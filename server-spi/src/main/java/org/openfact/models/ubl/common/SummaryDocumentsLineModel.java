@@ -5,44 +5,58 @@ import java.util.List;
 
 public interface SummaryDocumentsLineModel {
 
-    String getLineID();
+	String getID();
 
-    void setLineID(String value);
+	void setID(String ID);
 
-    String getDocumentTypeCode();
+	CustomerPartyModel getAccountingCustomerParty();
 
-    void setDocumentTypeCode(String value);
+	void setAccountingCustomerParty(CustomerPartyModel accountingCustomerParty);
 
-    String getDocumentSerialID();
+	BillingReferenceModel getBillingReference();
 
-    void setDocumentSerialID(String value);
+	void setBillingReference(BillingReferenceModel billingReference);
 
-    String getStartDocumentNumberID();
+	StatusModel getStatus();
 
-    void setStartDocumentNumberID(String value);
+	void setStatus(StatusModel status);
 
-    String getEndDocumentNumberID();
+	String getLineID();
 
-    void setEndDocumentNumberID(String value);
+	void setLineID(String value);
 
-    BigDecimal getTotalAmount();
+	String getDocumentTypeCode();
 
-    void setTotalAmount(BigDecimal value);
+	void setDocumentTypeCode(String value);
 
-    List<PaymentModel> getBillingPayment();
+	String getDocumentSerialID();
 
-    void setBillingPayment(List<PaymentModel> billingPayment);
+	void setDocumentSerialID(String value);
 
-    List<AllowanceChargeModel> getAllowanceCharge();
+	String getStartDocumentNumberID();
 
-    void setAllowanceCharge(List<AllowanceChargeModel> allowanceCharge);
+	void setStartDocumentNumberID(String value);
 
-    List<TaxTotalModel> getTaxTotal();
+	String getEndDocumentNumberID();
 
-    void setTaxTotal(List<TaxTotalModel> taxTotal);
+	void setEndDocumentNumberID(String value);
 
-    String getId();
+	BigDecimal getTotalAmount();
 
-    
+	void setTotalAmount(BigDecimal value);
+
+	List<PaymentModel> getBillingPayment();
+
+	void setBillingPayment(List<PaymentModel> billingPayment);
+
+	List<AllowanceChargeModel> getAllowanceCharge();
+
+	void setAllowanceCharge(List<AllowanceChargeModel> allowanceCharge);
+
+	List<TaxTotalModel> getTaxTotal();
+
+	void setTaxTotal(List<TaxTotalModel> taxTotal);
+
+	String getId();
 
 }

@@ -52,8 +52,8 @@ public class ContractEntity {
     @Type(type = "org.hibernate.type.LocalTimeType")
     protected LocalTime issueTime;
 
-    @Column(name = "CONTRACT_CODE")
-    protected String contractCode;
+    @Column(name = "CONTRACT_TYPE_CODE")
+    protected String contractTypeCode;
 
     @Column(name = "CONTRACT_TYPE")
     protected String contractType;
@@ -124,24 +124,22 @@ public class ContractEntity {
      */
     public void setIssueTime(LocalTime issueTime) {
         this.issueTime = issueTime;
-    }
-
-    /**
-     * @return the contractCode
-     */
-    public String getContractCode() {
-        return contractCode;
-    }
+    }    
 
     /**
      * @param contractCode
      *            the contractCode to set
      */
-    public void setContractCode(String contractCode) {
-        this.contractCode = contractCode;
-    }
+  
+    public String getContractTypeCode() {
+		return contractTypeCode;
+	}
 
-    /**
+	public void setContractTypeCode(String contractTypeCode) {
+		this.contractTypeCode = contractTypeCode;
+	}
+
+	/**
      * @return the contractType
      */
     public String getContractType() {

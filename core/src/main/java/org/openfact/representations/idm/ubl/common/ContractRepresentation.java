@@ -2,80 +2,87 @@ package org.openfact.representations.idm.ubl.common;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContractRepresentation {
-    private String idUbl;
-    private LocalDate issueDate;
-    private LocalTime issueTime;
-    private String contractRepresentationCode;
-    private String contractRepresentation;
-    private PeriodRepresentation validityPeriod;
-    private List<DocumentReferenceRepresentation> contractDocumentReference;
-    private String id;
+	private String idUbl;
+	private LocalDate issueDate;
+	private LocalTime issueTime;
+	private String contractTypeCode;
+	private String contractType;
+	private PeriodRepresentation validityPeriod;
+	private List<DocumentReferenceRepresentation> contractDocumentReference;
+	private String id;
 
-    public String getIdUbl() {
-        return this.idUbl;
-    }
+	public void addDocumentReference(DocumentReferenceRepresentation representation) {
+		if (contractDocumentReference == null) {
+			contractDocumentReference = new ArrayList<>();
+		}
+		contractDocumentReference.add(representation);
+	}
 
-    public void setIdUbl(String idUbl) {
-        this.idUbl = idUbl;
-    }
+	public String getIdUbl() {
+		return this.idUbl;
+	}
 
-    public PeriodRepresentation getValidityPeriod() {
-        return this.validityPeriod;
-    }
+	public void setIdUbl(String idUbl) {
+		this.idUbl = idUbl;
+	}
 
-    public void setValidityPeriod(PeriodRepresentation validityPeriod) {
-        this.validityPeriod = validityPeriod;
-    }
+	public PeriodRepresentation getValidityPeriod() {
+		return this.validityPeriod;
+	}
 
-    public String getId() {
-        return this.id;
-    }
+	public void setValidityPeriod(PeriodRepresentation validityPeriod) {
+		this.validityPeriod = validityPeriod;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    public LocalDate getIssueDate() {
-        return this.issueDate;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setIssueDate(LocalDate issueDate) {
-        this.issueDate = issueDate;
-    }
+	public LocalDate getIssueDate() {
+		return this.issueDate;
+	}
 
-    public String getContractRepresentationCode() {
-        return this.contractRepresentationCode;
-    }
+	public void setIssueDate(LocalDate issueDate) {
+		this.issueDate = issueDate;
+	}
 
-    public void setContractRepresentationCode(String contractRepresentationCode) {
-        this.contractRepresentationCode = contractRepresentationCode;
-    }
+	public String getContractTypeCode() {
+		return contractTypeCode;
+	}
 
-    public List<DocumentReferenceRepresentation> getContractDocumentReference() {
-        return this.contractDocumentReference;
-    }
+	public void setContractTypeCode(String contractTypeCode) {
+		this.contractTypeCode = contractTypeCode;
+	}
 
-    public void setContractDocumentReference(
-            List<DocumentReferenceRepresentation> contractDocumentReference) {
-        this.contractDocumentReference = contractDocumentReference;
-    }
+	public String getContractType() {
+		return contractType;
+	}
 
-    public String getContractRepresentation() {
-        return this.contractRepresentation;
-    }
+	public void setContractType(String contractType) {
+		this.contractType = contractType;
+	}
 
-    public void setContractRepresentation(String contractRepresentation) {
-        this.contractRepresentation = contractRepresentation;
-    }
+	public List<DocumentReferenceRepresentation> getContractDocumentReference() {
+		return this.contractDocumentReference;
+	}
 
-    public LocalTime getIssueTime() {
-        return this.issueTime;
-    }
+	public void setContractDocumentReference(List<DocumentReferenceRepresentation> contractDocumentReference) {
+		this.contractDocumentReference = contractDocumentReference;
+	}
 
-    public void setIssueTime(LocalTime issueTime) {
-        this.issueTime = issueTime;
-    }
+	public LocalTime getIssueTime() {
+		return this.issueTime;
+	}
+
+	public void setIssueTime(LocalTime issueTime) {
+		this.issueTime = issueTime;
+	}
 }

@@ -6,36 +6,34 @@ import java.util.List;
 
 public interface ContractModel {
 
-    String getID();
+	String getID();
 
-    void setID(String value);
+	void setID(String value);
 
-    LocalDate getIssueDate();
+	LocalDate getIssueDate();
 
-    void setIssueDate(LocalDate value);
+	void setIssueDate(LocalDate value);
 
-    LocalTime getIssueTime();
+	LocalTime getIssueTime();
 
-    void setIssueTime(LocalTime value);
+	void setIssueTime(LocalTime value);
 
-    String getContractCode();
+	String getContractTypeCode();
 
-    void setContractModelCode(String value);
+	void setContractTypeCode(String value);
 
-    String getContractType();
+	String getContractType();
 
-    void setContractType(String value);
+	void setContractType(String value);
 
-    PeriodModel getValidityPeriod();
+	PeriodModel getValidityPeriod();
 
-    void setValidityPeriod(PeriodModel value);
+	void setValidityPeriod(PeriodModel value);
 
-    List<DocumentReferenceModel> getContractDocumentReference();
+	List<DocumentReferenceModel> getContractDocumentReference();
 
-    void setContractDocumentReference(List<DocumentReferenceModel> contractDocumentReference);
+	void setContractDocumentReference(List<DocumentReferenceModel> contractDocumentReference);
 
-    String getId();
-
-    
+	String getId();
 
 }

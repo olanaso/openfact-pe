@@ -1,6 +1,7 @@
 package org.openfact.representations.idm.ubl.pe;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openfact.representations.idm.ubl.common.SignatureRepresentation;
@@ -19,7 +20,7 @@ public class SummaryDocumentsRepresentation {
 	protected List<SignatureRepresentation> signature;
 	protected SupplierPartyRepresentation accountingSupplierParty;
 	protected List<SummaryDocumentsLineRepresentation> SummaryDocumentsLines;
-	protected String xmlDocument;
+	protected byte[] xmlDocument;
 
 	public String getId() {
 		return id;
@@ -101,11 +102,25 @@ public class SummaryDocumentsRepresentation {
 		SummaryDocumentsLines = summaryDocumentsLines;
 	}
 
-	public String getXmlDocument() {
+	public byte[] getXmlDocument() {
 		return xmlDocument;
 	}
 
-	public void setXmlDocument(String xmlDocument) {
+	public void setXmlDocument(byte[] xmlDocument) {
 		this.xmlDocument = xmlDocument;
+	}
+
+	public void addSignature(SignatureRepresentation representation) {
+		if (signature == null) {
+			signature = new ArrayList<>();
+		}
+		signature.add(representation);
+	}
+
+	public void addSummaryDocumentsLine(SummaryDocumentsLineRepresentation representation) {
+		if (SummaryDocumentsLines == null) {
+			SummaryDocumentsLines = new ArrayList<>();
+		}
+		SummaryDocumentsLines.add(representation);
 	}
 }

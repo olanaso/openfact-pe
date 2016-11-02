@@ -1,6 +1,7 @@
 package org.openfact.representations.idm.ubl.common;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openfact.representations.idm.ubl.common.pe.PerceptionDocumentReferenceRepresentation;
@@ -16,7 +17,6 @@ public class SummaryDocumentsLineRepresentation {
 	protected BigDecimal totalAmount;
 	protected CustomerPartyRepresentation accountingCustomerParty;
 	protected BillingReferenceRepresentation billingReference;
-	protected PerceptionDocumentReferenceRepresentation perceptionDocumentReference;
 	protected StatusRepresentation status;
 	protected List<PaymentRepresentation> billingPayment;
 	protected List<AllowanceChargeRepresentation> allowanceCharge;
@@ -100,15 +100,7 @@ public class SummaryDocumentsLineRepresentation {
 
 	public void setBillingReference(BillingReferenceRepresentation billingReference) {
 		this.billingReference = billingReference;
-	}
-
-	public PerceptionDocumentReferenceRepresentation getPerceptionDocumentReference() {
-		return perceptionDocumentReference;
-	}
-
-	public void setPerceptionDocumentReference(PerceptionDocumentReferenceRepresentation perceptionDocumentReference) {
-		this.perceptionDocumentReference = perceptionDocumentReference;
-	}
+	}	
 
 	public StatusRepresentation getStatus() {
 		return status;
@@ -140,6 +132,27 @@ public class SummaryDocumentsLineRepresentation {
 
 	public void setTaxTotal(List<TaxTotalRepresentation> taxTotal) {
 		this.taxTotal = taxTotal;
+	}
+
+	public void addPayment(PaymentRepresentation representation) {
+		if (billingPayment == null) {
+			billingPayment = new ArrayList<>();
+		}
+		billingPayment.add(representation);
+	}
+
+	public void addAllowanceCharge(AllowanceChargeRepresentation representation) {
+		if (allowanceCharge == null) {
+			allowanceCharge = new ArrayList<>();
+		}
+		allowanceCharge.add(representation);
+	}
+
+	public void addTaxTotal(TaxTotalRepresentation representation) {
+		if (taxTotal == null) {
+			taxTotal = new ArrayList<>();
+		}
+		taxTotal.add(representation);
 	}
 
 }

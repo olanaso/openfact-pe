@@ -60,13 +60,13 @@ public class ContractAdapter implements ContractModel, JpaModel<ContractEntity> 
     }
 
     @Override
-    public String getContractCode() {
-        return this.contract.getContractCode();
+    public String getContractTypeCode() {
+        return this.contract.getContractTypeCode();
     }
 
     @Override
-    public void setContractModelCode(String value) {
-        this.contract.setContractCode(value);
+    public void setContractTypeCode(String value) {
+        this.contract.setContractTypeCode(value);
     }
 
     @Override

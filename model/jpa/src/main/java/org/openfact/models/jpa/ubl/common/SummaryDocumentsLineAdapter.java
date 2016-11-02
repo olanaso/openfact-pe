@@ -14,7 +14,10 @@ import org.openfact.models.jpa.entities.ubl.common.PaymentEntity;
 import org.openfact.models.jpa.entities.ubl.common.SummaryDocumentsLineEntity;
 import org.openfact.models.jpa.entities.ubl.common.TaxTotalEntity;
 import org.openfact.models.ubl.common.AllowanceChargeModel;
+import org.openfact.models.ubl.common.BillingReferenceModel;
+import org.openfact.models.ubl.common.CustomerPartyModel;
 import org.openfact.models.ubl.common.PaymentModel;
+import org.openfact.models.ubl.common.StatusModel;
 import org.openfact.models.ubl.common.SummaryDocumentsLineModel;
 import org.openfact.models.ubl.common.TaxTotalModel;
 
@@ -140,11 +143,52 @@ public class SummaryDocumentsLineAdapter implements SummaryDocumentsLineModel, J
 	public String getId() {
 		return summaryDocumentsLine.getId();
 	}
+
 	public static SummaryDocumentsLineEntity toEntity(SummaryDocumentsLineModel model, EntityManager em) {
 		if (model instanceof SummaryDocumentsLineAdapter) {
 			return ((SummaryDocumentsLineAdapter) model).getEntity();
 		}
 		return em.getReference(SummaryDocumentsLineEntity.class, model.getId());
+	}
+
+	@Override
+	public String getID() {
+		return summaryDocumentsLine.getID();
+	}
+
+	@Override
+	public void setID(String ID) {
+		summaryDocumentsLine.setID(ID);
+	}
+
+	@Override
+	public CustomerPartyModel getAccountingCustomerParty() {
+		return new CustomerPartyAdapter(session, em, summaryDocumentsLine.getAccountingCustomerParty());
+	}
+
+	@Override
+	public void setAccountingCustomerParty(CustomerPartyModel accountingCustomerParty) {
+		summaryDocumentsLine.setAccountingCustomerParty(CustomerPartyAdapter.toEntity(accountingCustomerParty, em));
+	}
+
+	@Override
+	public BillingReferenceModel getBillingReference() {
+		return new BillingReferenceAdapter(session, em, summaryDocumentsLine.getBillingReference());
+	}
+
+	@Override
+	public void setBillingReference(BillingReferenceModel billingReference) {
+		summaryDocumentsLine.setBillingReference(BillingReferenceAdapter.toEntity(billingReference, em));
+	}
+
+	@Override
+	public StatusModel getStatus() {
+		return new StatusAdapter(session, em, summaryDocumentsLine.getStatus());
+	}
+
+	@Override
+	public void setStatus(StatusModel status) {
+		summaryDocumentsLine.setStatus(StatusAdapter.toEntity(status, em));
 	}
 
 }

@@ -2,6 +2,7 @@ package org.openfact.representations.idm.ubl.pe;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openfact.representations.idm.ubl.common.PartyRepresentation;
@@ -26,7 +27,21 @@ public class PerceptionRepresentation {
 	protected BigDecimal totalInvoiceAmount;
 	protected BigDecimal SUNATTotalCashed;
 	protected List<PerceptionDocumentReferenceRepresentation> SUNATPerceptionDocumentReference;
-	protected String xmlDocument;
+	protected byte[] xmlDocument;
+
+	public void addSignature(SignatureRepresentation representation) {
+		if (signature == null) {
+			signature = new ArrayList<>();
+		}
+		signature.add(representation);
+	}
+
+	public void addPerceptionDocumentReference(PerceptionDocumentReferenceRepresentation representation) {
+		if (SUNATPerceptionDocumentReference == null) {
+			SUNATPerceptionDocumentReference = new ArrayList<>();
+		}
+		SUNATPerceptionDocumentReference.add(representation);
+	}
 
 	public String getId() {
 		return id;
@@ -149,11 +164,11 @@ public class PerceptionRepresentation {
 		SUNATPerceptionDocumentReference = sUNATPerceptionDocumentReference;
 	}
 
-	public String getXmlDocument() {
+	public byte[] getXmlDocument() {
 		return xmlDocument;
 	}
 
-	public void setXmlDocument(String xmlDocument) {
+	public void setXmlDocument(byte[] xmlDocument) {
 		this.xmlDocument = xmlDocument;
 	}
 

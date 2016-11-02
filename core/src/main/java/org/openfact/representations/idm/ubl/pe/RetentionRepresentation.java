@@ -2,6 +2,7 @@ package org.openfact.representations.idm.ubl.pe;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openfact.representations.idm.ubl.common.PartyRepresentation;
@@ -25,8 +26,20 @@ public class RetentionRepresentation {
 	protected BigDecimal totalInvoiceAmount;
 	protected BigDecimal SUNATTotalPaid;
 	protected List<RetentionDocumentReferenceRepresentation> SUNATRetentionDocumentReference;
-	protected String xmlDocument;
+	protected byte[] xmlDocument;
 
+	public void addSignature(SignatureRepresentation representation) {
+		if (signature == null) {
+			signature = new ArrayList<>();
+		}
+		signature.add(representation);
+	}
+	public void addPerceptionDocumentReference(RetentionDocumentReferenceRepresentation representation) {
+		if (SUNATRetentionDocumentReference == null) {
+			SUNATRetentionDocumentReference = new ArrayList<>();
+		}
+		SUNATRetentionDocumentReference.add(representation);
+	}
 	public String getId() {
 		return id;
 	}
@@ -148,12 +161,12 @@ public class RetentionRepresentation {
 		SUNATRetentionDocumentReference = sUNATRetentionDocumentReference;
 	}
 
-	public String getXmlDocument() {
+	public byte[] getXmlDocument() {
 		return xmlDocument;
 	}
 
-	public void setXmlDocument(String xmlDocument) {
+	public void setXmlDocument(byte[] xmlDocument) {
 		this.xmlDocument = xmlDocument;
-	}
+	}	
 
 }

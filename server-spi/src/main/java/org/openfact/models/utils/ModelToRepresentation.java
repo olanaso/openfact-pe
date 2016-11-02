@@ -741,7 +741,7 @@ public class ModelToRepresentation {
         for (UBLExtensionModel item : model.getUBLExtension()) {
             rep.addUBLExtension(toRepresentation(item));
         }
-        return null;
+        return rep;
     }
 
     public static UBLExtensionRepresentation toRepresentation(UBLExtensionModel model) {

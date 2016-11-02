@@ -2,7 +2,7 @@ package org.openfact.representations.idm.ubl.common;
 
 import java.util.List;
 
-public class LocationRepresentationCommAgg {
+public class LocationCommAggRepresentation {
     private String idUbl;
     private String description;
     private String conditions;

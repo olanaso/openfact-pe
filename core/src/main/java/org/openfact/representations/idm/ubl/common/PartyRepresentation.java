@@ -13,7 +13,7 @@ public class PartyRepresentation {
     private List<String> partyName;
     private LanguageRepresentation language;
     private AddressRepresentation postalAddress;
-    private LocationRepresentationCommAgg physicalLocation;
+    private LocationCommAggRepresentation physicalLocation;
     private List<PartyTaxSchemeRepresentation> partyTaxScheme;
     private List<PartyLegalEntityRepresentation> partyLegalEntity;
     private ContactRepresentation contact;
@@ -139,11 +139,11 @@ public class PartyRepresentation {
         this.contact = contact;
     }
 
-    public LocationRepresentationCommAgg getPhysicalLocation() {
+    public LocationCommAggRepresentation getPhysicalLocation() {
         return this.physicalLocation;
     }
 
-    public void setPhysicalLocation(LocationRepresentationCommAgg physicalLocation) {
+    public void setPhysicalLocation(LocationCommAggRepresentation physicalLocation) {
         this.physicalLocation = physicalLocation;
     }
 

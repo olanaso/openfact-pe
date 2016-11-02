@@ -14,7 +14,7 @@ public class DeliveryRepresentation {
     private LocalTime latestDeliveryTime;
     private String trackingID;
     private AddressRepresentation deliveryAddress;
-    private LocationRepresentationCommAgg deliveryLocation;
+    private LocationCommAggRepresentation deliveryLocation;
     private PeriodRepresentation requestedDeliveryPeriod;
     private PeriodRepresentation promisedDeliveryPeriod;
     private PeriodRepresentation estimatedDeliveryPeriod;
@@ -142,11 +142,11 @@ public class DeliveryRepresentation {
         this.deliveryParty = deliveryParty;
     }
 
-    public LocationRepresentationCommAgg getDeliveryLocation() {
+    public LocationCommAggRepresentation getDeliveryLocation() {
         return this.deliveryLocation;
     }
 
-    public void setDeliveryLocation(LocationRepresentationCommAgg deliveryLocation) {
+    public void setDeliveryLocation(LocationCommAggRepresentation deliveryLocation) {
         this.deliveryLocation = deliveryLocation;
     }
 

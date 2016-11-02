@@ -5,7 +5,7 @@ public class DeliveryTermsRepresentation {
     private String specialTerms;
     private String lossRiskResponsibilityCode;
     private String lossRisk;
-    private LocationRepresentationCommAgg deliveryLocation;
+    private LocationCommAggRepresentation deliveryLocation;
     private AllowanceChargeRepresentation allowanceCharge;
     private String id;
 
@@ -57,11 +57,11 @@ public class DeliveryTermsRepresentation {
         this.allowanceCharge = allowanceCharge;
     }
 
-    public LocationRepresentationCommAgg getDeliveryLocation() {
+    public LocationCommAggRepresentation getDeliveryLocation() {
         return this.deliveryLocation;
     }
 
-    public void setDeliveryLocation(LocationRepresentationCommAgg deliveryLocation) {
+    public void setDeliveryLocation(LocationCommAggRepresentation deliveryLocation) {
         this.deliveryLocation = deliveryLocation;
     }
 }

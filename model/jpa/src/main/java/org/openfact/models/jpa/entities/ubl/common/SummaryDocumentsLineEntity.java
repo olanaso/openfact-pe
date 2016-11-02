@@ -60,11 +60,11 @@ public class SummaryDocumentsLineEntity {
 
 	@ManyToOne(targetEntity = PerceptionDocumentReferenceEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "PERCEPTIONDOCUMENTREFERENCE_SUMMARY")
-	protected PerceptionDocumentReferenceEntity sunatPerceptionDocumentReference;
+	protected PerceptionDocumentReferenceEntity perceptionDocumentReference = new PerceptionDocumentReferenceEntity();
 
 	@ManyToOne(targetEntity = StatusEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "STATUS_SUMMARY")
-	protected StatusEntity status;
+	protected StatusEntity status = new StatusEntity();
 
 	@OneToMany(targetEntity = PaymentEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "BILLINGPAYMENT_SUMMARY")
@@ -158,12 +158,12 @@ public class SummaryDocumentsLineEntity {
 		this.billingReference = billingReference;
 	}
 
-	public PerceptionDocumentReferenceEntity getSunatPerceptionDocumentReference() {
-		return sunatPerceptionDocumentReference;
+	public PerceptionDocumentReferenceEntity getPerceptionDocumentReference() {
+		return perceptionDocumentReference;
 	}
 
-	public void setSunatPerceptionDocumentReference(PerceptionDocumentReferenceEntity sunatPerceptionDocumentReference) {
-		this.sunatPerceptionDocumentReference = sunatPerceptionDocumentReference;
+	public void setPerceptionDocumentReference(PerceptionDocumentReferenceEntity perceptionDocumentReference) {
+		this.perceptionDocumentReference = perceptionDocumentReference;
 	}
 
 	public StatusEntity getStatus() {

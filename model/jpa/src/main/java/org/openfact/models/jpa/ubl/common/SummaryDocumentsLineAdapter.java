@@ -191,4 +191,31 @@ public class SummaryDocumentsLineAdapter implements SummaryDocumentsLineModel, J
 		summaryDocumentsLine.setStatus(StatusAdapter.toEntity(status, em));
 	}
 
+	@Override
+	public TaxTotalModel addTaxTotal() {
+		List<TaxTotalEntity> entities = summaryDocumentsLine.getTaxTotal();
+
+		TaxTotalEntity entity = new TaxTotalEntity();
+		entities.add(entity);
+		return new TaxTotalAdapter(session, em, entity);
+	}
+
+	@Override
+	public PaymentModel addPayment() {
+		List<PaymentEntity> entities = summaryDocumentsLine.getBillingPayment();
+
+		PaymentEntity entity = new PaymentEntity();
+		entities.add(entity);
+		return new PaymentAdapter(session, em, entity);
+	}
+
+	@Override
+	public AllowanceChargeModel addAllowanceCharge() {
+		List<AllowanceChargeEntity> entities = summaryDocumentsLine.getAllowanceCharge();
+
+		AllowanceChargeEntity entity = new AllowanceChargeEntity();
+		entities.add(entity);
+		return new AllowanceChargeAdapter(session, em, entity);
+	}
+
 }

@@ -36,4 +36,6 @@ public interface ContractModel {
 
 	String getId();
 
+	DocumentReferenceModel addContractDocumentReference();
+
 }

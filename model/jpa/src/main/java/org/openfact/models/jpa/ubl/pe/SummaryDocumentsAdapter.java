@@ -57,6 +57,7 @@ public class SummaryDocumentsAdapter implements SummaryDocumentsModel, JpaModel<
 	public String getId() {
 		return summaryDocuments.getId();
 	}
+
 	@Override
 	public void setSingleAttribute(String name, String value) {
 		String firstExistingAttrId = null;
@@ -156,6 +157,7 @@ public class SummaryDocumentsAdapter implements SummaryDocumentsModel, JpaModel<
 		}
 		return result;
 	}
+
 	@Override
 	public OrganizationModel getOrganization() {
 		return new OrganizationAdapter(session, em, summaryDocuments.getOrganization());
@@ -287,5 +289,23 @@ public class SummaryDocumentsAdapter implements SummaryDocumentsModel, JpaModel<
 			return ((SummaryDocumentsAdapter) model).getEntity();
 		}
 		return em.getReference(SummaryDocumentsEntity.class, model.getId());
+	}
+
+	@Override
+	public SummaryDocumentsLineModel addSummaryDocumentsLine() {
+		List<SummaryDocumentsLineEntity> entities = summaryDocuments.getSummaryDocumentsLines();
+
+		SummaryDocumentsLineEntity entity = new SummaryDocumentsLineEntity();
+		entities.add(entity);
+		return new SummaryDocumentsLineAdapter(session, em, entity);
+	}
+
+	@Override
+	public SignatureModel addSignature() {
+		List<SignatureEntity> entities = summaryDocuments.getSignature();
+
+		SignatureEntity entity = new SignatureEntity();
+		entities.add(entity);
+		return new SignatureAdapter(session, em, entity);
 	}
 }

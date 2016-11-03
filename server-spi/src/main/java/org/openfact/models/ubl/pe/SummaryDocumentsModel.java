@@ -11,6 +11,7 @@ import org.openfact.models.ubl.common.SignatureModel;
 import org.openfact.models.ubl.common.SummaryDocumentsLineModel;
 import org.openfact.models.ubl.common.SupplierPartyModel;
 import org.openfact.models.ubl.common.UBLExtensionsModel;
+import org.openfact.models.ubl.common.pe.RetentionDocumentReferenceModel;
 import org.openfact.provider.ProviderEvent;
 
 public interface SummaryDocumentsModel {
@@ -78,6 +79,12 @@ public interface SummaryDocumentsModel {
 	List<RequeridActionDocument> getRequeridAction();
 
 	void setRequeridAction(List<RequeridActionDocument> requeridAction);
+	/**
+	 * Other methods
+	 */
+	SummaryDocumentsLineModel addSummaryDocumentsLine();
+
+	SignatureModel addSignature();
 	/**
 	 * Events interfaces
 	 */

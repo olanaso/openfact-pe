@@ -8,11 +8,14 @@ import java.util.Map;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.RequeridActionDocument;
+import org.openfact.models.ubl.common.InvoiceLineModel;
 import org.openfact.models.ubl.common.PartyModel;
 import org.openfact.models.ubl.common.SignatureModel;
+import org.openfact.models.ubl.common.TaxTotalModel;
 import org.openfact.models.ubl.common.UBLExtensionsModel;
 import org.openfact.models.ubl.common.pe.PerceptionDocumentReferenceModel;
 import org.openfact.provider.ProviderEvent;
+import org.openfact.representations.idm.ubl.common.pe.PerceptionDocumentReferenceRepresentation;
 
 public interface PerceptionModel {
 	/**
@@ -29,7 +32,7 @@ public interface PerceptionModel {
 	List<String> getAttribute(String name);
 
 	Map<String, List<String>> getAttributes();
-	
+
 	String getId();
 
 	OrganizationModel getOrganization();
@@ -99,6 +102,14 @@ public interface PerceptionModel {
 	List<RequeridActionDocument> getRequeridAction();
 
 	void setRequeridAction(List<RequeridActionDocument> requeridAction);
+
+	/**
+	 * Other methods
+	 */
+	PerceptionDocumentReferenceModel addPerceptionDocumentReference();
+
+	SignatureModel addSignature();
+
 	/**
 	 * Events interfaces
 	 */

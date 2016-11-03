@@ -342,4 +342,22 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 		}
 		return em.getReference(PerceptionEntity.class, model.getId());
 	}
+
+	@Override
+	public PerceptionDocumentReferenceModel addPerceptionDocumentReference() {
+		List<PerceptionDocumentReferenceEntity> entities = perception.getSUNATPerceptionDocumentReference();
+
+		PerceptionDocumentReferenceEntity entity = new PerceptionDocumentReferenceEntity();
+		entities.add(entity);
+		return new PerceptionDocumentReferenceAdapter(session, em, entity);
+	}
+
+	@Override
+	public SignatureModel addSignature() {
+		List<SignatureEntity> entities = perception.getSignature();
+
+		SignatureEntity entity = new SignatureEntity();
+		entities.add(entity);
+		return new SignatureAdapter(session, em, entity);
+	}
 }

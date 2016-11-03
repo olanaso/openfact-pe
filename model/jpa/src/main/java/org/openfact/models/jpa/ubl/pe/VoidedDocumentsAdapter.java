@@ -300,4 +300,22 @@ public class VoidedDocumentsAdapter implements VoidedDocumentsModel, JpaModel<Vo
 		}
 		return em.getReference(VoidedDocumentsEntity.class, model.getId());
 	}
+
+	@Override
+	public VoidedDocumentsLineModel addVoidedDocumentsLine() {
+		List<VoidedDocumentsLineEntity> entities = voidedDocuments.getVoidedDocumentsLine();
+
+		VoidedDocumentsLineEntity entity = new VoidedDocumentsLineEntity();
+		entities.add(entity);
+		return new VoidedDocumentsLineAdapter(session, em, entity);
+	}
+
+	@Override
+	public SignatureModel addSignature() {
+		List<SignatureEntity> entities = voidedDocuments.getSignature();
+
+		SignatureEntity entity = new SignatureEntity();
+		entities.add(entity);
+		return new SignatureAdapter(session, em, entity);
+	}
 }

@@ -8,6 +8,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.RequeridActionDocument;
 import org.openfact.models.ubl.common.SignatureModel;
+import org.openfact.models.ubl.common.SummaryDocumentsLineModel;
 import org.openfact.models.ubl.common.SupplierPartyModel;
 import org.openfact.models.ubl.common.UBLExtensionsModel;
 import org.openfact.models.ubl.common.VoidedDocumentsLineModel;
@@ -82,6 +83,13 @@ public interface VoidedDocumentsModel {
 	List<RequeridActionDocument> getRequeridAction();
 
 	void setRequeridAction(List<RequeridActionDocument> requeridAction);
+	
+	/**
+	 * Other methods
+	 */
+	VoidedDocumentsLineModel addVoidedDocumentsLine();
+
+	SignatureModel addSignature();
 	
 	/**
 	 * Events interfaces

@@ -342,4 +342,22 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 		}
 		return em.getReference(RetentionEntity.class, model.getId());
 	}
+
+	@Override
+	public RetentionDocumentReferenceModel addRetentionDocumentReference() {
+		List<RetentionDocumentReferenceEntity> entities = retention.getSUNATRetentionDocumentReference();
+
+		RetentionDocumentReferenceEntity entity = new RetentionDocumentReferenceEntity();
+		entities.add(entity);
+		return new RetentionDocumentReferenceAdapter(session, em, entity);
+	}
+
+	@Override
+	public SignatureModel addSignature() {
+		List<SignatureEntity> entities = retention.getSignature();
+
+		SignatureEntity entity = new SignatureEntity();
+		entities.add(entity);
+		return new SignatureAdapter(session, em, entity);
+	}
 }

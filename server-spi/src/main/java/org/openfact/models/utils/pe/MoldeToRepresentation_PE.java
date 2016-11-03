@@ -104,7 +104,7 @@ public class MoldeToRepresentation_PE {
 		rep.setTotalInvoiceAmount(model.getTotalInvoiceAmount());
 		rep.setSUNATTotalPaid(model.getSUNATTotalPaid());
 		for (RetentionDocumentReferenceModel item : model.getSUNATRetentionDocumentReference()) {
-			rep.addPerceptionDocumentReference(toRepresentation(item));
+			rep.addRetentionDocumentReference(toRepresentation(item));
 		}
 		if (model.getXmlDocument() != null) {
 			try {
@@ -145,11 +145,7 @@ public class MoldeToRepresentation_PE {
 		}
 		return rep;
 	}
-
-	/*
-	 * protected List<VoidedDocumentsLineRepresentation> voidedDocumentsLine;
-	 * protected byte[] xmlDocument;
-	 */
+	
 	public static VoidedDocumentsRepresentation toRepresentation(VoidedDocumentsModel model) {
 		VoidedDocumentsRepresentation rep = new VoidedDocumentsRepresentation();
 		rep.setId(model.getId());

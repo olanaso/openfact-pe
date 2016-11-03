@@ -59,4 +59,13 @@ public interface SummaryDocumentsLineModel {
 
 	String getId();
 
+	/**
+	 * Other methods
+	 */
+	TaxTotalModel addTaxTotal();
+
+	PaymentModel addPayment();
+
+	AllowanceChargeModel addAllowanceCharge();
+
 }

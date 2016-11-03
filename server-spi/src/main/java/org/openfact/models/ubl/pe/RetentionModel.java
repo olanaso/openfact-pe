@@ -11,6 +11,7 @@ import org.openfact.models.enums.RequeridActionDocument;
 import org.openfact.models.ubl.common.PartyModel;
 import org.openfact.models.ubl.common.SignatureModel;
 import org.openfact.models.ubl.common.UBLExtensionsModel;
+import org.openfact.models.ubl.common.pe.PerceptionDocumentReferenceModel;
 import org.openfact.models.ubl.common.pe.RetentionDocumentReferenceModel;
 import org.openfact.provider.ProviderEvent;
 
@@ -29,7 +30,7 @@ public interface RetentionModel {
 	List<String> getAttribute(String name);
 
 	Map<String, List<String>> getAttributes();
-	
+
 	String getId();
 
 	OrganizationModel getOrganization();
@@ -99,7 +100,14 @@ public interface RetentionModel {
 	List<RequeridActionDocument> getRequeridAction();
 
 	void setRequeridAction(List<RequeridActionDocument> requeridAction);
-	
+
+	/**
+	 * Other methods
+	 */
+	RetentionDocumentReferenceModel addRetentionDocumentReference();
+
+	SignatureModel addSignature();
+
 	/**
 	 * Events interfaces
 	 */

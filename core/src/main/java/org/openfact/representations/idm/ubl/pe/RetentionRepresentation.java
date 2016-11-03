@@ -34,7 +34,7 @@ public class RetentionRepresentation {
 		}
 		signature.add(representation);
 	}
-	public void addPerceptionDocumentReference(RetentionDocumentReferenceRepresentation representation) {
+	public void addRetentionDocumentReference(RetentionDocumentReferenceRepresentation representation) {
 		if (SUNATRetentionDocumentReference == null) {
 			SUNATRetentionDocumentReference = new ArrayList<>();
 		}

@@ -23,9 +23,9 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.UBLVers
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VoidedDocumentsType", propOrder = { "ublExtensions", "ublVersionID", "customizationID", "id",
-		"referenceDate", "issueDate", "note", "documentCurrencyCode", "signature", "accountingSupplierParty",
-		"voidedDocumentsLine" })
+@XmlType(name = "VoidedDocumentsType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:VoidedDocuments-1", propOrder = {
+		"ublExtensions", "ublVersionID", "customizationID", "id", "referenceDate", "issueDate", "note",
+		"documentCurrencyCode", "signature", "accountingSupplierParty", "voidedDocumentsLine" })
 public class VoidedDocumentsType {
 	@XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
 	protected UBLExtensionsType ublExtensions;

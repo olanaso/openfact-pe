@@ -26,9 +26,10 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.UBLVers
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PerceptionType", propOrder = { "ublExtensions", "signature", "ublVersionID", "customizationID", "id",
-		"issueDate", "agentParty", "receiverParty", "sunatPerceptionSystemCode", "sunatPerceptionPercent", "note",
-		"documentCurrencyCode", "totalInvoiceAmount", "sunatTotalCashed", "sunatPerceptionDocumentReference"
+@XmlType(name = "PerceptionType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1", propOrder = {
+		"ublExtensions", "signature", "ublVersionID", "customizationID", "id", "issueDate", "agentParty",
+		"receiverParty", "sunatPerceptionSystemCode", "sunatPerceptionPercent", "note", "documentCurrencyCode",
+		"totalInvoiceAmount", "sunatTotalCashed", "sunatPerceptionDocumentReference"
 
 })
 public class PerceptionType {

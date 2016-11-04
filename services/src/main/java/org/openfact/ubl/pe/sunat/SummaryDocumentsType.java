@@ -22,9 +22,9 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.UBLVers
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SummaryDocumentsType", propOrder = { "ublExtensions", "ublVersionID", "customizationID", "id",
-		"documentCurrencyCode", "issueDate", "referenceDateTime", "signature", "accountingSupplierParty",
-		"summaryDocumentsLines"
+@XmlType(name = "SummaryDocumentsType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1", propOrder = {
+		"ublExtensions", "ublVersionID", "customizationID", "id", "documentCurrencyCode", "issueDate",
+		"referenceDateTime", "signature", "accountingSupplierParty", "summaryDocumentsLines"
 
 })
 public class SummaryDocumentsType {

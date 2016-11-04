@@ -44,6 +44,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Descrip
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DurationMeasureType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.StatusReasonType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TextType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 
 public class ModelToType_PE {
 	public static PerceptionType toType(PerceptionModel model) throws DatatypeConfigurationException {
@@ -57,6 +58,12 @@ public class ModelToType_PE {
 		if (model.getSignature() != null) {
 			for (SignatureModel item : model.getSignature()) {
 				type.addSignature(ModelToType.toType(item));
+			}
+		}
+		if (model.getUblExtensions() != null) {
+			UBLExtensionsType ublExtensionsType = ModelToType.toType(model.getUblExtensions());
+			if (!ublExtensionsType.getUBLExtension().isEmpty()) {
+				type.setUblExtensions(ublExtensionsType);
 			}
 		}
 		if (model.getID() != null) {
@@ -106,6 +113,12 @@ public class ModelToType_PE {
 		if (model.getSignature() != null) {
 			for (SignatureModel item : model.getSignature()) {
 				type.addSignature(ModelToType.toType(item));
+			}
+		}
+		if (model.getUblExtensions() != null) {
+			UBLExtensionsType ublExtensionsType = ModelToType.toType(model.getUblExtensions());
+			if (!ublExtensionsType.getUBLExtension().isEmpty()) {
+				type.setUblExtensions(ublExtensionsType);
 			}
 		}
 		if (model.getID() != null) {
@@ -168,7 +181,12 @@ public class ModelToType_PE {
 				type.addSignature(ModelToType.toType(item));
 			}
 		}
-
+		if (model.getUblExtensions() != null) {
+			UBLExtensionsType ublExtensionsType = ModelToType.toType(model.getUblExtensions());
+			if (!ublExtensionsType.getUBLExtension().isEmpty()) {
+				type.setUblExtensions(ublExtensionsType);
+			}
+		}
 		if (model.getAccountingSupplierParty() != null) {
 			type.setAccountingSupplierParty(ModelToType.toType(model.getAccountingSupplierParty()));
 		}
@@ -206,6 +224,12 @@ public class ModelToType_PE {
 		if (model.getSignature() != null) {
 			for (SignatureModel item : model.getSignature()) {
 				type.addSignature(ModelToType.toType(item));
+			}
+		}
+		if (model.getUblExtensions() != null) {
+			UBLExtensionsType ublExtensionsType = ModelToType.toType(model.getUblExtensions());
+			if (!ublExtensionsType.getUBLExtension().isEmpty()) {
+				type.setUBLExtensions(ublExtensionsType);
 			}
 		}
 		if (model.getAccountingSupplierParty() != null) {

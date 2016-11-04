@@ -55,6 +55,9 @@ public class RepresentationToModel_PE {
 		if (rep.getUblExtensions() != null) {
 			RepresentationToModel.updateModel(model.getUblExtensions(), rep.getUblExtensions());
 		}
+		if (rep.getDocumentCurrencyCode() != null) {
+			model.setDocumentCurrencyCode(rep.getDocumentCurrencyCode());
+		}
 		if (rep.getSignature() != null) {
 			for (SignatureRepresentation item : rep.getSignature()) {
 				RepresentationToModel.updateModel(model.addSignature(), item);
@@ -119,6 +122,9 @@ public class RepresentationToModel_PE {
 		if (rep.getNote() != null) {
 			model.setNote(rep.getNote());
 		}
+		if (rep.getDocumentCurrencyCode() != null) {
+			model.setDocumentCurrencyCode(rep.getDocumentCurrencyCode());
+		}
 		if (rep.getUblExtensions() != null) {
 			RepresentationToModel.updateModel(model.getUblExtensions(), rep.getUblExtensions());
 		}
@@ -180,6 +186,9 @@ public class RepresentationToModel_PE {
 		if (rep.getUblExtensions() != null) {
 			RepresentationToModel.updateModel(model.getUblExtensions(), rep.getUblExtensions());
 		}
+		if (rep.getDocumentCurrencyCode() != null) {
+			model.setDocumentCurrencyCode(rep.getDocumentCurrencyCode());
+		}
 		if (rep.getSignature() != null) {
 			for (SignatureRepresentation item : rep.getSignature()) {
 				RepresentationToModel.updateModel(model.addSignature(), item);
@@ -222,6 +231,9 @@ public class RepresentationToModel_PE {
 		if (rep.getNote() != null) {
 			model.setNote(rep.getNote());
 		}
+		if (rep.getDocumentCurrencyCode() != null) {
+			model.setDocumentCurrencyCode(rep.getDocumentCurrencyCode());
+		}
 		if (rep.getUblExtensions() != null) {
 			RepresentationToModel.updateModel(model.getUblExtensions(), rep.getUblExtensions());
 		}
@@ -249,9 +261,6 @@ public class RepresentationToModel_PE {
 	}
 
 	public static void updateModel(VoidedDocumentsLineModel model, VoidedDocumentsLineRepresentation rep) {
-		if (rep.getIdUbl() != null) {
-			model.setID(rep.getIdUbl());
-		}
 		if (rep.getLineID() != null) {
 			model.setLineID(rep.getLineID());
 		}

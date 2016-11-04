@@ -18,10 +18,7 @@ public class VoidedDocumentsLineEntity {
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Access(AccessType.PROPERTY)
-	protected String id;
-
-    @Column(name = "ID_UBL")
-    protected String ID;
+	protected String id;  
     
 	@Column(name = "LINE_ID")
 	protected String lineID;
@@ -44,15 +41,7 @@ public class VoidedDocumentsLineEntity {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getID() {
-		return ID;
-	}
-
-	public void setID(String iD) {
-		ID = iD;
-	}
+	}	
 
 	public String getLineID() {
 		return lineID;

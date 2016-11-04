@@ -318,4 +318,14 @@ public class VoidedDocumentsAdapter implements VoidedDocumentsModel, JpaModel<Vo
 		entities.add(entity);
 		return new SignatureAdapter(session, em, entity);
 	}
+
+	@Override
+	public String getDocumentCurrencyCode() {
+		return voidedDocuments.getDocumentCurrencyCode();
+	}
+
+	@Override
+	public void setDocumentCurrencyCode(String value) {
+		voidedDocuments.setDocumentCurrencyCode(value);
+	}
 }

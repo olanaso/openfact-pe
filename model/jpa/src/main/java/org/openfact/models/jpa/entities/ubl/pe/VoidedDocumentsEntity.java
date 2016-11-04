@@ -85,6 +85,9 @@ public class VoidedDocumentsEntity {
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	protected LocalDateTime issueDateTime;
 
+	@Column(name = "DOCUMENT_CURRENCY_CODE")
+	protected String documentCurrencyCode;
+	
 	@ElementCollection
 	@Column(name = "VALUE")
 	@CollectionTable(name = "VOIDED_DOCUMENT_NOTE", joinColumns = { @JoinColumn(name = "VOIDED_DOCUMENT_ID") })
@@ -231,6 +234,14 @@ public class VoidedDocumentsEntity {
 
 	public void setRequeridAction(List<RequeridActionDocument> requeridAction) {
 		this.requeridAction = requeridAction;
+	}
+
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 	

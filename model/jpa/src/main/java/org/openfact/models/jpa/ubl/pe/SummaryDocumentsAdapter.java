@@ -308,4 +308,14 @@ public class SummaryDocumentsAdapter implements SummaryDocumentsModel, JpaModel<
 		entities.add(entity);
 		return new SignatureAdapter(session, em, entity);
 	}
+
+	@Override
+	public String getDocumentCurrencyCode() {
+		return summaryDocuments.getDocumentCurrencyCode();
+	}
+
+	@Override
+	public void setDocumentCurrencyCode(String value) {
+		summaryDocuments.setDocumentCurrencyCode(value);		
+	}
 }

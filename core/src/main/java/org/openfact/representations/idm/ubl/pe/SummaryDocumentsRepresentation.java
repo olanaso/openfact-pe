@@ -15,11 +15,12 @@ public class SummaryDocumentsRepresentation {
 	protected String ublVersionID;
 	protected String customizationID;
 	protected String IdUbl;
+	protected String documentCurrencyCode;
 	protected LocalDateTime referenceDateTime;
 	protected LocalDateTime issueDateTime;
 	protected List<SignatureRepresentation> signature;
 	protected SupplierPartyRepresentation accountingSupplierParty;
-	protected List<SummaryDocumentsLineRepresentation> SummaryDocumentsLines;
+	protected List<SummaryDocumentsLineRepresentation> summaryDocumentsLines;
 	protected byte[] xmlDocument;
 
 	public String getId() {
@@ -74,6 +75,14 @@ public class SummaryDocumentsRepresentation {
 		return issueDateTime;
 	}
 
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
+	}
+
 	public void setIssueDateTime(LocalDateTime issueDateTime) {
 		this.issueDateTime = issueDateTime;
 	}
@@ -95,11 +104,11 @@ public class SummaryDocumentsRepresentation {
 	}
 
 	public List<SummaryDocumentsLineRepresentation> getSummaryDocumentsLines() {
-		return SummaryDocumentsLines;
+		return summaryDocumentsLines;
 	}
 
 	public void setSummaryDocumentsLines(List<SummaryDocumentsLineRepresentation> summaryDocumentsLines) {
-		SummaryDocumentsLines = summaryDocumentsLines;
+		this.summaryDocumentsLines = summaryDocumentsLines;
 	}
 
 	public byte[] getXmlDocument() {
@@ -118,9 +127,9 @@ public class SummaryDocumentsRepresentation {
 	}
 
 	public void addSummaryDocumentsLine(SummaryDocumentsLineRepresentation representation) {
-		if (SummaryDocumentsLines == null) {
-			SummaryDocumentsLines = new ArrayList<>();
+		if (summaryDocumentsLines == null) {
+			summaryDocumentsLines = new ArrayList<>();
 		}
-		SummaryDocumentsLines.add(representation);
+		summaryDocumentsLines.add(representation);
 	}
 }

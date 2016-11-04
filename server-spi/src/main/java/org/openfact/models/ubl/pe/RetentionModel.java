@@ -49,6 +49,10 @@ public interface RetentionModel {
 
 	void setCustomizationID(String customizationID);
 
+	String getDocumentCurrencyCode();
+
+	void setDocumentCurrencyCode(String value);
+	
 	List<SignatureModel> getSignature();
 
 	void setSignature(List<SignatureModel> signature);

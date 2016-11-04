@@ -85,6 +85,9 @@ public class RetentionEntity {
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	protected LocalDateTime issueDateTime;
 
+	@Column(name = "DOCUMENT_CURRENCY_CODE")
+	protected String documentCurrencyCode;
+	
 	@ElementCollection
 	@Column(name = "VALUE")
 	@CollectionTable(name = "RETENTION_NOTE", joinColumns = { @JoinColumn(name = "RETENTION_ID") })
@@ -275,6 +278,14 @@ public class RetentionEntity {
 
 	public void setRequeridAction(List<RequeridActionDocument> requeridAction) {
 		this.requeridAction = requeridAction;
+	}
+
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 }

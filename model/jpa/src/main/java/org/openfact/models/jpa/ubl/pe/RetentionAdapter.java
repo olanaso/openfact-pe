@@ -360,4 +360,14 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 		entities.add(entity);
 		return new SignatureAdapter(session, em, entity);
 	}
+
+	@Override
+	public String getDocumentCurrencyCode() {
+		return retention.getDocumentCurrencyCode();
+	}
+
+	@Override
+	public void setDocumentCurrencyCode(String value) {
+		retention.setDocumentCurrencyCode(value);		
+	}
 }

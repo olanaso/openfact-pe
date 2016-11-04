@@ -88,16 +88,5 @@ public class VoidedDocumentsLineAdapter implements VoidedDocumentsLineModel, Jpa
 			return ((VoidedDocumentsLineAdapter) model).getEntity();
 		}
 		return em.getReference(VoidedDocumentsLineEntity.class, model.getId());
-	}
-
-	@Override
-	public String getID() {
-		return voidedDocumentsLine.getID();
-	}
-
-	@Override
-	public void setID(String ID) {
-		voidedDocumentsLine.setID(ID);
-	}
-
+	}	
 }

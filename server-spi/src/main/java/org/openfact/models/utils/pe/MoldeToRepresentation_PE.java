@@ -53,6 +53,7 @@ public class MoldeToRepresentation_PE {
 		for (SignatureModel item : model.getSignature()) {
 			rep.addSignature(ModelToRepresentation.toRepresentation(item));
 		}
+		rep.setDocumentCurrencyCode(model.getDocumentCurrencyCode());
 		rep.setIdUbl(model.getID());
 		rep.setIssueDateTime(model.getIssueDateTime());
 		rep.setNote(model.getNote());
@@ -87,6 +88,7 @@ public class MoldeToRepresentation_PE {
 		rep.setIdUbl(model.getID());
 		rep.setIssueDateTime(model.getIssueDateTime());
 		rep.setNote(model.getNote());
+		rep.setDocumentCurrencyCode(model.getDocumentCurrencyCode());
 		if (model.getUblExtensions() != null) {
 			rep.setUblExtensions(ModelToRepresentation.toRepresentation(model.getUblExtensions()));
 		}
@@ -119,6 +121,7 @@ public class MoldeToRepresentation_PE {
 	public static SummaryDocumentsRepresentation toRepresentation(SummaryDocumentsModel model) {
 		SummaryDocumentsRepresentation rep = new SummaryDocumentsRepresentation();
 		rep.setId(model.getId());
+		rep.setDocumentCurrencyCode(model.getDocumentCurrencyCode());
 		rep.setUblVersionID(model.getUblVersionID());
 		rep.setCustomizationID(model.getCustomizationID());
 		rep.setIdUbl(model.getID());
@@ -155,6 +158,7 @@ public class MoldeToRepresentation_PE {
 		rep.setReferenceDate(model.getReferenceDate());
 		rep.setIssueDateTime(model.getIssueDateTime());
 		rep.setNote(model.getNote());
+		rep.setDocumentCurrencyCode(model.getDocumentCurrencyCode());
 		if (model.getUblExtensions() != null) {
 			rep.setUblExtensions(ModelToRepresentation.toRepresentation(model.getUblExtensions()));
 		}
@@ -180,8 +184,7 @@ public class MoldeToRepresentation_PE {
 
 	public static VoidedDocumentsLineRepresentation toRepresentation(VoidedDocumentsLineModel model) {
 		VoidedDocumentsLineRepresentation rep = new VoidedDocumentsLineRepresentation();
-		rep.setId(model.getId());
-		rep.setIdUbl(model.getID());
+		rep.setId(model.getId());		
 		rep.setLineID(model.getLineID());
 		rep.setDocumentTypeCode(model.getDocumentTypeCode());
 		rep.setDocumentSerialID(model.getDocumentSerialID());

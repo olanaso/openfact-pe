@@ -360,4 +360,14 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 		entities.add(entity);
 		return new SignatureAdapter(session, em, entity);
 	}
+
+	@Override
+	public String getDocumentCurrencyCode() {
+		return perception.getDocumentCurrencyCode();
+	}
+
+	@Override
+	public void setDocumentCurrencyCode(String value) {
+		perception.setDocumentCurrencyCode(value);
+	}
 }

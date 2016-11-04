@@ -31,6 +31,10 @@ public interface VoidedDocumentsModel {
 	Map<String, List<String>> getAttributes();
 	
 	String getId();
+	
+	String getDocumentCurrencyCode();
+
+	void setDocumentCurrencyCode(String value);
 
 	OrganizationModel getOrganization();
 

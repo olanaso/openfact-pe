@@ -50,6 +50,10 @@ public interface PerceptionModel {
 	String getCustomizationID();
 
 	void setCustomizationID(String customizationID);
+	
+	String getDocumentCurrencyCode();
+
+	void setDocumentCurrencyCode(String value);
 
 	List<SignatureModel> getSignature();
 

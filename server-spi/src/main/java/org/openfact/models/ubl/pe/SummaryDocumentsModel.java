@@ -32,6 +32,10 @@ public interface SummaryDocumentsModel {
 	
 	String getId();
 
+	String getDocumentCurrencyCode();
+
+	void setDocumentCurrencyCode(String value);
+	
 	OrganizationModel getOrganization();
 
 	void setOrganization(OrganizationModel organization);

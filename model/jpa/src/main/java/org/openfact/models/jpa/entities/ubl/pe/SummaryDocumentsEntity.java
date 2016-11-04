@@ -79,6 +79,9 @@ public class SummaryDocumentsEntity {
 	@Column(name = "REFERENCE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	protected LocalDateTime referenceDateTime;
+
+	@Column(name = "DOCUMENT_CURRENCY_CODE")
+	protected String documentCurrencyCode;
 	
 	@Column(name = "ISSUE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
@@ -216,6 +219,14 @@ public class SummaryDocumentsEntity {
 
 	public void setRequeridAction(List<RequeridActionDocument> requeridAction) {
 		this.requeridAction = requeridAction;
+	}
+
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 	
 }

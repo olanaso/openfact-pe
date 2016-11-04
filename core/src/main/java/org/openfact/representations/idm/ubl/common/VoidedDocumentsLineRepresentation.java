@@ -4,7 +4,6 @@ import javax.persistence.Column;
 
 public class VoidedDocumentsLineRepresentation {
 	protected String id;
-    protected String IdUbl;    
 	protected String lineID;	
 	protected String documentTypeCode;	
 	protected String documentSerialID;	
@@ -16,12 +15,7 @@ public class VoidedDocumentsLineRepresentation {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getIdUbl() {
-		return IdUbl;
-	}
-	public void setIdUbl(String idUbl) {
-		IdUbl = idUbl;
-	}
+	
 	public String getLineID() {
 		return lineID;
 	}

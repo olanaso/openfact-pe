@@ -17,6 +17,7 @@ public class RetentionRepresentation {
 	protected String customizationID;
 	protected List<SignatureRepresentation> signature;
 	protected String idUbl;
+	protected String documentCurrencyCode;
 	protected LocalDateTime issueDateTime;
 	protected List<String> note;
 	protected String SUNATRetentionSystemCode;
@@ -68,6 +69,12 @@ public class RetentionRepresentation {
 		return customizationID;
 	}
 
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
+	}
 	public void setCustomizationID(String customizationID) {
 		this.customizationID = customizationID;
 	}

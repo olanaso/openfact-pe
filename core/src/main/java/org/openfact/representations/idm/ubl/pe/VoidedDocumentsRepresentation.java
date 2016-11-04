@@ -15,6 +15,7 @@ public class VoidedDocumentsRepresentation {
 	protected String ublVersionID;
 	protected String customizationID;
 	protected String IdUbl;
+	protected String documentCurrencyCode;
 	protected LocalDateTime referenceDate;
 	protected LocalDateTime issueDateTime;
 	protected List<String> note;
@@ -131,6 +132,14 @@ public class VoidedDocumentsRepresentation {
 			voidedDocumentsLine = new ArrayList<>();
 		}
 		voidedDocumentsLine.add(representation);
+	}
+
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 }

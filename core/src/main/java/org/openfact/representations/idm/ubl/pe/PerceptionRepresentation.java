@@ -17,6 +17,7 @@ public class PerceptionRepresentation {
 	protected String ublVersionID;
 	protected String customizationID;
 	protected List<SignatureRepresentation> signature;
+	protected String documentCurrencyCode;
 	protected String idUbl;
 	protected LocalDateTime issueDateTime;
 	protected List<String> note;
@@ -57,6 +58,14 @@ public class PerceptionRepresentation {
 
 	public void setUblExtensions(UBLExtensionsRepresentation ublExtensions) {
 		this.ublExtensions = ublExtensions;
+	}
+
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 	public String getUblVersionID() {

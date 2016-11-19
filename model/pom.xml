@@ -1,29 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>openfact</artifactId>
+		<artifactId>openfact-pe</artifactId>
 		<groupId>org.openfact</groupId>
 		<version>1.0.0.Final</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<name>Openfact Model</name>
-	<description />
+	<name>Openfact PE Model</name>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>openfact-model</artifactId>
+	<artifactId>openfact-pe-model</artifactId>
 	<packaging>pom</packaging>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<modules>
 		<module>jpa</module>
 	</modules>

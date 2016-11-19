@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>openfact</artifactId>
+		<artifactId>openfact-pe</artifactId>
 		<groupId>org.openfact</groupId>
 		<version>1.0.0.Final</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>openfact-model-jpa</artifactId>
-	<name>Openfact Model JPA</name>
+	<artifactId>openfact-pe-model-jpa</artifactId>
+	<name>Openfact PE Model JPA</name>
 	<description />
 
 	<properties>
@@ -19,140 +19,26 @@
 	</properties>
 
 	<dependencies>
-		<!-- Secondary Start -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-java8</artifactId>
-		</dependency>
-		<!-- Secondary End -->
-
-		<!-- Principal Start -->
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.openfact</groupId>
 			<artifactId>openfact-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-server-spi</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.openfact</groupId>
 			<artifactId>openfact-services</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.yaml</groupId>
-					<artifactId>snakeyaml</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.1-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-simple</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
+			<groupId>org.openfact</groupId>
+			<artifactId>openfact-server-spi</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<groupId>org.openfact</groupId>
+			<artifactId>openfact-model-jpa</artifactId>
+			<scope>provided</scope>
 		</dependency>
-		<!-- Principal End -->
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-				</configuration>
-			</plugin>
 
-			<!-- Liquibase -->
-			<plugin>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-maven-plugin</artifactId>
-				<configuration>
-					<changeLogFile>${project.build.directory}/changelog-master.xml</changeLogFile>
-					<diffChangeLogFile>${project.build.directory}/changelog-diff.xml</diffChangeLogFile>
-					<outputChangeLogFile>${project.build.directory}/changelog-output.xml</outputChangeLogFile>
-					<driver>org.h2.Driver</driver>
-					<url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</url>
-					<username>sa</username>
-					<password>sa</password>
-					<dropFirst>true</dropFirst>
-					<referenceUrl>hibernate:spring:org.openfact?dialect=org.hibernate.dialect.H2Dialect</referenceUrl>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.liquibase.ext</groupId>
-						<artifactId>liquibase-hibernate4</artifactId>
-						<version>3.5</version>
-					</dependency>
-					<dependency>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-beans</artifactId>
-						<version>4.1.7.RELEASE</version>
-					</dependency>
-					<dependency>
-						<groupId>org.springframework.data</groupId>
-						<artifactId>spring-data-jpa</artifactId>
-						<version>1.7.3.RELEASE</version>
-					</dependency>
-					<dependency>
-						<groupId>com.h2database</groupId>
-						<artifactId>h2</artifactId>
-						<version>1.4.192</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-	</build>
 </project>

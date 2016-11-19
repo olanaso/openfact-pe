@@ -23,6 +23,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -77,7 +78,7 @@ public class RetentionEntity {
     protected List<String> notes = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention", cascade = CascadeType.REMOVE)
-    protected Collection<RetentionAccionRequiredEntity> requiredActions = new ArrayList<>();
+    protected Collection<RetentionRequiredActionEntity> requiredActions = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention", cascade = CascadeType.ALL)
     protected List<SunatRetentionDocumentReferenceEntity> sunatRetentionDocumentReferences = new ArrayList<>();
@@ -86,6 +87,7 @@ public class RetentionEntity {
     @Column(name = "XML_DOCUMENT")
     protected byte[] xmlDocument;
 
+    @NotNull
     @Column(name = "ORGANIZATION_ID")
     protected String organizationId;
 
@@ -178,11 +180,11 @@ public class RetentionEntity {
         this.sunatRetentionDocumentReferences = sunatRetentionDocumentReferences;
     }
 
-    public Collection<RetentionAccionRequiredEntity> getRequiredActions() {
+    public Collection<RetentionRequiredActionEntity> getRequiredActions() {
         return requiredActions;
     }
 
-    public void setRequiredActions(Collection<RetentionAccionRequiredEntity> requiredActions) {
+    public void setRequiredActions(Collection<RetentionRequiredActionEntity> requiredActions) {
         this.requiredActions = requiredActions;
     }
 

@@ -6,13 +6,14 @@
 		<version>1.0.0.Final</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<name>Openfact PE Model</name>
+	<name>Openfact PE Core</name>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>openfact.pe-model</artifactId>
-	<packaging>pom</packaging>
+	<artifactId>openfact.pe-core</artifactId>
 
-	<modules>
-		<module>jpa</module>
-	</modules>
+	<properties>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+	</properties>
+
 </project>

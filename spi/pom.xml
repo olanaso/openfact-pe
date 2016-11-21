@@ -21,13 +21,29 @@
 			<groupId>org.openfact</groupId>
 			<artifactId>openfact.pe-core</artifactId>
 		</dependency>
-		
+
 		<!-- Openfact Core -->
+		<dependency>
+			<groupId>org.openfact</groupId>
+			<artifactId>openfact-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.openfact</groupId>
 			<artifactId>openfact-server-spi</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

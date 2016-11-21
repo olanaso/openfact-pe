@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<name>Openfact PE</name>
-	<description>Openfact PE Extension</description>
 	<groupId>org.openfact</groupId>
 	<artifactId>openfact.pe</artifactId>
 	<version>1.0.0.Final</version>
 	<packaging>pom</packaging>
 
-	<properties>
-		<product.version>${project.version}</product.version>
+	<name>Openfact PE</name>
+	<description>Openfact PE Extension</description>
 
-		<!-- Openfact core -->
+	<url>http://wildfly.org</url>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+
+	<properties>
+		<!-- Openfact Versions -->
+		<product.version>${project.version}</product.version>
 		<openfact.version>1.0.0.Final</openfact.version>
+
+		<!-- Explicitly declaring the source encoding eliminates the following 
+			message: -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- other plugin versions -->
+		<version.compiler.plugin>3.1</version.compiler.plugin>
+		<version.surefire.plugin>2.16</version.surefire.plugin>
+
+		<!-- maven-compiler-plugin -->
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
 
 	<developers>
@@ -52,6 +73,27 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.openfact</groupId>
+				<artifactId>openfact.pe-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openfact</groupId>
+				<artifactId>openfact.pe-services</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openfact</groupId>
+				<artifactId>openfact.pe-spi</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openfact</groupId>
+				<artifactId>openfact.pe-model-jpa</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<!-- Openfact Core -->
 			<dependency>
 				<groupId>org.openfact</groupId>
@@ -72,28 +114,6 @@
 				<groupId>org.openfact</groupId>
 				<artifactId>openfact-model-jpa</artifactId>
 				<version>${openfact.version}</version>
-			</dependency>
-
-			<!-- Openfact Core -->
-			<dependency>
-				<groupId>org.openfact</groupId>
-				<artifactId>openfact.pe-core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.openfact</groupId>
-				<artifactId>openfact.pe-services</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.openfact</groupId>
-				<artifactId>openfact.pe-spi</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.openfact</groupId>
-				<artifactId>openfact.pe-model-jpa</artifactId>
-				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

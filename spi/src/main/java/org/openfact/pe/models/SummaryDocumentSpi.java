@@ -18,13 +18,13 @@ public class SummaryDocumentSpi implements Spi {
 
     @Override
     public Class<? extends Provider> getProviderClass() {
-        return SummaryDocumentService.class;
+        return SummaryDocumentProvider.class;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public Class<? extends ProviderFactory> getProviderFactoryClass() {
-        return SummaryDocumentServiceProviderFactory.class;
+        return SummaryDocumentProviderFactory.class;
     }
 
 }

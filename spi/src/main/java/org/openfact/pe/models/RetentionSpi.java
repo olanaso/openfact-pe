@@ -18,13 +18,13 @@ public class RetentionSpi implements Spi {
 
     @Override
     public Class<? extends Provider> getProviderClass() {
-        return RetentionService.class;
+        return RetentionProvider.class;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public Class<? extends ProviderFactory> getProviderFactoryClass() {
-        return RetentionServiceProviderFactory.class;
+        return RetentionProviderFactory.class;
     }
 
 }

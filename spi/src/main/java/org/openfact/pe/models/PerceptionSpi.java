@@ -18,13 +18,13 @@ public class PerceptionSpi implements Spi {
 
     @Override
     public Class<? extends Provider> getProviderClass() {
-        return PerceptionService.class;
+        return PerceptionProvider.class;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public Class<? extends ProviderFactory> getProviderFactoryClass() {
-        return PerceptionServiceProviderFactory.class;
+        return PerceptionProviderFactory.class;
     }
 
 }

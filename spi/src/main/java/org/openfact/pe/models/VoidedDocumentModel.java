@@ -1,7 +1,6 @@
 package org.openfact.pe.models;
 
-public interface PerceptionModel {
+public interface VoidedDocumentModel {
 
     String getId();
-
 }

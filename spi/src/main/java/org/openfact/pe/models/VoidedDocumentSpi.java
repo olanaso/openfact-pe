@@ -18,13 +18,13 @@ public class VoidedDocumentSpi implements Spi {
 
     @Override
     public Class<? extends Provider> getProviderClass() {
-        return VoidedDocumentService.class;
+        return VoidedDocumentProvider.class;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public Class<? extends ProviderFactory> getProviderFactoryClass() {
-        return VoidedDocumentServiceProviderFactory.class;
+        return VoidedDocumentProviderFactory.class;
     }
 
 }

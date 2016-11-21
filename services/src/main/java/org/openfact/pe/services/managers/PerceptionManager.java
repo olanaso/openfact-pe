@@ -29,6 +29,7 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.RequiredActionDocument;
 import org.openfact.models.enums.UblDocumentType;
+import org.openfact.models.ubl.InvoiceModel;
 import org.openfact.models.ubl.common.ContactModel;
 import org.openfact.models.ubl.common.CustomerPartyModel;
 import org.openfact.models.ubl.common.PartyModel;
@@ -39,9 +40,11 @@ import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.utils.DocumentIdProvider_PE;
 import org.openfact.pe.models.utils.RepresentationToType_PE;
+import org.openfact.pe.models.utils.TypeToDocument;
 import org.openfact.pe.models.utils.TypeToModel_PE;
 import org.openfact.pe.representations.idm.GeneralDocumentRepresentation;
 import org.openfact.pe.types.PerceptionType;
+import org.openfact.pe.types.SunatFactory;
 import org.openfact.representations.idm.ubl.InvoiceRepresentation;
 import org.openfact.ubl.UblDocumentProvider;
 import org.openfact.ubl.UblDocumentSignerProvider;
@@ -65,7 +68,7 @@ public class PerceptionManager {
     }
 
     public PerceptionModel getPerceptionByDocumentId(String documentId, OrganizationModel organization) {
-        return model.getInvoiceByDocumentId(documentId, organization);
+        return model.getRetentionByDocumentId(documentId, organization);
     }
 
     public PerceptionModel addPerception(OrganizationModel organization, GeneralDocumentRepresentation rep) {
@@ -80,32 +83,26 @@ public class PerceptionManager {
             documentId = new IDType(generatedId);
             type.setId(documentId);
         }
-
-        PerceptionModel invoice = model.addPerception(organization, documentId.getValue());
-        TypeToModel_PE.importPerception(session, organization, invoice, type);
-        //RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
+        
+        PerceptionModel perception = model.addPerception(organization, documentId.getValue());
+        TypeToModel_PE.importPerception(session, organization, perception, type);
+        RequiredActionDocument.getDefaults().stream().forEach(c -> perception.addRequiredAction(c));
 
         // Generate Document
-        UblDocumentProvider documentProvider = session.getProvider(UblDocumentProvider.class);
-        Document baseDocument = documentProvider.getDocument(organization, invoice);
+        Document baseDocument = TypeToDocument.toDocument(type);
 
         // Sign Document
-        Document signedDocument = null;
         UblDocumentSignerProvider signerProvider = session.getProvider(UblDocumentSignerProvider.class);
-        if (signerProvider != null) {
-            signedDocument = signerProvider.sign(baseDocument, UblDocumentType.INVOICE, organization);
-        }
+        Document signedDocument = signerProvider.sign(baseDocument, organization);
 
         try {
-            byte[] bytes = DocumentUtils
-                    .getBytesFromDocument(signedDocument != null ? signedDocument : baseDocument);
-            invoice.setXmlDocument(ArrayUtils.toObject(bytes));
+            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+            perception.setXmlDocument(bytes);
         } catch (TransformerException e) {
             logger.error("Error parsing to byte XML", e);
             throw new ModelException(e);
         }
-
-        return invoice;
+        return perception;
     }
 
     public boolean removePerception(OrganizationModel organization, PerceptionModel perception) {

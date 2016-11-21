@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.openfact.pe.services.managers;
 
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.apache.commons.lang.ArrayUtils;
 import org.jboss.logging.Logger;
@@ -36,7 +37,14 @@ import org.openfact.models.ubl.provider.InvoiceProvider;
 import org.openfact.models.utils.RepresentationToModel;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.models.VoidedDocumentModel;
+import org.openfact.pe.models.VoidedDocumentProvider;
+import org.openfact.pe.models.VoidedDocumentModel;
+import org.openfact.pe.models.utils.DocumentIdProvider_PE;
+import org.openfact.pe.models.utils.RepresentationToType_PE;
+import org.openfact.pe.models.utils.TypeToDocument;
+import org.openfact.pe.models.utils.TypeToModel_PE;
 import org.openfact.pe.representations.idm.GeneralDocumentRepresentation;
+import org.openfact.pe.types.VoidedDocumentsType;
 import org.openfact.representations.idm.ubl.InvoiceRepresentation;
 import org.openfact.ubl.UblDocumentProvider;
 import org.openfact.ubl.UblDocumentSignerProvider;
@@ -52,161 +60,68 @@ public class VoidedDocumentManager {
     protected static final Logger logger = Logger.getLogger(VoidedDocumentManager.class);
 
     protected OpenfactSession session;
-    protected InvoiceProvider model;
+    protected VoidedDocumentProvider model;
 
     public VoidedDocumentManager(OpenfactSession session) {
         this.session = session;
-        this.model = session.invoices();
+        this.model = session.getProvider(VoidedDocumentProvider.class);
     }
 
-    public InvoiceModel getVoidedDocumentByDocumentId( String ID, OrganizationModel organization) {
-        return model.getInvoiceByID(organization, ID);
+    public VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId,
+            OrganizationModel organization) {
+        return model.getVoidedDocumentByDocumentId(documentId, organization);
     }
 
-    public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, GeneralDocumentRepresentation rep) {
-        String ID = rep.getIdUbl();
-        if (ID == null) {
-            UblIDGeneratorProvider provider = session.getProvider(UblIDGeneratorProvider.class);
-            ID = provider.generateInvoiceID(organization, rep.getInvoiceTypeCode());
+    public VoidedDocumentModel addVoidedDocument(OrganizationModel organization,
+            GeneralDocumentRepresentation rep) {
+        VoidedDocumentsType type = RepresentationToType_PE.toVoidedDocumentType(rep);
+        return addVoidedDocument(organization, type);
+    }
+
+    public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedDocumentsType type) {
+        IDType documentId = type.getID();
+        if (documentId == null || documentId.getValue() == null) {
+            String generatedId = DocumentIdProvider_PE.generateVoidedDocumentId(organization);
+            documentId = new IDType(generatedId);
+            type.setID(documentId);
         }
 
-        InvoiceModel invoice = model.addInvoice(organization, ID);
-        RepresentationToModel.importInvoice(session, organization, invoice, rep);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
+        VoidedDocumentModel voidedDocument = model.addVoidedDocument(organization, documentId.getValue());
+        TypeToModel_PE.importVoidedDocument(session, organization, voidedDocument, type);
+        RequiredActionDocument.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
 
-        process(organization, invoice);
-        return invoice;
-    }
-
-    public InvoiceModel addInvoice(OrganizationModel organization, InvoiceType rep) {
-        String ID = rep.getIDValue();
-        if (ID == null) {
-            UblIDGeneratorProvider provider = session.getProvider(UblIDGeneratorProvider.class);
-            ID = provider.generateInvoiceID(organization, rep.getInvoiceTypeCodeValue());
-        }
-
-        InvoiceModel invoice = model.addInvoice(organization, ID);
-        TypeToModel.importInvoice(session, organization, invoice, rep);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
-
-        process(organization, invoice);
-        return invoice;
-    }
-
-    protected void process(OrganizationModel organization, InvoiceModel invoice) {
-        // Generate extensions
-        UblExtensionContentGeneratorProvider extensionContentProvider = session
-                .getProvider(UblExtensionContentGeneratorProvider.class);
-        if (extensionContentProvider != null) {
-            extensionContentProvider.generateUBLExtensions(organization, invoice);
-        }
-
-        // Generate Document from Invoice
-        UblDocumentProvider documentProvider = session.getProvider(UblDocumentProvider.class);
-        Document baseDocument = documentProvider.getDocument(organization, invoice);
+        // Generate Document
+        Document baseDocument = TypeToDocument.toDocument(type);
 
         // Sign Document
-        Document signedDocument = null;
         UblDocumentSignerProvider signerProvider = session.getProvider(UblDocumentSignerProvider.class);
-        if (signerProvider != null) {
-            signedDocument = signerProvider.sign(baseDocument, UblDocumentType.INVOICE, organization);
-        }
+        Document signedDocument = signerProvider.sign(baseDocument, organization);
 
         try {
-            byte[] bytes = DocumentUtils
-                    .getBytesFromDocument(signedDocument != null ? signedDocument : baseDocument);
-            invoice.setXmlDocument(ArrayUtils.toObject(bytes));
+            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+            voidedDocument.setXmlDocument(bytes);
         } catch (TransformerException e) {
             logger.error("Error parsing to byte XML", e);
             throw new ModelException(e);
         }
+        return voidedDocument;
     }
 
-    public boolean removeInvoice(OrganizationModel organization, InvoiceModel invoice) {
-        if (model.removeInvoice(organization, invoice)) {
+    public boolean removeVoidedDocument(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
+        if (model.removeVoidedDocument(voidedDocument, organization)) {
             return true;
         }
         return false;
     }
 
-    public void enviarEmailAlCliente(OrganizationModel organization, VoidedDocumentModel retention)
+    public void enviarEmailAlCliente(OrganizationModel organization, VoidedDocumentModel voidedDocument)
             throws EmailException {
-        CustomerPartyModel customerParty = retention.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(retention);
-            }
-        }
     }
-    
-    public void enviarASunat(OrganizationModel organization, VoidedDocumentModel retention)
+
+    public void enviarASunat(OrganizationModel organization, VoidedDocumentModel voidedDocument)
             throws EmailException {
-        CustomerPartyModel customerParty = retention.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(retention);
-            }
-        }
     }
 
 }

@@ -9,6 +9,12 @@ import org.openfact.provider.Provider;
 
 public interface RetentionProvider extends Provider {
 
+    RetentionModel addRetention(OrganizationModel organization, String value);
+
+    RetentionModel getRetentionByDocumentId(String documentId, OrganizationModel organization);
+
+    boolean removeRetention(RetentionModel retention, OrganizationModel organization);
+
     List<RetentionModel> getRetentions(OrganizationModel organization, Integer firstResult,
             Integer maxResults);
 

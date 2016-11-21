@@ -9,7 +9,7 @@ import org.openfact.provider.Provider;
 
 public interface PerceptionProvider extends Provider {
 
-    PerceptionModel getInvoiceByDocumentId(String documentId, OrganizationModel organization);
+    PerceptionModel getRetentionByDocumentId(String documentId, OrganizationModel organization);
 
     PerceptionModel addPerception(OrganizationModel organization, String documentId);
 

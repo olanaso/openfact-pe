@@ -9,6 +9,10 @@ import org.openfact.provider.Provider;
 
 public interface VoidedDocumentProvider extends Provider {
 
+    VoidedDocumentModel addVoidedDocument(OrganizationModel organization, String value);
+
+    VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId, OrganizationModel organization);
+
     List<VoidedDocumentModel> getVoidedDocuments(OrganizationModel organization, Integer firstResult,
             Integer maxResults);
 
@@ -21,4 +25,5 @@ public interface VoidedDocumentProvider extends Provider {
     SearchResultsModel<VoidedDocumentModel> searchForVoidedDocument(String filterText,
             SearchCriteriaModel criteria, OrganizationModel organization);
 
+    
 }

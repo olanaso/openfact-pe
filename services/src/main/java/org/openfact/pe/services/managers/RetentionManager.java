@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.openfact.pe.services.managers;
 
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.apache.commons.lang.ArrayUtils;
 import org.jboss.logging.Logger;
@@ -36,7 +37,14 @@ import org.openfact.models.ubl.provider.InvoiceProvider;
 import org.openfact.models.utils.RepresentationToModel;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.models.RetentionModel;
+import org.openfact.pe.models.RetentionProvider;
+import org.openfact.pe.models.RetentionModel;
+import org.openfact.pe.models.utils.DocumentIdProvider_PE;
+import org.openfact.pe.models.utils.RepresentationToType_PE;
+import org.openfact.pe.models.utils.TypeToDocument;
+import org.openfact.pe.models.utils.TypeToModel_PE;
 import org.openfact.pe.representations.idm.GeneralDocumentRepresentation;
+import org.openfact.pe.types.RetentionType;
 import org.openfact.representations.idm.ubl.InvoiceRepresentation;
 import org.openfact.ubl.UblDocumentProvider;
 import org.openfact.ubl.UblDocumentSignerProvider;
@@ -52,78 +60,53 @@ public class RetentionManager {
     protected static final Logger logger = Logger.getLogger(RetentionManager.class);
 
     protected OpenfactSession session;
-    protected InvoiceProvider model;
+    protected RetentionProvider model;
 
     public RetentionManager(OpenfactSession session) {
         this.session = session;
-        this.model = session.invoices();
+        this.model = session.getProvider(RetentionProvider.class);
     }
 
-    public InvoiceModel getRetentionByDocumentId( String ID, OrganizationModel organization) {
-        return model.getInvoiceByID(organization, ID);
+    public RetentionModel getRetentionByDocumentId(String documentId, OrganizationModel organization) {
+        return model.getRetentionByDocumentId(documentId, organization);
     }
 
     public RetentionModel addRetention(OrganizationModel organization, GeneralDocumentRepresentation rep) {
-        String ID = rep.getIdUbl();
-        if (ID == null) {
-            UblIDGeneratorProvider provider = session.getProvider(UblIDGeneratorProvider.class);
-            ID = provider.generateInvoiceID(organization, rep.getInvoiceTypeCode());
-        }
-
-        InvoiceModel invoice = model.addInvoice(organization, ID);
-        RepresentationToModel.importInvoice(session, organization, invoice, rep);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
-
-        process(organization, invoice);
-        return invoice;
+        RetentionType type = RepresentationToType_PE.toRetentionType(rep);
+        return addRetention(organization, type);
     }
 
-    public InvoiceModel addInvoice(OrganizationModel organization, InvoiceType rep) {
-        String ID = rep.getIDValue();
-        if (ID == null) {
-            UblIDGeneratorProvider provider = session.getProvider(UblIDGeneratorProvider.class);
-            ID = provider.generateInvoiceID(organization, rep.getInvoiceTypeCodeValue());
+    public RetentionModel addRetention(OrganizationModel organization, RetentionType type) {
+        IDType documentId = type.getId();
+        if (documentId == null || documentId.getValue() == null) {
+            String generatedId = DocumentIdProvider_PE.generateRetentionDocumentId(organization);
+            documentId = new IDType(generatedId);
+            type.setId(documentId);
         }
+        
+        RetentionModel retention = model.addRetention(organization, documentId.getValue());
+        TypeToModel_PE.importRetention(session, organization, retention, type);
+        RequiredActionDocument.getDefaults().stream().forEach(c -> retention.addRequiredAction(c));
 
-        InvoiceModel invoice = model.addInvoice(organization, ID);
-        TypeToModel.importInvoice(session, organization, invoice, rep);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
-
-        process(organization, invoice);
-        return invoice;
-    }
-
-    protected void process(OrganizationModel organization, InvoiceModel invoice) {
-        // Generate extensions
-        UblExtensionContentGeneratorProvider extensionContentProvider = session
-                .getProvider(UblExtensionContentGeneratorProvider.class);
-        if (extensionContentProvider != null) {
-            extensionContentProvider.generateUBLExtensions(organization, invoice);
-        }
-
-        // Generate Document from Invoice
-        UblDocumentProvider documentProvider = session.getProvider(UblDocumentProvider.class);
-        Document baseDocument = documentProvider.getDocument(organization, invoice);
+        // Generate Document
+        Document baseDocument = TypeToDocument.toDocument(type);
 
         // Sign Document
-        Document signedDocument = null;
         UblDocumentSignerProvider signerProvider = session.getProvider(UblDocumentSignerProvider.class);
-        if (signerProvider != null) {
-            signedDocument = signerProvider.sign(baseDocument, UblDocumentType.INVOICE, organization);
-        }
+        Document signedDocument = signerProvider.sign(baseDocument, organization);
 
         try {
-            byte[] bytes = DocumentUtils
-                    .getBytesFromDocument(signedDocument != null ? signedDocument : baseDocument);
-            invoice.setXmlDocument(ArrayUtils.toObject(bytes));
+            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+            retention.setXmlDocument(bytes);
         } catch (TransformerException e) {
             logger.error("Error parsing to byte XML", e);
             throw new ModelException(e);
         }
+        return retention;
     }
 
-    public boolean removeInvoice(OrganizationModel organization, InvoiceModel invoice) {
-        if (model.removeInvoice(organization, invoice)) {
+    public boolean removeRetention(OrganizationModel organization, RetentionModel retention) {
+        if (model.removeRetention(retention, organization)) {
             return true;
         }
         return false;
@@ -131,82 +114,12 @@ public class RetentionManager {
 
     public void enviarEmailAlCliente(OrganizationModel organization, RetentionModel retention)
             throws EmailException {
-        CustomerPartyModel customerParty = retention.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(retention);
-            }
-        }
     }
-    
+
     public void enviarASunat(OrganizationModel organization, RetentionModel retention)
             throws EmailException {
-        CustomerPartyModel customerParty = retention.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(retention);
-            }
-        }
     }
 
 }

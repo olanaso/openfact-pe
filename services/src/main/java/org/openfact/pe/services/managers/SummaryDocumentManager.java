@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.openfact.pe.services.managers;
 
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.apache.commons.lang.ArrayUtils;
 import org.jboss.logging.Logger;
@@ -36,7 +37,14 @@ import org.openfact.models.ubl.provider.InvoiceProvider;
 import org.openfact.models.utils.RepresentationToModel;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.models.SummaryDocumentModel;
+import org.openfact.pe.models.SummaryDocumentProvider;
+import org.openfact.pe.models.SummaryDocumentModel;
+import org.openfact.pe.models.utils.DocumentIdProvider_PE;
+import org.openfact.pe.models.utils.RepresentationToType_PE;
+import org.openfact.pe.models.utils.TypeToDocument;
+import org.openfact.pe.models.utils.TypeToModel_PE;
 import org.openfact.pe.representations.idm.GeneralDocumentRepresentation;
+import org.openfact.pe.types.SummaryDocumentsType;
 import org.openfact.representations.idm.ubl.InvoiceRepresentation;
 import org.openfact.ubl.UblDocumentProvider;
 import org.openfact.ubl.UblDocumentSignerProvider;
@@ -52,161 +60,66 @@ public class SummaryDocumentManager {
     protected static final Logger logger = Logger.getLogger(SummaryDocumentManager.class);
 
     protected OpenfactSession session;
-    protected InvoiceProvider model;
+    protected SummaryDocumentProvider model;
 
     public SummaryDocumentManager(OpenfactSession session) {
         this.session = session;
-        this.model = session.invoices();
+        this.model = session.getProvider(SummaryDocumentProvider.class);
     }
 
-    public InvoiceModel getSummaryDocumentByDocumentId( String ID, OrganizationModel organization) {
-        return model.getInvoiceByID(organization, ID);
+    public SummaryDocumentModel getSummaryDocumentByDocumentId(String documentId, OrganizationModel organization) {
+        return model.getSummaryDocumentByDocumentId(documentId, organization);
     }
 
     public SummaryDocumentModel addSummaryDocument(OrganizationModel organization, GeneralDocumentRepresentation rep) {
-        String ID = rep.getIdUbl();
-        if (ID == null) {
-            UblIDGeneratorProvider provider = session.getProvider(UblIDGeneratorProvider.class);
-            ID = provider.generateInvoiceID(organization, rep.getInvoiceTypeCode());
-        }
-
-        InvoiceModel invoice = model.addInvoice(organization, ID);
-        RepresentationToModel.importInvoice(session, organization, invoice, rep);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
-
-        process(organization, invoice);
-        return invoice;
+        SummaryDocumentsType type = RepresentationToType_PE.toSummaryDocumentType(rep);
+        return addSummaryDocument(organization, type);
     }
 
-    public InvoiceModel addInvoice(OrganizationModel organization, InvoiceType rep) {
-        String ID = rep.getIDValue();
-        if (ID == null) {
-            UblIDGeneratorProvider provider = session.getProvider(UblIDGeneratorProvider.class);
-            ID = provider.generateInvoiceID(organization, rep.getInvoiceTypeCodeValue());
+    public SummaryDocumentModel addSummaryDocument(OrganizationModel organization, SummaryDocumentsType type) {
+        IDType documentId = type.getId();
+        if (documentId == null || documentId.getValue() == null) {
+            String generatedId = DocumentIdProvider_PE.generateSummaryDocumentDocumentId(organization);
+            documentId = new IDType(generatedId);
+            type.setId(documentId);
         }
+        
+        SummaryDocumentModel summaryDocument = model.addSummaryDocument(organization, documentId.getValue());
+        TypeToModel_PE.importSummaryDocument(session, organization, summaryDocument, type);
+        RequiredActionDocument.getDefaults().stream().forEach(c -> summaryDocument.addRequiredAction(c));
 
-        InvoiceModel invoice = model.addInvoice(organization, ID);
-        TypeToModel.importInvoice(session, organization, invoice, rep);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
-
-        process(organization, invoice);
-        return invoice;
-    }
-
-    protected void process(OrganizationModel organization, InvoiceModel invoice) {
-        // Generate extensions
-        UblExtensionContentGeneratorProvider extensionContentProvider = session
-                .getProvider(UblExtensionContentGeneratorProvider.class);
-        if (extensionContentProvider != null) {
-            extensionContentProvider.generateUBLExtensions(organization, invoice);
-        }
-
-        // Generate Document from Invoice
-        UblDocumentProvider documentProvider = session.getProvider(UblDocumentProvider.class);
-        Document baseDocument = documentProvider.getDocument(organization, invoice);
+        // Generate Document
+        Document baseDocument = TypeToDocument.toDocument(type);
 
         // Sign Document
-        Document signedDocument = null;
         UblDocumentSignerProvider signerProvider = session.getProvider(UblDocumentSignerProvider.class);
-        if (signerProvider != null) {
-            signedDocument = signerProvider.sign(baseDocument, UblDocumentType.INVOICE, organization);
-        }
+        Document signedDocument = signerProvider.sign(baseDocument, organization);
 
         try {
-            byte[] bytes = DocumentUtils
-                    .getBytesFromDocument(signedDocument != null ? signedDocument : baseDocument);
-            invoice.setXmlDocument(ArrayUtils.toObject(bytes));
+            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+            summaryDocument.setXmlDocument(bytes);
         } catch (TransformerException e) {
             logger.error("Error parsing to byte XML", e);
             throw new ModelException(e);
         }
+        return summaryDocument;
     }
 
-    public boolean removeInvoice(OrganizationModel organization, InvoiceModel invoice) {
-        if (model.removeInvoice(organization, invoice)) {
+    public boolean removeSummaryDocument(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
+        if (model.removeSummaryDocument(summaryDocument, organization)) {
             return true;
         }
         return false;
     }
 
-    public void enviarEmailAlCliente(OrganizationModel organization, SummaryDocumentModel retention)
+    public void enviarEmailAlCliente(OrganizationModel organization, SummaryDocumentModel summaryDocument)
             throws EmailException {
-        CustomerPartyModel customerParty = retention.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(retention);
-            }
-        }
     }
-    
-    public void enviarASunat(OrganizationModel organization, SummaryDocumentModel retention)
+
+    public void enviarASunat(OrganizationModel organization, SummaryDocumentModel summaryDocument)
             throws EmailException {
-        CustomerPartyModel customerParty = retention.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(retention);
-            }
-        }
     }
 
 }

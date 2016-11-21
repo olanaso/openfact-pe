@@ -19,17 +19,17 @@ public class TypeToModel_PE {
     }
 
     public static void importRetention(OpenfactSession session, OrganizationModel organization,
-            PerceptionModel perception, RetentionType type) {
+            RetentionModel perception, RetentionType type) {
 
     }
 
     public static void importSummaryDocument(OpenfactSession session, OrganizationModel organization,
-            PerceptionModel perception, SummaryDocumentsType type) {
+            SummaryDocumentModel perception, SummaryDocumentsType type) {
 
     }
 
     public static void importVoidedDocument(OpenfactSession session, OrganizationModel organization,
-            PerceptionModel perception, VoidedDocumentsType type) {
+            VoidedDocumentModel perception, VoidedDocumentsType type) {
 
     }
 

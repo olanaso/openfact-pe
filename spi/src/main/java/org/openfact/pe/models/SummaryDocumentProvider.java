@@ -9,6 +9,12 @@ import org.openfact.provider.Provider;
 
 public interface SummaryDocumentProvider extends Provider {
 
+    SummaryDocumentModel addSummaryDocument(OrganizationModel organization, String documentId);
+
+    SummaryDocumentModel getSummaryDocumentByDocumentId(String documentId, OrganizationModel organization);
+
+    boolean removeSummaryDocument(SummaryDocumentModel summaryDocument, OrganizationModel organization);
+
     List<SummaryDocumentModel> getSummaryDocuments(OrganizationModel organization, Integer firstResult,
             Integer maxResults);
 

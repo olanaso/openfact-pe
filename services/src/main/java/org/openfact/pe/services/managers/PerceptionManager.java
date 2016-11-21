@@ -37,7 +37,9 @@ import org.openfact.models.utils.RepresentationToModel;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
+import org.openfact.pe.models.utils.DocumentIdProvider_PE;
 import org.openfact.pe.models.utils.RepresentationToType_PE;
+import org.openfact.pe.models.utils.TypeToModel_PE;
 import org.openfact.pe.representations.idm.GeneralDocumentRepresentation;
 import org.openfact.pe.types.PerceptionType;
 import org.openfact.representations.idm.ubl.InvoiceRepresentation;
@@ -74,32 +76,16 @@ public class PerceptionManager {
     public PerceptionModel addPerception(OrganizationModel organization, PerceptionType type) {
         IDType documentId = type.getId();
         if (documentId == null || documentId.getValue() == null) {
-            
-            UblIDGeneratorProvider provider = session.getProvider(UblIDGeneratorProvider.class);
-            documentId = provider.generateInvoiceID(organization, type.getInvoiceTypeCodeValue());
+            String generatedId = DocumentIdProvider_PE.generatePerceptionDocumentId(organization);
+            documentId = new IDType(generatedId);
+            type.setId(documentId);
         }
 
-        PerceptionModel invoice = model.addInvoice(organization, documentId);
-        TypeToModel.importInvoice(session, organization, invoice, type);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
+        PerceptionModel invoice = model.addPerception(organization, documentId.getValue());
+        TypeToModel_PE.importPerception(session, organization, invoice, type);
+        //RequiredActionDocument.getDefaults().stream().forEach(c -> invoice.addRequiredAction(c));
 
-        process(organization, invoice);
-        return invoice;
-    }
-
-    public static String generatePerceptionDocumentId(OrganizationModel organization) {
-        return "";
-    }
-
-    protected void process(OrganizationModel organization, PerceptionModel invoice) {
-        // Generate extensions
-        UblExtensionContentGeneratorProvider extensionContentProvider = session
-                .getProvider(UblExtensionContentGeneratorProvider.class);
-        if (extensionContentProvider != null) {
-            extensionContentProvider.generateUBLExtensions(organization, invoice);
-        }
-
-        // Generate Document from Invoice
+        // Generate Document
         UblDocumentProvider documentProvider = session.getProvider(UblDocumentProvider.class);
         Document baseDocument = documentProvider.getDocument(organization, invoice);
 
@@ -118,6 +104,8 @@ public class PerceptionManager {
             logger.error("Error parsing to byte XML", e);
             throw new ModelException(e);
         }
+
+        return invoice;
     }
 
     public boolean removePerception(OrganizationModel organization, PerceptionModel perception) {
@@ -129,82 +117,12 @@ public class PerceptionManager {
 
     public void enviarEmailAlCliente(OrganizationModel organization, PerceptionModel perception)
             throws EmailException {
-        CustomerPartyModel customerParty = perception.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(perception);
-            }
-        }
     }
 
     public void enviarASunat(OrganizationModel organization, PerceptionModel perception)
             throws EmailException {
-        CustomerPartyModel customerParty = perception.getAccountingCustomerParty();
-        if (customerParty != null) {
-            PartyModel party = customerParty.getParty();
-            if (party != null) {
-                ContactModel contact = party.getContact();
-                EmailTemplateProvider provider = session.getProvider(EmailTemplateProvider.class)
-                        .setOrganization(organization).setUser(new UserSenderModel() {
 
-                            @Override
-                            public String getLastName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFullName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getFirstName() {
-                                return null;
-                            }
-
-                            @Override
-                            public String getEmail() {
-                                return contact.getElectronicMail();
-                            }
-
-                            @Override
-                            public Map<String, Object> getAttributes() {
-                                return null;
-                            }
-                        });
-                provider.sendInvoice(perception);
-            }
-        }
     }
 
 }

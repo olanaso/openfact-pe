@@ -11,6 +11,8 @@ public interface PerceptionProvider extends Provider {
 
     PerceptionModel getInvoiceByDocumentId(String documentId, OrganizationModel organization);
 
+    PerceptionModel addPerception(OrganizationModel organization, String documentId);
+
     boolean removePerception(PerceptionModel perception, OrganizationModel organization);
 
     List<PerceptionModel> getPerceptions(OrganizationModel organization, Integer firstResult,

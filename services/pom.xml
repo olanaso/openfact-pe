@@ -1,51 +1,51 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>openfact.pe</artifactId>
-		<groupId>org.openfact</groupId>
-		<version>1.0.0.Final</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<name>Openfact PE Services</name>
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>openfact.pe</artifactId>
+        <groupId>org.openfact</groupId>
+        <version>1.0.0.Final</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <name>Openfact PE Services</name>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>openfact.pe-services</artifactId>
+    <artifactId>openfact.pe-services</artifactId>
 
-	<properties>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-	</properties>
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact.pe-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact.pe-spi</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact.pe-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact.pe-spi</artifactId>
+        </dependency>
 
-		<!-- Openfact Core -->
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-services</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-server-spi</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-model-jpa</artifactId>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
+        <!-- Openfact Core -->
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-services</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-server-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-model-jpa</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

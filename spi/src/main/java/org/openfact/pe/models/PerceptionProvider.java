@@ -9,11 +9,13 @@ import org.openfact.provider.Provider;
 
 public interface PerceptionProvider extends Provider {
 
-    PerceptionModel getRetentionByDocumentId(String documentId, OrganizationModel organization);
+    PerceptionModel getPerceptionByDocumentId(String documentId, OrganizationModel organization);
 
     PerceptionModel addPerception(OrganizationModel organization, String documentId);
 
     boolean removePerception(PerceptionModel perception, OrganizationModel organization);
+
+    PerceptionModel getLastPerceptionByPattern(OrganizationModel organization, int lenght, String mask);
 
     List<PerceptionModel> getPerceptions(OrganizationModel organization, Integer firstResult,
             Integer maxResults);

@@ -2,10 +2,10 @@ package org.openfact.pe.models.utils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.dom.DOMResult;
 
-import org.openfact.models.OrganizationModel;
 import org.openfact.pe.types.PerceptionType;
 import org.openfact.pe.types.RetentionType;
 import org.openfact.pe.types.SummaryDocumentsType;
@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 
 public class TypeToDocument {
 
-    public static Document toDocument(PerceptionType type) throws Exception {
+    public static Document toDocument(PerceptionType type) throws JAXBException {
         SunatFactory factory = new SunatFactory();
         JAXBContext context = JAXBContext.newInstance(SunatFactory.class);
         Marshaller marshallerElement = context.createMarshaller();
@@ -26,7 +26,7 @@ public class TypeToDocument {
         return ((Document) res.getNode()).getOwnerDocument();
     }
 
-    public static Document toDocument(RetentionType type) throws Exception {
+    public static Document toDocument(RetentionType type) throws JAXBException {
         SunatFactory factory = new SunatFactory();
         JAXBContext context = JAXBContext.newInstance(SunatFactory.class);
         Marshaller marshallerElement = context.createMarshaller();
@@ -37,7 +37,7 @@ public class TypeToDocument {
         return ((Document) res.getNode()).getOwnerDocument();
     }
 
-    public static Document toDocument(SummaryDocumentsType type) throws Exception {
+    public static Document toDocument(SummaryDocumentsType type) throws JAXBException {
         SunatFactory factory = new SunatFactory();
         JAXBContext context = JAXBContext.newInstance(SunatFactory.class);
         Marshaller marshallerElement = context.createMarshaller();
@@ -48,7 +48,7 @@ public class TypeToDocument {
         return ((Document) res.getNode()).getOwnerDocument();
     }
 
-    public static Document toDocument(VoidedDocumentsType type) throws Exception {
+    public static Document toDocument(VoidedDocumentsType type) throws JAXBException {
         SunatFactory factory = new SunatFactory();
         JAXBContext context = JAXBContext.newInstance(SunatFactory.class);
         Marshaller marshallerElement = context.createMarshaller();

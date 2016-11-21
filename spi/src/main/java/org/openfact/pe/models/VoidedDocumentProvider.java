@@ -13,6 +13,8 @@ public interface VoidedDocumentProvider extends Provider {
 
     VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId, OrganizationModel organization);
 
+    boolean removeVoidedDocument(VoidedDocumentModel voidedDocument, OrganizationModel organization);
+    
     List<VoidedDocumentModel> getVoidedDocuments(OrganizationModel organization, Integer firstResult,
             Integer maxResults);
 
@@ -24,6 +26,8 @@ public interface VoidedDocumentProvider extends Provider {
 
     SearchResultsModel<VoidedDocumentModel> searchForVoidedDocument(String filterText,
             SearchCriteriaModel criteria, OrganizationModel organization);
+
+
 
     
 }

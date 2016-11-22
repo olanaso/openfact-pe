@@ -1,0 +1,50 @@
+package org.openfact.pe.services.sender.response;
+
+import org.openfact.models.OpenfactSession;
+import org.openfact.models.OrganizationModel;
+import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.ubl.DebitNoteModel;
+import org.openfact.models.ubl.SendEventModel;
+import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.services.util.DocumentResponseUtil;
+import org.openfact.representations.idm.ubl.SendEventRepresentation;
+import org.openfact.ubl.UblSenderException;
+import org.openfact.ubl.UblSenderResponseProvider;
+
+public class DebitNoteSunatResponseProvider implements UblSenderResponseProvider {
+	private OpenfactSession session;
+
+	public DebitNoteSunatResponseProvider(OpenfactSession session) {
+		this.session = session;
+	}
+
+	@Override
+	public void close() {
+
+	}
+
+	@Override
+	public SendEventModel senderResponse(OrganizationModel organization, Object model, byte[] xmlSubmitted,
+			byte[] response, String... fault) throws UblSenderException {
+		SendEventRepresentation rep = null;
+		DebitNoteModel debitNote = null;
+		try {
+			if (response != null) {
+				rep = DocumentResponseUtil.byteToResponse(response);
+			} else {
+				rep = DocumentResponseUtil.faultToResponse(fault);
+			}
+			if (rep.isAccepted()) {
+				debitNote = (DebitNoteModel) model;
+				debitNote.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
+			}
+			SendEventModel sendEvent = session.sendEvents("debitnote").addEvent(organization, debitNote, xmlSubmitted,
+					response, rep.isAccepted());
+			RepresentationToModel.toModel(rep, sendEvent);
+			return sendEvent;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+}

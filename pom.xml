@@ -25,6 +25,13 @@
 		<product.version>${project.version}</product.version>
 		<openfact.version>1.0.0.Final</openfact.version>
 
+		<!-- apache cfx -->
+		<version.apache.cxf>3.1.7</version.apache.cxf>
+		<version.woodstox>4.4.1</version.woodstox>
+		<version.jaxws-rt>2.2.8</version.jaxws-rt>
+		<jaxb2.basics.runtime>1.11.1</jaxb2.basics.runtime>
+		
+		
 		<!-- Explicitly declaring the source encoding eliminates the following 
 			message: -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,6 +121,47 @@
 				<groupId>org.openfact</groupId>
 				<artifactId>openfact-model-jpa</artifactId>
 				<version>${openfact.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-frontend-jaxws</artifactId>
+				<version>${version.apache.cxf}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-transports-http</artifactId>
+				<version>${version.apache.cxf}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-rs-client</artifactId>
+				<version>${version.apache.cxf}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-rs-service-description</artifactId>
+				<version>${version.apache.cxf}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-ws-security</artifactId>
+				<version>${version.apache.cxf}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jvnet.jaxb2_commons</groupId>
+				<artifactId>jaxb2-basics-runtime</artifactId>
+				<version>${jaxb2.basics.runtime}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.woodstox</groupId>
+				<artifactId>woodstox-core-asl</artifactId>
+				<version>${version.woodstox}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>jaxws-rt</artifactId>
+				<version>${version.jaxws-rt}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

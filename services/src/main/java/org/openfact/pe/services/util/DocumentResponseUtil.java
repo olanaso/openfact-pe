@@ -1,0 +1,181 @@
+package org.openfact.pe.services.util;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.openfact.common.converts.DocumentUtils;
+import org.openfact.models.ModelException;
+import org.openfact.pe.services.constants.CodigoTipoDocumento;
+import org.openfact.representations.idm.ubl.SendEventRepresentation;
+import org.openfact.ubl.UblSenderException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+public class DocumentResponseUtil {
+
+//	public static Map<String, String> getResponseToMap(SendEventRepresentation response, String invoiceTypeCode) {
+//		String message = "";
+//		Map<String, String> result = new HashMap<>();
+//		if (response.isAccepted()) {
+//			Integer errorCode = Integer.valueOf(response.getResponseCode());
+//
+//			String msgError = response.getError();
+//			List<String> listaWarnings = response.getSendWarning() != null ? response.getSendWarning()
+//					: new ArrayList<String>();
+//
+//			if (!invoiceTypeCode.equals(CodigoTipoDocumento.BOLETA.getCodigo())) {
+//				if ((errorCode.intValue() == 0) && (listaWarnings.size() == 0)) {
+//					result.put("situacion", "03");
+//				}
+//				if ((errorCode.intValue() == 0) && (listaWarnings.size() > 0)) {
+//					result.put("situacion", "04");
+//				}
+//				if (errorCode.intValue() > 0) {
+//					// get code error and message error from data base
+//					result.put("situacion", "10");
+//					result.put("message", message);
+//				}
+//			} else {
+//				result.put("situacion", "08");
+//				result.put("message", "Nro. Ticket: " + msgError);
+//				result.put("ticket", msgError);
+//			}
+//		} else {
+//			Integer errorCode = Integer.valueOf(response.getErrorCode());
+//			String msgError = response.getMessage();
+//			// get code error and message error from data base
+//			message = errorCode + "-" + msgError;
+//			result.put("situacion", "05");
+//			result.put("message", message);
+//		}
+//		return result;
+//	}
+
+	public static SendEventRepresentation byteToResponse(byte[] data) throws Exception {
+		SendEventRepresentation rep = new SendEventRepresentation();
+		byte intCode = -1;
+		try {
+			data = unzip(data);
+			Document e = DocumentUtils.byteToDocument(data);
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			String responseCode = (String) xPath.evaluate(
+					"/*[local-name()=\'ApplicationResponse\']/*[local-name()=\'DocumentResponse\']/*[local-name()=\'Response\']/*[local-name()=\'ResponseCode\']/text()",
+					e.getDocumentElement(), XPathConstants.STRING);
+			String description = (String) xPath.evaluate(
+					"/*[local-name()=\'ApplicationResponse\']/*[local-name()=\'DocumentResponse\']/*[local-name()=\'Response\']/*[local-name()=\'Description\']/text()",
+					e.getDocumentElement(), XPathConstants.STRING);
+			NodeList warningsNode = (NodeList) xPath.evaluate(
+					"/*[local-name()=\'ApplicationResponse\']/*[local-name()=\'Note\']", e.getDocumentElement(),
+					XPathConstants.NODESET);
+			ArrayList lstWarnings = new ArrayList();
+			for (int i = 0; i < warningsNode.getLength(); ++i) {
+				Node show = warningsNode.item(i);
+				lstWarnings.add(show.getTextContent());
+			}
+			int ErrorCode = (new Integer(responseCode)).intValue();
+			if (ErrorCode != 0 && (ErrorCode < 100 || ErrorCode > 399) && ErrorCode <= 4000) {
+				rep.setAccepted(false);
+			} else {
+				rep.setAccepted(true);
+			}
+			rep.setDocumentResponse(data);
+			rep.setDescription(description);
+			rep.setResponseCode(responseCode);
+
+			return rep;
+		} catch (XPathExpressionException e) {
+			rep.setAccepted(false);
+			rep.setDocumentResponse(data);
+			rep.setDescription(e.getMessage());
+			rep.setResponseCode("-1");
+			return rep;
+		}
+	}
+
+	public static SendEventRepresentation faultToResponse(String... soapFault) {
+		SendEventRepresentation rep = new SendEventRepresentation();
+		String faultCode = soapFault[0];
+		String message = "";
+		String retCode = getErrorCode(faultCode);
+		String faultString = soapFault[1];
+		int intCode = -1;
+		try {
+			if ("".equals(retCode)) {
+				intCode = (new Integer(faultString)).intValue();
+			} else {
+				intCode = (new Integer(retCode)).intValue();
+			}
+			Integer errorCode = Integer.valueOf(soapFault[1].indexOf("Detalle"));
+			if (errorCode.intValue() > 0) {
+				message = soapFault[1].substring(0, errorCode.intValue() - 1);
+			} else {
+				message = soapFault[1];
+			}
+		} catch (Throwable e) {
+			message = "Error al invocar Servicio: " + e.getMessage();
+		}
+
+		rep.setAccepted(false);
+		rep.setDescription(message);
+		rep.setResponseCode(String.valueOf(intCode));
+
+		return rep;
+	}
+
+	private static String getErrorCode(String faultCode) {
+		Integer length = Integer.valueOf(faultCode.length());
+		String errorCode = "";
+
+		for (int i = 0; i < length.intValue(); ++i) {
+			if (Character.isDigit(faultCode.charAt(i))) {
+				errorCode = errorCode + faultCode.charAt(i);
+			}
+		}
+		return errorCode;
+	}
+
+	private static byte[] unzip(byte[] data) {
+		try {
+			ByteArrayInputStream e = new ByteArrayInputStream(data);
+			ZipInputStream srcIs = new ZipInputStream(e);
+			ByteArrayOutputStream destOs = new ByteArrayOutputStream();
+			ZipEntry entry = null;
+
+			while (true) {
+				do {
+					if ((entry = srcIs.getNextEntry()) == null) {
+						destOs.flush();
+						byte[] b2 = destOs.toByteArray();
+						destOs.close();
+						destOs.close();
+						srcIs.close();
+						e.close();
+						return b2;
+					}
+				} while (!entry.getName().endsWith(".xml"));
+
+				boolean b = false;
+				byte[] buffer = new byte[2048];
+
+				int b1;
+				while ((b1 = srcIs.read(buffer)) > 0) {
+					destOs.write(buffer, 0, b1);
+				}
+			}
+		} catch (Exception e) {
+			throw new ModelException("Error al descomprimir la constancia", e.getCause());
+		}
+	}
+}

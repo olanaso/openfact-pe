@@ -9,12 +9,12 @@ import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.ubl.UblSendEventProvider;
 import org.openfact.ubl.UblSendEventProviderFactory;
 
-public class JpaSummarySendEventProviderFactory  implements UblSendEventProviderFactory {
+public class JpaSummaryDocumentSendEventProviderFactory  implements UblSendEventProviderFactory {
 
 	@Override
 	public UblSendEventProvider create(OpenfactSession session) {
 		EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
-		return new JpaSummarySendEventProvider(session, em);
+		return new JpaSummaryDocumentSendEventProvider(session, em);
 	}
 
 	@Override

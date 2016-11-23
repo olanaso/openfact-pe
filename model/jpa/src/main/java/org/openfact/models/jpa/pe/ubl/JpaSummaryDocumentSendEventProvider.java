@@ -12,31 +12,32 @@ import org.openfact.models.ubl.SendEventModel;
 import org.openfact.ubl.UblSendEventProvider;
 import org.openfact.ubl.UblSenderException;
 
-public class JpaVoidedSendEventProvider extends AbstractHibernateStorage implements UblSendEventProvider {
-
-	protected static final Logger logger = Logger.getLogger(JpaVoidedSendEventProvider.class);
+public class JpaSummaryDocumentSendEventProvider extends AbstractHibernateStorage implements UblSendEventProvider{
+	protected static final Logger logger = Logger.getLogger(JpaSummaryDocumentSendEventProvider.class);
 
 	private final OpenfactSession session;
 	protected EntityManager em;
 
-	public JpaVoidedSendEventProvider(OpenfactSession session, EntityManager em) {
+	public JpaSummaryDocumentSendEventProvider(OpenfactSession session, EntityManager em) {
 		this.session = session;
 		this.em = em;
 	}
 
 	@Override
 	public void close() {
-
+		
 	}
 
 	@Override
 	public SendEventModel addEvent(OrganizationModel organization, Object model, byte[] xmlSubmitted, byte[] response,
 			boolean isAccepted) throws UblSenderException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<SendEventModel> getEvents(OrganizationModel organization, Object model) throws UblSenderException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -44,5 +45,4 @@ public class JpaVoidedSendEventProvider extends AbstractHibernateStorage impleme
 	protected EntityManager getEntityManager() {
 		return em;
 	}
-
 }

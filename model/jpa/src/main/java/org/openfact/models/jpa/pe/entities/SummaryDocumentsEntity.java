@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -25,6 +26,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.openfact.models.jpa.entities.ubl.InvoiceSendEventEntity;
 import org.openfact.models.jpa.entities.ubl.common.SignatureEntity;
 import org.openfact.models.jpa.entities.ubl.common.SupplierPartyEntity;
 import org.openfact.models.jpa.entities.ubl.common.UBLExtensionsEntity;
@@ -47,7 +49,10 @@ public class SummaryDocumentsEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Access(AccessType.PROPERTY)
     protected String id;
-
+    
+	@ManyToMany(mappedBy = "summaryDocuments", cascade = { CascadeType.ALL })
+	protected List<SummaryDocumentsSendEventEntity> sendEvents = new ArrayList<>();
+	
     @Column(name = "DOCUMENT_ID")
     protected String documentId;
 
@@ -208,5 +213,13 @@ public class SummaryDocumentsEntity {
     public void setSignature(List<SignatureEntity> signature) {
         this.signature = signature;
     }
+
+	public List<SummaryDocumentsSendEventEntity> getSendEvents() {
+		return sendEvents;
+	}
+
+	public void setSendEvents(List<SummaryDocumentsSendEventEntity> sendEvents) {
+		this.sendEvents = sendEvents;
+	}
 
 }

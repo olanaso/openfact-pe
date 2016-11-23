@@ -18,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -27,6 +28,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.openfact.models.jpa.entities.ubl.InvoiceSendEventEntity;
 
 @Entity
 @Table(name = "RETENTION", uniqueConstraints = {
@@ -46,7 +48,10 @@ public class RetentionEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Access(AccessType.PROPERTY)
     protected String id;
-
+    
+	@ManyToMany(mappedBy = "retentions", cascade = { CascadeType.ALL })
+	protected List<RetentionSendEventEntity> sendEvents = new ArrayList<>();
+	
     @Column(name = "DOCUMENT_ID")
     protected String documentId;
 
@@ -196,7 +201,15 @@ public class RetentionEntity {
         this.xmlDocument = xmlDocument;
     }
 
-    @Override
+    public List<RetentionSendEventEntity> getSendEvents() {
+		return sendEvents;
+	}
+
+	public void setSendEvents(List<RetentionSendEventEntity> sendEvents) {
+		this.sendEvents = sendEvents;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

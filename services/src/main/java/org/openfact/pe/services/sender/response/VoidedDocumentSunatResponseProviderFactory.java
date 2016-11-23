@@ -6,26 +6,31 @@ import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.ubl.UblSenderResponseProvider;
 import org.openfact.ubl.UblSenderResponseProviderFactory;
 
-public class SummarySunatResponseProviderFactory  implements UblSenderResponseProviderFactory {
+public class VoidedDocumentSunatResponseProviderFactory implements UblSenderResponseProviderFactory {
+
 	@Override
 	public UblSenderResponseProvider create(OpenfactSession session) {
-		return new SummarySunatResponseProvider(session);
+		return new VoidedDocumentSunatResponseProvider(session);
 	}
 
 	@Override
 	public void init(Scope config) {
+
 	}
 
 	@Override
 	public void postInit(OpenfactSessionFactory factory) {
+
 	}
 
 	@Override
 	public void close() {
+
 	}
 
 	@Override
 	public String getId() {
 		return "pe";
 	}
+
 }

@@ -2,6 +2,7 @@ package org.openfact.models.jpa.pe.ubl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -9,11 +10,13 @@ import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.pe.entities.SummaryDocumentsEntity;
 import org.openfact.models.jpa.pe.entities.SummaryDocumentsSendEventEntity;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentsSendEventModel;
 
-public class SummaryDocumentSendEventAdapter implements SummaryDocumentsSendEventModel, JpaModel<SummaryDocumentsSendEventEntity> {
+public class SummaryDocumentSendEventAdapter
+		implements SummaryDocumentsSendEventModel, JpaModel<SummaryDocumentsSendEventEntity> {
 	protected static final Logger logger = Logger.getLogger(SummaryDocumentSendEventAdapter.class);
 
 	protected OrganizationModel organization;
@@ -161,19 +164,19 @@ public class SummaryDocumentSendEventAdapter implements SummaryDocumentsSendEven
 
 	@Override
 	public SummaryDocumentsSendEventEntity getEntity() {
-		// TODO Auto-generated method stub
-		return null;
+		return sendEvent;
 	}
 
 	@Override
 	public List<SummaryDocumentModel> getSummaryDocuments() {
-		// TODO Auto-generated method stub
-		return null;
+		return sendEvent.getSummaryDocuments().stream()
+				.map(f -> new SummaryDocumentAdapter(session, organization, em, f)).collect(Collectors.toList());
 	}
 
 	@Override
 	public void setSummaryDocuments(List<SummaryDocumentModel> summaryDocuments) {
-		// TODO Auto-generated method stub
-		
+		List<SummaryDocumentsEntity> entities = summaryDocuments.stream()
+				.map(f -> SummaryDocumentAdapter.toEntity(f, em)).collect(Collectors.toList());
+		sendEvent.setSummaryDocuments(entities);
 	}
 }

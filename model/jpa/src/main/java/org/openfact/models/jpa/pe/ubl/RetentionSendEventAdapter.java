@@ -2,6 +2,7 @@ package org.openfact.models.jpa.pe.ubl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -9,6 +10,7 @@ import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.pe.entities.RetentionEntity;
 import org.openfact.models.jpa.pe.entities.RetentionSendEventEntity;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionSendEventModel;
@@ -159,23 +161,22 @@ public class RetentionSendEventAdapter implements RetentionSendEventModel, JpaMo
 		sendEvent.setSendWarning(sendWarning);
 	}
 
-
 	@Override
 	public RetentionSendEventEntity getEntity() {
-		// TODO Auto-generated method stub
-		return null;
+		return sendEvent;
 	}
 
 	@Override
 	public List<RetentionModel> getRetentions() {
-		// TODO Auto-generated method stub
-		return null;
+		return sendEvent.getRetentions().stream().map(f -> new RetentionAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public void setRetentions(List<RetentionModel> retentions) {
-		// TODO Auto-generated method stub
-		
+		List<RetentionEntity> entities = retentions.stream().map(f -> RetentionAdapter.toEntity(f, em))
+				.collect(Collectors.toList());
+		sendEvent.setRetentions(entities);
 	}
 
 }

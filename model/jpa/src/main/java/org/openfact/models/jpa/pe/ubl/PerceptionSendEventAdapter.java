@@ -2,6 +2,7 @@ package org.openfact.models.jpa.pe.ubl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -10,6 +11,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.entities.ubl.CreditNoteSendEventEntity;
+import org.openfact.models.jpa.pe.entities.PerceptionEntity;
 import org.openfact.models.jpa.pe.entities.PerceptionSendEventEntity;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionSendEventModel;
@@ -167,13 +169,15 @@ public class PerceptionSendEventAdapter implements PerceptionSendEventModel, Jpa
 
 	@Override
 	public List<PerceptionModel> getPerceptions() {
-		// TODO Auto-generated method stub
-		return null;
+		return sendEvent.getPerceptions().stream().map(f -> new PerceptionAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public void setPerceptions(List<PerceptionModel> perceptions) {
-		// TODO Auto-generated method stub
+		List<PerceptionEntity> entities = perceptions.stream().map(f -> PerceptionAdapter.toEntity(f, em))
+				.collect(Collectors.toList());
+		sendEvent.setPerceptions(entities);
 
 	}
 

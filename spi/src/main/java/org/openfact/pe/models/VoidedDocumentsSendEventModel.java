@@ -5,7 +5,7 @@ import java.util.List;
 import org.openfact.models.ubl.SendEventModel;
 
 public interface VoidedDocumentsSendEventModel  extends SendEventModel {
-	List<VoidedDocumentModel> getSummaryDocuments();
+	List<VoidedDocumentModel> getVoidedDocuments();
 
-	void setSummaryDocuments(List<VoidedDocumentModel> summaryDocuments);
+	void setVoidedDocuments(List<VoidedDocumentModel> voidedDocuments);
 }

@@ -11,6 +11,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.pe.entities.PerceptionSendEventEntity;
+import org.openfact.models.jpa.pe.entities.VoidedDocumentsEntity;
 import org.openfact.models.jpa.pe.entities.VoidedDocumentsSendEventEntity;
 import org.openfact.models.jpa.ubl.CreditNoteAdapter;
 import org.openfact.pe.models.PerceptionSendEventModel;
@@ -171,13 +172,15 @@ public class VoidedDocumentSendEventAdapter
 	}
 
 	@Override
-	public List<VoidedDocumentModel> getSummaryDocuments() {
-		return null;
+	public List<VoidedDocumentModel> getVoidedDocuments() {
+		return sendEvent.getVoidedDocuments().stream().map(f -> new VoidedDocumentAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public void setSummaryDocuments(List<VoidedDocumentModel> summaryDocuments) {
-		// TODO Auto-generated method stub
-
+	public void setVoidedDocuments(List<VoidedDocumentModel> voidedDocuments) {
+		List<VoidedDocumentsEntity> entities = voidedDocuments.stream().map(f -> VoidedDocumentAdapter.toEntity(f, em))
+				.collect(Collectors.toList());
+		sendEvent.setVoidedDocuments(entities);
 	}
 }

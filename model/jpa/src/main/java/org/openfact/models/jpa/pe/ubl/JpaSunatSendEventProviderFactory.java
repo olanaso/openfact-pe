@@ -6,15 +6,15 @@ import org.openfact.Config.Scope;
 import org.openfact.connections.jpa.JpaConnectionProvider;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OpenfactSessionFactory;
-import org.openfact.ubl.UblSendEventProvider;
-import org.openfact.ubl.UblSendEventProviderFactory;
+import org.openfact.pe.provider.UblSunatSendEventProvider;
+import org.openfact.pe.provider.UblSunatSendEventProviderFactory;
 
-public class JpaSummaryDocumentSendEventProviderFactory  implements UblSendEventProviderFactory {
+public class JpaSunatSendEventProviderFactory  implements UblSunatSendEventProviderFactory {
 
 	@Override
-	public UblSendEventProvider create(OpenfactSession session) {
+	public UblSunatSendEventProvider create(OpenfactSession session) {
 		EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
-		return new JpaSummaryDocumentSendEventProvider(session, em);
+		return new JpaSunatSendEventProvider(session, em);		
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class JpaSummaryDocumentSendEventProviderFactory  implements UblSendEvent
 
 	@Override
 	public String getId() {
-		return "summary";
+		return "pe";
 	}
 
 }

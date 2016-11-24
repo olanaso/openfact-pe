@@ -2,6 +2,8 @@ package org.openfact.pe.services.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.pe.services.constants.CodigoTipoDocumento;
@@ -24,44 +27,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class DocumentResponseUtil {
-
-//	public static Map<String, String> getResponseToMap(SendEventRepresentation response, String invoiceTypeCode) {
-//		String message = "";
-//		Map<String, String> result = new HashMap<>();
-//		if (response.isAccepted()) {
-//			Integer errorCode = Integer.valueOf(response.getResponseCode());
-//
-//			String msgError = response.getError();
-//			List<String> listaWarnings = response.getSendWarning() != null ? response.getSendWarning()
-//					: new ArrayList<String>();
-//
-//			if (!invoiceTypeCode.equals(CodigoTipoDocumento.BOLETA.getCodigo())) {
-//				if ((errorCode.intValue() == 0) && (listaWarnings.size() == 0)) {
-//					result.put("situacion", "03");
-//				}
-//				if ((errorCode.intValue() == 0) && (listaWarnings.size() > 0)) {
-//					result.put("situacion", "04");
-//				}
-//				if (errorCode.intValue() > 0) {
-//					// get code error and message error from data base
-//					result.put("situacion", "10");
-//					result.put("message", message);
-//				}
-//			} else {
-//				result.put("situacion", "08");
-//				result.put("message", "Nro. Ticket: " + msgError);
-//				result.put("ticket", msgError);
-//			}
-//		} else {
-//			Integer errorCode = Integer.valueOf(response.getErrorCode());
-//			String msgError = response.getMessage();
-//			// get code error and message error from data base
-//			message = errorCode + "-" + msgError;
-//			result.put("situacion", "05");
-//			result.put("message", message);
-//		}
-//		return result;
-//	}
 
 	public static SendEventRepresentation byteToResponse(byte[] data) throws Exception {
 		SendEventRepresentation rep = new SendEventRepresentation();
@@ -176,6 +141,16 @@ public class DocumentResponseUtil {
 			}
 		} catch (Exception e) {
 			throw new ModelException("Error al descomprimir la constancia", e.getCause());
+		}
+	}
+
+	private static void writeByteToFile(String fileName, byte[] document, boolean response) throws IOException {
+		if (!response) {
+			FileUtils.writeByteArrayToFile(new File(System.getProperty("user.home") + "/ubl/" + fileName + ".zip"),
+					document);
+		} else {
+			FileUtils.writeByteArrayToFile(new File(System.getProperty("user.home") + "/ubl/R" + fileName + ".zip"),
+					document);
 		}
 	}
 }

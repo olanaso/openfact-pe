@@ -27,10 +27,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.openfact.models.jpa.entities.ubl.common.SignatureEntity;
-import org.openfact.models.jpa.entities.ubl.common.SupplierPartyEntity;
-import org.openfact.models.jpa.entities.ubl.common.UBLExtensionsEntity;
-import org.openfact.models.jpa.entities.ubl.common.VoidedDocumentsLineEntity;
 
 @Entity
 @Table(name = "VOIDED_DOCUMENTS", uniqueConstraints = {
@@ -73,14 +69,8 @@ public class VoidedDocumentsEntity {
 
     @ElementCollection
     @Column(name = "VALUE")
-    @CollectionTable(name = "BAJA_NOTE", joinColumns = { @JoinColumn(name = "BAJA_ID") })
+    @CollectionTable(name = "VOIDED_DOCUMENT_NOTE", joinColumns = { @JoinColumn(name = "VOIDED_DOCUMENT_ID") })
     protected List<String> notes = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "voidedDocument", cascade = CascadeType.REMOVE)
-    protected Collection<VoidedDocumentsRequiredActionEntity> requiredActions = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "voidedDocument", cascade = CascadeType.ALL)
-    protected List<VoidedDocumentsLineEntity> voidedDocumentLines = new ArrayList<>();
 
     @Lob
     @Column(name = "XML_DOCUMENT")
@@ -91,17 +81,6 @@ public class VoidedDocumentsEntity {
     protected String organizationId;
 
     /** Openfact Core relations */
-    @ManyToOne(targetEntity = UBLExtensionsEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "UBLEXTENSIONS_VOIDED_DOCUMENTS_ID")
-    protected UBLExtensionsEntity ublExtensions;
-
-    @ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "ACCOUNTINGSUPPLIERPARTY_VOIDEDDOCUMENTS")
-    protected SupplierPartyEntity accountingSupplierParty = new SupplierPartyEntity();
-
-    @OneToMany(targetEntity = SignatureEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "SIGNATURE_VOIDEDDOCUMENT")
-    protected List<SignatureEntity> signature = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -167,22 +146,6 @@ public class VoidedDocumentsEntity {
         this.notes = notes;
     }
 
-    public Collection<VoidedDocumentsRequiredActionEntity> getRequiredActions() {
-        return requiredActions;
-    }
-
-    public void setRequiredActions(Collection<VoidedDocumentsRequiredActionEntity> requiredActions) {
-        this.requiredActions = requiredActions;
-    }
-
-    public List<VoidedDocumentsLineEntity> getVoidedDocumentLines() {
-        return voidedDocumentLines;
-    }
-
-    public void setVoidedDocumentLines(List<VoidedDocumentsLineEntity> voidedDocumentLines) {
-        this.voidedDocumentLines = voidedDocumentLines;
-    }
-
     public byte[] getXmlDocument() {
         return xmlDocument;
     }
@@ -197,30 +160,6 @@ public class VoidedDocumentsEntity {
 
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
-    }
-
-    public UBLExtensionsEntity getUblExtensions() {
-        return ublExtensions;
-    }
-
-    public void setUblExtensions(UBLExtensionsEntity ublExtensions) {
-        this.ublExtensions = ublExtensions;
-    }
-
-    public SupplierPartyEntity getAccountingSupplierParty() {
-        return accountingSupplierParty;
-    }
-
-    public void setAccountingSupplierParty(SupplierPartyEntity accountingSupplierParty) {
-        this.accountingSupplierParty = accountingSupplierParty;
-    }
-
-    public List<SignatureEntity> getSignature() {
-        return signature;
-    }
-
-    public void setSignature(List<SignatureEntity> signature) {
-        this.signature = signature;
     }
 
     @Override

@@ -28,13 +28,10 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.openfact.models.jpa.entities.ubl.common.PartyEntity;
-import org.openfact.models.jpa.entities.ubl.common.SignatureEntity;
-import org.openfact.models.jpa.entities.ubl.common.UBLExtensionsEntity;
 
 @Entity
 @Table(name = "PERCEPTION", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "ORGANIZATION_ID", "ID_UBL" }) })
+        @UniqueConstraint(columnNames = { "ORGANIZATION_ID", "DOCUMENT_ID" }) })
 @NamedQueries({
         @NamedQuery(name = "getAllPerceptionsByOrganization", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.issueDate"),
         @NamedQuery(name = "getOrganizationPerceptionById", query = "select p from PerceptionEntity p where p.id = :id and p.organizationId = :organizationId"),
@@ -88,32 +85,6 @@ public class PerceptionEntity {
     @Column(name = "VALUE")
     @CollectionTable(name = "PERCEPTION_NOTE", joinColumns = { @JoinColumn(name = "PERCEPTION_ID") })
     protected List<String> notes = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception", cascade = CascadeType.REMOVE)
-    protected Collection<PerceptionRequiredActionEntity> requiredActions = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception", cascade = CascadeType.ALL)
-    protected List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences = new ArrayList<>();
-
-    /**
-     * Openfact core
-     */
-
-    @ManyToOne(targetEntity = UBLExtensionsEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "UBLEXTENSIONS_PERCEPTION_ID")
-    protected UBLExtensionsEntity ublExtensions;
-
-    @ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "AGENTPARTY_PERCEPTION_ID")
-    protected PartyEntity agentParty;
-
-    @ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "RECEIVERPARTY_PERCEPTION_ID")
-    protected PartyEntity receiverParty;
-
-    @OneToMany(targetEntity = SignatureEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "SIGNATURE_PERCEPTION")
-    protected List<SignatureEntity> signature = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -209,55 +180,6 @@ public class PerceptionEntity {
 
     public void setNotes(List<String> notes) {
         this.notes = notes;
-    }
-
-    public Collection<PerceptionRequiredActionEntity> getRequiredActions() {
-        return requiredActions;
-    }
-
-    public void setRequiredActions(Collection<PerceptionRequiredActionEntity> requiredActions) {
-        this.requiredActions = requiredActions;
-    }
-
-    public List<PerceptionDocumentReferenceEntity> getSunatPerceptionDocumentReferences() {
-        return sunatPerceptionDocumentReferences;
-    }
-
-    public void setSunatPerceptionDocumentReferences(
-            List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences) {
-        this.sunatPerceptionDocumentReferences = sunatPerceptionDocumentReferences;
-    }
-
-    public UBLExtensionsEntity getUblExtensions() {
-        return ublExtensions;
-    }
-
-    public void setUblExtensions(UBLExtensionsEntity ublExtensions) {
-        this.ublExtensions = ublExtensions;
-    }
-
-    public PartyEntity getAgentParty() {
-        return agentParty;
-    }
-
-    public void setAgentParty(PartyEntity agentParty) {
-        this.agentParty = agentParty;
-    }
-
-    public PartyEntity getReceiverParty() {
-        return receiverParty;
-    }
-
-    public void setReceiverParty(PartyEntity receiverParty) {
-        this.receiverParty = receiverParty;
-    }
-
-    public List<SignatureEntity> getSignature() {
-        return signature;
-    }
-
-    public void setSignature(List<SignatureEntity> signature) {
-        this.signature = signature;
     }
 
     @Override

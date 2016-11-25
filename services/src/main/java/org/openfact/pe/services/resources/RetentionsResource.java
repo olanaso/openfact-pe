@@ -29,7 +29,6 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
@@ -37,12 +36,12 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
-import org.openfact.pe.models.utils.ModelToRepresentation_PE;
+import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.services.managers.RetentionManager;
-import org.openfact.pe.types.RetentionType;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -81,7 +80,7 @@ public class RetentionsResource {
             retentions = retentionProvider.searchForRetention(filterText.trim(), organization, firstResult,
                     maxResults);
         }
-        return retentions.stream().map(f -> ModelToRepresentation_PE.toRepresentation(f))
+        return retentions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
                 .collect(Collectors.toList());
     }
 
@@ -104,14 +103,14 @@ public class RetentionsResource {
                 session.getTransactionManager().commit();
             }
 
-            // Enviar Email
+            // Enviar a Cliente
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                retentionManager.enviarEmailAlCliente(organization, retention);
+                retentionManager.sendToCustomerParty(organization, retention);
             }
 
             // Enviar Sunat
             if (rep.isEnviarAutomaticamenteASunat()) {
-                retentionManager.enviarASunat(organization, retention);
+                retentionManager.sendToTrirdParty(organization, retention);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(retention.getId()).build();
@@ -126,11 +125,6 @@ public class RetentionsResource {
                 session.getTransactionManager().setRollbackOnly();
             }
             return ErrorResponse.exists("Could not create retention");
-        } catch (EmailException e) {
-            if (session.getTransactionManager().isActive()) {
-                session.getTransactionManager().setRollbackOnly();
-            }
-            return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -165,11 +159,11 @@ public class RetentionsResource {
                     session.getTransactionManager().commit();
                 }
 
-                // Enviar Email
-                retentionManager.enviarEmailAlCliente(organization, retention);
+                // Enviar Cliente
+                retentionManager.sendToCustomerParty(organization, retention);
 
                 // Enviar Sunat
-                retentionManager.enviarASunat(organization, retention);
+                retentionManager.sendToTrirdParty(organization, retention);
 
                 URI location = uriInfo.getAbsolutePathBuilder().path(retention.getId()).build();
                 return Response.created(location).build();
@@ -188,11 +182,6 @@ public class RetentionsResource {
                     session.getTransactionManager().setRollbackOnly();
                 }
                 return ErrorResponse.exists("Could not create invoice");
-            } catch (EmailException e) {
-                if (session.getTransactionManager().isActive()) {
-                    session.getTransactionManager().setRollbackOnly();
-                }
-                return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -217,7 +206,7 @@ public class RetentionsResource {
         }
         SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
         List<DocumentRepresentation> items = new ArrayList<>();
-        results.getModels().forEach(f -> items.add(ModelToRepresentation_PE.toRepresentation(f)));
+        results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
         rep.setItems(items);
         rep.setTotalSize(results.getTotalSize());
         return rep;
@@ -234,7 +223,7 @@ public class RetentionsResource {
             throw new NotFoundException("Retention not found");
         }
 
-        DocumentRepresentation rep = ModelToRepresentation_PE.toRepresentation(retention);
+        DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(retention);
         return rep;
     }
 

@@ -3,8 +3,6 @@ package org.openfact.pe.models;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import org.openfact.models.ubl.common.ExchangeRateModel;
-
 public interface RetentionInformationModel {
 
     String getId();
@@ -21,8 +19,8 @@ public interface RetentionInformationModel {
 
     void setSunatNetTotalPaid(BigDecimal sunatNetTotalPaid);
 
-    ExchangeRateModel getExchangeRate();
+    /*ExchangeRateModel getExchangeRate();
 
-    ExchangeRateModel getExchangeRateAsNotNull();
+    ExchangeRateModel getExchangeRateAsNotNull();*/
 
 }

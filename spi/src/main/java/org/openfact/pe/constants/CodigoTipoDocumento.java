@@ -2,8 +2,8 @@ package org.openfact.pe.constants;
 
 public enum CodigoTipoDocumento {
 
-    FACTURA("01", "F%-%", 13),
-    BOLETA("03", "B%-%", 13),
+    FACTURA("01", "^[F]{1}\\d{1,3}[-]\\d{1,8}$", 13),
+    BOLETA("03", "^[B]{1}\\d{1,3}[-]\\d{1,8}$", 13),
     NOTA_CREDITO("07", "%C%-%", 13),
     NOTA_DEBITO("08", "%D%-%", 13),
     GUIA_REMISION("09", "F%-%", 13),

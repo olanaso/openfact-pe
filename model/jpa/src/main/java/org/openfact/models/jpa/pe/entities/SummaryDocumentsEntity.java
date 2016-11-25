@@ -25,9 +25,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.openfact.models.jpa.entities.ubl.common.SignatureEntity;
-import org.openfact.models.jpa.entities.ubl.common.SupplierPartyEntity;
-import org.openfact.models.jpa.entities.ubl.common.UBLExtensionsEntity;
 
 @Entity
 @Table(name = "SUMMARY_DOCUMENTS", uniqueConstraints = {
@@ -68,12 +65,6 @@ public class SummaryDocumentsEntity {
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     protected LocalDateTime issueDate;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "summaryDocument", cascade = CascadeType.ALL)
-    protected List<SumaryDocumentsLineEntity> summaryDocumentsLines = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "summaryDocument", cascade = CascadeType.REMOVE)
-    protected Collection<SummaryDocumentsRequiredActionEntity> requiredActions = new ArrayList<>();
-
     @Lob
     @Column(name = "XML_DOCUMENT")
     protected byte[] xmlDocument;
@@ -84,19 +75,7 @@ public class SummaryDocumentsEntity {
 
     /**
      * Openfact core
-     */
-    @ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "ACCOUNTINGSUPPLIERPARTY_SUMMARYDOCUMENTS_ID")
-    protected SupplierPartyEntity accountingSupplierParty;
-
-    @ManyToOne(targetEntity = UBLExtensionsEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "UBLEXTENSIONS_SUMMARYDOCUMENTS_ID")
-    protected UBLExtensionsEntity ublExtensions;
-
-    @OneToMany(targetEntity = SignatureEntity.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "SIGNATURE_SUMMARYDOCUMENTS")
-    protected List<SignatureEntity> signature = new ArrayList<>();
-
+     */    
     public String getId() {
         return id;
     }
@@ -153,22 +132,6 @@ public class SummaryDocumentsEntity {
         this.issueDate = issueDate;
     }
 
-    public List<SumaryDocumentsLineEntity> getSummaryDocumentsLines() {
-        return summaryDocumentsLines;
-    }
-
-    public void setSummaryDocumentsLines(List<SumaryDocumentsLineEntity> summaryDocumentsLines) {
-        this.summaryDocumentsLines = summaryDocumentsLines;
-    }
-
-    public Collection<SummaryDocumentsRequiredActionEntity> getRequiredActions() {
-        return requiredActions;
-    }
-
-    public void setRequiredActions(Collection<SummaryDocumentsRequiredActionEntity> requiredActions) {
-        this.requiredActions = requiredActions;
-    }
-
     public byte[] getXmlDocument() {
         return xmlDocument;
     }
@@ -183,30 +146,6 @@ public class SummaryDocumentsEntity {
 
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
-    }
-
-    public SupplierPartyEntity getAccountingSupplierParty() {
-        return accountingSupplierParty;
-    }
-
-    public void setAccountingSupplierParty(SupplierPartyEntity accountingSupplierParty) {
-        this.accountingSupplierParty = accountingSupplierParty;
-    }
-
-    public UBLExtensionsEntity getUblExtensions() {
-        return ublExtensions;
-    }
-
-    public void setUblExtensions(UBLExtensionsEntity ublExtensions) {
-        this.ublExtensions = ublExtensions;
-    }
-
-    public List<SignatureEntity> getSignature() {
-        return signature;
-    }
-
-    public void setSignature(List<SignatureEntity> signature) {
-        this.signature = signature;
     }
 
 }

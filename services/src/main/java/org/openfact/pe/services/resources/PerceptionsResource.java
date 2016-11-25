@@ -29,7 +29,6 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
@@ -37,12 +36,12 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
-import org.openfact.pe.models.utils.ModelToRepresentation_PE;
+import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.services.managers.PerceptionManager;
-import org.openfact.pe.types.PerceptionType;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -84,7 +83,7 @@ public class PerceptionsResource {
             perceptions = perceptionProvider.searchForPerception(filterText.trim(), organization, firstResult,
                     maxResults);
         }
-        return perceptions.stream().map(f -> ModelToRepresentation_PE.toRepresentation(f))
+        return perceptions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
                 .collect(Collectors.toList());
     }
 
@@ -107,14 +106,14 @@ public class PerceptionsResource {
                 session.getTransactionManager().commit();
             }
 
-            // Enviar Email
+            // Enviar a Cliente
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                perceptionManager.enviarEmailAlCliente(organization, perception);
+                perceptionManager.sendToCustomerParty(organization, perception);
             }
 
             // Enviar Sunat
             if (rep.isEnviarAutomaticamenteASunat()) {
-                perceptionManager.enviarASunat(organization, perception);
+                perceptionManager.sendToTrirdParty(organization, perception);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(perception.getId()).build();
@@ -129,11 +128,6 @@ public class PerceptionsResource {
                 session.getTransactionManager().setRollbackOnly();
             }
             return ErrorResponse.exists("Could not create perception");
-        } catch (EmailException e) {
-            if (session.getTransactionManager().isActive()) {
-                session.getTransactionManager().setRollbackOnly();
-            }
-            return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -152,7 +146,7 @@ public class PerceptionsResource {
 
                 PerceptionType perceptionType = null;
                 if (perceptionType == null) {
-                    throw new IOException("Invalid invoice Xml");
+                    throw new IOException("Invalid perception Xml");
                 }
 
                 PerceptionManager perceptionManager = new PerceptionManager(session);
@@ -168,11 +162,11 @@ public class PerceptionsResource {
                     session.getTransactionManager().commit();
                 }
 
-                // Enviar Email
-                perceptionManager.enviarEmailAlCliente(organization, perception);
+                // Enviar a Cliente
+                perceptionManager.sendToCustomerParty(organization, perception);
 
                 // Enviar Sunat
-                perceptionManager.enviarASunat(organization, perception);
+                perceptionManager.sendToTrirdParty(organization, perception);
 
                 URI location = uriInfo.getAbsolutePathBuilder().path(perception.getId()).build();
                 return Response.created(location).build();
@@ -191,11 +185,6 @@ public class PerceptionsResource {
                     session.getTransactionManager().setRollbackOnly();
                 }
                 return ErrorResponse.exists("Could not create invoice");
-            } catch (EmailException e) {
-                if (session.getTransactionManager().isActive()) {
-                    session.getTransactionManager().setRollbackOnly();
-                }
-                return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -220,7 +209,7 @@ public class PerceptionsResource {
         }
         SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
         List<DocumentRepresentation> items = new ArrayList<>();
-        results.getModels().forEach(f -> items.add(ModelToRepresentation_PE.toRepresentation(f)));
+        results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
         rep.setItems(items);
         rep.setTotalSize(results.getTotalSize());
         return rep;
@@ -237,7 +226,7 @@ public class PerceptionsResource {
             throw new NotFoundException("Perception not found");
         }
 
-        DocumentRepresentation rep = ModelToRepresentation_PE.toRepresentation(perception);
+        DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(perception);
         return rep;
     }
 

@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.openfact.models.ubl.common.PaymentModel;
-
 public interface RetentionDocumentReferenceModel {
 
     String getId();
@@ -20,9 +18,9 @@ public interface RetentionDocumentReferenceModel {
 
     void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
 
-    PaymentModel getPayment();
+    /*PaymentModel getPayment();
 
-    void setPayment(PaymentModel payment);
+    void setPayment(PaymentModel payment);*/
 
     RetentionInformationModel getSunatRetentionInformation();
 

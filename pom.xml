@@ -36,6 +36,8 @@
 		<!-- maven-compiler-plugin -->
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
+
+		<liquibase.version>3.4.1</liquibase.version>
 	</properties>
 
 	<developers>
@@ -120,6 +122,17 @@
 
 	<build>
 		<finalName>openfact-pe</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-maven-plugin</artifactId>
+					<version>${liquibase.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
+
+
 
 </project>

@@ -29,7 +29,6 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
@@ -37,12 +36,12 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.model.types.SummaryDocumentsType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
-import org.openfact.pe.models.utils.ModelToRepresentation_PE;
+import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.services.managers.SummaryDocumentManager;
-import org.openfact.pe.types.SummaryDocumentsType;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -81,7 +80,7 @@ public class SummaryDocumentsResource {
             summaryDocuments = summaryDocumentProvider.searchForSummaryDocument(filterText.trim(),
                     organization, firstResult, maxResults);
         }
-        return summaryDocuments.stream().map(f -> ModelToRepresentation_PE.toRepresentation(f))
+        return summaryDocuments.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
                 .collect(Collectors.toList());
     }
 
@@ -106,14 +105,14 @@ public class SummaryDocumentsResource {
                 session.getTransactionManager().commit();
             }
 
-            // Enviar Email
+            // Enviar a Cliente
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                summaryDocumentManager.enviarEmailAlCliente(organization, summaryDocument);
+                summaryDocumentManager.sendToCustomerParty(organization, summaryDocument);
             }
 
             // Enviar Sunat
             if (rep.isEnviarAutomaticamenteASunat()) {
-                summaryDocumentManager.enviarASunat(organization, summaryDocument);
+                summaryDocumentManager.sendToTrirdParty(organization, summaryDocument);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(summaryDocument.getId()).build();
@@ -128,11 +127,6 @@ public class SummaryDocumentsResource {
                 session.getTransactionManager().setRollbackOnly();
             }
             return ErrorResponse.exists("Could not create summaryDocument");
-        } catch (EmailException e) {
-            if (session.getTransactionManager().isActive()) {
-                session.getTransactionManager().setRollbackOnly();
-            }
-            return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -169,11 +163,11 @@ public class SummaryDocumentsResource {
                     session.getTransactionManager().commit();
                 }
 
-                // Enviar Email
-                summaryDocumentManager.enviarEmailAlCliente(organization, summaryDocument);
+                // Enviar Cliente
+                summaryDocumentManager.sendToCustomerParty(organization, summaryDocument);
 
                 // Enviar Sunat
-                summaryDocumentManager.enviarASunat(organization, summaryDocument);
+                summaryDocumentManager.sendToTrirdParty(organization, summaryDocument);
 
                 URI location = uriInfo.getAbsolutePathBuilder().path(summaryDocument.getId()).build();
                 return Response.created(location).build();
@@ -192,11 +186,6 @@ public class SummaryDocumentsResource {
                     session.getTransactionManager().setRollbackOnly();
                 }
                 return ErrorResponse.exists("Could not create invoice");
-            } catch (EmailException e) {
-                if (session.getTransactionManager().isActive()) {
-                    session.getTransactionManager().setRollbackOnly();
-                }
-                return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -222,7 +211,7 @@ public class SummaryDocumentsResource {
         }
         SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
         List<DocumentRepresentation> items = new ArrayList<>();
-        results.getModels().forEach(f -> items.add(ModelToRepresentation_PE.toRepresentation(f)));
+        results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
         rep.setItems(items);
         rep.setTotalSize(results.getTotalSize());
         return rep;
@@ -241,7 +230,7 @@ public class SummaryDocumentsResource {
             throw new NotFoundException("SummaryDocument not found");
         }
 
-        DocumentRepresentation rep = ModelToRepresentation_PE.toRepresentation(summaryDocument);
+        DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(summaryDocument);
         return rep;
     }
 

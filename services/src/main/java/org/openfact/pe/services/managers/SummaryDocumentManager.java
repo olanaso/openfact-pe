@@ -21,20 +21,19 @@ import javax.xml.transform.TransformerException;
 
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.pe.model.types.SummaryDocumentsType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
-import org.openfact.pe.models.utils.DocumentIdProvider_PE;
-import org.openfact.pe.models.utils.RepresentationToType_PE;
-import org.openfact.pe.models.utils.TypeToDocument;
-import org.openfact.pe.models.utils.TypeToModel_PE;
+import org.openfact.pe.models.utils.SunatDocumentIdProvider;
+import org.openfact.pe.models.utils.SunatRepresentationToType;
+import org.openfact.pe.models.utils.SunatTypeToDocument;
+import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
-import org.openfact.pe.types.SummaryDocumentsType;
-import org.openfact.ubl.UblDocumentSignerProvider;
+import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
@@ -58,7 +57,7 @@ public class SummaryDocumentManager {
 
     public SummaryDocumentModel addSummaryDocument(OrganizationModel organization,
             DocumentRepresentation rep) {
-        SummaryDocumentsType type = RepresentationToType_PE.toSummaryDocumentType(rep);
+        SummaryDocumentsType type = SunatRepresentationToType.toSummaryDocumentType(rep);
         return addSummaryDocument(organization, type);
     }
 
@@ -66,22 +65,22 @@ public class SummaryDocumentManager {
             SummaryDocumentsType type) {
         IDType documentId = type.getId();
         if (documentId == null || documentId.getValue() == null) {
-            String generatedId = DocumentIdProvider_PE.generateSummaryDocumentDocumentId(session,
+            String generatedId = SunatDocumentIdProvider.generateSummaryDocumentDocumentId(session,
                     organization);
             documentId = new IDType(generatedId);
             type.setId(documentId);
         }
 
         SummaryDocumentModel summaryDocument = model.addSummaryDocument(organization, documentId.getValue());
-        TypeToModel_PE.importSummaryDocument(session, organization, summaryDocument, type);
+        SunatTypeToModel.importSummaryDocument(session, organization, summaryDocument, type);
         RequiredActionDocument.getDefaults().stream().forEach(c -> summaryDocument.addRequiredAction(c));
 
         try {
             // Generate Document
-            Document baseDocument = TypeToDocument.toDocument(type);
+            Document baseDocument = SunatTypeToDocument.toDocument(type);
 
             // Sign Document
-            UblDocumentSignerProvider signerProvider = session.getProvider(UblDocumentSignerProvider.class);
+            SignerProvider signerProvider = session.getProvider(SignerProvider.class);
             Document signedDocument = signerProvider.sign(baseDocument, organization);
 
             byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
@@ -104,13 +103,13 @@ public class SummaryDocumentManager {
         return false;
     }
 
-    public void enviarEmailAlCliente(OrganizationModel organization, SummaryDocumentModel summaryDocument)
-            throws EmailException {
+    public void sendToCustomerParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
+        // TODO Auto-generated method stub
 
     }
 
-    public void enviarASunat(OrganizationModel organization, SummaryDocumentModel summaryDocument)
-            throws EmailException {
+    public void sendToTrirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
+        // TODO Auto-generated method stub
 
     }
 

@@ -3,12 +3,9 @@ package org.openfact.pe.models;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.openfact.models.ubl.common.AllowanceChargeModel;
-import org.openfact.models.ubl.common.BillingReferenceModel;
-import org.openfact.models.ubl.common.CustomerPartyModel;
-import org.openfact.models.ubl.common.PaymentModel;
-import org.openfact.models.ubl.common.StatusModel;
-import org.openfact.models.ubl.common.TaxTotalModel;
+import org.openfact.models.AllowanceChargeModel;
+import org.openfact.models.CustomerPartyModel;
+import org.openfact.models.TaxTotalModel;
 
 public interface SummaryDocumentsLineModel {
 
@@ -44,7 +41,7 @@ public interface SummaryDocumentsLineModel {
 
     CustomerPartyModel getAccountingCustomerPartyAsNotNull();
 
-    BillingReferenceModel getBillingReference();
+    /*BillingReferenceModel getBillingReference();
 
     BillingReferenceModel getBillingReferenceAsNotNull();
 
@@ -54,7 +51,7 @@ public interface SummaryDocumentsLineModel {
 
     List<PaymentModel> getBillingPayment();
 
-    PaymentModel addBillingPayment();
+    PaymentModel addBillingPayment();*/
 
     List<AllowanceChargeModel> getAllowanceCharge();
 

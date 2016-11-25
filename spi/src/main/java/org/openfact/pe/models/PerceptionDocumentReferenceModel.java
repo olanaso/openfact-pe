@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.openfact.models.ubl.common.PaymentModel;
-
 public interface PerceptionDocumentReferenceModel {
 
     String getId();
@@ -20,9 +18,9 @@ public interface PerceptionDocumentReferenceModel {
 
     void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
 
-    PaymentModel getPayment();
+    /*PaymentModel getPayment();
 
-    PaymentModel getPaymentAsNotNull();
+    PaymentModel getPaymentAsNotNull();*/
 
     PerceptionInformationModel getSunatPerceptionInformation();
 

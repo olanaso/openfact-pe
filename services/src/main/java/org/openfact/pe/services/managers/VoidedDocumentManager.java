@@ -21,20 +21,19 @@ import javax.xml.transform.TransformerException;
 
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.pe.model.types.VoidedDocumentsType;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
-import org.openfact.pe.models.utils.DocumentIdProvider_PE;
-import org.openfact.pe.models.utils.RepresentationToType_PE;
-import org.openfact.pe.models.utils.TypeToDocument;
-import org.openfact.pe.models.utils.TypeToModel_PE;
+import org.openfact.pe.models.utils.SunatDocumentIdProvider;
+import org.openfact.pe.models.utils.SunatRepresentationToType;
+import org.openfact.pe.models.utils.SunatTypeToDocument;
+import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
-import org.openfact.pe.types.VoidedDocumentsType;
-import org.openfact.ubl.UblDocumentSignerProvider;
+import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
@@ -57,28 +56,28 @@ public class VoidedDocumentManager {
     }
 
     public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, DocumentRepresentation rep) {
-        VoidedDocumentsType type = RepresentationToType_PE.toVoidedDocumentType(rep);
+        VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(rep);
         return addVoidedDocument(organization, type);
     }
 
     public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedDocumentsType type) {
         IDType documentId = type.getID();
         if (documentId == null || documentId.getValue() == null) {
-            String generatedId = DocumentIdProvider_PE.generateVoidedDocumentId(session, organization);
+            String generatedId = SunatDocumentIdProvider.generateVoidedDocumentId(session, organization);
             documentId = new IDType(generatedId);
             type.setID(documentId);
         }
 
         VoidedDocumentModel voidedDocument = model.addVoidedDocument(organization, documentId.getValue());
-        TypeToModel_PE.importVoidedDocument(session, organization, voidedDocument, type);
+        SunatTypeToModel.importVoidedDocument(session, organization, voidedDocument, type);
         RequiredActionDocument.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
 
         try {
             // Generate Document
-            Document baseDocument = TypeToDocument.toDocument(type);
+            Document baseDocument = SunatTypeToDocument.toDocument(type);
 
             // Sign Document
-            UblDocumentSignerProvider signerProvider = session.getProvider(UblDocumentSignerProvider.class);
+            SignerProvider signerProvider = session.getProvider(SignerProvider.class);
             Document signedDocument = signerProvider.sign(baseDocument, organization);
 
             byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
@@ -100,13 +99,13 @@ public class VoidedDocumentManager {
         return false;
     }
 
-    public void enviarEmailAlCliente(OrganizationModel organization, VoidedDocumentModel voidedDocument)
-            throws EmailException {
+    public void sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
+        // TODO Auto-generated method stub
 
     }
 
-    public void enviarASunat(OrganizationModel organization, VoidedDocumentModel voidedDocument)
-            throws EmailException {
+    public void sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
+        // TODO Auto-generated method stub
 
     }
 

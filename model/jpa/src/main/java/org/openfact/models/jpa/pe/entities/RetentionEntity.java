@@ -77,12 +77,6 @@ public class RetentionEntity {
     @CollectionTable(name = "RETENTION_NOTE", joinColumns = { @JoinColumn(name = "RETENTION_ID") })
     protected List<String> notes = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention", cascade = CascadeType.REMOVE)
-    protected Collection<RetentionRequiredActionEntity> requiredActions = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention", cascade = CascadeType.ALL)
-    protected List<SunatRetentionDocumentReferenceEntity> sunatRetentionDocumentReferences = new ArrayList<>();
-
     @Lob
     @Column(name = "XML_DOCUMENT")
     protected byte[] xmlDocument;
@@ -169,23 +163,6 @@ public class RetentionEntity {
 
     public void setNotes(List<String> notes) {
         this.notes = notes;
-    }
-
-    public List<SunatRetentionDocumentReferenceEntity> getSunatRetentionDocumentReferences() {
-        return sunatRetentionDocumentReferences;
-    }
-
-    public void setSunatRetentionDocumentReferences(
-            List<SunatRetentionDocumentReferenceEntity> sunatRetentionDocumentReferences) {
-        this.sunatRetentionDocumentReferences = sunatRetentionDocumentReferences;
-    }
-
-    public Collection<RetentionRequiredActionEntity> getRequiredActions() {
-        return requiredActions;
-    }
-
-    public void setRequiredActions(Collection<RetentionRequiredActionEntity> requiredActions) {
-        this.requiredActions = requiredActions;
     }
 
     public byte[] getXmlDocument() {

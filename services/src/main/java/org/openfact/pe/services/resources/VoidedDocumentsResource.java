@@ -29,7 +29,6 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
@@ -37,12 +36,12 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.model.types.VoidedDocumentsType;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
-import org.openfact.pe.models.utils.ModelToRepresentation_PE;
+import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.services.managers.VoidedDocumentManager;
-import org.openfact.pe.types.VoidedDocumentsType;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -81,7 +80,7 @@ public class VoidedDocumentsResource {
             voidedDocuments = voidedDocumentProvider.searchForVoidedDocument(filterText.trim(), organization,
                     firstResult, maxResults);
         }
-        return voidedDocuments.stream().map(f -> ModelToRepresentation_PE.toRepresentation(f))
+        return voidedDocuments.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
                 .collect(Collectors.toList());
     }
 
@@ -105,14 +104,14 @@ public class VoidedDocumentsResource {
                 session.getTransactionManager().commit();
             }
 
-            // Enviar Email
+            // Enviar a Cliente
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                voidedDocumentManager.enviarEmailAlCliente(organization, voidedDocument);
+                voidedDocumentManager.sendToCustomerParty(organization, voidedDocument);
             }
 
             // Enviar Sunat
             if (rep.isEnviarAutomaticamenteASunat()) {
-                voidedDocumentManager.enviarASunat(organization, voidedDocument);
+                voidedDocumentManager.sendToTrirdParty(organization, voidedDocument);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(voidedDocument.getId()).build();
@@ -127,11 +126,6 @@ public class VoidedDocumentsResource {
                 session.getTransactionManager().setRollbackOnly();
             }
             return ErrorResponse.exists("Could not create voidedDocument");
-        } catch (EmailException e) {
-            if (session.getTransactionManager().isActive()) {
-                session.getTransactionManager().setRollbackOnly();
-            }
-            return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -167,11 +161,11 @@ public class VoidedDocumentsResource {
                     session.getTransactionManager().commit();
                 }
 
-                // Enviar Email
-                voidedDocumentManager.enviarEmailAlCliente(organization, voidedDocument);
+                // Enviar Cliente
+                voidedDocumentManager.sendToCustomerParty(organization, voidedDocument);
 
                 // Enviar Sunat
-                voidedDocumentManager.enviarASunat(organization, voidedDocument);
+                voidedDocumentManager.sendToTrirdParty(organization, voidedDocument);
 
                 URI location = uriInfo.getAbsolutePathBuilder().path(voidedDocument.getId()).build();
                 return Response.created(location).build();
@@ -190,11 +184,6 @@ public class VoidedDocumentsResource {
                     session.getTransactionManager().setRollbackOnly();
                 }
                 return ErrorResponse.exists("Could not create invoice");
-            } catch (EmailException e) {
-                if (session.getTransactionManager().isActive()) {
-                    session.getTransactionManager().setRollbackOnly();
-                }
-                return ErrorResponse.error("Failed on send email", Response.Status.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -220,7 +209,7 @@ public class VoidedDocumentsResource {
         }
         SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
         List<DocumentRepresentation> items = new ArrayList<>();
-        results.getModels().forEach(f -> items.add(ModelToRepresentation_PE.toRepresentation(f)));
+        results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
         rep.setItems(items);
         rep.setTotalSize(results.getTotalSize());
         return rep;
@@ -239,7 +228,7 @@ public class VoidedDocumentsResource {
             throw new NotFoundException("VoidedDocument not found");
         }
 
-        DocumentRepresentation rep = ModelToRepresentation_PE.toRepresentation(voidedDocument);
+        DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(voidedDocument);
         return rep;
     }
 

@@ -26,20 +26,20 @@ import org.openfact.ubl.UblSenderException;
 
 import jodd.io.ZipBuilder;
 
-public class SunatTemplateProvider implements UblSunatTemplateProvider {
+public class SunatUblTemplateProvider implements UblSunatTemplateProvider {
 
 	private OpenfactSession session;
 
-	public SunatTemplateProvider(OpenfactSession session) {
+	public SunatUblTemplateProvider(OpenfactSession session) {
 		this.session = session;
 	}
 
-	private SunatSenderProvider getUblSenderProvider(OrganizationModel organization) {
-		return session.getProvider(SunatSenderProvider.class, organization.getDefaultLocale());
+	private SunatUblSenderProvider getUblSenderProvider(OrganizationModel organization) {
+		return session.getProvider(SunatUblSenderProvider.class, organization.getDefaultLocale());
 	}
 
-	private SunatSenderResponseProvider getUblSenderResponseProvider(OrganizationModel organization) {
-		return session.getProvider(SunatSenderResponseProvider.class, organization.getDefaultLocale());
+	private SunatUblSenderResponseProvider getUblSenderResponseProvider(OrganizationModel organization) {
+		return session.getProvider(SunatUblSenderResponseProvider.class, organization.getDefaultLocale());
 	}
 
 	@Override
@@ -50,9 +50,9 @@ public class SunatTemplateProvider implements UblSunatTemplateProvider {
 			String fileName = generateXmlFileName(organization, invoice);
 			zip = generateZip(ArrayUtils.toPrimitive(invoice.getXmlDocument()), fileName);
 			// sender
-			Map<String, Object> result = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
+			Map<String, Object> response = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
 					InternetMediaType.ZIP);
-			byte[] response = (byte[]) result.get("success");
+			// byte[] response = (byte[]) result.get("success");
 			// sender response
 			model = getUblSenderResponseProvider(organization).invoiceSenderResponse(organization, invoice, zip,
 					response);
@@ -83,9 +83,8 @@ public class SunatTemplateProvider implements UblSunatTemplateProvider {
 			String fileName = generateXmlFileName(organization, creditNote);
 			zip = generateZip(ArrayUtils.toPrimitive(creditNote.getXmlDocument()), fileName);
 			// sender
-			Map<String, Object> result = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
+			Map<String, Object> response = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
 					InternetMediaType.ZIP);
-			byte[] response = (byte[]) result.get("success");
 			// sender response
 			model = getUblSenderResponseProvider(organization).creditNoteSenderResponse(organization, creditNote, zip,
 					response);
@@ -110,9 +109,8 @@ public class SunatTemplateProvider implements UblSunatTemplateProvider {
 			String fileName = generateXmlFileName(organization, debitNote);
 			zip = generateZip(ArrayUtils.toPrimitive(debitNote.getXmlDocument()), fileName);
 			// sender
-			Map<String, Object> result = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
+			Map<String, Object> response = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
 					InternetMediaType.ZIP);
-			byte[] response = (byte[]) result.get("success");
 			// sender response
 			model = getUblSenderResponseProvider(organization).debitNoteSenderResponse(organization, debitNote, zip,
 					response);
@@ -139,7 +137,10 @@ public class SunatTemplateProvider implements UblSunatTemplateProvider {
 			// sender
 			Map<String, Object> result = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
 					InternetMediaType.ZIP);
-			byte[] response = (byte[]) result.get("success");
+			byte[] response = null;
+			if (result.containsKey("success")) {
+				response = (byte[]) result.get("success");
+			}
 			// sender response
 			model = getUblSenderResponseProvider(organization).perceptionSenderResponse(organization, perception, zip,
 					response);
@@ -166,7 +167,10 @@ public class SunatTemplateProvider implements UblSunatTemplateProvider {
 			// sender
 			Map<String, Object> result = getUblSenderProvider(organization).sendDocument(organization, zip, fileName,
 					InternetMediaType.ZIP);
-			byte[] response = (byte[]) result.get("success");
+			byte[] response = null;
+			if (result.containsKey("success")) {
+				response = (byte[]) result.get("success");
+			}
 			// sender response
 			model = getUblSenderResponseProvider(organization).retentionSenderResponse(organization, retention, zip,
 					response);

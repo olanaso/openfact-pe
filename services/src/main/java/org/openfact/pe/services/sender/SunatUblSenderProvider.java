@@ -20,11 +20,11 @@ import com.sun.xml.ws.util.ByteArrayDataSource;
 /**
  * Created by lxpary on 21/11/16.
  */
-public class SunatSenderProvider implements UblSunatSenderProvider {
+public class SunatUblSenderProvider implements UblSunatSenderProvider {
 
 	private OpenfactSession session;
 
-	public SunatSenderProvider(OpenfactSession session) {
+	public SunatUblSenderProvider(OpenfactSession session) {
 		this.session = session;
 	}
 
@@ -34,9 +34,9 @@ public class SunatSenderProvider implements UblSunatSenderProvider {
 	}
 
 	private byte[] sendBill(OrganizationModel organization, byte[] document, String fileName,
-			InternetMediaType mediaType, String wsUrl) throws UblSenderException {
+			InternetMediaType mediaType, String url) throws UblSenderException {
 		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(organization.getUblSenderConfig(),
-				wsUrl);
+				url);
 		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
 		DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
 		DataHandler contentFile = new DataHandler(dataSource);
@@ -49,8 +49,8 @@ public class SunatSenderProvider implements UblSunatSenderProvider {
 	public Map<String, Object> sendDocument(OrganizationModel organization, byte[] document, String fileName,
 			InternetMediaType mediaType) throws UblSenderException {
 		Map<String, Object> result = new HashMap<>();
-		String wsUrl = organization.getUblSenderConfig().get("wsUrl");
-		byte[] send = sendBill(organization, document, fileName, mediaType, wsUrl);
+		String url = organization.getUblSenderConfig().get("url");
+		byte[] send = sendBill(organization, document, fileName, mediaType, url);
 		result.put("success", send);
 		return result;
 	}
@@ -58,9 +58,9 @@ public class SunatSenderProvider implements UblSunatSenderProvider {
 	@Override
 	public String sendSummary(OrganizationModel organization, byte[] document, String fileName,
 			InternetMediaType mediaType) throws UblSenderException {
-		String wsUrl = organization.getUblSenderConfig().get("wsUrl");
+		String url = organization.getUblSenderConfig().get("url");
 		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(organization.getUblSenderConfig(),
-				wsUrl);
+				url);
 		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
 		DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
 		DataHandler contentFile = new DataHandler(dataSource);
@@ -72,9 +72,9 @@ public class SunatSenderProvider implements UblSunatSenderProvider {
 	@Override
 	public String sendPack(OrganizationModel organization, byte[] document, String fileName,
 			InternetMediaType mediaType) throws UblSenderException {
-		String wsUrl = organization.getUblSenderConfig().get("wsUrl");
+		String url = organization.getUblSenderConfig().get("url");
 		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(organization.getUblSenderConfig(),
-				wsUrl);
+				url);
 		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
 		DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
 		DataHandler contentFile = new DataHandler(dataSource);
@@ -85,10 +85,10 @@ public class SunatSenderProvider implements UblSunatSenderProvider {
 
 	@Override
 	public Map<String, Object> getStatus(OrganizationModel organization, String ticket) throws UblSenderException {
-		String wsUrl = organization.getUblSenderConfig().get("wsUrl");
+		String url = organization.getUblSenderConfig().get("url");
 		Map<String, Object> result = new HashMap<>();
 		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(organization.getUblSenderConfig(),
-				wsUrl);
+				url);
 		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
 		// send
 		StatusResponse statusResponse = client.getStatus(ticket);

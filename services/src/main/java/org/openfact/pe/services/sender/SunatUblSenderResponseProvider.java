@@ -1,5 +1,7 @@
 package org.openfact.pe.services.sender;
 
+import java.util.Map;
+
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ubl.CreditNoteModel;
@@ -17,10 +19,10 @@ import org.openfact.pe.services.util.DocumentResponseUtil;
 import org.openfact.representations.idm.ubl.SendEventRepresentation;
 import org.openfact.ubl.UblSenderException;
 
-public class SunatSenderResponseProvider implements UblSunatSenderResponseProvider {
+public class SunatUblSenderResponseProvider implements UblSunatSenderResponseProvider {
 	private OpenfactSession session;
 
-	public SunatSenderResponseProvider(OpenfactSession session) {
+	public SunatUblSenderResponseProvider(OpenfactSession session) {
 		this.session = session;
 	}
 
@@ -29,165 +31,169 @@ public class SunatSenderResponseProvider implements UblSunatSenderResponseProvid
 
 	}
 
-	private UblSunatSendEventProvider getSunatSendEventProvider(OrganizationModel organization) {
+	private UblSunatSendEventProvider getSendEventProvider(OrganizationModel organization) {
 		return session.getProvider(UblSunatSendEventProvider.class, organization.getDefaultLocale());
 	}
 
 	@Override
-	public SendEventModel invoiceSenderResponse(OrganizationModel organization, InvoiceModel invoice,
-			byte[] xmlSubmitted, byte[] response, String... fault) throws UblSenderException {
-		SendEventRepresentation rep = null;
+	public SendEventModel invoiceSenderResponse(OrganizationModel organization, InvoiceModel invoice, byte[] submitted,
+			Map<String, Object> response, String... fault) throws UblSenderException {
+
 		try {
+			SendEventRepresentation rep = new SendEventRepresentation();
+			byte[] document = null;
 			if (response != null) {
-				rep = DocumentResponseUtil.byteToResponse(response);
-			} else {
+				if (response.containsKey("success")) {
+					document = (byte[]) response.get("success");
+					rep = DocumentResponseUtil.byteToResponse(document);
+					rep.setDocumentResponse(document);
+				}
+			} else if (fault.length > 0) {
 				rep = DocumentResponseUtil.faultToResponse(fault);
 			}
-			// if (rep.isAccepted()) {
-			// invoice.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
-			// }
-			SendEventModel sendEvent = getSunatSendEventProvider(organization).addInvoiceSendEvent(organization,
-					invoice, xmlSubmitted, response, rep.isAccepted());
+			rep.setDocumentSubmitted(submitted);
+			SendEventModel sendEvent = getSendEventProvider(organization).addInvoiceSendEvent(organization, invoice,
+					rep.isAccepted());
 			RepresentationToModel.toModel(rep, sendEvent);
 			return sendEvent;
 		} catch (Exception e) {
-			return null;
+			throw new UblSenderException(e);
 		}
 	}
 
 	@Override
 	public SendEventModel creditNoteSenderResponse(OrganizationModel organization, CreditNoteModel creditNote,
-			byte[] xmlSubmitted, byte[] response, String... fault) throws UblSenderException {
+			byte[] submitted, Map<String, Object> response, String... fault) throws UblSenderException {
 		SendEventRepresentation rep = null;
+		byte[] document = null;
 		try {
 			if (response != null) {
-				rep = DocumentResponseUtil.byteToResponse(response);
-			} else {
+				if (response.containsKey("success")) {
+					document = (byte[]) response.get("success");
+					rep = DocumentResponseUtil.byteToResponse(document);
+					rep.setDocumentResponse(document);
+				}
+			} else if (fault.length > 0) {
 				rep = DocumentResponseUtil.faultToResponse(fault);
 			}
-			// if (rep.isAccepted()) {
-			// creditNote.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
-			// }
-			SendEventModel sendEvent = getSunatSendEventProvider(organization).addCreditNoteSendEvent(organization,
-					creditNote, xmlSubmitted, response, rep.isAccepted());
+			rep.setDocumentSubmitted(submitted);
+			SendEventModel sendEvent = getSendEventProvider(organization).addCreditNoteSendEvent(organization,
+					creditNote, rep.isAccepted());
 			RepresentationToModel.toModel(rep, sendEvent);
 			return sendEvent;
 		} catch (Exception e) {
-			return null;
+			throw new UblSenderException(e);
 		}
 	}
 
 	@Override
 	public SendEventModel debitNoteSenderResponse(OrganizationModel organization, DebitNoteModel debitNote,
-			byte[] xmlSubmitted, byte[] response, String... fault) throws UblSenderException {
+			byte[] submitted, Map<String, Object> response, String... fault) throws UblSenderException {
 		SendEventRepresentation rep = null;
+		byte[] document = null;
 		try {
 			if (response != null) {
-				rep = DocumentResponseUtil.byteToResponse(response);
-			} else {
+				if (response.containsKey("success")) {
+					document = (byte[]) response.get("success");
+					rep = DocumentResponseUtil.byteToResponse(document);
+					rep.setDocumentResponse(document);
+				}
+			} else if (fault.length > 0) {
 				rep = DocumentResponseUtil.faultToResponse(fault);
 			}
-			// if (rep.isAccepted()) {
-			// debitNote.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
-			// }
-			SendEventModel sendEvent = getSunatSendEventProvider(organization).addDebitNoteSendEvent(organization,
-					debitNote, xmlSubmitted, response, rep.isAccepted());
+			rep.setDocumentSubmitted(submitted);
+			SendEventModel sendEvent = getSendEventProvider(organization).addDebitNoteSendEvent(organization, debitNote,
+					rep.isAccepted());
 			RepresentationToModel.toModel(rep, sendEvent);
 			return sendEvent;
 		} catch (Exception e) {
-			return null;
+			throw new UblSenderException(e);
 		}
 	}
 
 	@Override
 	public SendEventModel perceptionSenderResponse(OrganizationModel organization, PerceptionModel perception,
-			byte[] xmlSubmitted, byte[] response, String... fault) throws UblSenderException {
+			byte[] submitted, byte[] response, String... fault) throws UblSenderException {
 		SendEventRepresentation rep = null;
 		try {
 			if (response != null) {
 				rep = DocumentResponseUtil.byteToResponse(response);
-			} else {
+				rep.setDocumentResponse(response);
+			} else if (fault.length > 0) {
 				rep = DocumentResponseUtil.faultToResponse(fault);
 			}
-			// if (rep.isAccepted()) {
-			// perception.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
-			// }
-			SendEventModel sendEvent = getSunatSendEventProvider(organization).addPerceptionSendEvent(organization,
-					perception, xmlSubmitted, response, rep.isAccepted());
+			rep.setDocumentSubmitted(submitted);
+			SendEventModel sendEvent = getSendEventProvider(organization).addPerceptionSendEvent(organization,
+					perception, rep.isAccepted());
 			RepresentationToModel.toModel(rep, sendEvent);
 			return sendEvent;
 		} catch (Exception e) {
-			return null;
+			throw new UblSenderException(e);
 		}
 	}
 
 	@Override
 	public SendEventModel retentionSenderResponse(OrganizationModel organization, RetentionModel retention,
-			byte[] xmlSubmitted, byte[] response, String... fault) throws UblSenderException {
+			byte[] submitted, byte[] response, String... fault) throws UblSenderException {
 		SendEventRepresentation rep = null;
 		try {
 			if (response != null) {
 				rep = DocumentResponseUtil.byteToResponse(response);
-			} else {
+				rep.setDocumentResponse(response);
+			} else if (fault.length > 0) {
 				rep = DocumentResponseUtil.faultToResponse(fault);
 			}
-			// if (rep.isAccepted()) {
-			// retention.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
-			// }
-			SendEventModel sendEvent = getSunatSendEventProvider(organization).addRetentionSendEvent(organization,
-					retention, xmlSubmitted, response, rep.isAccepted());
+			rep.setDocumentSubmitted(submitted);
+			SendEventModel sendEvent = getSendEventProvider(organization).addRetentionSendEvent(organization, retention,
+					rep.isAccepted());
 			RepresentationToModel.toModel(rep, sendEvent);
 			return sendEvent;
 		} catch (Exception e) {
-			return null;
+			throw new UblSenderException(e);
 		}
 	}
 
 	@Override
 	public SendEventModel voidedDocumentSenderResponse(OrganizationModel organization,
-			VoidedDocumentModel voidedDocument, byte[] xmlSubmitted, String response, String... fault)
+			VoidedDocumentModel voidedDocument, byte[] submitted, String response, String... fault)
 			throws UblSenderException {
 		SendEventRepresentation rep = null;
 		try {
 			if (response != null) {
 				rep = new SendEventRepresentation();
 				rep.setResponseCode(response);
-			} else {
+			} else if (fault.length > 0) {
 				rep = DocumentResponseUtil.faultToResponse(fault);
 			}
-			// if (rep.isAccepted()) {
-			// voidedDocument.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
-			// }
-			SendEventModel sendEvent = getSunatSendEventProvider(organization).addVoidedDocumentSendEvent(organization,
-					voidedDocument, xmlSubmitted, null, rep.isAccepted());
+			rep.setDocumentSubmitted(submitted);
+			SendEventModel sendEvent = getSendEventProvider(organization).addVoidedDocumentSendEvent(organization,
+					voidedDocument, rep.isAccepted());
 			RepresentationToModel.toModel(rep, sendEvent);
 			return sendEvent;
 		} catch (Exception e) {
-			return null;
+			throw new UblSenderException(e);
 		}
 	}
 
 	@Override
 	public SendEventModel summaryDocumentSenderResponse(OrganizationModel organization,
-			SummaryDocumentModel summaryDocument, byte[] xmlSubmitted, String response, String... fault)
+			SummaryDocumentModel summaryDocument, byte[] submitted, String response, String... fault)
 			throws UblSenderException {
 		SendEventRepresentation rep = null;
 		try {
 			if (response != null) {
 				rep = new SendEventRepresentation();
 				rep.setResponseCode(response);
-			} else {
+			} else if (fault.length > 0) {
 				rep = DocumentResponseUtil.faultToResponse(fault);
 			}
-			// if (rep.isAccepted()) {
-			// summaryDocument.removeRequiredAction(RequiredActionDocument.SEND_SOA_DOCUMENT);
-			// }
-			SendEventModel sendEvent = getSunatSendEventProvider(organization).addSummaryDocumentSendEvent(organization,
-					summaryDocument, xmlSubmitted, null, rep.isAccepted());
+			rep.setDocumentSubmitted(submitted);
+			SendEventModel sendEvent = getSendEventProvider(organization).addSummaryDocumentSendEvent(organization,
+					summaryDocument, rep.isAccepted());
 			RepresentationToModel.toModel(rep, sendEvent);
 			return sendEvent;
 		} catch (Exception e) {
-			return null;
+			throw new UblSenderException(e);
 		}
 	}
 

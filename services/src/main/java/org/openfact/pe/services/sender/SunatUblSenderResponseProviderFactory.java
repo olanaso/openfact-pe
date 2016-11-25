@@ -6,11 +6,11 @@ import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.pe.provider.UblSunatSenderResponseProvider;
 import org.openfact.pe.provider.UblSunatSenderResponseProviderFactory;
 
-public class SunatSenderResponseProviderFactory implements UblSunatSenderResponseProviderFactory {
+public class SunatUblSenderResponseProviderFactory implements UblSunatSenderResponseProviderFactory {
 
 	@Override
 	public UblSunatSenderResponseProvider create(OpenfactSession session) {
-		return new SunatSenderResponseProvider(session);
+		return new SunatUblSenderResponseProvider(session);
 	}
 
 	@Override

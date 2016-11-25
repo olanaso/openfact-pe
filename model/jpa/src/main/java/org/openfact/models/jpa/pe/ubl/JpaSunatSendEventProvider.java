@@ -52,15 +52,10 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 	}
 
 	@Override
-	public SendEventModel addInvoiceSendEvent(OrganizationModel organization, InvoiceModel invoice, byte[] xmlSubmitted,
-			byte[] response, boolean isAccepted) throws UblSenderException {
+	public SendEventModel addInvoiceSendEvent(OrganizationModel organization, InvoiceModel invoice,  boolean isAccepted) throws UblSenderException {
 		InvoiceSendEventEntity sendEventEntity = new InvoiceSendEventEntity();
-		sendEventEntity.setInvoices(Arrays.asList(InvoiceAdapter.toEntity(invoice, em)));
-		sendEventEntity.setXmlDoument(xmlSubmitted);
-		if (response != null) {
-			sendEventEntity.setDocumentResponse(response);
-		}
-		sendEventEntity.setID(invoice.getID());
+		sendEventEntity.setInvoices(Arrays.asList(InvoiceAdapter.toEntity(invoice, em)));		
+		sendEventEntity.setDocumentId(invoice.getID());
 		sendEventEntity.setAccepted(isAccepted);
 		sendEventEntity.setCreatedTimestamp(LocalDateTime.now());
 		em.persist(sendEventEntity);
@@ -71,14 +66,10 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 	@Override
 	public SendEventModel addCreditNoteSendEvent(OrganizationModel organization, CreditNoteModel creditNote,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException {
+			boolean isAccepted) throws UblSenderException {
 		CreditNoteSendEventEntity sendEventEntity = new CreditNoteSendEventEntity();
-		sendEventEntity.setCreditNotes(Arrays.asList(CreditNoteAdapter.toEntity(creditNote, em)));
-		sendEventEntity.setXmlDoument(xmlSubmitted);
-		if (response != null) {
-			sendEventEntity.setDocumentResponse(response);
-		}
-		sendEventEntity.setID(creditNote.getID());
+		sendEventEntity.setCreditNotes(Arrays.asList(CreditNoteAdapter.toEntity(creditNote, em)));		
+		sendEventEntity.setDocumentId(creditNote.getID());
 		sendEventEntity.setAccepted(isAccepted);
 		sendEventEntity.setCreatedTimestamp(LocalDateTime.now());
 		em.persist(sendEventEntity);
@@ -89,14 +80,10 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 	@Override
 	public SendEventModel addDebitNoteSendEvent(OrganizationModel organization, DebitNoteModel debitNote,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException {
+			 boolean isAccepted) throws UblSenderException {
 		DebitNoteSendEventEntity sendEventEntity = new DebitNoteSendEventEntity();
-		sendEventEntity.setDebitNotes(Arrays.asList(DebitNoteAdapter.toEntity(debitNote, em)));
-		sendEventEntity.setXmlDoument(xmlSubmitted);
-		if (response != null) {
-			sendEventEntity.setDocumentResponse(response);
-		}
-		sendEventEntity.setID(debitNote.getID());
+		sendEventEntity.setDebitNotes(Arrays.asList(DebitNoteAdapter.toEntity(debitNote, em)));		
+		sendEventEntity.setDocumentId(debitNote.getID());
 		sendEventEntity.setAccepted(isAccepted);
 		sendEventEntity.setCreatedTimestamp(LocalDateTime.now());
 		em.persist(sendEventEntity);
@@ -146,14 +133,10 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 	@Override
 	public SendEventModel addPerceptionSendEvent(OrganizationModel organization, PerceptionModel perception,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException {
+			 boolean isAccepted) throws UblSenderException {
 		PerceptionSendEventEntity sendEventEntity = new PerceptionSendEventEntity();
-		sendEventEntity.setPerceptions(Arrays.asList(PerceptionAdapter.toEntity(perception, em)));
-		sendEventEntity.setXmlDoument(xmlSubmitted);
-		if (response != null) {
-			sendEventEntity.setDocumentResponse(response);
-		}
-		sendEventEntity.setID(perception.getDocumentId());
+		sendEventEntity.setPerceptions(Arrays.asList(PerceptionAdapter.toEntity(perception, em)));		
+		sendEventEntity.setDocumentId(perception.getDocumentId());
 		sendEventEntity.setAccepted(isAccepted);
 		sendEventEntity.setCreatedTimestamp(LocalDateTime.now());
 		em.persist(sendEventEntity);
@@ -164,14 +147,10 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 	@Override
 	public SendEventModel addRetentionSendEvent(OrganizationModel organization, RetentionModel retention,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException {
+			boolean isAccepted) throws UblSenderException {
 		RetentionSendEventEntity sendEventEntity = new RetentionSendEventEntity();
-		sendEventEntity.setRetentions(Arrays.asList(RetentionAdapter.toEntity(retention, em)));
-		sendEventEntity.setXmlDoument(xmlSubmitted);
-		if (response != null) {
-			sendEventEntity.setDocumentResponse(response);
-		}
-		sendEventEntity.setID(retention.getDocumentId());
+		sendEventEntity.setRetentions(Arrays.asList(RetentionAdapter.toEntity(retention, em)));		
+		sendEventEntity.setDocumentId(retention.getDocumentId());
 		sendEventEntity.setAccepted(isAccepted);
 		sendEventEntity.setCreatedTimestamp(LocalDateTime.now());
 		em.persist(sendEventEntity);
@@ -182,15 +161,11 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 	@Override
 	public SendEventModel addSummaryDocumentSendEvent(OrganizationModel organization,
-			SummaryDocumentModel summaryDocument, byte[] xmlSubmitted, byte[] response, boolean isAccepted)
+			SummaryDocumentModel summaryDocument, boolean isAccepted)
 			throws UblSenderException {
 		SummaryDocumentsSendEventEntity sendEventEntity = new SummaryDocumentsSendEventEntity();
-		sendEventEntity.setSummaryDocuments(Arrays.asList(SummaryDocumentAdapter.toEntity(summaryDocument, em)));
-		sendEventEntity.setXmlDoument(xmlSubmitted);
-		if (response != null) {
-			sendEventEntity.setDocumentResponse(response);
-		}
-		sendEventEntity.setID(summaryDocument.getDocumentId());
+		sendEventEntity.setSummaryDocuments(Arrays.asList(SummaryDocumentAdapter.toEntity(summaryDocument, em)));		
+		sendEventEntity.setDocumentId(summaryDocument.getDocumentId());
 		sendEventEntity.setAccepted(isAccepted);
 		sendEventEntity.setCreatedTimestamp(LocalDateTime.now());
 		em.persist(sendEventEntity);
@@ -201,14 +176,10 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 	@Override
 	public SendEventModel addVoidedDocumentSendEvent(OrganizationModel organization, VoidedDocumentModel voidedDocument,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException {
+			 boolean isAccepted) throws UblSenderException {
 		VoidedDocumentsSendEventEntity sendEventEntity = new VoidedDocumentsSendEventEntity();
-		sendEventEntity.setVoidedDocuments(Arrays.asList(VoidedDocumentAdapter.toEntity(voidedDocument, em)));
-		sendEventEntity.setXmlDoument(xmlSubmitted);
-		if (response != null) {
-			sendEventEntity.setDocumentResponse(response);
-		}
-		sendEventEntity.setID(voidedDocument.getDocumentId());
+		sendEventEntity.setVoidedDocuments(Arrays.asList(VoidedDocumentAdapter.toEntity(voidedDocument, em)));		
+		sendEventEntity.setDocumentId(voidedDocument.getDocumentId());
 		sendEventEntity.setAccepted(isAccepted);
 		sendEventEntity.setCreatedTimestamp(LocalDateTime.now());
 		em.persist(sendEventEntity);

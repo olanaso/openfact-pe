@@ -3,14 +3,15 @@ package org.openfact.pe.services.sender;
 import org.openfact.Config.Scope;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OpenfactSessionFactory;
+import org.openfact.pe.provider.UblSunatSenderProvider;
+import org.openfact.pe.provider.UblSunatSenderProviderFactory;
 import org.openfact.ubl.UblSenderProvider;
 import org.openfact.ubl.UblSenderProviderFactory;
 
-public class SunatSenderProviderFactory implements UblSenderProviderFactory {
-
+public class SunatUblSenderProviderFactory implements UblSunatSenderProviderFactory {
 	@Override
-	public UblSenderProvider create(OpenfactSession session) {
-		return new SunatSenderProvider(session);
+	public UblSunatSenderProvider create(OpenfactSession session) {
+		return new SunatUblSenderProvider(session);
 	}
 
 	@Override

@@ -13,16 +13,16 @@ import org.openfact.ubl.UblSenderException;
 
 public interface UblSunatSendEventProvider extends UblSendEventProvider {
 	SendEventModel addPerceptionSendEvent(OrganizationModel organization, PerceptionModel perception,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException;
+			boolean isAccepted) throws UblSenderException;
 
-	SendEventModel addRetentionSendEvent(OrganizationModel organization, RetentionModel retention, byte[] xmlSubmitted,
-			byte[] response, boolean isAccepted) throws UblSenderException;
+	SendEventModel addRetentionSendEvent(OrganizationModel organization, RetentionModel retention, boolean isAccepted)
+			throws UblSenderException;
 
 	SendEventModel addSummaryDocumentSendEvent(OrganizationModel organization, SummaryDocumentModel summaryDocument,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException;
+			boolean isAccepted) throws UblSenderException;
 
 	SendEventModel addVoidedDocumentSendEvent(OrganizationModel organization, VoidedDocumentModel voidedDocument,
-			byte[] xmlSubmitted, byte[] response, boolean isAccepted) throws UblSenderException;
+			boolean isAccepted) throws UblSenderException;
 
 	List<SendEventModel> getPerceptionSendEvents(OrganizationModel organization, PerceptionModel perception)
 			throws UblSenderException;

@@ -11,16 +11,16 @@ import org.openfact.ubl.UblSenderResponseProvider;
 
 public interface UblSunatSenderResponseProvider extends UblSenderResponseProvider {
 	public SendEventModel perceptionSenderResponse(OrganizationModel organization, PerceptionModel perception,
-			byte[] xmlSubmitted, byte[] response, String... fault) throws UblSenderException;
+			byte[] submitted, byte[] response, String... fault) throws UblSenderException;
 
 	public SendEventModel retentionSenderResponse(OrganizationModel organization, RetentionModel retention,
-			byte[] xmlSubmitted, byte[] response, String... fault) throws UblSenderException;
+			byte[] submitted, byte[] response, String... fault) throws UblSenderException;
 
 	public SendEventModel voidedDocumentSenderResponse(OrganizationModel organization,
-			VoidedDocumentModel voidedDocument, byte[] xmlSubmitted, String response, String... fault)
+			VoidedDocumentModel voidedDocument, byte[] submitted, String response, String... fault)
 			throws UblSenderException;
 
 	public SendEventModel summaryDocumentSenderResponse(OrganizationModel organization,
-			SummaryDocumentModel summaryDocument, byte[] xmlSubmitted, String response, String... fault)
+			SummaryDocumentModel summaryDocument, byte[] submitted, String response, String... fault)
 			throws UblSenderException;
 }

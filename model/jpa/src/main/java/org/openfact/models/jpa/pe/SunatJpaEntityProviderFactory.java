@@ -8,7 +8,7 @@ import org.openfact.models.OpenfactSessionFactory;
 
 public class SunatJpaEntityProviderFactory implements JpaEntityProviderFactory {
 
-    protected static final String ID = "entity-provider-pe";
+    protected static final String ID = "entity-provider-sunat";
 
     @Override
     public JpaEntityProvider create(OpenfactSession session) {

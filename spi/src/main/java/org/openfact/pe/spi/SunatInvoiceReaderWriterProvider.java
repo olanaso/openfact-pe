@@ -38,6 +38,11 @@ public class SunatInvoiceReaderWriterProvider implements InvoiceReaderWriterProv
     }
 
     @Override
+    public InvoiceType read(Document document) {
+        return UBL21Reader.invoice().read(document);
+    }
+
+    @Override
     public Document writeAsDocument(OrganizationModel organization, InvoiceType invoice, Map<String, String> attributes) {
         try {
             MapBasedNamespaceContext mapBasedNamespace = SunatUtils.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");

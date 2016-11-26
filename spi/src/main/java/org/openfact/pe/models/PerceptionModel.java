@@ -9,8 +9,8 @@ import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredActionDocument;
 
 public interface PerceptionModel {
-
-    String getId();
+     
+	String getId();
 
     String getDocumentId();
 

@@ -24,7 +24,7 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.SummaryDocumentsType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
@@ -73,7 +73,7 @@ public class SummaryDocumentManager {
 
         SummaryDocumentModel summaryDocument = model.addSummaryDocument(organization, documentId.getValue());
         SunatTypeToModel.importSummaryDocument(session, organization, summaryDocument, type);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> summaryDocument.addRequiredAction(c));
+        RequiredAction.getDefaults().stream().forEach(c -> summaryDocument.addRequiredAction(c));
 
         try {
             // Generate Document

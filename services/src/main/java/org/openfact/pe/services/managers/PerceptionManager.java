@@ -24,7 +24,7 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
@@ -69,7 +69,7 @@ public class PerceptionManager {
 
         PerceptionModel perception = model.addPerception(organization, documentId.getValue());
         SunatTypeToModel.importPerception(session, organization, perception, type);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> perception.addRequiredAction(c));
+        RequiredAction.getDefaults().stream().forEach(c -> perception.addRequiredAction(c));
 
         try {
             // Generate Document

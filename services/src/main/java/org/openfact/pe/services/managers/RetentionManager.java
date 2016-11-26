@@ -24,7 +24,7 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
@@ -69,7 +69,7 @@ public class RetentionManager {
 
         RetentionModel retention = model.addRetention(organization, documentId.getValue());
         SunatTypeToModel.importRetention(session, organization, retention, type);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> retention.addRequiredAction(c));
+        RequiredAction.getDefaults().stream().forEach(c -> retention.addRequiredAction(c));
 
         try {
             // Generate Document

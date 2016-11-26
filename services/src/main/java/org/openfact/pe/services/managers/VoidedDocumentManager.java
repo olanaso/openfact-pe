@@ -24,7 +24,7 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.VoidedDocumentsType;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
@@ -70,7 +70,7 @@ public class VoidedDocumentManager {
 
         VoidedDocumentModel voidedDocument = model.addVoidedDocument(organization, documentId.getValue());
         SunatTypeToModel.importVoidedDocument(session, organization, voidedDocument, type);
-        RequiredActionDocument.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
+        RequiredAction.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
 
         try {
             // Generate Document

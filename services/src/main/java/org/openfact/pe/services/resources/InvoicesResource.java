@@ -23,6 +23,7 @@ import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.managers.InvoiceManager;
+import org.openfact.ubl.SendException;
 
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
@@ -60,10 +61,7 @@ public class InvoicesResource {
         try {
             InvoiceType invoiceType = SunatRepresentationToType.toInvoiceType(organization, rep);
             InvoiceModel invoice = invoiceManager.addInvoice(organization, invoiceType, Collections.emptyMap());
-            if (session.getTransactionManager().isActive()) {
-                session.getTransactionManager().commit();
-            }
-
+            
             // Enviar a Cliente
             if (rep.isEnviarAutomaticamenteAlCliente()) {
                 invoiceManager.sendToCustomerParty(organization, invoice);
@@ -73,6 +71,10 @@ public class InvoicesResource {
             if (rep.isEnviarAutomaticamenteASunat()) {
                 invoiceManager.sendToTrirdParty(organization, invoice);
             }
+            
+            if (session.getTransactionManager().isActive()) {
+                session.getTransactionManager().commit();
+            }            
 
             URI location = uriInfo.getAbsolutePathBuilder().path(invoice.getId()).build();
             return Response.created(location).build();
@@ -86,7 +88,12 @@ public class InvoicesResource {
                 session.getTransactionManager().setRollbackOnly();
             }
             return ErrorResponse.exists("Could not create invoice");
-        }
+        } catch (SendException me) {
+            if (session.getTransactionManager().isActive()) {
+                session.getTransactionManager().setRollbackOnly();
+            }
+            return ErrorResponse.exists("Could not send invoice");
+        } 
     }
 
 }

@@ -3,14 +3,17 @@ package org.openfact.pe.spi;
 import org.openfact.Config.Scope;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OpenfactSessionFactory;
-import org.openfact.ubl.InvoiceIDGeneratorProvider;
-import org.openfact.ubl.InvoiceIDGeneratorProviderFactory;
+import org.openfact.ubl.UBLCreditNoteProvider;
+import org.openfact.ubl.UBLCreditNoteProviderFactory;
 
-public class SunatInvoiceIDGeneratorProviderFactory implements InvoiceIDGeneratorProviderFactory {
+/**
+ * Created by admin on 11/22/16.
+ */
+public class SunatUBLCreditNoteProviderFactory implements UBLCreditNoteProviderFactory {
 
     @Override
-    public InvoiceIDGeneratorProvider create(OpenfactSession session) {
-        return new SunatInvoiceIDGeneratorProvider(session);
+    public UBLCreditNoteProvider create(OpenfactSession session) {
+        return new SunatUBLCreditNoteProvider(session);
     }
 
     @Override

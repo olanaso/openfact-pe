@@ -23,6 +23,7 @@ import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.managers.CreditNoteManager;
+import org.openfact.ubl.SendException;
 
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 
@@ -86,7 +87,12 @@ public class CreditNotesResource {
                 session.getTransactionManager().setRollbackOnly();
             }
             return ErrorResponse.exists("Could not create credit note");
-        }
+        } catch (SendException me) {
+            if (session.getTransactionManager().isActive()) {
+                session.getTransactionManager().setRollbackOnly();
+            }
+            return ErrorResponse.exists("Could not send credit note");
+        } 
     }
 
 }

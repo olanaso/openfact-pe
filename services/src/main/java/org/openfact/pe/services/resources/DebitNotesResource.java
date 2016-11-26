@@ -23,6 +23,7 @@ import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.managers.DebitNoteManager;
+import org.openfact.ubl.SendException;
 
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 
@@ -87,7 +88,12 @@ public class DebitNotesResource {
                 session.getTransactionManager().setRollbackOnly();
             }
             return ErrorResponse.exists("Could not create debit note");
-        }
+        } catch (SendException me) {
+            if (session.getTransactionManager().isActive()) {
+                session.getTransactionManager().setRollbackOnly();
+            }
+            return ErrorResponse.exists("Could not send Debit note");
+        } 
     }
 
 }

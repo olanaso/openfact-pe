@@ -3,14 +3,17 @@ package org.openfact.pe.spi;
 import org.openfact.Config.Scope;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OpenfactSessionFactory;
-import org.openfact.ubl.DebitNoteReaderWriterProvider;
-import org.openfact.ubl.DebitNoteReaderWriterProviderFactory;
+import org.openfact.ubl.UBLInvoiceProvider;
+import org.openfact.ubl.UBLInvoiceProviderFactory;
 
-public class SunatDebitNoteReaderWriterProviderFactory implements DebitNoteReaderWriterProviderFactory {
+/**
+ * Created by admin on 11/22/16.
+ */
+public class SunatUBLInvoiceProviderFactory implements UBLInvoiceProviderFactory {
 
     @Override
-    public DebitNoteReaderWriterProvider create(OpenfactSession session) {
-        return new SunatDebitNoteReaderWriterProvider(session);
+    public UBLInvoiceProvider create(OpenfactSession session) {
+        return new SunatUBLInvoiceProvider(session);
     }
 
     @Override

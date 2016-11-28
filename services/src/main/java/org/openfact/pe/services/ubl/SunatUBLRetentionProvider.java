@@ -4,13 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.soap.SOAPFault;
 import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import org.openfact.common.converts.DocumentUtils;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.models.FileModel;
 import org.openfact.models.OpenfactSession;
@@ -21,6 +27,7 @@ import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.RetentionType;
+import org.openfact.pe.model.types.SunatFactory;
 import org.openfact.pe.models.RetentionSendEventModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
@@ -37,6 +44,7 @@ import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
+import org.w3c.dom.Document;
 
 public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
@@ -54,12 +62,12 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 	@Override
 	public UBLIDGenerator<RetentionType> idGenerator() {
 		return new UBLIDGenerator<RetentionType>() {
-			
+
 			@Override
 			public void close() {
-				
+
 			}
-			
+
 			@Override
 			public String generateID(OrganizationModel organization, RetentionType retentionType) {
 				CodigoTipoDocumento retentionCode = CodigoTipoDocumento.RETENCION;
@@ -103,12 +111,69 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
 	@Override
 	public UBLReader<RetentionType> reader() {
-		return null;
+		return new UBLReader<RetentionType>() {
+
+			@Override
+			public void close() {
+
+			}
+
+			@Override
+			public RetentionType read(Document document) {
+				try {
+					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
+					Unmarshaller unmarshal = factory.createUnmarshaller();
+					JAXBElement<RetentionType> jaxbRetentionType = (JAXBElement<RetentionType>) unmarshal
+							.unmarshal(document);
+					RetentionType retentionType = jaxbRetentionType.getValue();
+					return retentionType;
+				} catch (JAXBException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			public RetentionType read(byte[] bytes) {
+				try {
+					Document document = DocumentUtils.byteToDocument(bytes);
+					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
+					Unmarshaller unmarshal = factory.createUnmarshaller();
+					JAXBElement<RetentionType> jaxbRetentionType = (JAXBElement<RetentionType>) unmarshal
+							.unmarshal(document);
+					RetentionType retentionType = jaxbRetentionType.getValue();
+					return retentionType;
+				} catch (JAXBException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return null;
+			}
+		};
 	}
 
 	@Override
 	public UBLWriter<RetentionType> writer() {
-		return null;
+		return new UBLWriter<RetentionType>() {
+
+			@Override
+			public void close() {
+
+			}
+
+			@Override
+			public Document write(OrganizationModel organization, RetentionType retentionType,
+					Map<String, String> attributes) {
+				return null;
+			}
+
+			@Override
+			public Document write(OrganizationModel organization, RetentionType retentionType) {
+				return null;
+			}
+		};
 	}
 
 	@Override
@@ -140,7 +205,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					// Write event to the default database
 					retentionSendEvent = (RetentionSendEventModel) session.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, retention);
-					//retentionSendEvent.setAttachments(files);
+					// retentionSendEvent.setAttachments(files);
 					retentionSendEvent.setRetention(retention);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

@@ -40,72 +40,72 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 
 public class RetentionManager {
 
-    protected static final Logger logger = Logger.getLogger(RetentionManager.class);
+	protected static final Logger logger = Logger.getLogger(RetentionManager.class);
 
-    protected OpenfactSession session;
-    protected RetentionProvider model;
+	protected OpenfactSession session;
+	protected RetentionProvider model;
 
-    public RetentionManager(OpenfactSession session) {
-        this.session = session;
-        this.model = session.getProvider(RetentionProvider.class);
-    }
+	public RetentionManager(OpenfactSession session) {
+		this.session = session;
+		this.model = session.getProvider(RetentionProvider.class);
+	}
 
-    public RetentionModel getRetentionByDocumentId(String documentId, OrganizationModel organization) {
-        return model.getRetentionByDocumentId(documentId, organization);
-    }
+	public RetentionModel getRetentionByDocumentId(String documentId, OrganizationModel organization) {
+		return model.getRetentionById(organization, documentId);
+	}
 
-    public RetentionModel addRetention(OrganizationModel organization, DocumentRepresentation rep) {
-        RetentionType type = SunatRepresentationToType.toRetentionType(rep);
-        return addRetention(organization, type);
-    }
+	public RetentionModel addRetention(OrganizationModel organization, DocumentRepresentation rep) {
+		RetentionType type = SunatRepresentationToType.toRetentionType(rep);
+		return addRetention(organization, type);
+	}
 
-    public RetentionModel addRetention(OrganizationModel organization, RetentionType type) {
-        IDType documentId = type.getId();
-        if (documentId == null || documentId.getValue() == null) {
-            String generatedId = SunatDocumentIdProvider.generateRetentionDocumentId(session, organization);
-            documentId = new IDType(generatedId);
-            type.setId(documentId);
-        }
+	public RetentionModel addRetention(OrganizationModel organization, RetentionType type) {
+		IDType documentId = type.getId();
+		if (documentId == null || documentId.getValue() == null) {
+			String generatedId = SunatDocumentIdProvider.generateRetentionDocumentId(session, organization);
+			documentId = new IDType(generatedId);
+			type.setId(documentId);
+		}
 
-        RetentionModel retention = model.addRetention(organization, documentId.getValue());
-        SunatTypeToModel.importRetention(session, organization, retention, type);
-        RequiredAction.getDefaults().stream().forEach(c -> retention.addRequiredAction(c));
+		RetentionModel retention = model.addRetention(organization, documentId.getValue());
+		SunatTypeToModel.importRetention(session, organization, retention, type);
+		RequiredAction.getDefaults().stream().forEach(c -> retention.addRequiredAction(c));
 
-        try {
-            // Generate Document
-            Document baseDocument = SunatTypeToDocument.toDocument(type);
+		try {
+			// Generate Document
+			Document baseDocument = SunatTypeToDocument.toDocument(type);
 
-            // Sign Document
-            SignerProvider signerProvider = session.getProvider(SignerProvider.class);
-            Document signedDocument = signerProvider.sign(baseDocument, organization);
+			// Sign Document
+			SignerProvider signerProvider = session.getProvider(SignerProvider.class);
+			Document signedDocument = signerProvider.sign(baseDocument, organization);
 
-            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
-            retention.setXmlDocument(bytes);
-        } catch (JAXBException e) {
-            logger.error("Error on marshal model", e);
-            throw new ModelException(e);
-        } catch (TransformerException e) {
-            logger.error("Error parsing to byte XML", e);
-            throw new ModelException(e);
-        }
-        return retention;
-    }
+			byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+			retention.setXmlDocument(bytes);
+		} catch (JAXBException e) {
+			logger.error("Error on marshal model", e);
+			throw new ModelException(e);
+		} catch (TransformerException e) {
+			logger.error("Error parsing to byte XML", e);
+			throw new ModelException(e);
+		}
+		return retention;
+	}
 
-    public boolean removeRetention(OrganizationModel organization, RetentionModel retention) {
-        if (model.removeRetention(retention, organization)) {
-            return true;
-        }
-        return false;
-    }
+	public boolean removeRetention(OrganizationModel organization, RetentionModel retention) {
+		if (model.removeRetention(organization, retention)) {
+			return true;
+		}
+		return false;
+	}
 
-    public void sendToCustomerParty(OrganizationModel organization, RetentionModel retention) {
-        // TODO Auto-generated method stub
+	public void sendToCustomerParty(OrganizationModel organization, RetentionModel retention) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    public void sendToTrirdParty(OrganizationModel organization, RetentionModel retention) {
-        // TODO Auto-generated method stub
+	public void sendToTrirdParty(OrganizationModel organization, RetentionModel retention) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
 }

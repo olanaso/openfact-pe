@@ -77,7 +77,7 @@ public class RetentionsResource {
         if (filterText == null) {
             retentions = retentionProvider.getRetentions(organization, firstResult, maxResults);
         } else {
-            retentions = retentionProvider.searchForRetention(filterText.trim(), organization, firstResult,
+            retentions = retentionProvider.searchForRetention(organization,filterText.trim(),  firstResult,
                     maxResults);
         }
         return retentions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
@@ -200,9 +200,9 @@ public class RetentionsResource {
         String filterText = criteria.getFilterText();
         SearchResultsModel<RetentionModel> results = null;
         if (filterText != null) {
-            results = retentionProvider.searchForRetention(filterText.trim(), criteriaModel, organization);
+            results = retentionProvider.searchForRetention(organization, criteriaModel, filterText.trim());
         } else {
-            results = retentionProvider.searchForRetention(criteriaModel, organization);
+            results = retentionProvider.searchForRetention(organization,criteriaModel );
         }
         SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
         List<DocumentRepresentation> items = new ArrayList<>();
@@ -218,7 +218,7 @@ public class RetentionsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public DocumentRepresentation getRetention(@PathParam("retentionId") final String retentionId) {
         RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionByDocumentId(retentionId, organization);
+        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
         if (retention == null) {
             throw new NotFoundException("Retention not found");
         }
@@ -233,7 +233,7 @@ public class RetentionsResource {
     @Produces("application/text")
     public Response getRetentionAsText(@PathParam("retentionId") final String retentionId) {
         RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionByDocumentId(retentionId, organization);
+        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
         if (retention == null) {
             throw new NotFoundException("Retention not found");
         }
@@ -256,7 +256,7 @@ public class RetentionsResource {
     @Produces("application/xml")
     public Response getRetentionAsXml(@PathParam("retentionId") final String retentionId) {
         RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionByDocumentId(retentionId, organization);
+        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
         if (retention == null) {
             throw new NotFoundException("Retention not found");
         }
@@ -286,7 +286,7 @@ public class RetentionsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRetention(@PathParam("retentionId") final String retentionId) {
         RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionByDocumentId(retentionId, organization);
+        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
         if (retention == null) {
             throw new NotFoundException("Retention not found");
         }

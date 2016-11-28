@@ -40,77 +40,72 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 
 public class SummaryDocumentManager {
 
-    protected static final Logger logger = Logger.getLogger(SummaryDocumentManager.class);
+	protected static final Logger logger = Logger.getLogger(SummaryDocumentManager.class);
 
-    protected OpenfactSession session;
-    protected SummaryDocumentProvider model;
+	protected OpenfactSession session;
+	protected SummaryDocumentProvider model;
 
-    public SummaryDocumentManager(OpenfactSession session) {
-        this.session = session;
-        this.model = session.getProvider(SummaryDocumentProvider.class);
-    }
+	public SummaryDocumentManager(OpenfactSession session) {
+		this.session = session;
+		this.model = session.getProvider(SummaryDocumentProvider.class);
+	}
 
-    public SummaryDocumentModel getSummaryDocumentByDocumentId(String documentId,
-            OrganizationModel organization) {
-        return model.getSummaryDocumentByDocumentId(documentId, organization);
-    }
+	public SummaryDocumentModel getSummaryDocumentByDocumentId(String documentId, OrganizationModel organization) {
+		return model.getSummaryDocumentById(organization, documentId);
+	}
 
-    public SummaryDocumentModel addSummaryDocument(OrganizationModel organization,
-            DocumentRepresentation rep) {
-        SummaryDocumentsType type = SunatRepresentationToType.toSummaryDocumentType(rep);
-        return addSummaryDocument(organization, type);
-    }
+	public SummaryDocumentModel addSummaryDocument(OrganizationModel organization, DocumentRepresentation rep) {
+		SummaryDocumentsType type = SunatRepresentationToType.toSummaryDocumentType(rep);
+		return addSummaryDocument(organization, type);
+	}
 
-    public SummaryDocumentModel addSummaryDocument(OrganizationModel organization,
-            SummaryDocumentsType type) {
-        IDType documentId = type.getId();
-        if (documentId == null || documentId.getValue() == null) {
-            String generatedId = SunatDocumentIdProvider.generateSummaryDocumentDocumentId(session,
-                    organization);
-            documentId = new IDType(generatedId);
-            type.setId(documentId);
-        }
+	public SummaryDocumentModel addSummaryDocument(OrganizationModel organization, SummaryDocumentsType type) {
+		IDType documentId = type.getId();
+		if (documentId == null || documentId.getValue() == null) {
+			String generatedId = SunatDocumentIdProvider.generateSummaryDocumentDocumentId(session, organization);
+			documentId = new IDType(generatedId);
+			type.setId(documentId);
+		}
 
-        SummaryDocumentModel summaryDocument = model.addSummaryDocument(organization, documentId.getValue());
-        SunatTypeToModel.importSummaryDocument(session, organization, summaryDocument, type);
-        RequiredAction.getDefaults().stream().forEach(c -> summaryDocument.addRequiredAction(c));
+		SummaryDocumentModel summaryDocument = model.addSummaryDocument(organization, documentId.getValue());
+		SunatTypeToModel.importSummaryDocument(session, organization, summaryDocument, type);
+		RequiredAction.getDefaults().stream().forEach(c -> summaryDocument.addRequiredAction(c));
 
-        try {
-            // Generate Document
-            Document baseDocument = SunatTypeToDocument.toDocument(type);
+		try {
+			// Generate Document
+			Document baseDocument = SunatTypeToDocument.toDocument(type);
 
-            // Sign Document
-            SignerProvider signerProvider = session.getProvider(SignerProvider.class);
-            Document signedDocument = signerProvider.sign(baseDocument, organization);
+			// Sign Document
+			SignerProvider signerProvider = session.getProvider(SignerProvider.class);
+			Document signedDocument = signerProvider.sign(baseDocument, organization);
 
-            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
-            summaryDocument.setXmlDocument(bytes);
-        } catch (JAXBException e) {
-            logger.error("Error on marshal model", e);
-            throw new ModelException(e);
-        } catch (TransformerException e) {
-            logger.error("Error parsing to byte XML", e);
-            throw new ModelException(e);
-        }
-        return summaryDocument;
-    }
+			byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+			summaryDocument.setXmlDocument(bytes);
+		} catch (JAXBException e) {
+			logger.error("Error on marshal model", e);
+			throw new ModelException(e);
+		} catch (TransformerException e) {
+			logger.error("Error parsing to byte XML", e);
+			throw new ModelException(e);
+		}
+		return summaryDocument;
+	}
 
-    public boolean removeSummaryDocument(OrganizationModel organization,
-            SummaryDocumentModel summaryDocument) {
-        if (model.removeSummaryDocument(summaryDocument, organization)) {
-            return true;
-        }
-        return false;
-    }
+	public boolean removeSummaryDocument(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
+		if (model.removeSummaryDocument(organization, summaryDocument)) {
+			return true;
+		}
+		return false;
+	}
 
-    public void sendToCustomerParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
-        // TODO Auto-generated method stub
+	public void sendToCustomerParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    public void sendToTrirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
-        // TODO Auto-generated method stub
+	public void sendToTrirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
 }

@@ -40,73 +40,72 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 
 public class VoidedDocumentManager {
 
-    protected static final Logger logger = Logger.getLogger(VoidedDocumentManager.class);
+	protected static final Logger logger = Logger.getLogger(VoidedDocumentManager.class);
 
-    protected OpenfactSession session;
-    protected VoidedDocumentProvider model;
+	protected OpenfactSession session;
+	protected VoidedDocumentProvider model;
 
-    public VoidedDocumentManager(OpenfactSession session) {
-        this.session = session;
-        this.model = session.getProvider(VoidedDocumentProvider.class);
-    }
+	public VoidedDocumentManager(OpenfactSession session) {
+		this.session = session;
+		this.model = session.getProvider(VoidedDocumentProvider.class);
+	}
 
-    public VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId,
-            OrganizationModel organization) {
-        return model.getVoidedDocumentByDocumentId(documentId, organization);
-    }
+	public VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId, OrganizationModel organization) {
+		return model.getVoidedDocumentById(organization, documentId);
+	}
 
-    public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, DocumentRepresentation rep) {
-        VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(rep);
-        return addVoidedDocument(organization, type);
-    }
+	public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, DocumentRepresentation rep) {
+		VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(rep);
+		return addVoidedDocument(organization, type);
+	}
 
-    public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedDocumentsType type) {
-        IDType documentId = type.getID();
-        if (documentId == null || documentId.getValue() == null) {
-            String generatedId = SunatDocumentIdProvider.generateVoidedDocumentId(session, organization);
-            documentId = new IDType(generatedId);
-            type.setID(documentId);
-        }
+	public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedDocumentsType type) {
+		IDType documentId = type.getID();
+		if (documentId == null || documentId.getValue() == null) {
+			String generatedId = SunatDocumentIdProvider.generateVoidedDocumentId(session, organization);
+			documentId = new IDType(generatedId);
+			type.setID(documentId);
+		}
 
-        VoidedDocumentModel voidedDocument = model.addVoidedDocument(organization, documentId.getValue());
-        SunatTypeToModel.importVoidedDocument(session, organization, voidedDocument, type);
-        RequiredAction.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
+		VoidedDocumentModel voidedDocument = model.addVoidedDocument(organization, documentId.getValue());
+		SunatTypeToModel.importVoidedDocument(session, organization, voidedDocument, type);
+		RequiredAction.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
 
-        try {
-            // Generate Document
-            Document baseDocument = SunatTypeToDocument.toDocument(type);
+		try {
+			// Generate Document
+			Document baseDocument = SunatTypeToDocument.toDocument(type);
 
-            // Sign Document
-            SignerProvider signerProvider = session.getProvider(SignerProvider.class);
-            Document signedDocument = signerProvider.sign(baseDocument, organization);
+			// Sign Document
+			SignerProvider signerProvider = session.getProvider(SignerProvider.class);
+			Document signedDocument = signerProvider.sign(baseDocument, organization);
 
-            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
-            voidedDocument.setXmlDocument(bytes);
-        } catch (JAXBException e) {
-            logger.error("Error on marshal model", e);
-            throw new ModelException(e);
-        } catch (TransformerException e) {
-            logger.error("Error parsing to byte XML", e);
-            throw new ModelException(e);
-        }
-        return voidedDocument;
-    }
+			byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+			voidedDocument.setXmlDocument(bytes);
+		} catch (JAXBException e) {
+			logger.error("Error on marshal model", e);
+			throw new ModelException(e);
+		} catch (TransformerException e) {
+			logger.error("Error parsing to byte XML", e);
+			throw new ModelException(e);
+		}
+		return voidedDocument;
+	}
 
-    public boolean removeVoidedDocument(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
-        if (model.removeVoidedDocument(voidedDocument, organization)) {
-            return true;
-        }
-        return false;
-    }
+	public boolean removeVoidedDocument(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
+		if (model.removeVoidedDocument(organization, voidedDocument)) {
+			return true;
+		}
+		return false;
+	}
 
-    public void sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
-        // TODO Auto-generated method stub
+	public void sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    public void sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
-        // TODO Auto-generated method stub
+	public void sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
 }

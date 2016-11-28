@@ -11,7 +11,7 @@ import org.openfact.provider.Provider;
 
 public interface SummaryDocumentProvider extends Provider {
 
-	 SummaryDocumentModel addInvoice(OrganizationModel organization, String ID);
+	 SummaryDocumentModel addSummaryDocument(OrganizationModel organization, String ID);
 
 	    SummaryDocumentModel getSummaryDocumentById(OrganizationModel organization, String id);
 

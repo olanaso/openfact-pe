@@ -40,72 +40,72 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 
 public class PerceptionManager {
 
-    protected static final Logger logger = Logger.getLogger(PerceptionManager.class);
+	protected static final Logger logger = Logger.getLogger(PerceptionManager.class);
 
-    protected OpenfactSession session;
-    protected PerceptionProvider model;
+	protected OpenfactSession session;
+	protected PerceptionProvider model;
 
-    public PerceptionManager(OpenfactSession session) {
-        this.session = session;
-        this.model = session.getProvider(PerceptionProvider.class);
-    }
+	public PerceptionManager(OpenfactSession session) {
+		this.session = session;
+		this.model = session.getProvider(PerceptionProvider.class);
+	}
 
-    public PerceptionModel getPerceptionByDocumentId(String documentId, OrganizationModel organization) {
-        return model.getPerceptionByDocumentId(documentId, organization);
-    }
+	public PerceptionModel getPerceptionByDocumentId(String documentId, OrganizationModel organization) {
+		return model.getPerceptionById(organization, documentId);
+	}
 
-    public PerceptionModel addPerception(OrganizationModel organization, DocumentRepresentation rep) {
-        PerceptionType type = SunatRepresentationToType.toPerceptionType(rep);
-        return addPerception(organization, type);
-    }
+	public PerceptionModel addPerception(OrganizationModel organization, DocumentRepresentation rep) {
+		PerceptionType type = SunatRepresentationToType.toPerceptionType(rep);
+		return addPerception(organization, type);
+	}
 
-    public PerceptionModel addPerception(OrganizationModel organization, PerceptionType type) {
-        IDType documentId = type.getId();
-        if (documentId == null || documentId.getValue() == null) {
-            String generatedId = SunatDocumentIdProvider.generatePerceptionDocumentId(session, organization);
-            documentId = new IDType(generatedId);
-            type.setId(documentId);
-        }
+	public PerceptionModel addPerception(OrganizationModel organization, PerceptionType type) {
+		IDType documentId = type.getId();
+		if (documentId == null || documentId.getValue() == null) {
+			String generatedId = SunatDocumentIdProvider.generatePerceptionDocumentId(session, organization);
+			documentId = new IDType(generatedId);
+			type.setId(documentId);
+		}
 
-        PerceptionModel perception = model.addPerception(organization, documentId.getValue());
-        SunatTypeToModel.importPerception(session, organization, perception, type);
-        RequiredAction.getDefaults().stream().forEach(c -> perception.addRequiredAction(c));
+		PerceptionModel perception = model.addPerception(organization, documentId.getValue());
+		SunatTypeToModel.importPerception(session, organization, perception, type);
+		RequiredAction.getDefaults().stream().forEach(c -> perception.addRequiredAction(c));
 
-        try {
-            // Generate Document
-            Document baseDocument = SunatTypeToDocument.toDocument(type);
+		try {
+			// Generate Document
+			Document baseDocument = SunatTypeToDocument.toDocument(type);
 
-            // Sign Document
-            SignerProvider signerProvider = session.getProvider(SignerProvider.class);
-            Document signedDocument = signerProvider.sign(baseDocument, organization);
+			// Sign Document
+			SignerProvider signerProvider = session.getProvider(SignerProvider.class);
+			Document signedDocument = signerProvider.sign(baseDocument, organization);
 
-            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
-            perception.setXmlDocument(bytes);
-        } catch (JAXBException e) {
-            logger.error("Error on marshal model", e);
-            throw new ModelException(e);
-        } catch (TransformerException e) {
-            logger.error("Error parsing to byte XML", e);
-            throw new ModelException(e);
-        }
-        return perception;
-    }
+			byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+			perception.setXmlDocument(bytes);
+		} catch (JAXBException e) {
+			logger.error("Error on marshal model", e);
+			throw new ModelException(e);
+		} catch (TransformerException e) {
+			logger.error("Error parsing to byte XML", e);
+			throw new ModelException(e);
+		}
+		return perception;
+	}
 
-    public boolean removePerception(OrganizationModel organization, PerceptionModel perception) {
-        if (model.removePerception(perception, organization)) {
-            return true;
-        }
-        return false;
-    }
+	public boolean removePerception(OrganizationModel organization, PerceptionModel perception) {
+		if (model.removePerception(organization, perception)) {
+			return true;
+		}
+		return false;
+	}
 
-    public void sendToCustomerParty(OrganizationModel organization, PerceptionModel perception) {
-        // TODO Auto-generated method stub
+	public void sendToCustomerParty(OrganizationModel organization, PerceptionModel perception) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    public void sendToTrirdParty(OrganizationModel organization, PerceptionModel perception) {
-        // TODO Auto-generated method stub
+	public void sendToTrirdParty(OrganizationModel organization, PerceptionModel perception) {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
 }

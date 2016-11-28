@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openfact.models.PartyModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.enums.RequiredAction;
 
 public interface RetentionModel {
 
@@ -80,7 +80,7 @@ public interface RetentionModel {
 
     void removeRequiredAction(String action);
 
-    void addRequiredAction(RequiredActionDocument action);
+    void addRequiredAction(RequiredAction action);
 
-    void removeRequiredAction(RequiredActionDocument action);
+    void removeRequiredAction(RequiredAction action);
 }

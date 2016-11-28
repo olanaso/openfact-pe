@@ -15,13 +15,11 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 
-public class ServiceWrapper<T> {
-	private String wsUrl;
+public class ServiceWrapper<T> {	
 	private Map<String, String> config;
 	private ServicePasswordThread passwordThread;
 
-	public ServiceWrapper(Map<String, String> config, String wsUrl) {
-		this.wsUrl = wsUrl;
+	public ServiceWrapper(Map<String, String> config) {		
 		this.config = config;
 		passwordThread = new ServicePasswordThread(config);
 	}
@@ -34,7 +32,7 @@ public class ServiceWrapper<T> {
 		Map<String, Object> props = new HashMap<>();
 		props.put("mtom-enabled", Boolean.FALSE);
 		factory.setProperties(props);
-		factory.setAddress(wsUrl);		
+		factory.setAddress(config.get("url"));		
 		factory.getInInterceptors().add(new LoggingInInterceptor());
 		factory.getOutInterceptors().add(new LoggingOutInterceptor());
 		factory.setServiceClass(serviceClass);

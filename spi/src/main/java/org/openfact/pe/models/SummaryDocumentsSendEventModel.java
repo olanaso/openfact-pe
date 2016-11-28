@@ -1,11 +1,10 @@
 package org.openfact.pe.models;
 
-import java.util.List;
+import org.openfact.ubl.SendEventModel;
 
-import org.openfact.models.ubl.SendEventModel;
 
 public interface SummaryDocumentsSendEventModel extends SendEventModel {
-	List<SummaryDocumentModel> getSummaryDocuments();
+	SummaryDocumentModel getSummaryDocument();
 
-	void setSummaryDocuments(List<SummaryDocumentModel> summaryDocuments);
+	void setSummaryDocument(SummaryDocumentModel summaryDocument);
 }

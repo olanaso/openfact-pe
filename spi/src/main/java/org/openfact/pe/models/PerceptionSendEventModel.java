@@ -1,11 +1,9 @@
 package org.openfact.pe.models;
 
-import java.util.List;
-
-import org.openfact.models.ubl.SendEventModel;
+import org.openfact.ubl.SendEventModel;
 
 public interface PerceptionSendEventModel extends SendEventModel {
-	List<PerceptionModel> getPerceptions();
+	PerceptionModel getPerception();
 
-	void setPerceptions(List<PerceptionModel> perceptions);
+	void setPerception(PerceptionModel perception);
 }

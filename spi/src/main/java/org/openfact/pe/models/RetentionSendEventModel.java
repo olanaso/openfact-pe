@@ -1,11 +1,9 @@
 package org.openfact.pe.models;
 
-import java.util.List;
-
-import org.openfact.models.ubl.SendEventModel;
+import org.openfact.ubl.SendEventModel;
 
 public interface RetentionSendEventModel  extends SendEventModel {
-	List<RetentionModel> getRetentions();
+	RetentionModel getRetention();
 
-	void setRetentions(List<RetentionModel> retentions);
+	void setRetention(RetentionModel retention);
 }

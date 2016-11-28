@@ -2,20 +2,28 @@ package org.openfact.pe.services.ubl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.soap.SOAPFault;
 import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import org.openfact.common.converts.StringUtils;
 import org.openfact.models.FileModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.ScrollModel;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.SendResultType;
+import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionSendEventModel;
+import org.openfact.pe.models.RetentionModel;
+import org.openfact.pe.models.RetentionProvider;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SunatResponseModel;
 import org.openfact.pe.models.SunatResponseProvider;
@@ -23,6 +31,7 @@ import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
+import org.openfact.pe.services.util.SunatUtils;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
@@ -44,7 +53,52 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
 	@Override
 	public UBLIDGenerator<RetentionType> idGenerator() {
-		return null;
+		return new UBLIDGenerator<RetentionType>() {
+			
+			@Override
+			public void close() {
+				
+			}
+			
+			@Override
+			public String generateID(OrganizationModel organization, RetentionType retentionType) {
+				CodigoTipoDocumento retentionCode = CodigoTipoDocumento.RETENCION;
+				RetentionModel lastRetention = null;
+				ScrollModel<RetentionModel> retentions = session.getProvider(RetentionProvider.class)
+						.getRetentionsScroll(organization, false, 4, 2);
+				Iterator<RetentionModel> iterator = retentions.iterator();
+
+				Pattern pattern = Pattern.compile(retentionCode.getMask());
+				while (iterator.hasNext()) {
+					RetentionModel retention = iterator.next();
+					String documentId = retention.getDocumentId();
+
+					Matcher matcher = pattern.matcher(documentId);
+					if (matcher.find()) {
+						lastRetention = retention;
+						break;
+					}
+				}
+
+				int series = 0;
+				int number = 0;
+				if (lastRetention != null) {
+					String[] splits = lastRetention.getDocumentId().split("-");
+					series = Integer.parseInt(splits[0].substring(1));
+					number = Integer.parseInt(splits[1]);
+				}
+
+				int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
+				int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
+				StringBuilder documentId = new StringBuilder();
+				documentId.append(retentionCode.getMask().substring(0, 1));
+				documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
+				documentId.append("-");
+				documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
+
+				return documentId.toString();
+			}
+		};
 	}
 
 	@Override

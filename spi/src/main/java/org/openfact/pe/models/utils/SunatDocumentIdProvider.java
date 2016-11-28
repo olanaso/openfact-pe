@@ -13,8 +13,8 @@ public class SunatDocumentIdProvider {
     public static String generatePerceptionDocumentId(OpenfactSession session,
             OrganizationModel organization) {
         PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-        PerceptionModel perception = perceptionProvider.getLastPerceptionByPattern(organization,
-                CodigoTipoDocumento.PERCEPCION.getLenght(), CodigoTipoDocumento.PERCEPCION.getMask());
+        PerceptionModel perception = null;//perceptionProvider.getLastPerceptionByPattern(organization,
+               // CodigoTipoDocumento.PERCEPCION.getLenght(), CodigoTipoDocumento.PERCEPCION.getMask());
 
         int series = 0;
         int number = 0;
@@ -38,8 +38,8 @@ public class SunatDocumentIdProvider {
     public static String generateRetentionDocumentId(OpenfactSession session,
             OrganizationModel organization) {
         PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-        PerceptionModel perception = perceptionProvider.getLastPerceptionByPattern(organization,
-                CodigoTipoDocumento.RETENCION.getLenght(), CodigoTipoDocumento.RETENCION.getMask());
+        PerceptionModel perception = null;//perceptionProvider.getLastPerceptionByPattern(organization,
+               // CodigoTipoDocumento.RETENCION.getLenght(), CodigoTipoDocumento.RETENCION.getMask());
 
         int series = 0;
         int number = 0;
@@ -63,8 +63,8 @@ public class SunatDocumentIdProvider {
     public static String generateSummaryDocumentDocumentId(OpenfactSession session,
             OrganizationModel organization) {
         PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-        PerceptionModel perception = perceptionProvider.getLastPerceptionByPattern(organization,
-                CodigoTipoDocumento.RESUMEN_DIARIO.getLenght(), CodigoTipoDocumento.RESUMEN_DIARIO.getMask());
+        PerceptionModel perception = null;//perceptionProvider.getLastPerceptionByPattern(organization,
+             //   CodigoTipoDocumento.RESUMEN_DIARIO.getLenght(), CodigoTipoDocumento.RESUMEN_DIARIO.getMask());
 
         int series = 0;
         int number = 0;
@@ -87,8 +87,8 @@ public class SunatDocumentIdProvider {
 
     public static String generateVoidedDocumentId(OpenfactSession session, OrganizationModel organization) {
         PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-        PerceptionModel perception = perceptionProvider.getLastPerceptionByPattern(organization,
-                CodigoTipoDocumento.BAJA.getLenght(), CodigoTipoDocumento.BAJA.getMask());
+        PerceptionModel perception =null;// perceptionProvider.getLastPerceptionByPattern(organization,
+               // CodigoTipoDocumento.BAJA.getLenght(), CodigoTipoDocumento.BAJA.getMask());
 
         int series = 0;
         int number = 0;

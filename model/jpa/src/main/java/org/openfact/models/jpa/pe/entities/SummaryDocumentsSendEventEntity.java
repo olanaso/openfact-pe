@@ -14,10 +14,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.openfact.models.jpa.entities.SendEventEntity;
 
 @Entity
 @Table(name = "SUMMARY_DOCUMENTS_SEND_EVENT")
-public class SummaryDocumentsSendEventEntity {
+public class SummaryDocumentsSendEventEntity extends SendEventEntity{
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(generator = "uuid2")

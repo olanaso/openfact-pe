@@ -2,23 +2,34 @@ package org.openfact.pe.services.ubl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.soap.SOAPFault;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import org.openfact.common.converts.DocumentUtils;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.models.FileModel;
+import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
+import org.openfact.pe.model.types.SunatFactory;
 import org.openfact.pe.model.types.VoidedDocumentsType;
 import org.openfact.pe.models.SunatResponseModel;
 import org.openfact.pe.models.SunatResponseProvider;
@@ -36,6 +47,7 @@ import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
+import org.w3c.dom.Document;
 
 public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider {
 
@@ -101,12 +113,72 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 
 	@Override
 	public UBLReader<VoidedDocumentsType> reader() {
-		return null;
+		return new UBLReader<VoidedDocumentsType>() {
+
+			@Override
+			public void close() {
+			}
+
+			@Override
+			public VoidedDocumentsType read(Document document) {
+				try {
+					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
+					Unmarshaller unmarshal = factory.createUnmarshaller();
+					@SuppressWarnings("unchecked")
+					JAXBElement<VoidedDocumentsType> jaxbVoidedDocumentsType = (JAXBElement<VoidedDocumentsType>) unmarshal
+							.unmarshal(document);
+					VoidedDocumentsType voidedDocumentsType = jaxbVoidedDocumentsType.getValue();
+					return voidedDocumentsType;
+				} catch (JAXBException e) {
+					throw new ModelException(e);
+				}
+			}
+
+			@Override
+			public VoidedDocumentsType read(byte[] bytes) {
+				try {
+					Document document = DocumentUtils.byteToDocument(bytes);
+					return read(document);
+				} catch (Exception e) {
+					throw new ModelException(e);
+				}
+			}
+		};
 	}
 
 	@Override
 	public UBLWriter<VoidedDocumentsType> writer() {
-		return null;
+		return new UBLWriter<VoidedDocumentsType>() {
+
+			@Override
+			public void close() {
+			}
+
+			@Override
+			public Document write(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType,
+					Map<String, String> attributes) {
+				SunatFactory factory = new SunatFactory();
+				JAXBContext context;
+				try {
+					context = JAXBContext.newInstance(SunatFactory.class);
+					Marshaller marshallerElement = context.createMarshaller();
+					JAXBElement<VoidedDocumentsType> jaxbElement = factory.createVoidedDocuments(voidedDocumentsType);
+					DOMResult res = new DOMResult();
+					marshallerElement.marshal(jaxbElement, res);
+					// Element element = ((Document)
+					// res.getNode()).getDocumentElement();
+					Document document = ((Document) res.getNode()).getOwnerDocument();
+					return document;
+				} catch (JAXBException e) {
+					throw new ModelException(e);
+				}
+			}
+
+			@Override
+			public Document write(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
+				return write(organization, voidedDocumentsType, Collections.emptyMap());
+			}
+		};
 	}
 
 	@Override
@@ -164,7 +236,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, VoidedDocumentModel t)
+			public SendEventModel sendToCustomer(OrganizationModel organization, VoidedDocumentModel perception)
 					throws SendException {
 				return null;
 			}

@@ -2,6 +2,9 @@ package org.openfact.pe.services.ubl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -11,34 +14,44 @@ import java.util.regex.Pattern;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.soap.SOAPFault;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.common.converts.StringUtils;
+import org.openfact.email.EmailException;
+import org.openfact.email.EmailTemplateProvider;
+import org.openfact.email.freemarker.beans.ProfileBean;
 import org.openfact.models.FileModel;
+import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.PartyLegalEntityModel;
+import org.openfact.models.PartyModel;
 import org.openfact.models.ScrollModel;
-import org.openfact.ubl.SendEventModel;
+import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.model.types.SunatFactory;
-import org.openfact.pe.models.RetentionSendEventModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
-import org.openfact.pe.models.RetentionModel;
+import org.openfact.pe.models.RetentionSendEventModel;
 import org.openfact.pe.models.SunatResponseModel;
 import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
+import org.openfact.pe.services.constants.SunatEventType;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
+import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
@@ -123,33 +136,24 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 				try {
 					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
 					Unmarshaller unmarshal = factory.createUnmarshaller();
+					@SuppressWarnings("unchecked")
 					JAXBElement<RetentionType> jaxbRetentionType = (JAXBElement<RetentionType>) unmarshal
 							.unmarshal(document);
 					RetentionType retentionType = jaxbRetentionType.getValue();
 					return retentionType;
 				} catch (JAXBException e) {
-					e.printStackTrace();
+					throw new ModelException(e);
 				}
-				return null;
 			}
 
 			@Override
 			public RetentionType read(byte[] bytes) {
 				try {
 					Document document = DocumentUtils.byteToDocument(bytes);
-					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
-					Unmarshaller unmarshal = factory.createUnmarshaller();
-					JAXBElement<RetentionType> jaxbRetentionType = (JAXBElement<RetentionType>) unmarshal
-							.unmarshal(document);
-					RetentionType retentionType = jaxbRetentionType.getValue();
-					return retentionType;
-				} catch (JAXBException e) {
-					e.printStackTrace();
+					return read(document);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new ModelException(e);
 				}
-				return null;
 			}
 		};
 	}
@@ -160,18 +164,31 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
 			@Override
 			public void close() {
-
 			}
 
 			@Override
 			public Document write(OrganizationModel organization, RetentionType retentionType,
 					Map<String, String> attributes) {
-				return null;
+				SunatFactory factory = new SunatFactory();
+				JAXBContext context;
+				try {
+					context = JAXBContext.newInstance(SunatFactory.class);
+					Marshaller marshallerElement = context.createMarshaller();
+					JAXBElement<RetentionType> jaxbElement = factory.createRetention(retentionType);
+					DOMResult res = new DOMResult();
+					marshallerElement.marshal(jaxbElement, res);
+					// Element element = ((Document)
+					// res.getNode()).getDocumentElement();
+					Document document = ((Document) res.getNode()).getOwnerDocument();
+					return document;
+				} catch (JAXBException e) {
+					throw new ModelException(e);
+				}
 			}
 
 			@Override
 			public Document write(OrganizationModel organization, RetentionType retentionType) {
-				return null;
+				return write(organization, retentionType, Collections.emptyMap());
 			}
 		};
 	}
@@ -185,9 +202,57 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, RetentionModel t)
+			public SendEventModel sendToCustomer(OrganizationModel organization, RetentionModel retention)
 					throws SendException {
-				return null;
+				PartyModel retentionParty = retention.getReceiverParty();
+				if (retentionParty == null || retentionParty.getContact() == null
+						|| retentionParty.getContact().getElectronicMail() == null) {
+					return null;
+				}
+
+				// User where the email will be send
+				UserSenderModel user = new UserSenderModel() {
+					@Override
+					public String getFullName() {
+						List<PartyLegalEntityModel> partyLegalEntities = retentionParty.getPartyLegalEntity();
+						return partyLegalEntities.stream().map(f -> f.getRegistrationName())
+								.reduce((t, u) -> t + "," + u).get();
+					}
+
+					@Override
+					public String getEmail() {
+						return retentionParty.getContact().getElectronicMail();
+					}
+				};
+
+				// Attatchments
+				FileModel file = new FileModel();
+				file.setFileName(retention.getDocumentId());
+				file.setFile(retention.getXmlDocument());
+				file.setMimeType("application/xml");
+
+				try {
+					Map<String, Object> attributes = new HashMap<String, Object>();
+					attributes.put("user", new ProfileBean(user));
+					attributes.put("organizationName", SunatTemplateUtils.getOrganizationName(organization));
+
+					session.getProvider(EmailTemplateProvider.class).setOrganization(organization).setUser(user)
+							.setAttachments(new ArrayList<>(Arrays.asList(file)))
+							.send(SunatTemplateUtils.toCamelCase(SunatEventType.RETENTION) + "Subject",
+									"event-" + SunatEventType.RETENTION.toString().toLowerCase() + ".ftl", attributes);
+
+					// Write event to the database
+					SendEventModel sendEvent = session.getProvider(SunatSendEventProvider.class)
+							.addSendEvent(organization, SendResultType.SUCCESS, retention);
+					sendEvent.setDescription("Retention Sended by Email");
+
+					if (sendEvent.getResult()) {
+						retention.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
+					}
+					return sendEvent;
+				} catch (EmailException e) {
+					throw new SendException(e);
+				}
 			}
 
 			@Override

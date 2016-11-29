@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.xml.transform.TransformerException;
 
 import org.openfact.common.converts.StringUtils;
+import org.openfact.common.util.ObjectUtil;
 import org.openfact.models.CreditNoteModel;
 import org.openfact.models.DebitNoteModel;
 import org.openfact.models.FileModel;
@@ -15,6 +16,7 @@ import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.VoidedDocumentModel;
+import org.openfact.pe.services.constants.SunatEventType;
 import org.openfact.ubl.SendException;
 
 import jodd.io.ZipBuilder;
@@ -124,11 +126,28 @@ public class SunatTemplateUtils {
 		sb.append(perception.getDocumentId());
 		return sb.toString();
 	}
+
 	public static FileModel toFileModel(String mimeType, String fileName, byte[] file) {
 		FileModel model = new FileModel();
 		model.setFile(file);
 		model.setFileName(fileName);
 		model.setMimeType(mimeType);
 		return model;
+	}
+
+	public static String getOrganizationName(OrganizationModel organization) {
+		if (organization.getDisplayName() != null) {
+			return organization.getDisplayName();
+		} else {
+			return ObjectUtil.capitalize(organization.getName());
+		}
+	}
+
+	public static String toCamelCase(SunatEventType event) {
+		StringBuilder sb = new StringBuilder("event");
+		for (String s : event.name().toString().toLowerCase().split("_")) {
+			sb.append(ObjectUtil.capitalize(s));
+		}
+		return sb.toString();
 	}
 }

@@ -9,10 +9,10 @@ import javax.persistence.EntityManager;
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.SupplierPartyModel;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.pe.entities.VoidedDocumentsEntity;
-import org.openfact.models.ubl.common.SupplierPartyModel;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentsLineModel;
 
@@ -123,18 +123,6 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	}
 
 	@Override
-	public SupplierPartyModel getAccountingSupplierParty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SupplierPartyModel addAccountingSupplierParty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<String> getNotes() {
 		// TODO Auto-generated method stub
 		return null;
@@ -189,14 +177,27 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	}
 
 	@Override
-	public void addRequiredAction(RequiredActionDocument action) {
+	public SupplierPartyModel getAccountingSupplierParty() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SupplierPartyModel addAccountingSupplierParty() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addRequiredAction(RequiredAction action) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeRequiredAction(RequiredActionDocument action) {
+	public void removeRequiredAction(RequiredAction action) {
 		// TODO Auto-generated method stub
 		
 	}
+
 }

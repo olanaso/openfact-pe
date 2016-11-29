@@ -9,10 +9,10 @@ import javax.persistence.EntityManager;
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.SupplierPartyModel;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.pe.entities.SummaryDocumentsEntity;
-import org.openfact.models.ubl.common.SupplierPartyModel;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentsLineModel;
 
@@ -124,18 +124,6 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 	}
 
 	@Override
-	public SupplierPartyModel getAccountingSupplierParty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<SummaryDocumentsLineModel> getSummaryDocumentsLines() {
 		// TODO Auto-generated method stub
 		return null;
@@ -178,14 +166,26 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 	}
 
 	@Override
-	public void addRequiredAction(RequiredActionDocument action) {
+	public SupplierPartyModel getAccountingSupplierParty() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
-	public void removeRequiredAction(RequiredActionDocument action) {
+	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
 		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public void addRequiredAction(RequiredAction action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeRequiredAction(RequiredAction action) {
+		// TODO Auto-generated method stub
+		
 	}
 }

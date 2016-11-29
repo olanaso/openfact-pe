@@ -10,10 +10,10 @@ import javax.persistence.EntityManager;
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.RequiredActionDocument;
+import org.openfact.models.PartyModel;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.pe.entities.PerceptionEntity;
-import org.openfact.models.ubl.common.PartyModel;
 import org.openfact.pe.models.PerceptionDocumentReferenceModel;
 import org.openfact.pe.models.PerceptionModel;
 
@@ -162,31 +162,8 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	public void setSUNATTotalCashed(BigDecimal sUNATTotalCashed) {
 		// TODO Auto-generated method stub
 		
-	}
+	}	
 
-	@Override
-	public PartyModel getAgentParty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public PartyModel getAgentPartyAsNotNull() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public PartyModel getReceiverParty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public PartyModel getReceiverPartyAsNotNull() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public List<String> getNotes() {
@@ -242,14 +219,39 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 		
 	}
 
+
 	@Override
-	public void addRequiredAction(RequiredActionDocument action) {
+	public PartyModel getAgentParty() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PartyModel getAgentPartyAsNotNull() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PartyModel getReceiverParty() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PartyModel getReceiverPartyAsNotNull() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addRequiredAction(RequiredAction action) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeRequiredAction(RequiredActionDocument action) {
+	public void removeRequiredAction(RequiredAction action) {
 		// TODO Auto-generated method stub
 		
 	}

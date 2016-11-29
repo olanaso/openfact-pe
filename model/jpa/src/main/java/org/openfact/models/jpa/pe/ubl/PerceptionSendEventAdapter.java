@@ -6,6 +6,7 @@ import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.OrganizationAdapter;
 import org.openfact.models.jpa.pe.entities.PerceptionSendEventEntity;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionSendEventModel;
@@ -38,44 +39,50 @@ public class PerceptionSendEventAdapter implements PerceptionSendEventModel, Jpa
 
 	@Override
 	public boolean getResult() {
-		// TODO Auto-generated method stub
-		return false;
+		return sendEvent.isResult();
 	}
 
 	@Override
 	public void setResult(boolean result) {
-		// TODO Auto-generated method stub
-		
+		sendEvent.setResult(result);		
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return sendEvent.getDescription();
 	}
 
 	@Override
 	public void setDescription(String description) {
-		// TODO Auto-generated method stub
-		
+		sendEvent.setDescription(description);
 	}
 
 	@Override
 	public OrganizationModel getOrganization() {
-		// TODO Auto-generated method stub
-		return null;
+		if (sendEvent.getOrganization() == null) {
+			return null;
+		}
+		return new OrganizationAdapter(session, em, sendEvent.getOrganization());
 	}
 
 	@Override
 	public PerceptionModel getPerception() {
-		// TODO Auto-generated method stub
-		return null;
+		if (sendEvent.getPerception() == null) {
+			return null;
+		}
+		return new PerceptionAdapter(session,organization, em, sendEvent.getPerception());
 	}
 
 	@Override
 	public void setPerception(PerceptionModel perception) {
-		// TODO Auto-generated method stub
-		
-	}	
+		sendEvent.setPerception(PerceptionAdapter.toEntity(perception, em));		
+	}
+
+	public static PerceptionSendEventEntity toEntity(PerceptionSendEventModel model, EntityManager em) {
+		if (model instanceof PerceptionSendEventAdapter) {
+			return ((PerceptionSendEventAdapter) model).getEntity();
+		}
+		return em.getReference(PerceptionSendEventEntity.class, model.getId());
+	}
 
 }

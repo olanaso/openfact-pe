@@ -1,16 +1,20 @@
 package org.openfact.models.jpa.pe.entities;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -25,11 +29,15 @@ public class RetentionSendEventEntity extends SendEventEntity{
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Access(AccessType.PROPERTY)
 	private String id;
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<RetentionEntity> retentions = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey, name = "RETENTION_ID")
+    private RetentionEntity retention;	
 	
-	@ManyToMany(mappedBy = "retentionSendEvents", cascade = { CascadeType.ALL })
-	protected List<SunatResponseEntity> sunatResponses = new ArrayList<>();
+	/**
+     * Sunat Response
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "retentionSendEvents", cascade = { CascadeType.ALL })
+    protected Collection<SunatResponseEntity> sunatResponses = new ArrayList<>();	
 
 	public String getId() {
 		return id;
@@ -39,19 +47,20 @@ public class RetentionSendEventEntity extends SendEventEntity{
 		this.id = id;
 	}
 
-	public List<RetentionEntity> getRetentions() {
-		return retentions;
+	public RetentionEntity getRetention() {
+		return retention;
 	}
 
-	public void setRetentions(List<RetentionEntity> retentions) {
-		this.retentions = retentions;
+	public void setRetention(RetentionEntity retention) {
+		this.retention = retention;
 	}
 
-	public List<SunatResponseEntity> getSunatResponses() {
+	public Collection<SunatResponseEntity> getSunatResponses() {
 		return sunatResponses;
 	}
 
-	public void setSunatResponses(List<SunatResponseEntity> sunatResponses) {
+	public void setSunatResponses(Collection<SunatResponseEntity> sunatResponses) {
 		this.sunatResponses = sunatResponses;
 	}
+
 }

@@ -269,9 +269,8 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					perceptionSendEvent.setPerception(perception);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, perception);
+							.addSunatResponse(organization, SendResultType.SUCCESS, perceptionSendEvent);
 					sunatResponse.setDocumentResponse(response);
-					sunatResponse.setPerceptionSendEvent(perceptionSendEvent);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
@@ -285,8 +284,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					perceptionSendEvent.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, perception);
-					sunatResponse.setPerceptionSendEvent(perceptionSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, perceptionSendEvent);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}

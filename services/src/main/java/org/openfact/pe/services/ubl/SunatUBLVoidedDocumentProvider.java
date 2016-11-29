@@ -210,9 +210,8 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					summaryDocumentsSendEvent.setVoidedDocument(voidedDocument);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, voidedDocument);
+							.addSunatResponse(organization, SendResultType.SUCCESS, summaryDocumentsSendEvent);
 					sunatResponse.setTicket(response);
-					sunatResponse.setVoidedDocumentsSendEvent(summaryDocumentsSendEvent);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
@@ -227,8 +226,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					summaryDocumentsSendEvent.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, voidedDocument);
-					sunatResponse.setVoidedDocumentsSendEvent(summaryDocumentsSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, summaryDocumentsSendEvent);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}

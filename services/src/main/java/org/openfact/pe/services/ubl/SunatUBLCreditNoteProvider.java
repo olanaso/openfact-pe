@@ -248,9 +248,8 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					creditNoteSendEvent.setCreditNote(creditNote);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, creditNote);
+							.addSunatResponse(organization, SendResultType.SUCCESS, creditNoteSendEvent);
 					sunatResponse.setDocumentResponse(response);
-					sunatResponse.setCreditNoteSendEvent(creditNoteSendEvent);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
@@ -264,8 +263,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					creditNoteSendEvent.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, creditNote);
-					sunatResponse.setCreditNoteSendEvent(creditNoteSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, creditNoteSendEvent);					
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}

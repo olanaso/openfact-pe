@@ -1,6 +1,9 @@
 package org.openfact.models.jpa.pe.ubl;
 
+import javax.persistence.EntityManager;
+
 import org.openfact.Config.Scope;
+import org.openfact.connections.jpa.JpaConnectionProvider;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.pe.models.SunatResponseProvider;
@@ -10,7 +13,8 @@ public class JpaSunatResponseProviderFactory implements SunatResponseProviderFac
 
 	@Override
 	public SunatResponseProvider create(OpenfactSession session) {
-		return new JpaSunatResponseProvider(session);
+		 EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
+		return new JpaSunatResponseProvider(session,em);
 	}
 
 	@Override

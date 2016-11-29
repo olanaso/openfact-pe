@@ -1,18 +1,18 @@
 package org.openfact.models.jpa.pe.entities;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -31,27 +31,37 @@ public class SunatResponseEntity {
 	@Access(AccessType.PROPERTY)
 	private String id;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<InvoiceSendEventEntity> invoiceSendEvents = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "INVOICE_SEND_EVENT_ID")
+	private InvoiceSendEventEntity invoiceSendEvent;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<CreditNoteSendEventEntity> creditNoteSendEvents = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "CREDIT_NOTE_SEND_EVENT_ID")
+	private CreditNoteSendEventEntity creditNoteSendEvent;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<DebitNoteSendEventEntity> debitNoteSendEvents = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "DEBIT_NOTE_SEND_EVENT_ID")
+	private DebitNoteSendEventEntity debitNoteSendEvent;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<PerceptionSendEventEntity> perceptionSendEvents = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "PERCEPTION_SEND_EVENT_ID")
+	private PerceptionSendEventEntity perceptionSendEvent;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<RetentionSendEventEntity> retentionSendEvents = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "RETENTION_SEND_EVENT_ID")
+	private RetentionSendEventEntity retentionSendEvent;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<SummaryDocumentsSendEventEntity> summaryDocumentsSendEvents = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "SUMMARY_DOCUMENT_SEND_EVENT_ID")
+	private SummaryDocumentsSendEventEntity summaryDocumentsSendEvent;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	protected List<VoidedDocumentsSendEventEntity> voidedDocumentsSendEvents = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "VOIDED_DOCUMENT_SEND_EVENT_ID")
+	private VoidedDocumentsSendEventEntity voidedDocumentsSendEvent;
 
+	@Column(name = "RESULT")
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	protected boolean result;
 	@Lob
 	@Column(name = "DOCUMENT_RESPONSE")
 	protected byte[] documentResponse;
@@ -73,60 +83,60 @@ public class SunatResponseEntity {
 		this.id = id;
 	}
 
-	public List<InvoiceSendEventEntity> getInvoiceSendEvents() {
-		return invoiceSendEvents;
+	public InvoiceSendEventEntity getInvoiceSendEvent() {
+		return invoiceSendEvent;
 	}
 
-	public void setInvoiceSendEvents(List<InvoiceSendEventEntity> invoiceSendEvents) {
-		this.invoiceSendEvents = invoiceSendEvents;
+	public void setInvoiceSendEvent(InvoiceSendEventEntity invoiceSendEvent) {
+		this.invoiceSendEvent = invoiceSendEvent;
 	}
 
-	public List<CreditNoteSendEventEntity> getCreditNoteSendEvents() {
-		return creditNoteSendEvents;
+	public CreditNoteSendEventEntity getCreditNoteSendEvent() {
+		return creditNoteSendEvent;
 	}
 
-	public void setCreditNoteSendEvents(List<CreditNoteSendEventEntity> creditNoteSendEvents) {
-		this.creditNoteSendEvents = creditNoteSendEvents;
+	public void setCreditNoteSendEvent(CreditNoteSendEventEntity creditNoteSendEvent) {
+		this.creditNoteSendEvent = creditNoteSendEvent;
 	}
 
-	public List<DebitNoteSendEventEntity> getDebitNoteSendEvents() {
-		return debitNoteSendEvents;
+	public DebitNoteSendEventEntity getDebitNoteSendEvent() {
+		return debitNoteSendEvent;
 	}
 
-	public void setDebitNoteSendEvents(List<DebitNoteSendEventEntity> debitNoteSendEvents) {
-		this.debitNoteSendEvents = debitNoteSendEvents;
+	public void setDebitNoteSendEvent(DebitNoteSendEventEntity debitNoteSendEvent) {
+		this.debitNoteSendEvent = debitNoteSendEvent;
 	}
 
-	public List<PerceptionSendEventEntity> getPerceptionSendEvents() {
-		return perceptionSendEvents;
+	public PerceptionSendEventEntity getPerceptionSendEvent() {
+		return perceptionSendEvent;
 	}
 
-	public void setPerceptionSendEvents(List<PerceptionSendEventEntity> perceptionSendEvents) {
-		this.perceptionSendEvents = perceptionSendEvents;
+	public void setPerceptionSendEvent(PerceptionSendEventEntity perceptionSendEvent) {
+		this.perceptionSendEvent = perceptionSendEvent;
 	}
 
-	public List<RetentionSendEventEntity> getRetentionSendEvents() {
-		return retentionSendEvents;
+	public RetentionSendEventEntity getRetentionSendEvent() {
+		return retentionSendEvent;
 	}
 
-	public void setRetentionSendEvents(List<RetentionSendEventEntity> retentionSendEvents) {
-		this.retentionSendEvents = retentionSendEvents;
+	public void setRetentionSendEvent(RetentionSendEventEntity retentionSendEvent) {
+		this.retentionSendEvent = retentionSendEvent;
 	}
 
-	public List<SummaryDocumentsSendEventEntity> getSummaryDocumentsSendEvents() {
-		return summaryDocumentsSendEvents;
+	public SummaryDocumentsSendEventEntity getSummaryDocumentsSendEvent() {
+		return summaryDocumentsSendEvent;
 	}
 
-	public void setSummaryDocumentsSendEvents(List<SummaryDocumentsSendEventEntity> summaryDocumentsSendEvents) {
-		this.summaryDocumentsSendEvents = summaryDocumentsSendEvents;
+	public void setSummaryDocumentsSendEvent(SummaryDocumentsSendEventEntity summaryDocumentsSendEvent) {
+		this.summaryDocumentsSendEvent = summaryDocumentsSendEvent;
 	}
 
-	public List<VoidedDocumentsSendEventEntity> getVoidedDocumentsSendEvents() {
-		return voidedDocumentsSendEvents;
+	public VoidedDocumentsSendEventEntity getVoidedDocumentsSendEvent() {
+		return voidedDocumentsSendEvent;
 	}
 
-	public void setVoidedDocumentsSendEvents(List<VoidedDocumentsSendEventEntity> voidedDocumentsSendEvents) {
-		this.voidedDocumentsSendEvents = voidedDocumentsSendEvents;
+	public void setVoidedDocumentsSendEvent(VoidedDocumentsSendEventEntity voidedDocumentsSendEvent) {
+		this.voidedDocumentsSendEvent = voidedDocumentsSendEvent;
 	}
 
 	public byte[] getDocumentResponse() {
@@ -167,6 +177,14 @@ public class SunatResponseEntity {
 
 	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
+	}
+
+	public boolean isResult() {
+		return result;
+	}
+
+	public void setResult(boolean result) {
+		this.result = result;
 	}
 
 }

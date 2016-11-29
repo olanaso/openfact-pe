@@ -1,27 +1,63 @@
 package org.openfact.pe.models;
 
-import org.openfact.models.CreditNoteModel;
-import org.openfact.models.DebitNoteModel;
-import org.openfact.models.InvoiceModel;
+import java.util.List;
+
+import org.openfact.models.CreditNoteSendEventModel;
+import org.openfact.models.DebitNoteSendEventModel;
+import org.openfact.models.InvoiceSendEventModel;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.ScrollModel;
 import org.openfact.models.enums.SendResultType;
+import org.openfact.models.search.SearchCriteriaModel;
+import org.openfact.models.search.SearchResultsModel;
 import org.openfact.provider.Provider;
+import org.openfact.ubl.SendEventModel;
 
 public interface SunatResponseProvider extends Provider {
 
-	SunatResponseModel addSendEvent(OrganizationModel organization, SendResultType type, InvoiceModel invoice);
+	SunatResponseModel addSunatResponse(OrganizationModel organization, SendResultType type,
+			InvoiceSendEventModel invoiceSendEvent);
 
-	SunatResponseModel addSendEvent(OrganizationModel organization, SendResultType type, CreditNoteModel creditNote);
+	SunatResponseModel addSunatResponse(OrganizationModel organization, SendResultType type,
+			CreditNoteSendEventModel creditNoteSendEvent);
 
-	SunatResponseModel addSendEvent(OrganizationModel organization, SendResultType type, DebitNoteModel debitNote);
+	SunatResponseModel addSunatResponse(OrganizationModel organization, SendResultType type,
+			DebitNoteSendEventModel debitNoteSendEvent);
 
-	SunatResponseModel addSendEvent(OrganizationModel organization, SendResultType type, PerceptionModel perception);
+	SunatResponseModel addSunatResponse(OrganizationModel organization, SendResultType type,
+			PerceptionSendEventModel perceptionSendEvent);
 
-	SunatResponseModel addSendEvent(OrganizationModel organization, SendResultType type, RetentionModel retention);
+	SunatResponseModel addSunatResponse(OrganizationModel organization, SendResultType type,
+			RetentionSendEventModel retentionSendEvent);
 
-	SunatResponseModel addSendEvent(OrganizationModel organization, SendResultType type,
-			SummaryDocumentModel summaryDocument);
+	SunatResponseModel addSunatResponse(OrganizationModel organization, SendResultType type,
+			SummaryDocumentsSendEventModel summaryDocumentsSendEvent);
 
-	SunatResponseModel addSendEvent(OrganizationModel organization, SendResultType type,
-			VoidedDocumentModel voidedDocument);
+	SunatResponseModel addSunatResponse(OrganizationModel organization, SendResultType type,
+			VoidedDocumentsSendEventModel voidedDocumentsSendEvent);
+
+	SunatResponseModel getSunatResponseById(OrganizationModel organization, String id);
+
+	boolean removeSunatResponse(OrganizationModel organization, String id);
+
+	boolean removeSunatResponse(OrganizationModel organization, SunatResponseModel sunatResponse);
+
+	int getSunatResponsesCount(OrganizationModel organization);
+
+	List<SunatResponseModel> getSunatResponses(OrganizationModel organization);
+
+	List<SunatResponseModel> getSunatResponse(OrganizationModel organization, Integer firstResult, Integer maxResults);
+
+	SearchResultsModel<SunatResponseModel> searchForSunatResponse(OrganizationModel organization,
+			SearchCriteriaModel criteria);
+
+	ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization);
+
+	ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization, boolean asc);
+
+	ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization, boolean asc,
+			int scrollSize);
+
+	ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization, boolean asc, int scrollSize,
+			int fetchSize);
 }

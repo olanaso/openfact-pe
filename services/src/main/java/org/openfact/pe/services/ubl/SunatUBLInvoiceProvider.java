@@ -210,10 +210,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					//invoiceSendEvent.setAttachments(files);
 					invoiceSendEvent.setInvoice(invoice);
 					// Write event to the extends database 	
-					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSendEvent(organization,
-							SendResultType.SUCCESS, invoice);
+					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSunatResponse(organization,
+							SendResultType.SUCCESS, invoiceSendEvent);
 					sunatResponse.setDocumentResponse(response);	
-					sunatResponse.setInvoiceSendEvent(invoiceSendEvent);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
@@ -226,9 +225,8 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					invoiceSendEvent.setInvoice(invoice);
 					invoiceSendEvent.setDescription(soapFault.getFaultString());
 					// Write event to the extends database 	
-					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, invoice);					
-					sunatResponse.setInvoiceSendEvent(invoiceSendEvent);	
+					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSunatResponse(organization,
+							SendResultType.ERROR, invoiceSendEvent);					
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}

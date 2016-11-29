@@ -6,6 +6,28 @@ import org.openfact.models.InvoiceSendEventModel;
 
 public interface SunatResponseModel {
 
+	String getId();
+
+	boolean getResult();
+
+	void setResult(boolean result);
+
+	byte[] getDocumentResponse();
+
+	void setDocumentResponse(byte[] documentResponse);
+
+	String getResponseCode();
+
+	void setResponseCode(String responseCode);
+
+	String getErrorMessage();
+
+	void setErrorMessage(String errorMenssage);
+
+	String getTicket();
+
+	void setTicket(String ticket);
+
 	InvoiceSendEventModel getInvoiceSendEvent();
 
 	CreditNoteSendEventModel getCreditNoteSendEvent();
@@ -34,19 +56,4 @@ public interface SunatResponseModel {
 
 	void setVoidedDocumentsSendEvent(VoidedDocumentsSendEventModel voidedDocumentsSendEvent);
 
-	byte[] getDocumentResponse();
-
-	void setDocumentResponse(byte[] documentResponse);
-
-	String getResponseCode();
-
-	void setResponseCode(String responseCode);
-
-	String getErrorMessage();
-
-	void setErrorMessage(String errorMenssage);
-
-	String getTicket();
-
-	void setTicket(String ticket);
 }

@@ -274,9 +274,8 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					retentionSendEvent.setRetention(retention);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, retention);
+							.addSunatResponse(organization, SendResultType.SUCCESS, retentionSendEvent);
 					sunatResponse.setDocumentResponse(response);
-					sunatResponse.setRetentionSendEvent(retentionSendEvent);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
@@ -290,8 +289,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					retentionSendEvent.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, retention);
-					sunatResponse.setRetentionSendEvent(retentionSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, retentionSendEvent);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}

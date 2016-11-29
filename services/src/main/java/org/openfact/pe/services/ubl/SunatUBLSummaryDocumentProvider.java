@@ -215,9 +215,8 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					summaryDocumentsSendEvent.setSummaryDocument(summaryDocument);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, summaryDocument);
+							.addSunatResponse(organization, SendResultType.SUCCESS, summaryDocumentsSendEvent);
 					sunatResponse.setTicket(response);
-					sunatResponse.setSummaryDocumentsSendEvent(summaryDocumentsSendEvent);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
@@ -232,8 +231,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					summaryDocumentsSendEvent.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, summaryDocument);
-					sunatResponse.setSummaryDocumentsSendEvent(summaryDocumentsSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, summaryDocumentsSendEvent);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}

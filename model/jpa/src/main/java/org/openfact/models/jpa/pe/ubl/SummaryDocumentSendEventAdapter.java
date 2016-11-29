@@ -1,16 +1,12 @@
 package org.openfact.models.jpa.pe.ubl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
-import org.openfact.models.jpa.pe.entities.SummaryDocumentsEntity;
+import org.openfact.models.jpa.OrganizationAdapter;
 import org.openfact.models.jpa.pe.entities.SummaryDocumentsSendEventEntity;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentsSendEventModel;
@@ -49,37 +45,45 @@ public class SummaryDocumentSendEventAdapter
 
 	@Override
 	public boolean getResult() {
-		// TODO Auto-generated method stub
-		return false;
+		return sendEvent.isResult();
 	}
 
 	@Override
 	public void setResult(boolean result) {
-		// TODO Auto-generated method stub
-		
+		sendEvent.setResult(result);
 	}
 
 	@Override
 	public void setDescription(String description) {
-		// TODO Auto-generated method stub
-		
+		sendEvent.setDescription(description);
 	}
 
 	@Override
 	public OrganizationModel getOrganization() {
-		// TODO Auto-generated method stub
-		return null;
+		if (sendEvent.getOrganization() == null) {
+			return null;
+		}
+		return new OrganizationAdapter(session, em, sendEvent.getOrganization());
 	}
 
 	@Override
 	public SummaryDocumentModel getSummaryDocument() {
-		// TODO Auto-generated method stub
-		return null;
+		if (sendEvent.getSummaryDocuments() == null) {
+			return null;
+		}
+		return new SummaryDocumentAdapter(session, organization, em, sendEvent.getSummaryDocuments());
 	}
 
 	@Override
 	public void setSummaryDocument(SummaryDocumentModel summaryDocument) {
-		// TODO Auto-generated method stub
-		
+		sendEvent.setSummaryDocuments(SummaryDocumentAdapter.toEntity(summaryDocument, em));
+
+	}
+
+	public static SummaryDocumentsSendEventEntity toEntity(SummaryDocumentsSendEventModel model, EntityManager em) {
+		if (model instanceof SummaryDocumentSendEventAdapter) {
+			return ((SummaryDocumentSendEventAdapter) model).getEntity();
+		}
+		return em.getReference(SummaryDocumentsSendEventEntity.class, model.getId());
 	}
 }

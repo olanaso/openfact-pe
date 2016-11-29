@@ -247,9 +247,8 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					debitNoteSendEvent.setDebitNote(debitNote);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, debitNote);
+							.addSunatResponse(organization, SendResultType.SUCCESS, debitNoteSendEvent);
 					sunatResponse.setDocumentResponse(response);
-					sunatResponse.setDebitNoteSendEvent(debitNoteSendEvent);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
@@ -263,8 +262,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					debitNoteSendEvent.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, debitNote);
-					sunatResponse.setDebitNoteSendEvent(debitNoteSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, debitNoteSendEvent);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}

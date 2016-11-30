@@ -33,6 +33,7 @@ import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.pe.representations.idm.SummaryRepresentation;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -54,8 +55,8 @@ public class SummaryDocumentManager {
 		return model.getSummaryDocumentById(organization, documentId);
 	}
 
-	public SummaryDocumentModel addSummaryDocument(OrganizationModel organization, DocumentRepresentation rep) {
-		SummaryDocumentsType type = SunatRepresentationToType.toSummaryDocumentType(rep);
+	public SummaryDocumentModel addSummaryDocument(OrganizationModel organization, SummaryRepresentation rep) {
+		SummaryDocumentsType type = SunatRepresentationToType.toSummaryDocumentType(organization, rep);
 		return addSummaryDocument(organization, type);
 	}
 

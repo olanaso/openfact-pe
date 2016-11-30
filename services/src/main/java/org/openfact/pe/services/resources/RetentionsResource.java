@@ -41,6 +41,7 @@ import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.pe.representations.idm.RetentionRepresentation;
 import org.openfact.pe.services.managers.RetentionManager;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
@@ -88,7 +89,7 @@ public class RetentionsResource {
     @Path("")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createRetention(DocumentRepresentation rep) {
+    public Response createRetention(RetentionRepresentation rep) {
         RetentionManager retentionManager = new RetentionManager(session);
 
         // Double-check duplicated ID

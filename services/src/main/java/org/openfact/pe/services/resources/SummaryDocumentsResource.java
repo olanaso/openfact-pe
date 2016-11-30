@@ -41,6 +41,7 @@ import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.pe.representations.idm.SummaryRepresentation;
 import org.openfact.pe.services.managers.SummaryDocumentManager;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
@@ -87,7 +88,7 @@ public class SummaryDocumentsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createSummaryDocument(DocumentRepresentation rep) {
+	public Response createSummaryDocument(SummaryRepresentation rep) {
 		SummaryDocumentManager summaryDocumentManager = new SummaryDocumentManager(session);
 
 		// Double-check duplicated ID

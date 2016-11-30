@@ -33,6 +33,7 @@ import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -54,8 +55,8 @@ public class VoidedDocumentManager {
 		return model.getVoidedDocumentById(organization, documentId);
 	}
 
-	public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, DocumentRepresentation rep) {
-		VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(rep);
+	public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedRepresentation rep) {
+		VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(organization, rep);
 		return addVoidedDocument(organization, type);
 	}
 

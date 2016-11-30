@@ -41,6 +41,7 @@ import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.pe.services.managers.VoidedDocumentManager;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
@@ -87,7 +88,7 @@ public class VoidedDocumentsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createVoidedDocument(DocumentRepresentation rep) {
+	public Response createVoidedDocument(VoidedRepresentation rep) {
 		VoidedDocumentManager voidedDocumentManager = new VoidedDocumentManager(session);
 
 		// Double-check duplicated ID

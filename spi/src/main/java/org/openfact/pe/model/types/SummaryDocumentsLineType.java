@@ -590,7 +590,7 @@ public class SummaryDocumentsLineType {
         return aObj;
     }
 
-    public void addPayment(PaymentType type) {
+    public void addBillingPayment(PaymentType type) {
         getBillingPayment().add(type);
     }
 

@@ -41,6 +41,7 @@ import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.pe.representations.idm.RetentionRepresentation;
 import org.openfact.pe.services.managers.PerceptionManager;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
@@ -91,7 +92,7 @@ public class PerceptionsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createPerception(DocumentRepresentation rep) {
+	public Response createPerception(RetentionRepresentation rep) {
 		PerceptionManager perceptionManager = new PerceptionManager(session);
 
 		// Double-check duplicated ID

@@ -1,6 +1,7 @@
 package org.openfact.pe.services.ubl;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,9 +17,13 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPFault;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
@@ -58,6 +63,7 @@ import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 	private OpenfactSession session;
@@ -123,13 +129,13 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 	@Override
 	public UBLReader<PerceptionType> reader() {
 		return new UBLReader<PerceptionType>() {
-			
+
 			@Override
-			public void close() {				
+			public void close() {
 			}
-			
+
 			@Override
-			public PerceptionType read(Document document) {
+			public PerceptionType read(Document document) {	
 				try {
 					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
 					Unmarshaller unmarshal = factory.createUnmarshaller();
@@ -142,7 +148,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					throw new ModelException(e);
 				}
 			}
-			
+
 			@Override
 			public PerceptionType read(byte[] bytes) {
 				try {
@@ -158,29 +164,42 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 	@Override
 	public UBLWriter<PerceptionType> writer() {
 		return new UBLWriter<PerceptionType>() {
-			
+
 			@Override
-			public void close() {}
-			
+			public void close() {
+			}
+
 			@Override
-			public Document write(OrganizationModel organization, PerceptionType perceptionType, Map<String, String> attributes) {
+			public Document write(OrganizationModel organization, PerceptionType perceptionType,
+					Map<String, String> attributes) {
 				SunatFactory factory = new SunatFactory();
 				JAXBContext context;
 				try {
 					context = JAXBContext.newInstance(SunatFactory.class);
 					Marshaller marshallerElement = context.createMarshaller();
 					JAXBElement<PerceptionType> jaxbElement = factory.createPerception(perceptionType);
-					DOMResult res = new DOMResult();
-					marshallerElement.marshal(jaxbElement, res);
-					// Element element = ((Document)
-					// res.getNode()).getDocumentElement();
-					Document document = ((Document) res.getNode()).getOwnerDocument();
+					StringWriter xmlWriter = new StringWriter();
+					XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
+					xmlStream.setNamespaceContext(SunatUtils.getBasedNamespaceContext(
+							"urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1"));
+					marshallerElement.marshal(jaxbElement, xmlStream);
+					Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
 					return document;
 				} catch (JAXBException e) {
 					throw new ModelException(e);
+				} catch (XMLStreamException e) {
+					throw new ModelException(e);
+				} catch (FactoryConfigurationError e) {
+					throw new ModelException(e);
+				} catch (IOException e) {
+					throw new ModelException(e);
+				} catch (SAXException e) {
+					throw new ModelException(e);
+				} catch (ParserConfigurationException e) {
+					throw new ModelException(e);
 				}
 			}
-			
+
 			@Override
 			public Document write(OrganizationModel organization, PerceptionType perceptionType) {
 				return write(organization, perceptionType, Collections.emptyMap());

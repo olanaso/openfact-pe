@@ -1,6 +1,7 @@
 package org.openfact.pe.services.ubl;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -14,7 +15,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPFault;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -48,6 +54,7 @@ import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvider {
 	private OpenfactSession session;
@@ -162,13 +169,24 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					Marshaller marshallerElement = context.createMarshaller();
 					JAXBElement<SummaryDocumentsType> jaxbElement = factory
 							.createSummaryDocuments(summaryDocumentsType);
-					DOMResult res = new DOMResult();
-					marshallerElement.marshal(jaxbElement, res);
-					// Element element = ((Document)
-					// res.getNode()).getDocumentElement();
-					Document document = ((Document) res.getNode()).getOwnerDocument();
+					StringWriter xmlWriter = new StringWriter();
+					XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
+					xmlStream.setNamespaceContext(SunatUtils.getBasedNamespaceContext(
+							"urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1"));
+					marshallerElement.marshal(jaxbElement, xmlStream);
+					Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
 					return document;
 				} catch (JAXBException e) {
+					throw new ModelException(e);
+				} catch (XMLStreamException e) {
+					throw new ModelException(e);
+				} catch (FactoryConfigurationError e) {
+					throw new ModelException(e);
+				} catch (IOException e) {
+					throw new ModelException(e);
+				} catch (SAXException e) {
+					throw new ModelException(e);
+				} catch (ParserConfigurationException e) {
 					throw new ModelException(e);
 				}
 			}

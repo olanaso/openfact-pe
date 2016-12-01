@@ -15,9 +15,8 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.models.FileModel;
 import org.openfact.models.ModelException;
-import org.openfact.representations.idm.ubl.SendEventRepresentation;
+import org.openfact.representations.idm.SendEventRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -47,20 +46,16 @@ public class SunatResponseUtils {
 			}
 			int ErrorCode = (new Integer(responseCode)).intValue();
 			if (ErrorCode != 0 && (ErrorCode < 100 || ErrorCode > 399) && ErrorCode <= 4000) {
-				rep.setAccepted(false);
+				rep.setResult(false);
 			} else {
-				rep.setAccepted(true);
+				rep.setResult(true);
 			}
-			rep.setDocumentResponse(data);
 			rep.setDescription(description);
-			rep.setResponseCode(responseCode);
 
 			return rep;
 		} catch (XPathExpressionException e) {
-			rep.setAccepted(false);
-			rep.setDocumentResponse(data);
+			rep.setResult(false);
 			rep.setDescription(e.getMessage());
-			rep.setResponseCode("-1");
 			return rep;
 		}
 	}
@@ -88,10 +83,8 @@ public class SunatResponseUtils {
 			message = "Error al invocar Servicio: " + e.getMessage();
 		}
 
-		rep.setAccepted(false);
+		rep.setResult(false);
 		rep.setDescription(message);
-		rep.setResponseCode(String.valueOf(intCode));
-
 		return rep;
 	}
 
@@ -149,7 +142,5 @@ public class SunatResponseUtils {
 					document);
 		}
 	}
-
-	
 
 }

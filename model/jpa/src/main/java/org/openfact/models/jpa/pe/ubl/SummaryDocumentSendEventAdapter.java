@@ -1,8 +1,13 @@
 package org.openfact.models.jpa.pe.ubl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
+import org.openfact.models.FileModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
@@ -85,5 +90,47 @@ public class SummaryDocumentSendEventAdapter
 			return ((SummaryDocumentSendEventAdapter) model).getEntity();
 		}
 		return em.getReference(SummaryDocumentsSendEventEntity.class, model.getId());
+	}
+
+	@Override
+	public List<FileModel> getFileAttatchments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFileAttatchments(List<FileModel> files) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setType(String type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Map<String, String> getDestity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDestiny(Map<String, String> destiny) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public LocalDateTime getCreatedTimestamp() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

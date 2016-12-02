@@ -1,8 +1,13 @@
 package org.openfact.models.jpa.pe.ubl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
+import org.openfact.models.FileModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.jpa.JpaModel;
@@ -83,6 +88,41 @@ public class PerceptionSendEventAdapter implements PerceptionSendEventModel, Jpa
 			return ((PerceptionSendEventAdapter) model).getEntity();
 		}
 		return em.getReference(PerceptionSendEventEntity.class, model.getId());
+	}
+
+	@Override
+	public List<FileModel> getFileAttatchments() {
+		return null;
+	}
+
+	@Override
+	public void setFileAttatchments(List<FileModel> files) {
+				
+	}
+
+	@Override
+	public String getType() {
+		return sendEvent.getType();
+	}
+
+	@Override
+	public void setType(String type) {
+		sendEvent.setType(type);
+	}
+
+	@Override
+	public Map<String, String> getDestity() {
+		return sendEvent.getDestiny();
+	}
+
+	@Override
+	public void setDestiny(Map<String, String> destiny) {
+		sendEvent.setDestiny(destiny);		
+	}
+
+	@Override
+	public LocalDateTime getCreatedTimestamp() {
+		return sendEvent.getCreatedTimestamp();
 	}
 
 }

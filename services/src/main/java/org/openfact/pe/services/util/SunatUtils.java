@@ -1,6 +1,10 @@
 package org.openfact.pe.services.util;
 
 import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -31,6 +35,13 @@ public class SunatUtils {
 		}
 	}
 
+	public static int getDateToNumber() {
+		Calendar localCalendar = Calendar.getInstance(TimeZone.getDefault());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String formatted = sdf.format(localCalendar.getTime());
+		return Integer.parseInt(formatted);
+	}
+
 	public static MapBasedNamespaceContext getBasedNamespaceContext(String defaultNamespace) {
 		UBL21NamespaceContext namespace = UBL21NamespaceContext.getInstance();
 		namespace.setMapping("ccts", "urn:un:unece:uncefact:documentation:2");
@@ -48,8 +59,10 @@ public class SunatUtils {
 	/**
 	 * Unmarshal a String with XML to a class
 	 * 
-	 * @param xmlData a String with XML
-	 * @param clazz The class to unmarshal to
+	 * @param xmlData
+	 *            a String with XML
+	 * @param clazz
+	 *            The class to unmarshal to
 	 * @return The class
 	 */
 	@SuppressWarnings("unchecked")

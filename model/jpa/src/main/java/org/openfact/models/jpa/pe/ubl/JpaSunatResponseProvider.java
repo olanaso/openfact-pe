@@ -10,8 +10,11 @@ import javax.persistence.TypedQuery;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openfact.models.CreditNoteModel;
 import org.openfact.models.CreditNoteSendEventModel;
+import org.openfact.models.DebitNoteModel;
 import org.openfact.models.DebitNoteSendEventModel;
+import org.openfact.models.InvoiceModel;
 import org.openfact.models.InvoiceSendEventModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
@@ -26,11 +29,16 @@ import org.openfact.models.jpa.pe.entities.SunatResponseEntity;
 import org.openfact.models.search.SearchCriteriaFilterOperator;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
+import org.openfact.pe.constants.CodigoTipoDocumento;
+import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionSendEventModel;
+import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionSendEventModel;
+import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentsSendEventModel;
 import org.openfact.pe.models.SunatResponseModel;
 import org.openfact.pe.models.SunatResponseProvider;
+import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentsSendEventModel;
 
 public class JpaSunatResponseProvider extends AbstractHibernateStorage implements SunatResponseProvider {
@@ -160,88 +168,82 @@ public class JpaSunatResponseProvider extends AbstractHibernateStorage implement
 	}
 
 	@Override
-	public int getSunatResponsesCount(OrganizationModel organization) {
-		return 0;
-	}
-
-	@Override
-	public List<SunatResponseModel> getSunatResponses(OrganizationModel organization) {
-		return getSunatResponse(organization, -1, -1);
-	}
-
-	@Override
-	public List<SunatResponseModel> getSunatResponse(OrganizationModel organization, Integer firstResult,
-			Integer maxResults) {
-		String queryName = "getAllSendEventsByOrganization";
-
-		TypedQuery<SunatResponseEntity> query = em.createNamedQuery(queryName, SunatResponseEntity.class);
-		query.setParameter("organizationId", organization.getId());
-		if (firstResult != -1) {
-			query.setFirstResult(firstResult);
-		}
-		if (maxResults != -1) {
-			query.setMaxResults(maxResults);
-		}
-		List<SunatResponseEntity> results = query.getResultList();
-		List<SunatResponseModel> invoices = results.stream()
-				.map(f -> new SunatResponseAdapter(session, organization, em, f)).collect(Collectors.toList());
-		return invoices;
-	}
-
-	@Override
-	public SearchResultsModel<SunatResponseModel> searchForSunatResponse(OrganizationModel organization,
-			SearchCriteriaModel criteria) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
-
-		SearchResultsModel<SunatResponseEntity> entityResult = find(criteria, SunatResponseEntity.class);
-		List<SunatResponseEntity> entities = entityResult.getModels();
-
-		SearchResultsModel<SunatResponseModel> searchResult = new SearchResultsModel<>();
-		List<SunatResponseModel> models = searchResult.getModels();
-
-		entities.forEach(f -> models.add(new SunatResponseAdapter(session, organization, em, f)));
-		searchResult.setTotalSize(entityResult.getTotalSize());
-		return searchResult;
-	}
-
-	@Override
-	public ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization) {
-		return getSunatResponsesScroll(organization, true);
-	}
-
-	@Override
-	public ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization, boolean asc) {
-		return getSunatResponsesScroll(organization, asc, -1);
-	}
-
-	@Override
-	public ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization, boolean asc,
-			int scrollSize) {
-		return getSunatResponsesScroll(organization, asc, scrollSize, -1);
-	}
-
-	@Override
-	public ScrollModel<SunatResponseModel> getSunatResponsesScroll(OrganizationModel organization, boolean asc,
-			int scrollSize, int fetchSize) {
-		if (scrollSize == -1) {
-			scrollSize = 5;
-		}
-		if (fetchSize == -1) {
-			scrollSize = 1;
-		}
-
-		Criteria criteria = getSession().createCriteria(SunatResponseEntity.class)
-				.add(Restrictions.eq("organization.id", organization.getId()))
-				.addOrder(asc ? Order.asc("createdTimestamp") : Order.desc("createdTimestamp"));
-
-		JpaScrollAdapter<SunatResponseModel, SunatResponseEntity> result = new JpaScrollAdapter<>(criteria, scrollSize,
-				f -> new SunatResponseAdapter(session, organization, em, f));
-		return result;
-	}
-
-	@Override
 	protected EntityManager getEntityManager() {
 		return em;
+	}
+
+	@Override
+	public SunatResponseModel getSunatResponseByDocument(OrganizationModel organization,
+			CodigoTipoDocumento documentType, String id) {
+		String queryName = "";
+		switch (documentType) {
+		case FACTURA:
+			queryName = "getCDRInvoice";
+			break;
+		case NOTA_CREDITO:
+			queryName = "getCDRCreditNote";
+			break;
+		case NOTA_DEBITO:
+			queryName = "getCDRDebitNote";
+			break;
+		case PERCEPCION:
+			queryName = "getCDRPerception";
+			break;
+		case RETENCION:
+			queryName = "getCDRRetention";
+			break;
+		case RESUMEN_DIARIO:
+			queryName = "getTicketSummary";
+			break;
+		case BAJA:
+			queryName = "getTicketVoided";
+			break;
+		default:
+			break;
+		}		
+		TypedQuery<SunatResponseEntity> query = em.createNamedQuery(queryName, SunatResponseEntity.class);
+		query.setParameter("Id", id);
+		List<SunatResponseEntity> entities = query.getResultList();
+		if (entities.size() == 0)
+			return null;
+		return new SunatResponseAdapter(session, organization, em, entities.get(0));
+	}
+
+	@Override
+	public List<SunatResponseModel> getSunatResponsesByDocument(OrganizationModel organization,
+			CodigoTipoDocumento documentType, String id) {
+		String queryName = "";
+		switch (documentType) {
+		case FACTURA:
+			queryName = "getAllSunatResponseEventsByInvoice";
+			break;
+		case NOTA_CREDITO:
+			queryName = "getAllSunatResponseEventsByCreditNote";
+			break;
+		case NOTA_DEBITO:
+			queryName = "getAllSunatResponseEventsByDebitNote";
+			break;
+		case PERCEPCION:
+			queryName = "getAllSunatResponseEventsByPerception";
+			break;
+		case RETENCION:
+			queryName = "getAllSunatResponseEventsByRetention";
+			break;
+		case RESUMEN_DIARIO:
+			queryName = "getAllSunatResponseEventsBySummary";
+			break;
+		case BAJA:
+			queryName = "getAllSunatResponseEventsByVoided";
+			break;
+		default:
+			break;
+		}		
+		TypedQuery<SunatResponseEntity> query = em.createNamedQuery(queryName, SunatResponseEntity.class);
+		query.setParameter("Id", id);
+		List<SunatResponseEntity> results = query.getResultList();
+		List<SunatResponseModel> sunatResponses = results.stream()
+				.map(f -> new SunatResponseAdapter(session, organization, em, f)).collect(Collectors.toList());
+		return sunatResponses;
 	}
 
 }

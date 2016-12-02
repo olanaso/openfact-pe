@@ -54,23 +54,11 @@ public class SunatSenderUtils {
 	}
 
 	public byte[] getStatus(String ticket) {
-		// Map<String, Object> result = new HashMap<>();
-		// ServiceWrapper<BillService> serviceWrapper = new
-		// ServiceWrapper<BillService>(config);
-		// BillService client = (BillService)
-		// serviceWrapper.initWebService(BillService.class);
-		// // send
-		// StatusResponse statusResponse = client.getStatus(ticket);
-		// Integer inCode = new Integer(statusResponse.getStatusCode());
-		// if (inCode.equals(Integer.valueOf(98))) {
-		// result.put("warning",
-		// "La transaccion " + ticket + ", aun se esta procesando con codigo " +
-		// inCode.intValue());
-		// } else {
-		// byte[] send = statusResponse.getContent();
-		// result.put("success", send);
-		// }
-		// return result;
-		return null;
+		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+		// send
+		byte[] send = client.getStatus(ticket).getContent();
+		return send;
+
 	}
 }

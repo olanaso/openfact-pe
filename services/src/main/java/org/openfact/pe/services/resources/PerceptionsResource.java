@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
@@ -36,12 +37,16 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
+import org.openfact.pe.models.SunatResponseModel;
+import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.RetentionRepresentation;
+import org.openfact.pe.representations.idm.SunatResponseRepresentation;
 import org.openfact.pe.services.managers.PerceptionManager;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
@@ -302,4 +307,42 @@ public class PerceptionsResource {
 		}
 	}
 
+	@GET
+	@Path("{perceptionId}")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<SunatResponseRepresentation> getSunatResponses(@QueryParam("perceptionId") final String perceptionId) {
+		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
+		List<SunatResponseModel> sunatResponses;
+		if (perceptionId == null) {
+			throw new NotFoundException("Sunat response not found");
+		}
+		sunatResponses = responseProvider.getSunatResponsesByDocument(organization, CodigoTipoDocumento.PERCEPCION,
+				perceptionId);
+
+		return sunatResponses.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
+				.collect(Collectors.toList());
+	}
+
+	@GET
+	@Path("{perceptionId}/representation/cdr")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCdr(@QueryParam("perceptionId") final String perceptionId) {
+		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
+		SunatResponseModel sunatResponse;
+		if (perceptionId == null) {
+			throw new NotFoundException("Sunat response not found");
+
+		}
+		sunatResponse = responseProvider.getSunatResponseByDocument(organization, CodigoTipoDocumento.PERCEPCION,
+				perceptionId);
+		if (sunatResponse.getDocumentResponse() == null) {
+			throw new NotFoundException("Response not found");
+		}
+		ResponseBuilder response = Response.ok(sunatResponse.getDocumentResponse());
+		response.type("application/zip");
+		response.header("content-disposition", "attachment; filename=\"" + sunatResponse.getId() + ".zip\"");
+		return response.build();
+	}
 }

@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
@@ -36,13 +37,18 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.SummaryDocumentsType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
+import org.openfact.pe.models.SunatResponseModel;
+import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.SummaryRepresentation;
+import org.openfact.pe.representations.idm.SunatResponseRepresentation;
 import org.openfact.pe.services.managers.SummaryDocumentManager;
+import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -303,4 +309,51 @@ public class SummaryDocumentsResource {
 		}
 	}
 
+	@GET
+	@Path("{summaryDocumentId}")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<SunatResponseRepresentation> getSunatResponses(
+			@QueryParam("summaryDocumentId") final String summaryDocumentId) {
+		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
+		List<SunatResponseModel> sunatResponses;
+		if (summaryDocumentId == null) {
+			throw new NotFoundException("Sunat response not found");
+		}
+		sunatResponses = responseProvider.getSunatResponsesByDocument(organization, CodigoTipoDocumento.RESUMEN_DIARIO,
+				summaryDocumentId);
+
+		return sunatResponses.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
+				.collect(Collectors.toList());
+	}
+
+	@GET
+	@Path("{summaryDocumentId}/representation/cdr")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCdr(@QueryParam("summaryDocumentId") final String summaryDocumentId) {
+		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
+		SunatResponseModel sunatResponse;
+		if (summaryDocumentId == null) {
+			throw new NotFoundException("Sunat response not found");
+
+		}
+		sunatResponse = responseProvider.getSunatResponseByDocument(organization, CodigoTipoDocumento.RESUMEN_DIARIO,
+				summaryDocumentId);
+		if (sunatResponse.getTicket() == null) {
+			throw new NotFoundException("Ticket not found");
+		}
+		if (sunatResponse.getDocumentResponse() == null) {
+			byte[] result = new SunatSenderUtils(organization).getStatus(sunatResponse.getTicket());
+			if (result == null) {
+				throw new NotFoundException("response not found");
+			}
+			sunatResponse.setDocumentResponse(result);
+		}
+
+		ResponseBuilder response = Response.ok(sunatResponse.getDocumentResponse());
+		response.type("application/zip");
+		response.header("content-disposition", "attachment; filename=\"" + sunatResponse.getId() + ".zip\"");
+		return response.build();
+	}
 }

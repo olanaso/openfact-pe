@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -23,6 +25,21 @@ import org.openfact.models.jpa.entities.InvoiceSendEventEntity;
 
 @Entity
 @Table(name = "SUNAT_RESPONSE")
+@NamedQueries({
+		@NamedQuery(name = "getAllSunatResponseEventsByInvoice", query = "select s from SunatResponseEntity s join s.invoiceSendEvent e join i.invoice i where i.id = :Id order by s.createdTimestamp desc"),
+		@NamedQuery(name = "getAllSunatResponseEventsByCreditNote", query = "select s from SunatResponseEntity s join s.creditNoteSendEvent e join i.creditNote i where i.id = :Id order by s.createdTimestamp desc"),
+		@NamedQuery(name = "getAllSunatResponseEventsByDebitNote", query = "select s from SunatResponseEntity s join s.debitNoteSendEvent e join i.debitNote i where i.id = :Id order by s.createdTimestamp desc"),
+		@NamedQuery(name = "getAllSunatResponseEventsByPerception", query = "select s from SunatResponseEntity s join s.perceptionSendEvent e join i.perception i where i.id = :Id order by s.createdTimestamp desc"),
+		@NamedQuery(name = "getAllSunatResponseEventsByRetention", query = "select s from SunatResponseEntity s join s.retentionSendEvent e join i.retention i where i.id = :Id order by s.createdTimestamp desc"),
+		@NamedQuery(name = "getAllSunatResponseEventsBySummary", query = "select s from SunatResponseEntity s join s.summaryDocumentsSendEvent e join i.summaryDocuments i where i.id = :Id order by s.createdTimestamp desc"),
+		@NamedQuery(name = "getAllSunatResponseEventsByVoided", query = "select s from SunatResponseEntity s join s.voidedDocumentsSendEvent e join i.voidedDocuments i where i.id = :Id order by s.createdTimestamp desc"),
+		@NamedQuery(name = "getCDRInvoice", query = "select s from SunatResponseEntity s join s.invoiceSendEvent e join i.invoice i where i.id = :Id and s.result = true and s.documentResponse not null"),
+		@NamedQuery(name = "getCDRCreditNote", query = "select s from SunatResponseEntity s join s.creditNoteSendEvent e join i.creditNote i where i.id = :Id and s.result = true and s.documentResponse not null"),
+		@NamedQuery(name = "getCDRDebitNote", query = "select s from SunatResponseEntity s join s.debitNoteSendEvent e join i.debitNote i where i.id = :Id and s.result = true and s.documentResponse not null"),
+		@NamedQuery(name = "getCDRPerception", query = "select s from SunatResponseEntity s join s.perceptionSendEvent e join i.perception i where i.id = :Id and s.result = true and s.documentResponse not null"),
+		@NamedQuery(name = "getCDRRetention", query = "select s from SunatResponseEntity s join s.retentionSendEvent e join i.retention i where i.id = :Id and s.result = true and s.documentResponse not null"),
+		@NamedQuery(name = "getTicketSummary", query = "select s from SunatResponseEntity s join s.summaryDocumentsSendEvent e join i.summaryDocuments i where i.id = :Id and s.result = true and s.ticked not null"),
+		@NamedQuery(name = "getTicketVoided", query = "select s from SunatResponseEntity s join s.voidedDocumentsSendEvent e join i.voidedDocuments i where i.id = :Id and s.result = true and s.ticked not null") })
 public class SunatResponseEntity {
 	@Id
 	@Column(name = "ID")

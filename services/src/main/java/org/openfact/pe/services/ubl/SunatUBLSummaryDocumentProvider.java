@@ -2,8 +2,10 @@ package org.openfact.pe.services.ubl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -95,21 +97,20 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					}
 				}
 
-				int series = 0;
 				int number = 0;
 				if (lastSummaryDocument != null) {
 					String[] splits = lastSummaryDocument.getDocumentId().split("-");
-					series = Integer.parseInt(splits[0].substring(1));
-					number = Integer.parseInt(splits[1]);
+					number = Integer.parseInt(splits[2]);
 				}
 
-				int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-				int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
+				int nextNumber = SunatUtils.getNextNumber(number, 999);
+				int nextSeries = SunatUtils.getDateToNumber();
 				StringBuilder documentId = new StringBuilder();
-				documentId.append(summaryDocumentCode.getMask().substring(0, 1));
-				documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
+				documentId.append(summaryDocumentCode.getMask().substring(0, 2));
 				documentId.append("-");
-				documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
+				documentId.append(nextSeries);
+				documentId.append("-");
+				documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 3, "0"));
 
 				return documentId.toString();
 			}

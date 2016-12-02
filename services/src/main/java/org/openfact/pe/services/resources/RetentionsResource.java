@@ -323,7 +323,7 @@ public class RetentionsResource {
 	@GET
 	@Path("{retentionId}/representation/cdr")
 	@NoCache
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@QueryParam("retentionId") final String retentionId) {
 		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
 		SunatResponseModel sunatResponse;

@@ -330,7 +330,7 @@ public class SummaryDocumentsResource {
 	@GET
 	@Path("{summaryDocumentId}/representation/cdr")
 	@NoCache
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@QueryParam("summaryDocumentId") final String summaryDocumentId) {
 		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
 		SunatResponseModel sunatResponse;

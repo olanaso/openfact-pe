@@ -130,7 +130,7 @@ public class CreditNotesResource {
 	@GET
 	@Path("{creditNoteId}/representation/cdr")
 	@NoCache
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@QueryParam("creditNoteId") final String creditNoteId) {
 		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
 		SunatResponseModel sunatResponse;

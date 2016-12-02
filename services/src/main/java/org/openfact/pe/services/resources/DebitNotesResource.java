@@ -126,7 +126,7 @@ public class DebitNotesResource {
 	@GET
 	@Path("{debitNoteId}/representation/cdr")
 	@NoCache
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@QueryParam("debitNoteId") final String debitNoteId) {
 		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
 		SunatResponseModel sunatResponse;

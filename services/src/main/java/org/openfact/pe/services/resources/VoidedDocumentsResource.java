@@ -330,7 +330,7 @@ public class VoidedDocumentsResource {
 	@GET
 	@Path("{voidedDocumentId}/representation/cdr")
 	@NoCache
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@QueryParam("voidedDocumentId") final String voidedDocumentId) {
 		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
 		SunatResponseModel sunatResponse;

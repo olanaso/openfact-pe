@@ -29,6 +29,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.ScrollModel;
+import org.openfact.models.SimpleFileModel;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
@@ -209,7 +210,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 				};
 
 				// Attatchments
-				FileModel file = new FileModel();
+				FileModel file = new SimpleFileModel();
 				file.setFileName(creditNote.getDocumentId() + ".xml");
 				file.setFile(creditNote.getXmlDocument());
 				file.setMimeType("application/xml");
@@ -234,17 +235,15 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					throws SendException {
 				CreditNoteSendEventModel creditNoteSendEvent = null;
 				byte[] zip = null;
-				try {
-					List<FileModel> files = new ArrayList<>();
+				try {					
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, creditNote);
-					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);
-					files.add(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
+					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);					
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
 					creditNoteSendEvent = (CreditNoteSendEventModel) session.getProvider(SendEventProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, creditNote);
-					creditNoteSendEvent.setFileAttatchments(files);
+							.addSendEvent(organization, SendResultType.SUCCESS, creditNote);										
+					creditNoteSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					creditNoteSendEvent.setCreditNote(creditNote);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

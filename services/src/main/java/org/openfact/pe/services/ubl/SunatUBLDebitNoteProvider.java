@@ -29,6 +29,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.ScrollModel;
+import org.openfact.models.SimpleFileModel;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
@@ -208,7 +209,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 				};
 
 				// Attatchments
-				FileModel file = new FileModel();
+				FileModel file = new SimpleFileModel();
 				file.setFileName(debitNote.getDocumentId() + ".xml");
 				file.setFile(debitNote.getXmlDocument());
 				file.setMimeType("application/xml");
@@ -233,17 +234,15 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					throws SendException {
 				DebitNoteSendEventModel debitNoteSendEvent = null;
 				byte[] zip = null;
-				try {
-					List<FileModel> files = new ArrayList<>();
+				try {					
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, debitNote);
-					zip = SunatTemplateUtils.generateZip(debitNote.getXmlDocument(), fileName);
-					files.add(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
+					zip = SunatTemplateUtils.generateZip(debitNote.getXmlDocument(), fileName);					
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
 					debitNoteSendEvent = (DebitNoteSendEventModel) session.getProvider(SendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, debitNote);
-					debitNoteSendEvent.setFileAttatchments(files);
+					debitNoteSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					debitNoteSendEvent.setDebitNote(debitNote);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

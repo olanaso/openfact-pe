@@ -38,6 +38,7 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.ScrollModel;
+import org.openfact.models.SimpleFileModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
@@ -240,7 +241,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 				};
 
 				// Attatchments
-				FileModel file = new FileModel();
+				FileModel file = new SimpleFileModel();
 				file.setFileName(perception.getDocumentId());
 				file.setFile(perception.getXmlDocument());
 				file.setMimeType("application/xml");
@@ -284,7 +285,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					// Write event to the default database
 					perceptionSendEvent = (PerceptionSendEventModel) session.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, perception);
-					perceptionSendEvent.setFileAttatchments(files);
+					perceptionSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					perceptionSendEvent.setPerception(perception);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

@@ -10,6 +10,7 @@ import org.jboss.logging.Logger;
 import org.openfact.models.FileModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.StorageFileModel;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.OrganizationAdapter;
 import org.openfact.models.jpa.pe.entities.PerceptionSendEventEntity;
@@ -88,17 +89,7 @@ public class PerceptionSendEventAdapter implements PerceptionSendEventModel, Jpa
 			return ((PerceptionSendEventAdapter) model).getEntity();
 		}
 		return em.getReference(PerceptionSendEventEntity.class, model.getId());
-	}
-
-	@Override
-	public List<FileModel> getFileAttatchments() {
-		return null;
-	}
-
-	@Override
-	public void setFileAttatchments(List<FileModel> files) {
-				
-	}
+	}	
 
 	@Override
 	public String getType() {
@@ -123,6 +114,18 @@ public class PerceptionSendEventAdapter implements PerceptionSendEventModel, Jpa
 	@Override
 	public LocalDateTime getCreatedTimestamp() {
 		return sendEvent.getCreatedTimestamp();
+	}
+
+	@Override
+	public List<StorageFileModel> getFileAttatchments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StorageFileModel addFileAttatchments(FileModel file) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

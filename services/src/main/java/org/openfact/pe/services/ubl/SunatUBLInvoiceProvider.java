@@ -30,6 +30,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.ScrollModel;
+import org.openfact.models.SimpleFileModel;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
@@ -196,16 +197,14 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 				InvoiceSendEventModel invoiceSendEvent = null;
 				byte[] zip = null;
 				try {
-					List<FileModel> files = new ArrayList<>();
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);					
 					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
-					files.add(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);					
 					// Write event to the default database 
 					invoiceSendEvent =(InvoiceSendEventModel)session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, invoice);
-					invoiceSendEvent.setFileAttatchments(files);
+					invoiceSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					invoiceSendEvent.setInvoice(invoice);
 					// Write event to the extends database 	
 					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSunatResponse(organization,
@@ -257,7 +256,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 				};
 
 				// Attatchments
-				FileModel file = new FileModel();
+				FileModel file = new SimpleFileModel();
 				file.setFileName(invoice.getDocumentId());
 				file.setFile(invoice.getXmlDocument());
 				file.setMimeType("application/xml");

@@ -219,10 +219,8 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 				SummaryDocumentsSendEventModel summaryDocumentsSendEvent = null;
 				byte[] zip = null;
 				try {
-					List<FileModel> files = new ArrayList<>();
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, summaryDocument);
 					zip = SunatTemplateUtils.generateZip(summaryDocument.getXmlDocument(), fileName);
-					files.add(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					// sender
 					String response = new SunatSenderUtils(organization).sendSummary(zip, fileName,
 							InternetMediaType.ZIP);
@@ -230,7 +228,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					summaryDocumentsSendEvent = (SummaryDocumentsSendEventModel) session
 							.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, summaryDocument);
-					 summaryDocumentsSendEvent.setFileAttatchments(files);
+					 summaryDocumentsSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					summaryDocumentsSendEvent.setSummaryDocument(summaryDocument);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

@@ -212,10 +212,8 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 				VoidedDocumentsSendEventModel summaryDocumentsSendEvent = null;
 				byte[] zip = null;
 				try {
-					List<FileModel> files = new ArrayList<>();
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
 					zip = SunatTemplateUtils.generateZip(voidedDocument.getXmlDocument(), fileName);
-					files.add(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					// sender
 					String response = new SunatSenderUtils(organization).sendSummary(zip, fileName,
 							InternetMediaType.ZIP);
@@ -223,7 +221,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					summaryDocumentsSendEvent = (VoidedDocumentsSendEventModel) session
 							.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, voidedDocument);
-					summaryDocumentsSendEvent.setFileAttatchments(files);
+					summaryDocumentsSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					summaryDocumentsSendEvent.setVoidedDocument(voidedDocument);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

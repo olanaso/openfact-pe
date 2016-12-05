@@ -11,6 +11,7 @@ import org.openfact.models.DebitNoteModel;
 import org.openfact.models.FileModel;
 import org.openfact.models.InvoiceModel;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.SimpleFileModel;
 import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.RetentionModel;
@@ -125,7 +126,7 @@ public class SunatTemplateUtils {
 	}
 
 	public static FileModel toFileModel(String mimeType, String fileName, byte[] file) {
-		FileModel model = new FileModel();
+		FileModel model = new SimpleFileModel();
 		model.setFile(file);
 		model.setFileName(fileName);
 		model.setMimeType(mimeType);

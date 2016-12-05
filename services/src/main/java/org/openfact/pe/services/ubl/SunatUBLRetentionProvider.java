@@ -39,6 +39,7 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.ScrollModel;
+import org.openfact.models.SimpleFileModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
@@ -244,7 +245,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 				};
 
 				// Attatchments
-				FileModel file = new FileModel();
+				FileModel file = new SimpleFileModel();
 				file.setFileName(retention.getDocumentId());
 				file.setFile(retention.getXmlDocument());
 				file.setMimeType("application/xml");
@@ -279,16 +280,14 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 				RetentionSendEventModel retentionSendEvent = null;
 				byte[] zip = null;
 				try {
-					List<FileModel> files = new ArrayList<>();
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, retention);
 					zip = SunatTemplateUtils.generateZip(retention.getXmlDocument(), fileName);
-					files.add(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
 					retentionSendEvent = (RetentionSendEventModel) session.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, retention);
-					retentionSendEvent.setFileAttatchments(files);
+					retentionSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					retentionSendEvent.setRetention(retention);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

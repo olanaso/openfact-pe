@@ -33,6 +33,11 @@
 			<artifactId>openfact-server-spi</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.openfact</groupId>
+			<artifactId>openfact-server-spi-private</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import org.openfact.models.OpenfactSession;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.provider.ProviderEvent;
 
 public interface VoidedDocumentModel {
 
@@ -66,4 +68,22 @@ public interface VoidedDocumentModel {
     void addRequiredAction(RequiredAction action);
 
     void removeRequiredAction(RequiredAction action);
+    /**
+     * Events interfaces
+     */
+    interface VoidedDocumentCreationEvent extends ProviderEvent {
+        VoidedDocumentModel getCreatedVoidedDocument();
+    }
+
+    interface VoidedDocumentPostCreateEvent extends ProviderEvent {
+        VoidedDocumentModel getCreatedVoidedDocument();
+
+        OpenfactSession getOpenfactSession();
+    }
+
+    interface VoidedDocumentRemovedEvent extends ProviderEvent {
+        VoidedDocumentModel getVoidedDocument();
+
+        OpenfactSession getOpenfactSession();
+    }
 }

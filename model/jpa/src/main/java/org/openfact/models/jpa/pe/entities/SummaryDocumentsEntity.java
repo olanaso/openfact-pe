@@ -11,6 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.openfact.models.jpa.entities.OrganizationEntity;
 import org.openfact.models.jpa.entities.ubl.InvoiceSendEventEntity;
 import org.openfact.models.jpa.entities.ubl.common.SignatureEntity;
 import org.openfact.models.jpa.entities.ubl.common.SupplierPartyEntity;
@@ -78,7 +80,14 @@ public class SummaryDocumentsEntity {
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "summaryDocument", cascade = CascadeType.REMOVE)
     protected Collection<SummaryDocumentsRequiredActionEntity> requiredActions = new ArrayList<>();
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey, name = "ORGANIZATION_ID")
+    private OrganizationEntity organization;
 
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    @Column(name = "CREATED_TIMESTAMP")
+    private LocalDateTime createdTimestamp;
     @Lob
     @Column(name = "XML_DOCUMENT")
     protected byte[] xmlDocument;
@@ -106,7 +115,23 @@ public class SummaryDocumentsEntity {
         return id;
     }
 
-    public void setId(String id) {
+    public OrganizationEntity getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(OrganizationEntity organization) {
+		this.organization = organization;
+	}
+
+	public LocalDateTime getCreatedTimestamp() {
+		return createdTimestamp;
+	}
+
+	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+		this.createdTimestamp = createdTimestamp;
+	}
+
+	public void setId(String id) {
         this.id = id;
     }
 

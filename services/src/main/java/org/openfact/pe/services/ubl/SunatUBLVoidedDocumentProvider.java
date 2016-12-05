@@ -103,7 +103,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					number = Integer.parseInt(splits[2]);
 				}
 
-				int nextNumber = SunatUtils.getNextNumber(number, 999);
+				int nextNumber = SunatUtils.getNextNumber(number, 99999);
 				int nextSeries = SunatUtils.getDateToNumber();
 				StringBuilder documentId = new StringBuilder();
 				documentId.append(voidedDocumentCode.getMask().substring(0, 2));

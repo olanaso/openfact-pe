@@ -15,8 +15,8 @@ public enum CodigoTipoDocumento {
     
     PERCEPCION("01", "^[P]{1}\\d{1,3}[-]\\d{1,8}$", 13),
     RETENCION("01", "^[R]{1}\\d{1,3}[-]\\d{1,8}$", 13),
-    RESUMEN_DIARIO("01", "^[RC]{2}[-]\\d{8}[-]\\d{1,3}$", 15),
-    BAJA("01", "^[RA]{2}[-]\\d{8}[-]\\d{1,3}$", 15);
+    RESUMEN_DIARIO("01", "^[RC]{2}[-]\\d{8}[-]\\d{1,5}$", 17),
+    BAJA("01", "^[RA]{2}[-]\\d{8}[-]\\d{1,5}$", 17);
     
     private final String codigo;
 

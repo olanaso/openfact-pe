@@ -130,6 +130,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.openfact</groupId>
+				<artifactId>openfact-server-spi-private</artifactId>
+				<version>${openfact.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openfact</groupId>
 				<artifactId>openfact-model-jpa</artifactId>
 				<version>${openfact.version}</version>
 			</dependency>

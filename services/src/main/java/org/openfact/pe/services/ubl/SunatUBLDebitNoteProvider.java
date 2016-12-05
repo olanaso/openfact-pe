@@ -243,7 +243,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					// Write event to the default database
 					debitNoteSendEvent = (DebitNoteSendEventModel) session.getProvider(SendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, debitNote);
-					//debitNoteSendEvent.setAttachments(files);
+					debitNoteSendEvent.setFileAttatchments(files);
 					debitNoteSendEvent.setDebitNote(debitNote);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

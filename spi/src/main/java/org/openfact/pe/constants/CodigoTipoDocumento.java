@@ -13,10 +13,10 @@ public enum CodigoTipoDocumento {
     GUIA_TRANSPORTISTA("31", "F%-%", 13),
     SEAE("56", "F%-%", 13),
     
-    PERCEPCION("01", "^[P]{1}\\d{1,3}[-]\\d{1,8}$", 13),
-    RETENCION("01", "^[R]{1}\\d{1,3}[-]\\d{1,8}$", 13),
-    RESUMEN_DIARIO("01", "^[RC]{2}[-]\\d{8}[-]\\d{1,5}$", 17),
-    BAJA("01", "^[RA]{2}[-]\\d{8}[-]\\d{1,5}$", 17);
+    PERCEPCION("40", "^[P]{1}\\d{1,3}[-]\\d{1,8}$", 13),
+    RETENCION("20", "^[R]{1}\\d{1,3}[-]\\d{1,8}$", 13),
+    RESUMEN_DIARIO("", "^[RC]{2}[-]\\d{8}[-]\\d{1,5}$", 17),
+    BAJA("", "^[RA]{2}[-]\\d{8}[-]\\d{1,5}$", 17);
     
     private final String codigo;
 

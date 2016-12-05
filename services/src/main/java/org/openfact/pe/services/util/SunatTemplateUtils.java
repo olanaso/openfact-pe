@@ -79,11 +79,9 @@ public class SunatTemplateUtils {
 			throws SendException {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
-		}
-		String codigo = CodigoTipoDocumento.BAJA.getCodigo();
+		}		
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
-		sb.append(codigo).append("-");
 		sb.append(voidedDocument.getDocumentId());
 		return sb.toString();
 	}
@@ -93,10 +91,9 @@ public class SunatTemplateUtils {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
 		}
-		String codigo = CodigoTipoDocumento.RESUMEN_DIARIO.getCodigo();
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append(organization.getAssignedIdentificationId()).append("-");
-		sb.append(codigo).append("-");
+		sb.append(organization.getAssignedIdentificationId()).append("-");	
 		sb.append(summaryDocument.getDocumentId());
 		return sb.toString();
 	}

@@ -230,7 +230,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					summaryDocumentsSendEvent = (SummaryDocumentsSendEventModel) session
 							.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, summaryDocument);
-					// summaryDocumentsSendEvent.setAttachments(files);
+					 summaryDocumentsSendEvent.setFileAttatchments(files);
 					summaryDocumentsSendEvent.setSummaryDocument(summaryDocument);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

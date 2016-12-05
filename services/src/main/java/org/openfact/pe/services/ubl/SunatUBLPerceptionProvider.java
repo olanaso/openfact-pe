@@ -284,7 +284,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					// Write event to the default database
 					perceptionSendEvent = (PerceptionSendEventModel) session.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, perception);
-					// perceptionSendEvent.setAttachments(files);
+					perceptionSendEvent.setFileAttatchments(files);
 					perceptionSendEvent.setPerception(perception);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

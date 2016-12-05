@@ -184,8 +184,8 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					JAXBElement<RetentionType> jaxbElement = factory.createRetention(retentionType);
 					StringWriter xmlWriter = new StringWriter();
 					XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
-					xmlStream.setNamespaceContext(SunatUtils.getBasedNamespaceContext(
-							"urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1"));
+					xmlStream.setNamespaceContext(SunatUtils
+							.getBasedNamespaceContext("urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1"));
 					marshallerElement.marshal(jaxbElement, xmlStream);
 					Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
 					return document;
@@ -288,7 +288,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					// Write event to the default database
 					retentionSendEvent = (RetentionSendEventModel) session.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, retention);
-					// retentionSendEvent.setAttachments(files);
+					retentionSendEvent.setFileAttatchments(files);
 					retentionSendEvent.setRetention(retention);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

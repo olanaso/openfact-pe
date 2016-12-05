@@ -244,7 +244,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					// Write event to the default database
 					creditNoteSendEvent = (CreditNoteSendEventModel) session.getProvider(SendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, creditNote);
-					//creditNoteSendEvent.setAttachments(files);
+					creditNoteSendEvent.setFileAttatchments(files);
 					creditNoteSendEvent.setCreditNote(creditNote);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

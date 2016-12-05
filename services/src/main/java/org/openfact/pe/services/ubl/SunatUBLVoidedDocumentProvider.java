@@ -223,7 +223,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					summaryDocumentsSendEvent = (VoidedDocumentsSendEventModel) session
 							.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, voidedDocument);
-					// summaryDocumentsSendEvent.setAttachments(files);
+					summaryDocumentsSendEvent.setFileAttatchments(files);
 					summaryDocumentsSendEvent.setVoidedDocument(voidedDocument);
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)

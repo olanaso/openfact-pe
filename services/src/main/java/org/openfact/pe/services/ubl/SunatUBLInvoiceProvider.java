@@ -205,7 +205,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					// Write event to the default database 
 					invoiceSendEvent =(InvoiceSendEventModel)session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, invoice);
-					//invoiceSendEvent.setAttachments(files);
+					invoiceSendEvent.setFileAttatchments(files);
 					invoiceSendEvent.setInvoice(invoice);
 					// Write event to the extends database 	
 					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSunatResponse(organization,

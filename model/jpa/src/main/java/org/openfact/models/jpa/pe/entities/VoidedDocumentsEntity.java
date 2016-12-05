@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.openfact.models.jpa.entities.OrganizationEntity;
 import org.openfact.models.jpa.entities.ubl.InvoiceSendEventEntity;
 import org.openfact.models.jpa.entities.ubl.common.SignatureEntity;
 import org.openfact.models.jpa.entities.ubl.common.SupplierPartyEntity;
@@ -107,8 +109,32 @@ public class VoidedDocumentsEntity {
     @OneToMany(targetEntity = SignatureEntity.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "SIGNATURE_VOIDEDDOCUMENT")
     protected List<SignatureEntity> signature = new ArrayList<>();
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(foreignKey = @ForeignKey, name = "ORGANIZATION_ID")
+    private OrganizationEntity organization;
 
-    public String getId() {
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    @Column(name = "CREATED_TIMESTAMP")
+    private LocalDateTime createdTimestamp;
+    
+    public OrganizationEntity getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(OrganizationEntity organization) {
+		this.organization = organization;
+	}
+
+	public LocalDateTime getCreatedTimestamp() {
+		return createdTimestamp;
+	}
+
+	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+		this.createdTimestamp = createdTimestamp;
+	}
+
+	public String getId() {
         return id;
     }
 

@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import org.openfact.models.OpenfactSession;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.provider.ProviderEvent;
 
 public interface PerceptionModel {
      
@@ -86,5 +88,23 @@ public interface PerceptionModel {
     void addRequiredAction(RequiredAction action);
 
     void removeRequiredAction(RequiredAction action);
+    /**
+     * Events interfaces
+     */
+    interface PerceptionCreationEvent extends ProviderEvent {
+        PerceptionModel getCreatedPerception();
+    }
+
+    interface PerceptionPostCreateEvent extends ProviderEvent {
+        PerceptionModel getCreatedPerception();
+
+        OpenfactSession getOpenfactSession();
+    }
+
+    interface PerceptionRemovedEvent extends ProviderEvent {
+        PerceptionModel getPerception();
+
+        OpenfactSession getOpenfactSession();
+    }
 
 }

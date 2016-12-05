@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import org.openfact.models.OpenfactSession;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.provider.ProviderEvent;
 
 public interface SummaryDocumentModel {
 
@@ -62,4 +64,22 @@ public interface SummaryDocumentModel {
     void addRequiredAction(RequiredAction action);
 
     void removeRequiredAction(RequiredAction action);
+    /**
+     * Events interfaces
+     */
+    interface SummaryDocumentCreationEvent extends ProviderEvent {
+        SummaryDocumentModel getCreatedSummaryDocument();
+    }
+
+    interface SummaryDocumentPostCreateEvent extends ProviderEvent {
+        SummaryDocumentModel getCreatedSummaryDocument();
+
+        OpenfactSession getOpenfactSession();
+    }
+
+    interface SummaryDocumentRemovedEvent extends ProviderEvent {
+        SummaryDocumentModel getSummaryDocument();
+
+        OpenfactSession getOpenfactSession();
+    }
 }

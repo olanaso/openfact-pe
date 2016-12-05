@@ -5,8 +5,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import org.openfact.models.CreditNoteModel;
+import org.openfact.models.OpenfactSession;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.provider.ProviderEvent;
 
 public interface RetentionModel {
 
@@ -83,4 +86,22 @@ public interface RetentionModel {
     void addRequiredAction(RequiredAction action);
 
     void removeRequiredAction(RequiredAction action);
+    /**
+     * Events interfaces
+     */
+    interface RetentionCreationEvent extends ProviderEvent {
+        RetentionModel getCreatedRetention();
+    }
+
+    interface RetentionPostCreateEvent extends ProviderEvent {
+        RetentionModel getCreatedRetention();
+
+        OpenfactSession getOpenfactSession();
+    }
+
+    interface RetentionRemovedEvent extends ProviderEvent {
+        RetentionModel getRetention();
+
+        OpenfactSession getOpenfactSession();
+    }
 }

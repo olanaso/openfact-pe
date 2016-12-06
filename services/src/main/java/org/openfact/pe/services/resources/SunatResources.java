@@ -1,12 +1,8 @@
 package org.openfact.pe.services.resources;
 
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.services.managers.OrganizationManager;
-import org.openfact.services.resources.OrganizationsResource;
-
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
+
+import org.openfact.models.OpenfactSession;
 
 public class SunatResources {
 

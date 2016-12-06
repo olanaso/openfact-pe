@@ -9,102 +9,109 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
+import org.openfact.ubl.SendEventModel;
 
 public interface PerceptionModel {
-     
+
 	String getId();
 
-    String getDocumentId();
+	String getDocumentId();
 
-    String getOrganizationId();
+	String getOrganizationId();
 
-    void setDocumentId(String documentId);
+	void setDocumentId(String documentId);
 
-    String getUblVersionID();
+	String getUblVersionID();
 
-    void setUblVersionID(String ublVersionID);
+	void setUblVersionID(String ublVersionID);
 
-    String getCustomizationID();
+	String getCustomizationID();
 
-    void setCustomizationID(String customizationID);
+	void setCustomizationID(String customizationID);
 
-    String getDocumentCurrencyCode();
+	String getDocumentCurrencyCode();
 
-    void setDocumentCurrencyCode(String value);
+	void setDocumentCurrencyCode(String value);
 
-    LocalDate getIssueDate();
+	LocalDate getIssueDate();
 
-    void setIssueDate(LocalDate issueDate);
+	void setIssueDate(LocalDate issueDate);
 
-    String getSUNATPerceptionSystemCode();
+	String getSUNATPerceptionSystemCode();
 
-    void setSUNATPerceptionSystemCode(String sUNATPerceptionSystemCode);
+	void setSUNATPerceptionSystemCode(String sUNATPerceptionSystemCode);
 
-    BigDecimal getSUNATPerceptionPercent();
+	BigDecimal getSUNATPerceptionPercent();
 
-    void setSUNATPerceptionPercent(BigDecimal sUNATPerceptionPercent);
+	void setSUNATPerceptionPercent(BigDecimal sUNATPerceptionPercent);
 
-    BigDecimal getTotalInvoiceAmount();
+	BigDecimal getTotalInvoiceAmount();
 
-    void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
+	void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
 
-    BigDecimal getSUNATTotalCashed();
+	BigDecimal getSUNATTotalCashed();
 
-    void setSUNATTotalCashed(BigDecimal sUNATTotalCashed);
+	void setSUNATTotalCashed(BigDecimal sUNATTotalCashed);
 
-    PartyModel getAgentParty();
+	PartyModel getAgentParty();
 
-    PartyModel getAgentPartyAsNotNull();
+	PartyModel getAgentPartyAsNotNull();
 
-    PartyModel getReceiverParty();
+	PartyModel getReceiverParty();
 
-    PartyModel getReceiverPartyAsNotNull();
+	PartyModel getReceiverPartyAsNotNull();
 
-    List<String> getNotes();
+	List<String> getNotes();
 
-    void setNotes(List<String> notes);
+	void setNotes(List<String> notes);
 
-    List<PerceptionDocumentReferenceModel> getSunatPerceptionDocumentReference();
+	List<PerceptionDocumentReferenceModel> getSunatPerceptionDocumentReference();
 
-    PerceptionDocumentReferenceModel addSunatPerceptionDocumentReference();
+	PerceptionDocumentReferenceModel addSunatPerceptionDocumentReference();
 
-    /**
-     * Xml
-     **/
+	/**
+	 * Xml
+	 **/
 
-    byte[] getXmlDocument();
+	byte[] getXmlDocument();
 
-    void setXmlDocument(byte[] object);
+	void setXmlDocument(byte[] object);
 
-    /**
-     * Required Actions
-     */
-    Set<String> getRequiredActions();
+	/**
+	 * Send events
+	 */
+	List<SendEventModel> getSendEvents();
 
-    void addRequiredAction(String action);
+	/**
+	 * Required Actions
+	 */
+	Set<String> getRequiredActions();
 
-    void removeRequiredAction(String action);
+	void addRequiredAction(String action);
 
-    void addRequiredAction(RequiredAction action);
+	void removeRequiredAction(String action);
 
-    void removeRequiredAction(RequiredAction action);
-    /**
-     * Events interfaces
-     */
-    interface PerceptionCreationEvent extends ProviderEvent {
-        PerceptionModel getCreatedPerception();
-    }
+	void addRequiredAction(RequiredAction action);
 
-    interface PerceptionPostCreateEvent extends ProviderEvent {
-        PerceptionModel getCreatedPerception();
+	void removeRequiredAction(RequiredAction action);
 
-        OpenfactSession getOpenfactSession();
-    }
+	/**
+	 * Events interfaces
+	 */
+	interface PerceptionCreationEvent extends ProviderEvent {
+		PerceptionModel getCreatedPerception();
+	}
 
-    interface PerceptionRemovedEvent extends ProviderEvent {
-        PerceptionModel getPerception();
+	interface PerceptionPostCreateEvent extends ProviderEvent {
+		PerceptionModel getCreatedPerception();
 
-        OpenfactSession getOpenfactSession();
-    }
+		OpenfactSession getOpenfactSession();
+	}
+
+	interface PerceptionRemovedEvent extends ProviderEvent {
+		PerceptionModel getPerception();
+
+		OpenfactSession getOpenfactSession();
+	}
 
 }

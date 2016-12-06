@@ -3,6 +3,7 @@ package org.openfact.pe.models.jpa.ubl;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -12,9 +13,11 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.SendEventAdapter;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentsLineModel;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsEntity;
+import org.openfact.ubl.SendEventModel;
 
 public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<VoidedDocumentsEntity> {
 
@@ -37,6 +40,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	public VoidedDocumentsEntity getEntity() {
 		return voidedDocuments;
 	}
+
 	public static VoidedDocumentsEntity toEntity(VoidedDocumentModel model, EntityManager em) {
 		if (model instanceof VoidedDocumentAdapter) {
 			return ((VoidedDocumentAdapter) model).getEntity();
@@ -71,7 +75,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void setDocumentCurrencyCode(String value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -83,7 +87,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void setUblVersionId(String ublVersionId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -95,7 +99,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void setCustomizationId(String customizationId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -107,7 +111,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void setReferenceDate(LocalDate referenceDate) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -119,7 +123,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void setIssueDate(LocalDate issueDate) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -131,7 +135,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void setNote(List<String> notes) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -155,7 +159,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void setXmlDocument(byte[] bytes) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -167,13 +171,13 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 	@Override
 	public void addRequiredAction(String action) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeRequiredAction(String action) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -190,14 +194,20 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 
 	@Override
 	public void addRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		String actionName = action.name();
+		addRequiredAction(actionName);
 	}
 
 	@Override
 	public void removeRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		String actionName = action.name();
+		removeRequiredAction(actionName);
+	}
+
+	@Override
+	public List<SendEventModel> getSendEvents() {
+		return voidedDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
 	}
 
 }

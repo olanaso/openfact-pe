@@ -8,78 +8,85 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
+import org.openfact.ubl.SendEventModel;
 
 public interface SummaryDocumentModel {
 
-    String getId();
+	String getId();
 
-    String getDocumentId();
+	String getDocumentId();
 
-    String getOrganizationId();
+	String getOrganizationId();
 
-    String getDocumentCurrencyCode();
+	String getDocumentCurrencyCode();
 
-    void setDocumentCurrencyCode(String value);
+	void setDocumentCurrencyCode(String value);
 
-    String getUblVersionId();
+	String getUblVersionId();
 
-    void setUblVersionId(String ublVersionId);
+	void setUblVersionId(String ublVersionId);
 
-    String getCustomizationI();
+	String getCustomizationI();
 
-    void setCustomizationId(String customizationId);
+	void setCustomizationId(String customizationId);
 
-    LocalDate getReferenceDate();
+	LocalDate getReferenceDate();
 
-    void setReferenceDate(LocalDate referenceDate);
+	void setReferenceDate(LocalDate referenceDate);
 
-    LocalDate getIssueDate();
+	LocalDate getIssueDate();
 
-    void setIssueDateTime(LocalDate issueDate);
+	void setIssueDateTime(LocalDate issueDate);
 
-    SupplierPartyModel getAccountingSupplierParty();
+	SupplierPartyModel getAccountingSupplierParty();
 
-    SupplierPartyModel getAccountingSupplierPartyAsNotNull();
+	SupplierPartyModel getAccountingSupplierPartyAsNotNull();
 
-    List<SummaryDocumentsLineModel> getSummaryDocumentsLines();
+	List<SummaryDocumentsLineModel> getSummaryDocumentsLines();
 
-    SummaryDocumentsLineModel addSummaryDocumentsLines();
+	SummaryDocumentsLineModel addSummaryDocumentsLines();
 
-    /**
-     * Xml
-     */
-    byte[] getXmlDocument();
+	/**
+	 * Xml
+	 */
+	byte[] getXmlDocument();
 
-    void setXmlDocument(byte[] bytes);
+	void setXmlDocument(byte[] bytes);
 
-    /**
-     * Required Actions
-     */
-    Set<String> getRequiredActions();
+	/**
+	 * Send events
+	 */
+	List<SendEventModel> getSendEvents();
 
-    void addRequiredAction(String action);
+	/**
+	 * Required Actions
+	 */
+	Set<String> getRequiredActions();
 
-    void removeRequiredAction(String action);
+	void addRequiredAction(String action);
 
-    void addRequiredAction(RequiredAction action);
+	void removeRequiredAction(String action);
 
-    void removeRequiredAction(RequiredAction action);
-    /**
-     * Events interfaces
-     */
-    interface SummaryDocumentCreationEvent extends ProviderEvent {
-        SummaryDocumentModel getCreatedSummaryDocument();
-    }
+	void addRequiredAction(RequiredAction action);
 
-    interface SummaryDocumentPostCreateEvent extends ProviderEvent {
-        SummaryDocumentModel getCreatedSummaryDocument();
+	void removeRequiredAction(RequiredAction action);
 
-        OpenfactSession getOpenfactSession();
-    }
+	/**
+	 * Events interfaces
+	 */
+	interface SummaryDocumentCreationEvent extends ProviderEvent {
+		SummaryDocumentModel getCreatedSummaryDocument();
+	}
 
-    interface SummaryDocumentRemovedEvent extends ProviderEvent {
-        SummaryDocumentModel getSummaryDocument();
+	interface SummaryDocumentPostCreateEvent extends ProviderEvent {
+		SummaryDocumentModel getCreatedSummaryDocument();
 
-        OpenfactSession getOpenfactSession();
-    }
+		OpenfactSession getOpenfactSession();
+	}
+
+	interface SummaryDocumentRemovedEvent extends ProviderEvent {
+		SummaryDocumentModel getSummaryDocument();
+
+		OpenfactSession getOpenfactSession();
+	}
 }

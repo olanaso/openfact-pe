@@ -3,6 +3,7 @@ package org.openfact.pe.models.jpa.ubl;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -12,9 +13,11 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.SendEventAdapter;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentsLineModel;
 import org.openfact.pe.models.jpa.entities.SummaryDocumentsEntity;
+import org.openfact.ubl.SendEventModel;
 
 public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<SummaryDocumentsEntity> {
 
@@ -179,13 +182,19 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 
 	@Override
 	public void addRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		  String actionName = action.name();
+	        addRequiredAction(actionName);		
 	}
 
 	@Override
 	public void removeRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		 String actionName = action.name();
+	        removeRequiredAction(actionName);		
+	}
+
+	@Override
+	public List<SendEventModel> getSendEvents() {
+		 return summaryDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+	                .collect(Collectors.toList());
 	}
 }

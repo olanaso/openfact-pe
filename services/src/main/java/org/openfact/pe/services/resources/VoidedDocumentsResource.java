@@ -34,24 +34,27 @@ import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.StorageFileModel;
+import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
+import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.models.utils.RepresentationToModel;
-import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.VoidedDocumentsType;
-import org.openfact.pe.models.SunatResponseModel;
-import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
-import org.openfact.pe.representations.idm.SunatResponseRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.pe.services.managers.VoidedDocumentManager;
+import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
+import org.openfact.pe.services.util.SunatTemplateUtils;
+import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
+import org.openfact.ubl.SendEventModel;
 import org.w3c.dom.Document;
 
 public class VoidedDocumentsResource {
@@ -313,47 +316,57 @@ public class VoidedDocumentsResource {
 	@Path("{voidedDocumentId}")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<SunatResponseRepresentation> getSunatResponses(
-			@QueryParam("voidedDocumentId") final String voidedDocumentId) {
-		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
-		List<SunatResponseModel> sunatResponses;
-		if (voidedDocumentId == null) {
-			throw new NotFoundException("Sunat response not found");
-		}
-		sunatResponses = responseProvider.getSunatResponsesByDocument(organization, CodigoTipoDocumento.BAJA,
+	public List<SendEventRepresentation> getSendEvents(@QueryParam("voidedDocumentId") final String voidedDocumentId) {
+		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
+		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization,
 				voidedDocumentId);
-
-		return sunatResponses.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
-				.collect(Collectors.toList());
+		if (voidedDocument == null) {
+			throw new NotFoundException("VoidedDocument not found");
+		}
+		List<SendEventModel> sendEvents = voidedDocument.getSendEvents();
+		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
 	}
 
 	@GET
 	@Path("{voidedDocumentId}/representation/cdr")
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getCdr(@QueryParam("voidedDocumentId") final String voidedDocumentId) {
-		SunatResponseProvider responseProvider = session.getProvider(SunatResponseProvider.class);
-		SunatResponseModel sunatResponse;
+	public Response getCdr(@QueryParam("voidedDocumentId") final String voidedDocumentId) throws Exception {
+		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
 		if (voidedDocumentId == null) {
 			throw new NotFoundException("Sunat response not found");
-
 		}
-		sunatResponse = responseProvider.getSunatResponseByDocument(organization, CodigoTipoDocumento.BAJA,
+		String ticket = null;
+		SendEventModel sendEvent = null;
+		StorageFileModel storageFile = null;
+		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentByID(organization,
 				voidedDocumentId);
-		if (sunatResponse.getTicket() == null) {
+		List<SendEventModel> sendEvents = voidedDocument.getSendEvents();
+		for (SendEventModel model : sendEvents) {
+			if (model.getResponse().containsKey("TICKET")) {
+				sendEvent = model;
+			}
+		}
+		if (sendEvent == null) {
 			throw new NotFoundException("Ticket not found");
 		}
-		if (sunatResponse.getDocumentResponse() == null) {
-			byte[] result = new SunatSenderUtils(organization).getStatus(sunatResponse.getTicket());
+		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
+			byte[] result = new SunatSenderUtils(organization).getStatus(ticket);
 			if (result == null) {
-				throw new NotFoundException("response not found");
+				throw new NotFoundException("Sunat response, cdr not found");
 			}
-			sunatResponse.setDocumentResponse(result);
+			String fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
+			sendEvent.addFileResponseAttatchments(
+					SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, result));
+			sendEvent.setResponse(SunatResponseUtils.byteResponseToMap(result));
 		}
-
-		ResponseBuilder response = Response.ok(sunatResponse.getDocumentResponse());
-		response.type("application/zip");
-		response.header("content-disposition", "attachment; filename=\"" + sunatResponse.getId() + ".zip\"");
+		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
+			throw new NotFoundException("Sunat response, cdr not found");
+		}
+		storageFile = sendEvent.getFileResponseAttatchments().get(0);
+		ResponseBuilder response = Response.ok(storageFile.getFile());
+		response.type(storageFile.getMimeType());
+		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
 		return response.build();
 	}
 }

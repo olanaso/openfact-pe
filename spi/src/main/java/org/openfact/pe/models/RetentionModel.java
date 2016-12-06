@@ -10,98 +10,105 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
+import org.openfact.ubl.SendEventModel;
 
 public interface RetentionModel {
 
-    String getId();
+	String getId();
 
-    String getDocumentId();
+	String getDocumentId();
 
-    String getOrganizationId();
+	String getOrganizationId();
 
-    String getUblVersionId();
+	String getUblVersionId();
 
-    void setUblVersionId(String ublVersionId);
+	void setUblVersionId(String ublVersionId);
 
-    String getCustomizationId();
+	String getCustomizationId();
 
-    void setCustomizationId(String customizationId);
+	void setCustomizationId(String customizationId);
 
-    String getDocumentCurrencyCode();
+	String getDocumentCurrencyCode();
 
-    void setDocumentCurrencyCode(String value);
+	void setDocumentCurrencyCode(String value);
 
-    LocalDate getIssueDate();
+	LocalDate getIssueDate();
 
-    void setIssueDate(LocalDate issueDate);
+	void setIssueDate(LocalDate issueDate);
 
-    String getSunatRetentionSystemCode();
+	String getSunatRetentionSystemCode();
 
-    void setSunatRetentionSystemCode(String code);
+	void setSunatRetentionSystemCode(String code);
 
-    BigDecimal getSunatRetentionPercent();
+	BigDecimal getSunatRetentionPercent();
 
-    void setSunatRetentionPercent(BigDecimal percent);
+	void setSunatRetentionPercent(BigDecimal percent);
 
-    BigDecimal getTotalInvoiceAmount();
+	BigDecimal getTotalInvoiceAmount();
 
-    void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
+	void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
 
-    BigDecimal getSunatTotalPaid();
+	BigDecimal getSunatTotalPaid();
 
-    void setSunatTotalPaid(BigDecimal totalPaid);
+	void setSunatTotalPaid(BigDecimal totalPaid);
 
-    PartyModel getAgentParty();
+	PartyModel getAgentParty();
 
-    PartyModel getAgentPartyAsNotNull();
+	PartyModel getAgentPartyAsNotNull();
 
-    PartyModel getReceiverParty();
+	PartyModel getReceiverParty();
 
-    PartyModel getReceiverPartyAsNotNull();
+	PartyModel getReceiverPartyAsNotNull();
 
-    List<String> getNotes();
+	List<String> getNotes();
 
-    void setNotes(List<String> notes);
+	void setNotes(List<String> notes);
 
-    List<RetentionDocumentReferenceModel> getSunatRetentionDocumentReference();
+	List<RetentionDocumentReferenceModel> getSunatRetentionDocumentReference();
 
-    RetentionDocumentReferenceModel addSunatRetentionDocumentReference();
+	RetentionDocumentReferenceModel addSunatRetentionDocumentReference();
 
-    /**
-     * Xml
-     */
-    byte[] getXmlDocument();
+	/**
+	 * Xml
+	 */
+	byte[] getXmlDocument();
 
-    void setXmlDocument(byte[] bytes);
+	void setXmlDocument(byte[] bytes);
 
-    /**
-     * Required Actions
-     */
-    Set<String> getRequiredActions();
+	/**
+	 * Send events
+	 */
+	List<SendEventModel> getSendEvents();
 
-    void addRequiredAction(String action);
+	/**
+	 * Required Actions
+	 */
+	Set<String> getRequiredActions();
 
-    void removeRequiredAction(String action);
+	void addRequiredAction(String action);
 
-    void addRequiredAction(RequiredAction action);
+	void removeRequiredAction(String action);
 
-    void removeRequiredAction(RequiredAction action);
-    /**
-     * Events interfaces
-     */
-    interface RetentionCreationEvent extends ProviderEvent {
-        RetentionModel getCreatedRetention();
-    }
+	void addRequiredAction(RequiredAction action);
 
-    interface RetentionPostCreateEvent extends ProviderEvent {
-        RetentionModel getCreatedRetention();
+	void removeRequiredAction(RequiredAction action);
 
-        OpenfactSession getOpenfactSession();
-    }
+	/**
+	 * Events interfaces
+	 */
+	interface RetentionCreationEvent extends ProviderEvent {
+		RetentionModel getCreatedRetention();
+	}
 
-    interface RetentionRemovedEvent extends ProviderEvent {
-        RetentionModel getRetention();
+	interface RetentionPostCreateEvent extends ProviderEvent {
+		RetentionModel getCreatedRetention();
 
-        OpenfactSession getOpenfactSession();
-    }
+		OpenfactSession getOpenfactSession();
+	}
+
+	interface RetentionRemovedEvent extends ProviderEvent {
+		RetentionModel getRetention();
+
+		OpenfactSession getOpenfactSession();
+	}
 }

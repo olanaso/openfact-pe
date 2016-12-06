@@ -2,8 +2,10 @@ package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -13,9 +15,12 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.SendEventAdapter;
+import org.openfact.models.jpa.entities.InvoiceRequiredActionEntity;
 import org.openfact.pe.models.PerceptionDocumentReferenceModel;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.jpa.entities.PerceptionEntity;
+import org.openfact.ubl.SendEventModel;
 
 public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEntity> {
 	protected static final Logger logger = Logger.getLogger(PerceptionAdapter.class);
@@ -65,7 +70,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setDocumentId(String documentId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -77,7 +82,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setUblVersionID(String ublVersionID) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -89,7 +94,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setCustomizationID(String customizationID) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -101,7 +106,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setDocumentCurrencyCode(String value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -113,7 +118,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setIssueDate(LocalDate issueDate) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -125,7 +130,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setSUNATPerceptionSystemCode(String sUNATPerceptionSystemCode) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -137,7 +142,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setSUNATPerceptionPercent(BigDecimal sUNATPerceptionPercent) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -149,7 +154,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -161,9 +166,8 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setSUNATTotalCashed(BigDecimal sUNATTotalCashed) {
 		// TODO Auto-generated method stub
-		
-	}	
 
+	}
 
 	@Override
 	public List<String> getNotes() {
@@ -174,7 +178,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setNotes(List<String> notes) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -198,7 +202,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void setXmlDocument(byte[] object) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -210,15 +214,13 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 	@Override
 	public void addRequiredAction(String action) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void removeRequiredAction(String action) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void removeRequiredAction(String action) {		 
 
+	}
 
 	@Override
 	public PartyModel getAgentParty() {
@@ -246,13 +248,19 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 
 	@Override
 	public void addRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		String actionName = action.name();
+		addRequiredAction(actionName);
 	}
 
 	@Override
 	public void removeRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		String actionName = action.name();
+		removeRequiredAction(actionName);
+	}
+
+	@Override
+	public List<SendEventModel> getSendEvents() {
+		return perception.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
 	}
 }

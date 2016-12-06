@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
@@ -13,9 +14,11 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.SendEventAdapter;
 import org.openfact.pe.models.RetentionDocumentReferenceModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.jpa.entities.RetentionEntity;
+import org.openfact.ubl.SendEventModel;
 
 public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntity> {
 	protected static final Logger logger = Logger.getLogger(RetentionAdapter.class);
@@ -159,7 +162,6 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 
 	}
 
-
 	@Override
 	public List<String> getNotes() {
 		// TODO Auto-generated method stub
@@ -240,16 +242,21 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 
 	@Override
 	public void addRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		String actionName = action.name();
+		addRequiredAction(actionName);
 	}
 
 	@Override
 	public void removeRequiredAction(RequiredAction action) {
-		// TODO Auto-generated method stub
-		
+		String actionName = action.name();
+		removeRequiredAction(actionName);
+
 	}
 
-	
+	@Override
+	public List<SendEventModel> getSendEvents() {
+		return retention.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
+	}
 
 }

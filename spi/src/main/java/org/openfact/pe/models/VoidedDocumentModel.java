@@ -8,82 +8,89 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
+import org.openfact.ubl.SendEventModel;
 
 public interface VoidedDocumentModel {
 
-    String getId();
+	String getId();
 
-    String getDocumentId();
+	String getDocumentId();
 
-    String getOrganizationId();
+	String getOrganizationId();
 
-    String getDocumentCurrencyCode();
+	String getDocumentCurrencyCode();
 
-    void setDocumentCurrencyCode(String value);
+	void setDocumentCurrencyCode(String value);
 
-    String getUblVersionId();
+	String getUblVersionId();
 
-    void setUblVersionId(String ublVersionId);
+	void setUblVersionId(String ublVersionId);
 
-    String getCustomizationId();
+	String getCustomizationId();
 
-    void setCustomizationId(String customizationId);
+	void setCustomizationId(String customizationId);
 
-    LocalDate getReferenceDate();
+	LocalDate getReferenceDate();
 
-    void setReferenceDate(LocalDate referenceDate);
+	void setReferenceDate(LocalDate referenceDate);
 
-    LocalDate getIssueDate();
+	LocalDate getIssueDate();
 
-    void setIssueDate(LocalDate issueDate);
+	void setIssueDate(LocalDate issueDate);
 
-    SupplierPartyModel getAccountingSupplierParty();
+	SupplierPartyModel getAccountingSupplierParty();
 
-    SupplierPartyModel addAccountingSupplierParty();
+	SupplierPartyModel addAccountingSupplierParty();
 
-    List<String> getNotes();
+	List<String> getNotes();
 
-    void setNote(List<String> notes);
+	void setNote(List<String> notes);
 
-    List<VoidedDocumentsLineModel> getVoidedDocumentsLine();
+	List<VoidedDocumentsLineModel> getVoidedDocumentsLine();
 
-    VoidedDocumentsLineModel addVoidedDocumentsLine();
+	VoidedDocumentsLineModel addVoidedDocumentsLine();
 
-    /**
-     * Xml
-     */
-    byte[] getXmlDocument();
+	/**
+	 * Xml
+	 */
+	byte[] getXmlDocument();
 
-    void setXmlDocument(byte[] bytes);
+	void setXmlDocument(byte[] bytes);
 
-    /**
-     * Required Actions
-     */
-    Set<String> getRequiredActions();
+	/**
+	 * Send events
+	 */
+	List<SendEventModel> getSendEvents();
 
-    void addRequiredAction(String action);
+	/**
+	 * Required Actions
+	 */
+	Set<String> getRequiredActions();
 
-    void removeRequiredAction(String action);
+	void addRequiredAction(String action);
 
-    void addRequiredAction(RequiredAction action);
+	void removeRequiredAction(String action);
 
-    void removeRequiredAction(RequiredAction action);
-    /**
-     * Events interfaces
-     */
-    interface VoidedDocumentCreationEvent extends ProviderEvent {
-        VoidedDocumentModel getCreatedVoidedDocument();
-    }
+	void addRequiredAction(RequiredAction action);
 
-    interface VoidedDocumentPostCreateEvent extends ProviderEvent {
-        VoidedDocumentModel getCreatedVoidedDocument();
+	void removeRequiredAction(RequiredAction action);
 
-        OpenfactSession getOpenfactSession();
-    }
+	/**
+	 * Events interfaces
+	 */
+	interface VoidedDocumentCreationEvent extends ProviderEvent {
+		VoidedDocumentModel getCreatedVoidedDocument();
+	}
 
-    interface VoidedDocumentRemovedEvent extends ProviderEvent {
-        VoidedDocumentModel getVoidedDocument();
+	interface VoidedDocumentPostCreateEvent extends ProviderEvent {
+		VoidedDocumentModel getCreatedVoidedDocument();
 
-        OpenfactSession getOpenfactSession();
-    }
+		OpenfactSession getOpenfactSession();
+	}
+
+	interface VoidedDocumentRemovedEvent extends ProviderEvent {
+		VoidedDocumentModel getVoidedDocument();
+
+		OpenfactSession getOpenfactSession();
+	}
 }

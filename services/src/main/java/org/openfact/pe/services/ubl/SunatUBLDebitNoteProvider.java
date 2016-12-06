@@ -236,8 +236,9 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					throws SendException {
 				SendEventModel model = null;
 				byte[] zip = null;
+				String fileName = "";
 				try {
-					String fileName = SunatTemplateUtils.generateXmlFileName(organization, debitNote);
+					fileName = SunatTemplateUtils.generateXmlFileName(organization, debitNote);
 					zip = SunatTemplateUtils.generateZip(debitNote.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
@@ -259,6 +260,8 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					SOAPFault soapFault = e.getFault();
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, debitNote);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -266,6 +269,8 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 				} catch (Exception e) {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, debitNote);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

@@ -33,10 +33,12 @@ import org.openfact.models.SimpleFileModel;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.models.SunatResponseModel;
 import org.openfact.pe.models.SunatResponseProvider;
+import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
@@ -242,27 +244,30 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, debitNote);
-					model.addFileAttatchments(
-							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					// Write event to the extends database
-					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.SUCCESS, model);
-					sunatResponse.setDocumentResponse(response);
+					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.addFileResponseAttatchments(
+							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
+					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
+					model.setType("SUNAT");
+					if (model.getResult()) {
+						debitNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					}
 				} catch (TransformerException e) {
-					throw new SendException(e);
-				} catch (IOException e) {
 					throw new SendException(e);
 				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
-					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, debitNote);
+					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
-					// Write event to the extends database
-					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.ERROR, model);
-					sunatResponse.setErrorMessage(soapFault.getFaultString());
-					sunatResponse.setResponseCode(soapFault.getFaultCode());
+					model.setResponse(
+							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
+				} catch (Exception e) {
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, debitNote);
+					model.setType("SUNAT");
+					model.setDescription(e.getMessage());
 				}
 				return model;
 			}

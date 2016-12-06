@@ -195,12 +195,14 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, invoice);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					// Write event to the extends database
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
 					model.setType("SUNAT");
-					invoice.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					if (model.getResult()) {
+						invoice.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					}
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {

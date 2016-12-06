@@ -6,7 +6,7 @@ import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.UBLRetentionProviderFactory;
 
-public class SunatUBLRetentionProviderFactory implements UBLRetentionProviderFactory{
+public class SunatUBLRetentionProviderFactory implements UBLRetentionProviderFactory {
 
 	@Override
 	public UBLRetentionProvider create(OpenfactSession session) {
@@ -14,15 +14,15 @@ public class SunatUBLRetentionProviderFactory implements UBLRetentionProviderFac
 	}
 
 	@Override
-	public void init(Scope config) {		
+	public void init(Scope config) {
 	}
 
 	@Override
-	public void postInit(OpenfactSessionFactory factory) {		
+	public void postInit(OpenfactSessionFactory factory) {
 	}
 
 	@Override
-	public void close() {		
+	public void close() {
 	}
 
 	@Override

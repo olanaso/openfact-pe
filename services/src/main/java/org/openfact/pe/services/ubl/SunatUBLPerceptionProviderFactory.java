@@ -6,7 +6,7 @@ import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.UBLPerceptionProviderFactory;
 
-public class SunatUBLPerceptionProviderFactory  implements UBLPerceptionProviderFactory {
+public class SunatUBLPerceptionProviderFactory implements UBLPerceptionProviderFactory {
 
 	@Override
 	public UBLPerceptionProvider create(OpenfactSession session) {
@@ -15,17 +15,17 @@ public class SunatUBLPerceptionProviderFactory  implements UBLPerceptionProvider
 
 	@Override
 	public void init(Scope config) {
-		
+
 	}
 
 	@Override
 	public void postInit(OpenfactSessionFactory factory) {
-		
+
 	}
 
 	@Override
 	public void close() {
-		
+
 	}
 
 	@Override

@@ -224,13 +224,16 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, voidedDocument);
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					Map<String, String> result = new HashMap<>();
 					result.put("ACCEPTED BY SUNAT", "YES");
 					result.put("TICKET", response);
 					model.setResponse(result);
 					model.setType("SUNAT");
-					voidedDocument.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					if (model.getResult()) {
+						voidedDocument.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					}
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (SOAPFaultException e) {

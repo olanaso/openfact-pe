@@ -23,6 +23,12 @@ public class SunatSenderUtils {
 		config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService");
 	}
 
+	public static Map<String,String> getDestiny(){
+		Map<String, String> destiny = new HashMap<>();
+		destiny.put("Address","{https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService}");
+		return  destiny;
+	}
+
 	public byte[] sendBill(byte[] document, String fileName, InternetMediaType mediaType) {
 		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
 		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);

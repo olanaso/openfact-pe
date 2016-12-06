@@ -285,16 +285,18 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, perception);
-					model.addFileAttatchments(
-							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
 					model.setType("SUNAT");
-					perception.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					if (model.getResult()) {
+						perception.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					}
 				} catch (TransformerException e) {
 					throw new SendException(e);
-				}catch (SOAPFaultException e) {
+				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,

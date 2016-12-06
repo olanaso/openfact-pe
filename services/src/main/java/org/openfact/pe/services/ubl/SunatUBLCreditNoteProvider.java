@@ -245,16 +245,18 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, creditNote);
-					model.addFileAttatchments(
-							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));	
+					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
 					model.setType("SUNAT");
-					creditNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					if (model.getResult()) {
+						creditNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					}
 				} catch (TransformerException e) {
 					throw new SendException(e);
-				}catch (SOAPFaultException e) {
+				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,

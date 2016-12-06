@@ -6,7 +6,7 @@ import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.UBLVoidedDocumentProviderFactory;
 
-public class SunatUBLVoidedDocumentProviderFactory implements UBLVoidedDocumentProviderFactory{
+public class SunatUBLVoidedDocumentProviderFactory implements UBLVoidedDocumentProviderFactory {
 
 	@Override
 	public UBLVoidedDocumentProvider create(OpenfactSession session) {
@@ -15,17 +15,17 @@ public class SunatUBLVoidedDocumentProviderFactory implements UBLVoidedDocumentP
 
 	@Override
 	public void init(Scope config) {
-		
+
 	}
 
 	@Override
 	public void postInit(OpenfactSessionFactory factory) {
-		
+
 	}
 
 	@Override
 	public void close() {
-		
+
 	}
 
 	@Override

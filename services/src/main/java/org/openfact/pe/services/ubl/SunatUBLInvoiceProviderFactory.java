@@ -11,26 +11,26 @@ import org.openfact.ubl.UBLInvoiceProviderFactory;
  */
 public class SunatUBLInvoiceProviderFactory implements UBLInvoiceProviderFactory {
 
-    @Override
-    public UBLInvoiceProvider create(OpenfactSession session) {
-        return new SunatUBLInvoiceProvider(session);
-    }
+	@Override
+	public UBLInvoiceProvider create(OpenfactSession session) {
+		return new SunatUBLInvoiceProvider(session);
+	}
 
-    @Override
-    public void init(Scope config) {
-    }
+	@Override
+	public void init(Scope config) {
+	}
 
-    @Override
-    public void postInit(OpenfactSessionFactory factory) {
-    }
+	@Override
+	public void postInit(OpenfactSessionFactory factory) {
+	}
 
-    @Override
-    public void close() {
-    }
+	@Override
+	public void close() {
+	}
 
-    @Override
-    public String getId() {
-        return "sunat";
-    }
+	@Override
+	public String getId() {
+		return "sunat";
+	}
 
 }

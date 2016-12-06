@@ -2,13 +2,7 @@ package org.openfact.pe.services.ubl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +26,8 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.SimpleFileModel;
-import org.openfact.ubl.SendEventModel;
+import org.openfact.report.ReportException;
+import org.openfact.ubl.*;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
@@ -44,13 +39,6 @@ import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
-import org.openfact.ubl.SendEventProvider;
-import org.openfact.ubl.SendException;
-import org.openfact.ubl.UBLIDGenerator;
-import org.openfact.ubl.UBLInvoiceProvider;
-import org.openfact.ubl.UBLReader;
-import org.openfact.ubl.UBLSender;
-import org.openfact.ubl.UBLWriter;
 import org.w3c.dom.Document;
 
 import com.helger.ubl21.UBL21Reader;
@@ -239,10 +227,18 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 			public SendEventModel sendToCustomer(OrganizationModel organization, InvoiceModel invoice)
 					throws SendException {
 				CustomerPartyModel customerParty = invoice.getAccountingCustomerParty();
-				if (customerParty == null || customerParty.getParty() == null
-						|| customerParty.getParty().getContact() == null
-						|| customerParty.getParty().getContact().getElectronicMail() == null) {
-					return null;
+
+				SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, invoice);
+				sendEvent.setType("EMAIL");
+
+				if (customerParty == null || customerParty.getParty() == null || customerParty.getParty().getContact() == null || customerParty.getParty().getContact().getElectronicMail() == null) {
+					sendEvent.setDescription("Could not find a valid email for the customer.");
+					return sendEvent;
+				}
+
+				if (organization.getSmtpConfig().size() == 0) {
+					sendEvent.setDescription("Could not find a valid smtp configuration on organization.");
+					return sendEvent;
 				}
 
 				// User where the email will be send
@@ -250,8 +246,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					@Override
 					public String getFullName() {
 						List<PartyLegalEntityModel> partyLegalEntities = customerParty.getParty().getPartyLegalEntity();
-						return partyLegalEntities.stream().map(f -> f.getRegistrationName())
-								.reduce((t, u) -> t + "," + u).get();
+						return partyLegalEntities.stream().map(f -> f.getRegistrationName()).reduce((t, u) -> t + "," + u).get();
 					}
 
 					@Override
@@ -260,27 +255,44 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					}
 				};
 
-				// Attatchments
-				FileModel file = new SimpleFileModel();
-				file.setFileName(invoice.getDocumentId());
-				file.setFile(invoice.getXmlDocument());
-				file.setMimeType("application/xml");
-
 				try {
-					session.getProvider(EmailTemplateProvider.class).setOrganization(organization).setUser(user)
-							.setAttachments(new ArrayList<>(Arrays.asList(file))).sendInvoice(invoice);
+					// Attatchments
+					FileModel xmlFile = new SimpleFileModel();
+					xmlFile.setFileName(invoice.getDocumentId() + ".xml");
+					xmlFile.setFile(invoice.getXmlDocument());
+					xmlFile.setMimeType("application/xml");
+
+					FileModel pdfFile = new SimpleFileModel();
+
+					pdfFile.setFileName(invoice.getDocumentId() + ".pdf");
+					pdfFile.setFile(session.getProvider(UBLReportProvider.class).invoice().setOrganization(organization).getReportAsPdf(invoice));
+					pdfFile.setMimeType("application/pdf");
+
+					session.getProvider(EmailTemplateProvider.class)
+							.setOrganization(organization).setUser(user)
+							.setAttachments(Arrays.asList(xmlFile, pdfFile))
+							.sendInvoice(invoice);
 
 					// Write event to the database
-					SendEventModel sendEvent = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.SUCCESS, invoice);
-					sendEvent.setDescription("Invoice Sended by Email");
+					sendEvent.setDescription("Ivoice successfully sended");
+					sendEvent.addFileAttatchments(xmlFile);
+					sendEvent.addFileAttatchments(pdfFile);
+					sendEvent.setResult(true);
 
-					if (sendEvent.getResult()) {
-						invoice.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
-					}
+					Map<String, String> destiny = new HashMap<>();
+					destiny.put("email", user.getEmail());
+					sendEvent.setDestiny(destiny);
+
+					// Remove required action
+					invoice.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
+
 					return sendEvent;
+				} catch (ReportException e) {
+					sendEvent.setDescription(e.getMessage());
+					throw new SendException("Could not generate pdf report", e);
 				} catch (EmailException e) {
-					throw new SendException(e);
+					sendEvent.setDescription(e.getMessage());
+					throw new SendException("Could not send email", e);
 				}
 			}
 		};

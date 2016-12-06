@@ -232,21 +232,21 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 			@Override
 			public SendEventModel sendToThridParty(OrganizationModel organization, DebitNoteModel debitNote)
 					throws SendException {
-				DebitNoteSendEventModel debitNoteSendEvent = null;
+				SendEventModel model = null;
 				byte[] zip = null;
-				try {					
+				try {
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, debitNote);
-					zip = SunatTemplateUtils.generateZip(debitNote.getXmlDocument(), fileName);					
+					zip = SunatTemplateUtils.generateZip(debitNote.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
-					debitNoteSendEvent = (DebitNoteSendEventModel) session.getProvider(SendEventProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, debitNote);
-					debitNoteSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
-					debitNoteSendEvent.setDebitNote(debitNote);
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+							SendResultType.SUCCESS, debitNote);
+					model.addFileAttatchments(
+							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.SUCCESS, debitNoteSendEvent);
+							.addSunatResponse(organization, SendResultType.SUCCESS, model);
 					sunatResponse.setDocumentResponse(response);
 				} catch (TransformerException e) {
 					throw new SendException(e);
@@ -255,17 +255,16 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
-					debitNoteSendEvent = (DebitNoteSendEventModel) session.getProvider(SendEventProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, debitNote);
-					debitNoteSendEvent.setDebitNote(debitNote);
-					debitNoteSendEvent.setDescription(soapFault.getFaultString());
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, debitNote);
+					model.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.ERROR, debitNoteSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, model);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}
-				return debitNoteSendEvent;
+				return model;
 			}
 		};
 	}

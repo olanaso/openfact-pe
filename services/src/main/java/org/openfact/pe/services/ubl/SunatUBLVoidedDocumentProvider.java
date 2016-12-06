@@ -209,7 +209,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 			@Override
 			public SendEventModel sendToThridParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
 					throws SendException {
-				VoidedDocumentsSendEventModel summaryDocumentsSendEvent = null;
+				SendEventModel model = null;
 				byte[] zip = null;
 				try {
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
@@ -218,14 +218,13 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					String response = new SunatSenderUtils(organization).sendSummary(zip, fileName,
 							InternetMediaType.ZIP);
 					// Write event to the default database
-					summaryDocumentsSendEvent = (VoidedDocumentsSendEventModel) session
-							.getProvider(SunatSendEventProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, voidedDocument);
-					summaryDocumentsSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
-					summaryDocumentsSendEvent.setVoidedDocument(voidedDocument);
+					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+							SendResultType.SUCCESS, voidedDocument);
+					model.addFileAttatchments(
+							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.SUCCESS, summaryDocumentsSendEvent);
+							.addSunatResponse(organization, SendResultType.SUCCESS, model);
 					sunatResponse.setTicket(response);
 				} catch (TransformerException e) {
 					throw new SendException(e);
@@ -234,18 +233,16 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
-					summaryDocumentsSendEvent = (VoidedDocumentsSendEventModel) session
-							.getProvider(SunatSendEventProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, voidedDocument);
-					summaryDocumentsSendEvent.setVoidedDocument(voidedDocument);
-					summaryDocumentsSendEvent.setDescription(soapFault.getFaultString());
+					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, voidedDocument);
+					model.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.ERROR, summaryDocumentsSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, model);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}
-				return summaryDocumentsSendEvent;
+				return model;
 			}
 
 			@Override

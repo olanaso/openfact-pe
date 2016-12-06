@@ -136,7 +136,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 			}
 
 			@Override
-			public PerceptionType read(Document document) {	
+			public PerceptionType read(Document document) {
 				try {
 					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
 					Unmarshaller unmarshal = factory.createUnmarshaller();
@@ -273,23 +273,21 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 			@Override
 			public SendEventModel sendToThridParty(OrganizationModel organization, PerceptionModel perception)
 					throws SendException {
-				PerceptionSendEventModel perceptionSendEvent = null;
+				SendEventModel model = null;
 				byte[] zip = null;
 				try {
-					List<FileModel> files = new ArrayList<>();
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, perception);
 					zip = SunatTemplateUtils.generateZip(perception.getXmlDocument(), fileName);
-					files.add(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
-					perceptionSendEvent = (PerceptionSendEventModel) session.getProvider(SunatSendEventProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, perception);
-					perceptionSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
-					perceptionSendEvent.setPerception(perception);
+					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+							SendResultType.SUCCESS, perception);
+					model.addFileAttatchments(
+							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.SUCCESS, perceptionSendEvent);
+							.addSunatResponse(organization, SendResultType.SUCCESS, model);
 					sunatResponse.setDocumentResponse(response);
 				} catch (TransformerException e) {
 					throw new SendException(e);
@@ -298,17 +296,16 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
-					perceptionSendEvent = (PerceptionSendEventModel) session.getProvider(SunatSendEventProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, perception);
-					perceptionSendEvent.setPerception(perception);
-					perceptionSendEvent.setDescription(soapFault.getFaultString());
+					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, perception);
+					model.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.ERROR, perceptionSendEvent);
+							.addSunatResponse(organization, SendResultType.ERROR, model);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}
-				return perceptionSendEvent;
+				return model;
 			}
 		};
 	}

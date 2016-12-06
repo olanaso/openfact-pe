@@ -12,6 +12,7 @@ import org.openfact.models.FileModel;
 import org.openfact.models.InvoiceModel;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.SimpleFileModel;
+import org.openfact.models.enums.InternetMediaType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.RetentionModel;
@@ -80,7 +81,7 @@ public class SunatTemplateUtils {
 			throws SendException {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
-		}		
+		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(voidedDocument.getDocumentId());
@@ -92,9 +93,9 @@ public class SunatTemplateUtils {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
-		sb.append(organization.getAssignedIdentificationId()).append("-");	
+		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(summaryDocument.getDocumentId());
 		return sb.toString();
 	}
@@ -125,11 +126,11 @@ public class SunatTemplateUtils {
 		return sb.toString();
 	}
 
-	public static FileModel toFileModel(String mimeType, String fileName, byte[] file) {
+	public static FileModel toFileModel(InternetMediaType mediaType, String fileName, byte[] file) {
 		FileModel model = new SimpleFileModel();
 		model.setFile(file);
-		model.setFileName(fileName);
-		model.setMimeType(mimeType);
+		model.setFileName(fileName + mediaType.getExtension());
+		model.setMimeType(mediaType.getMimeType());
 		return model;
 	}
 

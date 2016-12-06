@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -23,9 +25,8 @@ import org.w3c.dom.NodeList;
 
 public class SunatResponseUtils {
 
-	public static SendEventRepresentation byteToResponse(byte[] data) throws Exception {
-		SendEventRepresentation rep = new SendEventRepresentation();
-		byte intCode = -1;
+	public static Map<String, String> byteResponseToMap(byte[] data) throws Exception {
+		Map<String, String> response = new HashMap<>();
 		try {
 			data = unzip(data);
 			Document e = DocumentUtils.byteToDocument(data);
@@ -39,29 +40,28 @@ public class SunatResponseUtils {
 			NodeList warningsNode = (NodeList) xPath.evaluate(
 					"/*[local-name()=\'ApplicationResponse\']/*[local-name()=\'Note\']", e.getDocumentElement(),
 					XPathConstants.NODESET);
-			ArrayList lstWarnings = new ArrayList();
-			for (int i = 0; i < warningsNode.getLength(); ++i) {
-				Node show = warningsNode.item(i);
-				lstWarnings.add(show.getTextContent());
-			}
+			// ArrayList lstWarnings = new ArrayList();
+			// for (int i = 0; i < warningsNode.getLength(); ++i) {
+			// Node show = warningsNode.item(i);
+			// lstWarnings.add(show.getTextContent());
+			// }
 			int ErrorCode = (new Integer(responseCode)).intValue();
 			if (ErrorCode != 0 && (ErrorCode < 100 || ErrorCode > 399) && ErrorCode <= 4000) {
-				rep.setResult(false);
+				response.put("ACCEPTED BY SUNAT", "NO");
 			} else {
-				rep.setResult(true);
+				response.put("ACCEPTED BY SUNAT", "YES");
 			}
-			rep.setDescription(description);
-
-			return rep;
+			response.put("RESPONSE CODE", responseCode);
+			response.put("MESSAGE", description);
 		} catch (XPathExpressionException e) {
-			rep.setResult(false);
-			rep.setDescription(e.getMessage());
-			return rep;
+			response.put("ACCEPTED BY SUNAT", "NO");
+			response.put("MESSAGE", e.getMessage());
 		}
+		return response;
 	}
 
-	public static SendEventRepresentation faultToResponse(String... soapFault) {
-		SendEventRepresentation rep = new SendEventRepresentation();
+	public static Map<String, String> faultToMap(String... soapFault) {
+		Map<String, String> response = new HashMap<>();
 		String faultCode = soapFault[0];
 		String message = "";
 		String retCode = getErrorCode(faultCode);
@@ -80,12 +80,11 @@ public class SunatResponseUtils {
 				message = soapFault[1];
 			}
 		} catch (Throwable e) {
-			message = "Error al invocar Servicio: " + e.getMessage();
+			message = "Failed to invoke Service: " + e.getMessage();
 		}
-
-		rep.setResult(false);
-		rep.setDescription(message);
-		return rep;
+		response.put("ACCEPTED BY SUNAT", "NO");
+		response.put("MESSAGE", message);
+		return response;
 	}
 
 	private static String getErrorCode(String faultCode) {

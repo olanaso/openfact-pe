@@ -48,7 +48,7 @@ public class SunatSignerProvider implements SignerProvider {
 
     @Override
     public Document sign(Document document, OrganizationModel organizacion) {
-        String idReference = "Sign" + organizacion.getName().toUpperCase();
+        String idReference = "Sign" + organizacion.getName().toUpperCase().replaceAll("\\s","");
         Document newdocument = addUBLExtensions(document);
         Node parentNode = addExtensionContent(newdocument);
 

@@ -86,7 +86,7 @@
     "provider": "sunat"
   },
 
-  "invoice-reader-writer": {
+  "ublInvoice": {
     "provider": "sunat"
   },
   "invoice-id-generator": {

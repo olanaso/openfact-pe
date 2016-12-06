@@ -1,8 +1,7 @@
 package org.openfact.pe.models;
 
-import org.openfact.models.CreditNoteSendEventModel;
-import org.openfact.models.DebitNoteSendEventModel;
-import org.openfact.models.InvoiceSendEventModel;
+import org.openfact.models.OrganizationModel;
+import org.openfact.ubl.SendEventModel;
 
 public interface SunatResponseModel {
 
@@ -28,32 +27,12 @@ public interface SunatResponseModel {
 
 	void setTicket(String ticket);
 
-	InvoiceSendEventModel getInvoiceSendEvent();
+	SendEventModel getSendEvent();
 
-	CreditNoteSendEventModel getCreditNoteSendEvent();
+	void setSendEvent(SendEventModel sendEvent);
 
-	DebitNoteSendEventModel getDebitNoteSendEvent();
+	OrganizationModel getOrganization();
 
-	PerceptionSendEventModel getPerceptionSendEvent();
-
-	RetentionSendEventModel getRetentionSendEvent();
-
-	SummaryDocumentsSendEventModel getSummaryDocumentsSendEvent();
-
-	VoidedDocumentsSendEventModel getVoidedDocumentsSendEvent();
-
-	void setInvoiceSendEvent(InvoiceSendEventModel invoiceSendEvent);
-
-	void setCreditNoteSendEvent(CreditNoteSendEventModel creditNoteSendEvent);
-
-	void setDebitNoteSendEvent(DebitNoteSendEventModel debitNoteSendEvent);
-
-	void setPerceptionSendEvent(PerceptionSendEventModel perceptionSendEvent);
-
-	void setRetentionSendEvent(RetentionSendEventModel retentionSendEvent);
-
-	void setSummaryDocumentsSendEvent(SummaryDocumentsSendEventModel summaryDocumentsSendEvent);
-
-	void setVoidedDocumentsSendEvent(VoidedDocumentsSendEventModel voidedDocumentsSendEvent);
+	void setOrganization(OrganizationModel organization);
 
 }

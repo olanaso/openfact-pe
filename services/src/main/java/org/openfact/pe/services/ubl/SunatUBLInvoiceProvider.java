@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.models.SunatResponseModel;
 import org.openfact.pe.models.SunatResponseProvider;
+import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
@@ -194,40 +196,43 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 			@Override
 			public SendEventModel sendToThridParty(OrganizationModel organization, InvoiceModel invoice)
 					throws SendException {
-				InvoiceSendEventModel invoiceSendEvent = null;
 				byte[] zip = null;
+				SendEventModel model = null;
 				try {
-					String fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);					
+					String fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
 					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
 					// sender
-					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);					
-					// Write event to the default database 
-					invoiceSendEvent =(InvoiceSendEventModel)session.getProvider(SendEventProvider.class).addSendEvent(organization,
+					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
+					// Write event to the default database
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, invoice);
-					invoiceSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
-					invoiceSendEvent.setInvoice(invoice);
-					// Write event to the extends database 	
-					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSunatResponse(organization,
-							SendResultType.SUCCESS, invoiceSendEvent);
-					sunatResponse.setDocumentResponse(response);	
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					// Write event to the extends database
+					model.addFileResponseAttatchments(
+							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
+					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
+					model.setType("SUNAT");
+					invoice.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 				} catch (TransformerException e) {
 					throw new SendException(e);
 				} catch (IOException e) {
 					throw new SendException(e);
 				} catch (SOAPFaultException e) {
-					SOAPFault soapFault = e.getFault();					
-					// Write event to the default database 
-					invoiceSendEvent =(InvoiceSendEventModel)session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, invoice);					
-					invoiceSendEvent.setInvoice(invoice);
-					invoiceSendEvent.setDescription(soapFault.getFaultString());
-					// Write event to the extends database 	
-					SunatResponseModel sunatResponse =  session.getProvider(SunatResponseProvider.class).addSunatResponse(organization,
-							SendResultType.ERROR, invoiceSendEvent);					
-					sunatResponse.setErrorMessage(soapFault.getFaultString());
-					sunatResponse.setResponseCode(soapFault.getFaultCode());
+					SOAPFault soapFault = e.getFault();
+					// Write event to the default database
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, invoice);
+					model.setType("SUNAT");
+					model.setDescription(soapFault.getFaultString());
+					model.setResponse(
+							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
+				} catch (Exception e) {
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, invoice);
+					model.setType("SUNAT");
+					model.setDescription(e.getMessage());
 				}
-				return invoiceSendEvent;
+				return model;
 			}
 
 			@Override

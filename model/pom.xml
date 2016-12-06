@@ -13,6 +13,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-<!-- 		<module>jpa</module> -->
+		<module>jpa</module>
 	</modules>
 </project>

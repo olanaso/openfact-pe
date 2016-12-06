@@ -233,21 +233,21 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 			@Override
 			public SendEventModel sendToThridParty(OrganizationModel organization, CreditNoteModel creditNote)
 					throws SendException {
-				CreditNoteSendEventModel creditNoteSendEvent = null;
+				SendEventModel model = null;
 				byte[] zip = null;
-				try {					
+				try {
 					String fileName = SunatTemplateUtils.generateXmlFileName(organization, creditNote);
-					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);					
+					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
-					creditNoteSendEvent = (CreditNoteSendEventModel) session.getProvider(SendEventProvider.class)
-							.addSendEvent(organization, SendResultType.SUCCESS, creditNote);										
-					creditNoteSendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP.getMimeType(), fileName, zip));
-					creditNoteSendEvent.setCreditNote(creditNote);
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+							SendResultType.SUCCESS, creditNote);
+					model.addFileAttatchments(
+							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.SUCCESS, creditNoteSendEvent);
+							.addSunatResponse(organization, SendResultType.SUCCESS, model);
 					sunatResponse.setDocumentResponse(response);
 				} catch (TransformerException e) {
 					throw new SendException(e);
@@ -256,17 +256,16 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
-					creditNoteSendEvent = (CreditNoteSendEventModel) session.getProvider(SendEventProvider.class)
-							.addSendEvent(organization, SendResultType.ERROR, creditNote);
-					creditNoteSendEvent.setCreditNote(creditNote);
-					creditNoteSendEvent.setDescription(soapFault.getFaultString());
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, creditNote);
+					model.setDescription(soapFault.getFaultString());
 					// Write event to the extends database
 					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.ERROR, creditNoteSendEvent);					
+							.addSunatResponse(organization, SendResultType.ERROR, model);
 					sunatResponse.setErrorMessage(soapFault.getFaultString());
 					sunatResponse.setResponseCode(soapFault.getFaultCode());
 				}
-				return creditNoteSendEvent;
+				return model;
 			}
 		};
 	}

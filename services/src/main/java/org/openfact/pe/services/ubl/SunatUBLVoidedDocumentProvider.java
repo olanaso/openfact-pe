@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.enums.InternetMediaType;
+import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.SunatFactory;
@@ -44,10 +46,12 @@ import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.VoidedDocumentsSendEventModel;
+import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
 import org.openfact.ubl.SendEventModel;
+import org.openfact.ubl.SendEventProvider;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
@@ -220,27 +224,29 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, voidedDocument);
-					model.addFileAttatchments(
-							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					// Write event to the extends database
-					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.SUCCESS, model);
-					sunatResponse.setTicket(response);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					Map<String, String> result = new HashMap<>();
+					result.put("ACCEPTED BY SUNAT", "YES");
+					result.put("TICKET", response);
+					model.setResponse(result);
+					model.setType("SUNAT");
+					voidedDocument.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 				} catch (TransformerException e) {
-					throw new SendException(e);
-				} catch (IOException e) {
 					throw new SendException(e);
 				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, voidedDocument);
+					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
-					// Write event to the extends database
-					SunatResponseModel sunatResponse = session.getProvider(SunatResponseProvider.class)
-							.addSunatResponse(organization, SendResultType.ERROR, model);
-					sunatResponse.setErrorMessage(soapFault.getFaultString());
-					sunatResponse.setResponseCode(soapFault.getFaultCode());
+					model.setResponse(
+							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
+				} catch (Exception e) {
+					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, voidedDocument);
+					model.setType("SUNAT");
+					model.setDescription(e.getMessage());
 				}
 				return model;
 			}

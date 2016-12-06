@@ -24,7 +24,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMResult;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
@@ -49,9 +48,6 @@ import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.model.types.SunatFactory;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
-import org.openfact.pe.models.RetentionSendEventModel;
-import org.openfact.pe.models.SunatResponseModel;
-import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.services.constants.SunatEventType;
@@ -60,7 +56,6 @@ import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
 import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendEventProvider;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
@@ -295,6 +290,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
+					model.setDescription("Retention submitted successfully to SUNAT");
 					model.setType("SUNAT");
 					if (model.getResult()) {
 						retention.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);

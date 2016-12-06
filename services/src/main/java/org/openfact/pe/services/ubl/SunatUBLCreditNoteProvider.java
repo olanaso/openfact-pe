@@ -1,7 +1,6 @@
 package org.openfact.pe.services.ubl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +21,6 @@ import org.openfact.email.EmailException;
 import org.openfact.email.EmailTemplateProvider;
 import org.openfact.models.CreditNoteModel;
 import org.openfact.models.CustomerPartyModel;
-import org.openfact.models.CreditNoteSendEventModel;
 import org.openfact.models.FileModel;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
@@ -30,22 +28,20 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.SimpleFileModel;
-import org.openfact.ubl.SendEventModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
-import org.openfact.pe.models.SunatResponseModel;
-import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
-import org.openfact.ubl.UBLIDGenerator;
+import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendEventProvider;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLCreditNoteProvider;
+import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
@@ -251,6 +247,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
+					model.setDescription("Credit Note submitted successfully to SUNAT");
 					model.setType("SUNAT");
 					if (model.getResult()) {
 						creditNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);

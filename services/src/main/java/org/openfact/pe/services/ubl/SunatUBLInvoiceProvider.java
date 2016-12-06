@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.email.EmailException;
@@ -25,25 +23,22 @@ import org.openfact.email.EmailTemplateProvider;
 import org.openfact.models.CustomerPartyModel;
 import org.openfact.models.FileModel;
 import org.openfact.models.InvoiceModel;
-import org.openfact.models.InvoiceSendEventModel;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.SimpleFileModel;
-import org.openfact.ubl.SendEventModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
-import org.openfact.pe.models.SunatResponseModel;
-import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
+import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendEventProvider;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
@@ -198,9 +193,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					throws SendException {
 				byte[] zip = null;
 				SendEventModel model = null;
-				String fileName="";
+				String fileName = "";
 				try {
-					 fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
+					fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
 					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
@@ -213,6 +208,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
 					model.setType("SUNAT");
+					model.setDescription("Invoice submitted successfully to SUNAT");
 					if (model.getResult()) {
 						invoice.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 					}

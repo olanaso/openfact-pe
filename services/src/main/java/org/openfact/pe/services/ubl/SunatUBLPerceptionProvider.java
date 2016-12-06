@@ -48,9 +48,6 @@ import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.model.types.SunatFactory;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
-import org.openfact.pe.models.PerceptionSendEventModel;
-import org.openfact.pe.models.SunatResponseModel;
-import org.openfact.pe.models.SunatResponseProvider;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.services.constants.SunatEventType;
@@ -59,7 +56,6 @@ import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.pe.services.util.SunatUtils;
 import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendEventProvider;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
@@ -291,6 +287,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
+					model.setDescription("Perception submitted successfully to SUNAT");
 					model.setType("SUNAT");
 					if (model.getResult()) {
 						perception.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);

@@ -281,8 +281,9 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					throws SendException {
 				SendEventModel model = null;
 				byte[] zip = null;
+				String fileName="";
 				try {
-					String fileName = SunatTemplateUtils.generateXmlFileName(organization, retention);
+					 fileName = SunatTemplateUtils.generateXmlFileName(organization, retention);
 					zip = SunatTemplateUtils.generateZip(retention.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
@@ -304,6 +305,8 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					SOAPFault soapFault = e.getFault();
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, retention);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -311,6 +314,8 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 				} catch (Exception e) {
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, retention);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

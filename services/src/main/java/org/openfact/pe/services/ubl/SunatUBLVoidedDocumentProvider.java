@@ -215,8 +215,9 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					throws SendException {
 				SendEventModel model = null;
 				byte[] zip = null;
+				String fileName = "";
 				try {
-					String fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
+					fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
 					zip = SunatTemplateUtils.generateZip(voidedDocument.getXmlDocument(), fileName);
 					// sender
 					String response = new SunatSenderUtils(organization).sendSummary(zip, fileName,
@@ -241,6 +242,8 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, voidedDocument);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -248,6 +251,8 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 				} catch (Exception e) {
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, voidedDocument);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

@@ -237,8 +237,9 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					throws SendException {
 				SendEventModel model = null;
 				byte[] zip = null;
+				String fileName="";
 				try {
-					String fileName = SunatTemplateUtils.generateXmlFileName(organization, creditNote);
+					 fileName = SunatTemplateUtils.generateXmlFileName(organization, creditNote);
 					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
@@ -261,6 +262,8 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, creditNote);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -268,6 +271,8 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 				} catch (Exception e) {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, creditNote);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

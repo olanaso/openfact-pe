@@ -198,8 +198,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					throws SendException {
 				byte[] zip = null;
 				SendEventModel model = null;
+				String fileName="";
 				try {
-					String fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
+					 fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
 					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
@@ -224,6 +225,8 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, invoice);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -231,6 +234,8 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 				} catch (Exception e) {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, invoice);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

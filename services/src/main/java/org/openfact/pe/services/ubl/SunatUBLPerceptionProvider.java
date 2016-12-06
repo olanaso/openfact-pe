@@ -277,8 +277,9 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					throws SendException {
 				SendEventModel model = null;
 				byte[] zip = null;
+				String fileName = "";
 				try {
-					String fileName = SunatTemplateUtils.generateXmlFileName(organization, perception);
+					fileName = SunatTemplateUtils.generateXmlFileName(organization, perception);
 					zip = SunatTemplateUtils.generateZip(perception.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
@@ -301,6 +302,8 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, perception);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -308,6 +311,8 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 				} catch (Exception e) {
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, perception);
+					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

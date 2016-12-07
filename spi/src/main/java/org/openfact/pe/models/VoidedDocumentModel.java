@@ -16,6 +16,8 @@ public interface VoidedDocumentModel {
 
 	String getDocumentId();
 
+	void setDocumentId(String documentId);
+
 	String getOrganizationId();
 
 	String getDocumentCurrencyCode();
@@ -46,9 +48,9 @@ public interface VoidedDocumentModel {
 
 	void setNote(List<String> notes);
 
-//	List<VoidedDocumentsLineModel> getVoidedDocumentsLine();
-//
-//	VoidedDocumentsLineModel addVoidedDocumentsLine();
+	// List<VoidedDocumentsLineModel> getVoidedDocumentsLine();
+	//
+	// VoidedDocumentsLineModel addVoidedDocumentsLine();
 
 	/**
 	 * Xml

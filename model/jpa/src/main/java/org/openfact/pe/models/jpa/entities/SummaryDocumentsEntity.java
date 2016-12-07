@@ -70,8 +70,8 @@ public class SummaryDocumentsEntity {
 	protected String documentCurrencyCode;
 
 	@Column(name = "ISSUE_DATE")
-	@Type(type = "org.hibernate.type.LocalDateTimeType")
-	protected LocalDateTime issueDate;
+	@Type(type = "org.hibernate.type.LocalDateType")
+	protected LocalDate issueDate;
 
 	// @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy =
 	// "summaryDocument", cascade = CascadeType.ALL)
@@ -167,11 +167,11 @@ public class SummaryDocumentsEntity {
 		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
-	public LocalDateTime getIssueDate() {
+	public LocalDate getIssueDate() {
 		return issueDate;
 	}
 
-	public void setIssueDate(LocalDateTime issueDate) {
+	public void setIssueDate(LocalDate issueDate) {
 		this.issueDate = issueDate;
 	}
 

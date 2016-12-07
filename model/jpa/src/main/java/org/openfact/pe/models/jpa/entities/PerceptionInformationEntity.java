@@ -32,8 +32,8 @@ public class PerceptionInformationEntity {
 	@Type(type = "org.hibernate.type.LocalDateType")
 	protected LocalDate sunatPerceptionDate;
 
-	@Column(name = "NET_TOTAL_PAID")
-	protected BigDecimal sunatNetTotalPaid;
+	@Column(name = "NET_TOTAL_CASHED")
+	protected BigDecimal sunatNetTotalCashed;
 
 	// @ManyToOne(targetEntity = ExchangeRateEntity.class, cascade = {
 	// CascadeType.ALL })
@@ -64,11 +64,12 @@ public class PerceptionInformationEntity {
 		this.sunatPerceptionDate = sunatPerceptionDate;
 	}
 
-	public BigDecimal getSunatNetTotalPaid() {
-		return sunatNetTotalPaid;
+	public BigDecimal getSunatNetTotalCashed() {
+		return sunatNetTotalCashed;
 	}
 
-	public void setSunatNetTotalPaid(BigDecimal sunatNetTotalPaid) {
-		this.sunatNetTotalPaid = sunatNetTotalPaid;
+	public void setSunatNetTotalCashed(BigDecimal sunatNetTotalCashed) {
+		this.sunatNetTotalCashed = sunatNetTotalCashed;
 	}
+
 }

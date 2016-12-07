@@ -109,12 +109,12 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 	}
 
 	@Override
-	public LocalDateTime getIssueDateTime() {
+	public LocalDate getIssueDate() {
 		return summaryDocuments.getIssueDate();
 	}
 
 	@Override
-	public void setIssueDateTime(LocalDateTime issueDate) {
+	public void setIssueDate(LocalDate issueDate) {
 		summaryDocuments.setIssueDate(issueDate);
 	}
 
@@ -197,4 +197,9 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 		return summaryDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
 				.collect(Collectors.toList());
 	}
+
+	@Override
+	public void setDocumentId(String documentId) {
+		summaryDocuments.setDocumentId(documentId);
+	}	
 }

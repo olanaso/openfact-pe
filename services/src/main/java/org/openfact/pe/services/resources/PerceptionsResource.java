@@ -43,7 +43,6 @@ import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.RetentionRepresentation;
 import org.openfact.pe.services.managers.PerceptionManager;
 import org.openfact.representations.idm.SendEventRepresentation;
@@ -76,7 +75,7 @@ public class PerceptionsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<DocumentRepresentation> getPerceptions(@QueryParam("filterText") String filterText,
+	public List<RetentionRepresentation> getPerceptions(@QueryParam("filterText") String filterText,
 			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
 		firstResult = firstResult != null ? firstResult : -1;
 		maxResults = maxResults != null ? maxResults : -1;
@@ -201,7 +200,7 @@ public class PerceptionsResource {
 	@Path("search")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResultsRepresentation<DocumentRepresentation> search(final SearchCriteriaRepresentation criteria) {
+	public SearchResultsRepresentation<RetentionRepresentation> search(final SearchCriteriaRepresentation criteria) {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 
 		SearchCriteriaModel criteriaModel = RepresentationToModel.toModel(criteria);
@@ -212,8 +211,8 @@ public class PerceptionsResource {
 		} else {
 			results = perceptionProvider.searchForPerception(organization, criteriaModel);
 		}
-		SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
-		List<DocumentRepresentation> items = new ArrayList<>();
+		SearchResultsRepresentation<RetentionRepresentation> rep = new SearchResultsRepresentation<>();
+		List<RetentionRepresentation> items = new ArrayList<>();
 		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
@@ -224,14 +223,14 @@ public class PerceptionsResource {
 	@Path("{perceptionId}")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public DocumentRepresentation getPerception(@PathParam("perceptionId") final String perceptionId) {
+	public RetentionRepresentation getPerception(@PathParam("perceptionId") final String perceptionId) {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
 		if (perception == null) {
 			throw new NotFoundException("Perception not found");
 		}
 
-		DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(perception);
+		RetentionRepresentation rep = SunatModelToRepresentation.toRepresentation(perception);
 		return rep;
 	}
 

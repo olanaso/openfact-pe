@@ -18,6 +18,8 @@ public interface RetentionModel {
 
 	String getDocumentId();
 
+	void setDocumentId(String documentId);
+
 	String getOrganizationId();
 
 	String getUblVersionId();

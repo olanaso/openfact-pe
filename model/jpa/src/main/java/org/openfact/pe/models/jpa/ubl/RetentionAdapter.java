@@ -272,4 +272,9 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public void setDocumentId(String documentId) {
+		 retention.setDocumentId(documentId);
+	}
+
 }

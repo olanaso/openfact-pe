@@ -1,6 +1,7 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.EntityManager;
@@ -62,13 +63,13 @@ public class RetentionDocumentReferenceAdapter
 	}
 
 	@Override
-	public LocalDateTime getIssueDate() {
-		return retentionDocumentReference.getIssueDateTime();
+	public LocalDate getIssueDate() {
+		return retentionDocumentReference.getIssueDate();
 	}
 
 	@Override
-	public void setIssueDateTime(LocalDateTime issueDateTime) {
-		retentionDocumentReference.setIssueDateTime(issueDateTime);
+	public void setIssueDate(LocalDate issueDate) {
+		retentionDocumentReference.setIssueDate(issueDate);
 	}
 
 	@Override
@@ -79,6 +80,11 @@ public class RetentionDocumentReferenceAdapter
 	@Override
 	public void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount) {
 		retentionDocumentReference.setTotalInvoiceAmount(totalInvoiceAmount);
+	}
+
+	@Override
+	public void setDocumentId(String documentId) {
+		retentionDocumentReference.setID(documentId);
 	}
 
 }

@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.xml.transform.TransformerException;
 
-import org.openfact.common.converts.StringUtils;
 import org.openfact.common.util.ObjectUtil;
 import org.openfact.models.CreditNoteModel;
 import org.openfact.models.DebitNoteModel;

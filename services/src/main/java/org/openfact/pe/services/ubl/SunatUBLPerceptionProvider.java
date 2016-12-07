@@ -1,33 +1,18 @@
 package org.openfact.pe.services.ubl;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPFault;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.common.converts.StringUtils;
 import org.openfact.email.EmailException;
 import org.openfact.email.EmailTemplateProvider;
 import org.openfact.email.freemarker.beans.ProfileBean;
@@ -37,24 +22,22 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.PartyModel;
-import org.openfact.models.ScrollModel;
 import org.openfact.models.SimpleFileModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.constants.CodigoTipoDocumento;
 import org.openfact.pe.model.types.PerceptionType;
-import org.openfact.pe.model.types.SunatFactory;
 import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLPerceptionProvider;
+import org.openfact.pe.models.utils.SunatDocumentIdProvider;
+import org.openfact.pe.models.utils.SunatDocumentToType;
+import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.services.constants.SunatEventType;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.pe.services.util.SunatUtils;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
@@ -62,7 +45,6 @@ import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 	private OpenfactSession session;
@@ -86,41 +68,8 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 
 			@Override
 			public String generateID(OrganizationModel organization, PerceptionType perceptionType) {
-				CodigoTipoDocumento perceptionCode = CodigoTipoDocumento.PERCEPCION;
-				PerceptionModel lastPerception = null;
-				ScrollModel<PerceptionModel> perceptions = session.getProvider(PerceptionProvider.class)
-						.getPerceptionsScroll(organization, false, 4, 2);
-				Iterator<PerceptionModel> iterator = perceptions.iterator();
-
-				Pattern pattern = Pattern.compile(perceptionCode.getMask());
-				while (iterator.hasNext()) {
-					PerceptionModel perception = iterator.next();
-					String documentId = perception.getDocumentId();
-
-					Matcher matcher = pattern.matcher(documentId);
-					if (matcher.find()) {
-						lastPerception = perception;
-						break;
-					}
-				}
-
-				int series = 0;
-				int number = 0;
-				if (lastPerception != null) {
-					String[] splits = lastPerception.getDocumentId().split("-");
-					series = Integer.parseInt(splits[0].substring(1));
-					number = Integer.parseInt(splits[1]);
-				}
-
-				int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-				int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
-				StringBuilder documentId = new StringBuilder();
-				documentId.append(perceptionCode.getMask().substring(0, 1));
-				documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
-				documentId.append("-");
-				documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
-
-				return documentId.toString();
+				String documentId = SunatDocumentIdProvider.generatePerceptionDocumentId(session, organization);
+				return documentId;
 			}
 		};
 	}
@@ -135,17 +84,8 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 
 			@Override
 			public PerceptionType read(Document document) {
-				try {
-					JAXBContext factory = JAXBContext.newInstance(SunatFactory.class);
-					Unmarshaller unmarshal = factory.createUnmarshaller();
-					@SuppressWarnings("unchecked")
-					JAXBElement<PerceptionType> jaxbPerceptionType = (JAXBElement<PerceptionType>) unmarshal
-							.unmarshal(document);
-					PerceptionType perceptionType = jaxbPerceptionType.getValue();
-					return perceptionType;
-				} catch (JAXBException e) {
-					throw new ModelException(e);
-				}
+				PerceptionType type = SunatDocumentToType.toPerceptionType(document);
+				return type;					
 			}
 
 			@Override
@@ -171,30 +111,10 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 			@Override
 			public Document write(OrganizationModel organization, PerceptionType perceptionType,
 					Map<String, String> attributes) {
-				SunatFactory factory = new SunatFactory();
-				JAXBContext context;
 				try {
-					context = JAXBContext.newInstance(SunatFactory.class);
-					Marshaller marshallerElement = context.createMarshaller();
-					JAXBElement<PerceptionType> jaxbElement = factory.createPerception(perceptionType);
-					StringWriter xmlWriter = new StringWriter();
-					XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
-					xmlStream.setNamespaceContext(SunatUtils.getBasedNamespaceContext(
-							"urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1"));
-					marshallerElement.marshal(jaxbElement, xmlStream);
-					Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
+					Document document = SunatTypeToDocument.toDocument(perceptionType);
 					return document;
 				} catch (JAXBException e) {
-					throw new ModelException(e);
-				} catch (XMLStreamException e) {
-					throw new ModelException(e);
-				} catch (FactoryConfigurationError e) {
-					throw new ModelException(e);
-				} catch (IOException e) {
-					throw new ModelException(e);
-				} catch (SAXException e) {
-					throw new ModelException(e);
-				} catch (ParserConfigurationException e) {
 					throw new ModelException(e);
 				}
 			}

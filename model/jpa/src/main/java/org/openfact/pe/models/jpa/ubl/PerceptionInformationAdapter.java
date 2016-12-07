@@ -47,13 +47,13 @@ public class PerceptionInformationAdapter implements PerceptionInformationModel,
 	}
 
 	@Override
-	public BigDecimal getSunatNetTotalPaid() {
-		return perceptionInformation.getSunatNetTotalPaid();
+	public BigDecimal getSunatNetTotalCashed() {
+		return perceptionInformation.getSunatNetTotalCashed();
 	}
 
 	@Override
-	public void setSunatNetTotalPaid(BigDecimal sunatNetTotalPaid) {
-		perceptionInformation.setSunatNetTotalPaid(sunatNetTotalPaid);
+	public void setSunatNetTotalCashed(BigDecimal sunatNetTotalCashed) {
+		perceptionInformation.setSunatNetTotalCashed(sunatNetTotalCashed);
 	}
 
 	public static PerceptionInformationEntity toEntity(PerceptionInformationModel model, EntityManager em) {

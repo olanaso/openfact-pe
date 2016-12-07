@@ -43,7 +43,6 @@ import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.RetentionRepresentation;
 import org.openfact.pe.services.managers.RetentionManager;
 import org.openfact.representations.idm.SendEventRepresentation;
@@ -73,7 +72,7 @@ public class RetentionsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<DocumentRepresentation> getRetentions(@QueryParam("filterText") String filterText,
+	public List<RetentionRepresentation> getRetentions(@QueryParam("filterText") String filterText,
 			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
 		firstResult = firstResult != null ? firstResult : -1;
 		maxResults = maxResults != null ? maxResults : -1;
@@ -197,7 +196,7 @@ public class RetentionsResource {
 	@Path("search")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResultsRepresentation<DocumentRepresentation> search(final SearchCriteriaRepresentation criteria) {
+	public SearchResultsRepresentation<RetentionRepresentation> search(final SearchCriteriaRepresentation criteria) {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 
 		SearchCriteriaModel criteriaModel = RepresentationToModel.toModel(criteria);
@@ -208,8 +207,8 @@ public class RetentionsResource {
 		} else {
 			results = retentionProvider.searchForRetention(organization, criteriaModel);
 		}
-		SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
-		List<DocumentRepresentation> items = new ArrayList<>();
+		SearchResultsRepresentation<RetentionRepresentation> rep = new SearchResultsRepresentation<>();
+		List<RetentionRepresentation> items = new ArrayList<>();
 		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
@@ -220,14 +219,14 @@ public class RetentionsResource {
 	@Path("{retentionId}")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public DocumentRepresentation getRetention(@PathParam("retentionId") final String retentionId) {
+	public RetentionRepresentation getRetention(@PathParam("retentionId") final String retentionId) {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
 		if (retention == null) {
 			throw new NotFoundException("Retention not found");
 		}
 
-		DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(retention);
+		RetentionRepresentation rep = SunatModelToRepresentation.toRepresentation(retention);
 		return rep;
 	}
 

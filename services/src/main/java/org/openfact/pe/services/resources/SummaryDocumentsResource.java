@@ -44,7 +44,6 @@ import org.openfact.pe.model.types.SummaryDocumentsType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.SummaryRepresentation;
 import org.openfact.pe.services.managers.SummaryDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
@@ -76,7 +75,7 @@ public class SummaryDocumentsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<DocumentRepresentation> getSummaryDocuments(@QueryParam("filterText") String filterText,
+	public List<SummaryRepresentation> getSummaryDocuments(@QueryParam("filterText") String filterText,
 			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
 		firstResult = firstResult != null ? firstResult : -1;
 		maxResults = maxResults != null ? maxResults : -1;
@@ -202,7 +201,7 @@ public class SummaryDocumentsResource {
 	@Path("search")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResultsRepresentation<DocumentRepresentation> search(final SearchCriteriaRepresentation criteria) {
+	public SearchResultsRepresentation<SummaryRepresentation> search(final SearchCriteriaRepresentation criteria) {
 		SummaryDocumentProvider summaryDocumentProvider = session.getProvider(SummaryDocumentProvider.class);
 
 		SearchCriteriaModel criteriaModel = RepresentationToModel.toModel(criteria);
@@ -213,8 +212,8 @@ public class SummaryDocumentsResource {
 		} else {
 			results = summaryDocumentProvider.searchForSummaryDocument(organization, criteriaModel);
 		}
-		SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
-		List<DocumentRepresentation> items = new ArrayList<>();
+		SearchResultsRepresentation<SummaryRepresentation> rep = new SearchResultsRepresentation<>();
+		List<SummaryRepresentation> items = new ArrayList<>();
 		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
@@ -225,7 +224,7 @@ public class SummaryDocumentsResource {
 	@Path("{summaryDocumentId}")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public DocumentRepresentation getSummaryDocument(@PathParam("summaryDocumentId") final String summaryDocumentId) {
+	public SummaryRepresentation getSummaryDocument(@PathParam("summaryDocumentId") final String summaryDocumentId) {
 		SummaryDocumentProvider summaryDocumentProvider = session.getProvider(SummaryDocumentProvider.class);
 		SummaryDocumentModel summaryDocument = summaryDocumentProvider.getSummaryDocumentById(organization,
 				summaryDocumentId);
@@ -233,7 +232,7 @@ public class SummaryDocumentsResource {
 			throw new NotFoundException("SummaryDocument not found");
 		}
 
-		DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(summaryDocument);
+		SummaryRepresentation rep = SunatModelToRepresentation.toRepresentation(summaryDocument);
 		return rep;
 	}
 

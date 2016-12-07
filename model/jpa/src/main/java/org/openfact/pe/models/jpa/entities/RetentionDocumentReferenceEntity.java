@@ -32,8 +32,8 @@ public class RetentionDocumentReferenceEntity {
 	protected String ID;
 
 	@Column(name = "ISSUE_DATE")
-	@Type(type = "org.hibernate.type.LocalDateTimeType")
-	protected LocalDateTime issueDateTime;
+	@Type(type = "org.hibernate.type.LocalDateType")
+	protected LocalDate issueDate;
 
 	@Column(name = "TOTAL_INVOICE_AMOUNT")
 	protected BigDecimal totalInvoiceAmount;
@@ -58,12 +58,12 @@ public class RetentionDocumentReferenceEntity {
 		ID = iD;
 	}
 
-	public LocalDateTime getIssueDateTime() {
-		return issueDateTime;
+	public LocalDate getIssueDate() {
+		return issueDate;
 	}
 
-	public void setIssueDateTime(LocalDateTime issueDateTime) {
-		this.issueDateTime = issueDateTime;
+	public void setIssueDate(LocalDate issueDate) {
+		this.issueDate = issueDate;
 	}
 
 	public BigDecimal getTotalInvoiceAmount() {

@@ -15,9 +15,9 @@ public interface PerceptionInformationModel {
 
     void setSunatPerceptionDate(LocalDate sunatPerceptionDate);
 
-    BigDecimal getSunatNetTotalPaid();
+    BigDecimal getSunatNetTotalCashed();
 
-    void setSunatNetTotalPaid(BigDecimal sunatNetTotalPaid);
+    void setSunatNetTotalCashed(BigDecimal sunatNetTotalcashed);
 
     /*ExchangeRateModel getExchangeRate();
 

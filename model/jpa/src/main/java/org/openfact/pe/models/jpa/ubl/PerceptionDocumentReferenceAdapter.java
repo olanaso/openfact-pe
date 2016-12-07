@@ -86,4 +86,9 @@ public class PerceptionDocumentReferenceAdapter
 				perceptionDocumentReference.getSunatPerceptionInformation());
 	}
 
+	@Override
+	public void setDocumentId(String documentId) {
+		perceptionDocumentReference.setID(documentId);
+	}
+
 }

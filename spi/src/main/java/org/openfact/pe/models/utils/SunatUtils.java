@@ -1,4 +1,4 @@
-package org.openfact.pe.services.util;
+package org.openfact.pe.models.utils;
 
 import java.io.StringReader;
 import java.text.SimpleDateFormat;

@@ -44,7 +44,6 @@ import org.openfact.pe.model.types.VoidedDocumentsType;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.pe.services.managers.VoidedDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
@@ -76,7 +75,7 @@ public class VoidedDocumentsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<DocumentRepresentation> getVoidedDocuments(@QueryParam("filterText") String filterText,
+	public List<VoidedRepresentation> getVoidedDocuments(@QueryParam("filterText") String filterText,
 			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
 		firstResult = firstResult != null ? firstResult : -1;
 		maxResults = maxResults != null ? maxResults : -1;
@@ -202,7 +201,7 @@ public class VoidedDocumentsResource {
 	@Path("search")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResultsRepresentation<DocumentRepresentation> search(final SearchCriteriaRepresentation criteria) {
+	public SearchResultsRepresentation<VoidedRepresentation> search(final SearchCriteriaRepresentation criteria) {
 		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
 
 		SearchCriteriaModel criteriaModel = RepresentationToModel.toModel(criteria);
@@ -213,8 +212,8 @@ public class VoidedDocumentsResource {
 		} else {
 			results = voidedDocumentProvider.searchForVoidedDocument(organization, criteriaModel);
 		}
-		SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
-		List<DocumentRepresentation> items = new ArrayList<>();
+		SearchResultsRepresentation<VoidedRepresentation> rep = new SearchResultsRepresentation<>();
+		List<VoidedRepresentation> items = new ArrayList<>();
 		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
@@ -225,7 +224,7 @@ public class VoidedDocumentsResource {
 	@Path("{voidedDocumentId}")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public DocumentRepresentation getVoidedDocument(@PathParam("voidedDocumentId") final String voidedDocumentId) {
+	public VoidedRepresentation getVoidedDocument(@PathParam("voidedDocumentId") final String voidedDocumentId) {
 		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
 		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization,
 				voidedDocumentId);
@@ -233,7 +232,7 @@ public class VoidedDocumentsResource {
 			throw new NotFoundException("VoidedDocument not found");
 		}
 
-		DocumentRepresentation rep = SunatModelToRepresentation.toRepresentation(voidedDocument);
+		VoidedRepresentation rep = SunatModelToRepresentation.toRepresentation(voidedDocument);
 		return rep;
 	}
 

@@ -9,7 +9,9 @@ public interface PerceptionDocumentReferenceModel {
     String getId();
 
     String getDocumentId();
-
+    
+    void setDocumentId(String documentId);
+    
     LocalDate getIssueDate();
 
     void setIssueDate(LocalDate issueDate);

@@ -208,4 +208,9 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public void setDocumentId(String documentId) {
+		voidedDocuments.setDocumentId(documentId);
+	}
+
 }

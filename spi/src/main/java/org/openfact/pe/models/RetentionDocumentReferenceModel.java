@@ -6,24 +6,28 @@ import java.time.LocalDateTime;
 
 public interface RetentionDocumentReferenceModel {
 
-    String getId();
+	String getId();
 
-    String getDocumentId();
+	String getDocumentId();
 
-    LocalDateTime getIssueDate();
+	void setDocumentId(String documentId);
 
-    void setIssueDateTime(LocalDateTime issueDateTime);
+	LocalDate getIssueDate();
 
-    BigDecimal getTotalInvoiceAmount();
+	void setIssueDate(LocalDate issueDate);
 
-    void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
+	BigDecimal getTotalInvoiceAmount();
 
-    /*PaymentModel getPayment();
+	void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
 
-    void setPayment(PaymentModel payment);*/
+	/*
+	 * PaymentModel getPayment();
+	 * 
+	 * void setPayment(PaymentModel payment);
+	 */
 
-    RetentionInformationModel getSunatRetentionInformation();
+	RetentionInformationModel getSunatRetentionInformation();
 
-    void setSunatRetentionInformation(RetentionInformationModel sunatRetentionInformation);
+	void setSunatRetentionInformation(RetentionInformationModel sunatRetentionInformation);
 
 }

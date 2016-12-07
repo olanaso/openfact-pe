@@ -17,6 +17,8 @@ public interface SummaryDocumentModel {
 
 	String getDocumentId();
 
+	void setDocumentId(String documentId);
+
 	String getOrganizationId();
 
 	String getDocumentCurrencyCode();
@@ -35,17 +37,17 @@ public interface SummaryDocumentModel {
 
 	void setReferenceDate(LocalDate referenceDate);
 
-	LocalDateTime getIssueDateTime();
+	LocalDate getIssueDate();
 
-	void setIssueDateTime(LocalDateTime issueDateTime);
+	void setIssueDate(LocalDate issueDate);
 
 	SupplierPartyModel getAccountingSupplierParty();
 
 	SupplierPartyModel getAccountingSupplierPartyAsNotNull();
 
-//	List<SummaryDocumentsLineModel> getSummaryDocumentsLines();
-//
-//	SummaryDocumentsLineModel addSummaryDocumentsLines();
+	// List<SummaryDocumentsLineModel> getSummaryDocumentsLines();
+	//
+	// SummaryDocumentsLineModel addSummaryDocumentsLines();
 
 	/**
 	 * Xml

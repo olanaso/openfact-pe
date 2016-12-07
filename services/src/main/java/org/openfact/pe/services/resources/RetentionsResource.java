@@ -84,7 +84,7 @@ public class RetentionsResource {
 		} else {
 			retentions = retentionProvider.searchForRetention(organization, filterText.trim(), firstResult, maxResults);
 		}
-		return retentions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
+		return retentions.stream().map(f -> SunatModelToRepresentation.toRepresentation(organization, f))
 				.collect(Collectors.toList());
 	}
 
@@ -209,7 +209,7 @@ public class RetentionsResource {
 		}
 		SearchResultsRepresentation<RetentionRepresentation> rep = new SearchResultsRepresentation<>();
 		List<RetentionRepresentation> items = new ArrayList<>();
-		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
+		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(organization, f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
 		return rep;
@@ -226,7 +226,7 @@ public class RetentionsResource {
 			throw new NotFoundException("Retention not found");
 		}
 
-		RetentionRepresentation rep = SunatModelToRepresentation.toRepresentation(retention);
+		RetentionRepresentation rep = SunatModelToRepresentation.toRepresentation(organization, retention);
 		return rep;
 	}
 
@@ -315,8 +315,7 @@ public class RetentionsResource {
 		List<SendEventModel> sendEvents = retention.getSendEvents();
 		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
 	}
-	
-	
+
 	@GET
 	@Path("{retentionId}/representation/cdr")
 	@NoCache

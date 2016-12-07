@@ -3,22 +3,12 @@ package org.openfact.pe.models.jpa.ubl;
 import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
-import org.openfact.models.CreditNoteSendEventModel;
-import org.openfact.models.DebitNoteSendEventModel;
-import org.openfact.models.InvoiceSendEventModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.jpa.CreditNoteSendEventAdapter;
-import org.openfact.models.jpa.DebitNoteSendEventAdapter;
-import org.openfact.models.jpa.InvoiceSendEventAdapter;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.OrganizationAdapter;
 import org.openfact.models.jpa.SendEventAdapter;
-import org.openfact.pe.models.PerceptionSendEventModel;
-import org.openfact.pe.models.RetentionSendEventModel;
-import org.openfact.pe.models.SummaryDocumentsSendEventModel;
 import org.openfact.pe.models.SunatResponseModel;
-import org.openfact.pe.models.VoidedDocumentsSendEventModel;
 import org.openfact.pe.models.jpa.entities.SunatResponseEntity;
 import org.openfact.ubl.SendEventModel;
 

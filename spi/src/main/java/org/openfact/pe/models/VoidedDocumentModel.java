@@ -40,15 +40,15 @@ public interface VoidedDocumentModel {
 
 	SupplierPartyModel getAccountingSupplierParty();
 
-	SupplierPartyModel addAccountingSupplierParty();
+	SupplierPartyModel getAccountingSupplierPartyAsNotNull();
 
 	List<String> getNotes();
 
 	void setNote(List<String> notes);
 
-	List<VoidedDocumentsLineModel> getVoidedDocumentsLine();
-
-	VoidedDocumentsLineModel addVoidedDocumentsLine();
+//	List<VoidedDocumentsLineModel> getVoidedDocumentsLine();
+//
+//	VoidedDocumentsLineModel addVoidedDocumentsLine();
 
 	/**
 	 * Xml

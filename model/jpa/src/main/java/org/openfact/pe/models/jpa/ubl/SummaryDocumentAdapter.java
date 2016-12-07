@@ -1,6 +1,9 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,9 +17,11 @@ import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.SendEventAdapter;
+import org.openfact.models.jpa.SupplierPartyAdapter;
+import org.openfact.models.jpa.entities.SupplierPartyEntity;
 import org.openfact.pe.models.SummaryDocumentModel;
-import org.openfact.pe.models.SummaryDocumentsLineModel;
 import org.openfact.pe.models.jpa.entities.SummaryDocumentsEntity;
+import org.openfact.pe.models.jpa.entities.SummaryDocumentsRequiredActionEntity;
 import org.openfact.ubl.SendEventModel;
 
 public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<SummaryDocumentsEntity> {
@@ -50,151 +55,146 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getId();
 	}
 
 	@Override
 	public String getDocumentId() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getDocumentId();
 	}
 
 	@Override
 	public String getOrganizationId() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getOrganizationId();
 	}
 
 	@Override
 	public String getDocumentCurrencyCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getDocumentCurrencyCode();
 	}
 
 	@Override
 	public void setDocumentCurrencyCode(String value) {
-		// TODO Auto-generated method stub
-
+		summaryDocuments.setDocumentCurrencyCode(value);
 	}
 
 	@Override
 	public String getUblVersionId() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getUblVersionId();
 	}
 
 	@Override
 	public void setUblVersionId(String ublVersionId) {
-		// TODO Auto-generated method stub
-
+		summaryDocuments.setUblVersionId(ublVersionId);
 	}
 
 	@Override
 	public String getCustomizationI() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getCustomizationId();
 	}
 
 	@Override
 	public void setCustomizationId(String customizationId) {
-		// TODO Auto-generated method stub
-
+		summaryDocuments.setCustomizationId(customizationId);
 	}
 
 	@Override
 	public LocalDate getReferenceDate() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getReferenceDate();
 	}
 
 	@Override
 	public void setReferenceDate(LocalDate referenceDate) {
-		// TODO Auto-generated method stub
-
+		summaryDocuments.setReferenceDate(referenceDate);
 	}
 
 	@Override
-	public LocalDate getIssueDate() {
-		// TODO Auto-generated method stub
-		return null;
+	public LocalDateTime getIssueDateTime() {
+		return summaryDocuments.getIssueDate();
 	}
 
 	@Override
-	public void setIssueDateTime(LocalDate issueDate) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<SummaryDocumentsLineModel> getSummaryDocumentsLines() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SummaryDocumentsLineModel addSummaryDocumentsLines() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setIssueDateTime(LocalDateTime issueDate) {
+		summaryDocuments.setIssueDate(issueDate);
 	}
 
 	@Override
 	public byte[] getXmlDocument() {
-		// TODO Auto-generated method stub
-		return null;
+		return summaryDocuments.getXmlDocument();
 	}
 
 	@Override
 	public void setXmlDocument(byte[] bytes) {
-		// TODO Auto-generated method stub
-
+		summaryDocuments.setXmlDocument(bytes);
 	}
 
 	@Override
 	public Set<String> getRequiredActions() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> result = new HashSet<>();
+		for (SummaryDocumentsRequiredActionEntity attr : summaryDocuments.getRequiredActions()) {
+			result.add(attr.getAction());
+		}
+		return result;
 	}
 
 	@Override
-	public void addRequiredAction(String action) {
-		// TODO Auto-generated method stub
-
+	public void addRequiredAction(String actionName) {
+		for (SummaryDocumentsRequiredActionEntity attr : summaryDocuments.getRequiredActions()) {
+			if (attr.getAction().equals(actionName)) {
+				return;
+			}
+		}
+		SummaryDocumentsRequiredActionEntity attr = new SummaryDocumentsRequiredActionEntity();
+		attr.setAction(actionName);
+		attr.setSummaryDocuments(summaryDocuments);
+		em.persist(attr);
+		summaryDocuments.getRequiredActions().add(attr);
 	}
 
 	@Override
-	public void removeRequiredAction(String action) {
-		// TODO Auto-generated method stub
-
+	public void removeRequiredAction(String actionName) {
+		Iterator<SummaryDocumentsRequiredActionEntity> it = summaryDocuments.getRequiredActions().iterator();
+		while (it.hasNext()) {
+			SummaryDocumentsRequiredActionEntity attr = it.next();
+			if (attr.getAction().equals(actionName)) {
+				it.remove();
+				em.remove(attr);
+			}
+		}
 	}
 
 	@Override
 	public SupplierPartyModel getAccountingSupplierParty() {
-		// TODO Auto-generated method stub
-		return null;
+		if (summaryDocuments.getAccountingSupplierParty() == null) {
+			return null;
+		}
+		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());
 	}
 
 	@Override
 	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
-		// TODO Auto-generated method stub
-		return null;
+		if (summaryDocuments.getAccountingSupplierParty() == null) {
+			SupplierPartyEntity entity = new SupplierPartyEntity();
+			summaryDocuments.setAccountingSupplierParty(entity);
+		}
+		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());
 	}
 
 	@Override
 	public void addRequiredAction(RequiredAction action) {
-		  String actionName = action.name();
-	        addRequiredAction(actionName);		
+		String actionName = action.name();
+		addRequiredAction(actionName);
 	}
 
 	@Override
 	public void removeRequiredAction(RequiredAction action) {
-		 String actionName = action.name();
-	        removeRequiredAction(actionName);		
+		String actionName = action.name();
+		removeRequiredAction(actionName);
 	}
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-		 return summaryDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-	                .collect(Collectors.toList());
+		return summaryDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
 	}
 }

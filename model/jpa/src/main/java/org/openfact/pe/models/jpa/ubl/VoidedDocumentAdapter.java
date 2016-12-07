@@ -1,6 +1,8 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,9 +16,11 @@ import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.SendEventAdapter;
+import org.openfact.models.jpa.SupplierPartyAdapter;
+import org.openfact.models.jpa.entities.SupplierPartyEntity;
 import org.openfact.pe.models.VoidedDocumentModel;
-import org.openfact.pe.models.VoidedDocumentsLineModel;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsEntity;
+import org.openfact.pe.models.jpa.entities.VoidedDocumentsRequiredActionEntity;
 import org.openfact.ubl.SendEventModel;
 
 public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<VoidedDocumentsEntity> {
@@ -50,146 +54,140 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getId();
 	}
 
 	@Override
 	public String getDocumentId() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getDocumentId();
 	}
 
 	@Override
 	public String getOrganizationId() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getOrganizationId();
 	}
 
 	@Override
 	public String getDocumentCurrencyCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getDocumentCurrencyCode();
 	}
 
 	@Override
 	public void setDocumentCurrencyCode(String value) {
-		// TODO Auto-generated method stub
-
+		voidedDocuments.setDocumentCurrencyCode(value);
 	}
 
 	@Override
 	public String getUblVersionId() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getUblVersionId();
 	}
 
 	@Override
 	public void setUblVersionId(String ublVersionId) {
-		// TODO Auto-generated method stub
-
+		voidedDocuments.setUblVersionId(ublVersionId);
 	}
 
 	@Override
 	public String getCustomizationId() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getCustomizationId();
 	}
 
 	@Override
 	public void setCustomizationId(String customizationId) {
-		// TODO Auto-generated method stub
-
+		voidedDocuments.setCustomizationId(customizationId);
 	}
 
 	@Override
 	public LocalDate getReferenceDate() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getReferenceDate();
 	}
 
 	@Override
 	public void setReferenceDate(LocalDate referenceDate) {
-		// TODO Auto-generated method stub
-
+		voidedDocuments.setReferenceDate(referenceDate);
 	}
 
 	@Override
 	public LocalDate getIssueDate() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getIssueDate();
 	}
 
 	@Override
 	public void setIssueDate(LocalDate issueDate) {
-		// TODO Auto-generated method stub
-
+		voidedDocuments.setIssueDate(issueDate);
 	}
 
 	@Override
 	public List<String> getNotes() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getNotes();
 	}
 
 	@Override
 	public void setNote(List<String> notes) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<VoidedDocumentsLineModel> getVoidedDocumentsLine() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public VoidedDocumentsLineModel addVoidedDocumentsLine() {
-		// TODO Auto-generated method stub
-		return null;
+		voidedDocuments.setNotes(notes);
 	}
 
 	@Override
 	public byte[] getXmlDocument() {
-		// TODO Auto-generated method stub
-		return null;
+		return voidedDocuments.getXmlDocument();
 	}
 
 	@Override
 	public void setXmlDocument(byte[] bytes) {
-		// TODO Auto-generated method stub
-
+		voidedDocuments.setXmlDocument(bytes);
 	}
 
 	@Override
 	public Set<String> getRequiredActions() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> result = new HashSet<>();
+		for (VoidedDocumentsRequiredActionEntity attr : voidedDocuments.getRequiredActions()) {
+			result.add(attr.getAction());
+		}
+		return result;
 	}
 
 	@Override
-	public void addRequiredAction(String action) {
-		// TODO Auto-generated method stub
+	public void addRequiredAction(String actionName) {
+		for (VoidedDocumentsRequiredActionEntity attr : voidedDocuments.getRequiredActions()) {
+			if (attr.getAction().equals(actionName)) {
+				return;
+			}
+		}
+		VoidedDocumentsRequiredActionEntity attr = new VoidedDocumentsRequiredActionEntity();
+		attr.setAction(actionName);
+		attr.setVoidedDocuments(voidedDocuments);
+		em.persist(attr);
+		voidedDocuments.getRequiredActions().add(attr);
 
 	}
 
 	@Override
 	public void removeRequiredAction(String action) {
-		// TODO Auto-generated method stub
-
+		Iterator<VoidedDocumentsRequiredActionEntity> it = voidedDocuments.getRequiredActions().iterator();
+		while (it.hasNext()) {
+			VoidedDocumentsRequiredActionEntity attr = it.next();
+			if (attr.getAction().equals(action)) {
+				it.remove();
+				em.remove(attr);
+			}
+		}
 	}
 
 	@Override
 	public SupplierPartyModel getAccountingSupplierParty() {
-		// TODO Auto-generated method stub
-		return null;
+		if (voidedDocuments.getAccountingSupplierParty() == null) {
+			return null;
+		}
+		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());
 	}
 
 	@Override
-	public SupplierPartyModel addAccountingSupplierParty() {
-		// TODO Auto-generated method stub
-		return null;
+	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
+		if (voidedDocuments.getAccountingSupplierParty() == null) {
+			SupplierPartyEntity entity = new SupplierPartyEntity();
+			voidedDocuments.setAccountingSupplierParty(entity);
+		}
+		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());
 	}
 
 	@Override

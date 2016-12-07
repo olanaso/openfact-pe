@@ -13,10 +13,8 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.StorageFileModel;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.OrganizationAdapter;
-import org.openfact.pe.models.PerceptionSendEventModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionSendEventModel;
-import org.openfact.pe.models.jpa.entities.PerceptionSendEventEntity;
 import org.openfact.pe.models.jpa.entities.RetentionSendEventEntity;
 
 public class RetentionSendEventAdapter implements RetentionSendEventModel, JpaModel<RetentionSendEventEntity> {

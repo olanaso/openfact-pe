@@ -1,6 +1,7 @@
 package org.openfact.pe.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -34,17 +35,17 @@ public interface SummaryDocumentModel {
 
 	void setReferenceDate(LocalDate referenceDate);
 
-	LocalDate getIssueDate();
+	LocalDateTime getIssueDateTime();
 
-	void setIssueDateTime(LocalDate issueDate);
+	void setIssueDateTime(LocalDateTime issueDateTime);
 
 	SupplierPartyModel getAccountingSupplierParty();
 
 	SupplierPartyModel getAccountingSupplierPartyAsNotNull();
 
-	List<SummaryDocumentsLineModel> getSummaryDocumentsLines();
-
-	SummaryDocumentsLineModel addSummaryDocumentsLines();
+//	List<SummaryDocumentsLineModel> getSummaryDocumentsLines();
+//
+//	SummaryDocumentsLineModel addSummaryDocumentsLines();
 
 	/**
 	 * Xml

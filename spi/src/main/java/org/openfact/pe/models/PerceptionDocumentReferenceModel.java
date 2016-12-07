@@ -12,7 +12,7 @@ public interface PerceptionDocumentReferenceModel {
 
     LocalDate getIssueDate();
 
-    void setIssueDate(LocalDateTime issueDate);
+    void setIssueDate(LocalDate issueDate);
 
     BigDecimal getTotalInvoiceAmount();
 

@@ -2,6 +2,8 @@ package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,10 +16,14 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
+import org.openfact.models.jpa.PartyAdapter;
 import org.openfact.models.jpa.SendEventAdapter;
+import org.openfact.models.jpa.entities.PartyEntity;
 import org.openfact.pe.models.RetentionDocumentReferenceModel;
 import org.openfact.pe.models.RetentionModel;
+import org.openfact.pe.models.jpa.entities.RetentionDocumentReferenceEntity;
 import org.openfact.pe.models.jpa.entities.RetentionEntity;
+import org.openfact.pe.models.jpa.entities.RetentionRequiredActionEntity;
 import org.openfact.ubl.SendEventModel;
 
 public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntity> {
@@ -50,194 +56,201 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getId();
 	}
 
 	@Override
 	public String getDocumentId() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getDocumentId();
 	}
 
 	@Override
 	public String getOrganizationId() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getOrganizationId();
 	}
 
 	@Override
 	public String getUblVersionId() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getUblVersionId();
 	}
 
 	@Override
 	public void setUblVersionId(String ublVersionId) {
-		// TODO Auto-generated method stub
-
+		retention.setUblVersionId(ublVersionId);
 	}
 
 	@Override
 	public String getCustomizationId() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getCustomizationId();
 	}
 
 	@Override
 	public void setCustomizationId(String customizationId) {
-		// TODO Auto-generated method stub
-
+		retention.setCustomizationId(customizationId);
 	}
 
 	@Override
 	public String getDocumentCurrencyCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getDocumentCurrencyCode();
 	}
 
 	@Override
 	public void setDocumentCurrencyCode(String value) {
-		// TODO Auto-generated method stub
-
+		retention.setDocumentCurrencyCode(value);
 	}
 
 	@Override
 	public LocalDate getIssueDate() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getIssueDate();
 	}
 
 	@Override
 	public void setIssueDate(LocalDate issueDate) {
-		// TODO Auto-generated method stub
-
+		retention.setIssueDate(issueDate);
 	}
 
 	@Override
 	public String getSunatRetentionSystemCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getSunatRetentionSystemCode();
 	}
 
 	@Override
 	public void setSunatRetentionSystemCode(String code) {
-		// TODO Auto-generated method stub
-
+		retention.setSunatRetentionSystemCode(code);
 	}
 
 	@Override
 	public BigDecimal getSunatRetentionPercent() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getSunatRetentionPercent();
 	}
 
 	@Override
 	public void setSunatRetentionPercent(BigDecimal percent) {
-		// TODO Auto-generated method stub
-
+		retention.setSunatRetentionPercent(percent);
 	}
 
 	@Override
 	public BigDecimal getTotalInvoiceAmount() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getTotalInvoiceAmount();
 	}
 
 	@Override
 	public void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount) {
-		// TODO Auto-generated method stub
-
+		retention.setTotalInvoiceAmount(totalInvoiceAmount);
 	}
 
 	@Override
 	public BigDecimal getSunatTotalPaid() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getTotalPaid();
 	}
 
 	@Override
 	public void setSunatTotalPaid(BigDecimal totalPaid) {
-		// TODO Auto-generated method stub
-
+		retention.setTotalPaid(totalPaid);
 	}
 
 	@Override
 	public List<String> getNotes() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getNotes();
 	}
 
 	@Override
 	public void setNotes(List<String> notes) {
-		// TODO Auto-generated method stub
-
+		retention.setNotes(notes);
 	}
 
 	@Override
 	public List<RetentionDocumentReferenceModel> getSunatRetentionDocumentReference() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getSunatRetentionDocumentReferences().stream()
+				.map(f -> new RetentionDocumentReferenceAdapter(session, em, f)).collect(Collectors.toList());
 	}
 
 	@Override
 	public RetentionDocumentReferenceModel addSunatRetentionDocumentReference() {
-		// TODO Auto-generated method stub
-		return null;
+		List<RetentionDocumentReferenceEntity> entities = retention.getSunatRetentionDocumentReferences();
+
+		RetentionDocumentReferenceEntity entity = new RetentionDocumentReferenceEntity();
+		entities.add(entity);
+		return new RetentionDocumentReferenceAdapter(session, em, entity);
 	}
 
 	@Override
 	public byte[] getXmlDocument() {
-		// TODO Auto-generated method stub
-		return null;
+		return retention.getXmlDocument();
 	}
 
 	@Override
 	public void setXmlDocument(byte[] bytes) {
-		// TODO Auto-generated method stub
-
+		retention.setXmlDocument(bytes);
 	}
 
 	@Override
 	public Set<String> getRequiredActions() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> result = new HashSet<>();
+		for (RetentionRequiredActionEntity attr : retention.getRequiredActions()) {
+			result.add(attr.getAction());
+		}
+		return result;
 	}
 
 	@Override
-	public void addRequiredAction(String action) {
-		// TODO Auto-generated method stub
-
+	public void addRequiredAction(String actionName) {
+		for (RetentionRequiredActionEntity attr : retention.getRequiredActions()) {
+			if (attr.getAction().equals(actionName)) {
+				return;
+			}
+		}
+		RetentionRequiredActionEntity attr = new RetentionRequiredActionEntity();
+		attr.setAction(actionName);
+		attr.setRetention(retention);
+		em.persist(attr);
+		retention.getRequiredActions().add(attr);
 	}
 
 	@Override
-	public void removeRequiredAction(String action) {
-		// TODO Auto-generated method stub
-
+	public void removeRequiredAction(String actionName) {
+		Iterator<RetentionRequiredActionEntity> it = retention.getRequiredActions().iterator();
+		while (it.hasNext()) {
+			RetentionRequiredActionEntity attr = it.next();
+			if (attr.getAction().equals(actionName)) {
+				it.remove();
+				em.remove(attr);
+			}
+		}
 	}
 
 	@Override
 	public PartyModel getAgentParty() {
-		// TODO Auto-generated method stub
-		return null;
+		if (retention.getAgentParty() == null) {
+			return null;
+		}
+		return new PartyAdapter(session, em, retention.getAgentParty());
 	}
 
 	@Override
 	public PartyModel getAgentPartyAsNotNull() {
-		// TODO Auto-generated method stub
-		return null;
+		if (retention.getAgentParty() == null) {
+			PartyEntity entity = new PartyEntity();
+			retention.setAgentParty(entity);
+		}
+		return new PartyAdapter(session, em, retention.getAgentParty());
 	}
 
 	@Override
 	public PartyModel getReceiverParty() {
-		// TODO Auto-generated method stub
-		return null;
+		if (retention.getReceiverParty() == null) {
+			return null;
+		}
+		return new PartyAdapter(session, em, retention.getReceiverParty());
 	}
 
 	@Override
 	public PartyModel getReceiverPartyAsNotNull() {
-		// TODO Auto-generated method stub
-		return null;
+		if (retention.getReceiverParty() == null) {
+			PartyEntity entity = new PartyEntity();
+			retention.setReceiverParty(entity);
+		}
+		return new PartyAdapter(session, em, retention.getReceiverParty());
 	}
 
 	@Override

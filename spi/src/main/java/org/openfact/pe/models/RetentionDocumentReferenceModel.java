@@ -12,7 +12,7 @@ public interface RetentionDocumentReferenceModel {
 
     LocalDateTime getIssueDate();
 
-    void setIssueDateTime(LocalDate issueDate);
+    void setIssueDateTime(LocalDateTime issueDateTime);
 
     BigDecimal getTotalInvoiceAmount();
 

@@ -8,9 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
@@ -18,8 +15,8 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.AbstractHibernateStorage;
-import org.openfact.models.jpa.JpaScrollAdapter;
 import org.openfact.models.jpa.OrganizationAdapter;
+import org.openfact.models.jpa.ScrollAdapter;
 import org.openfact.models.search.SearchCriteriaFilterOperator;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
@@ -27,15 +24,17 @@ import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
 import org.openfact.pe.models.jpa.entities.SummaryDocumentsEntity;
 
-public class JpaSummaryDocumentsProvider extends AbstractHibernateStorage implements SummaryDocumentProvider{
+public class JpaSummaryDocumentsProvider extends AbstractHibernateStorage implements SummaryDocumentProvider {
 
 	private OpenfactSession session;
 	protected EntityManager em;
 	private static final String DOCUMENT_ID = "ID";
+
 	public JpaSummaryDocumentsProvider(OpenfactSession session, EntityManager em) {
 		this.session = session;
 		this.em = em;
 	}
+
 	@Override
 	public void close() {
 
@@ -150,8 +149,8 @@ public class JpaSummaryDocumentsProvider extends AbstractHibernateStorage implem
 	}
 
 	@Override
-	public List<SummaryDocumentModel> getSummaryDocuments(OrganizationModel organization, List<RequiredAction> requeridAction,
-			boolean intoRequeridAction) {
+	public List<SummaryDocumentModel> getSummaryDocuments(OrganizationModel organization,
+			List<RequiredAction> requeridAction, boolean intoRequeridAction) {
 		String queryName = "";
 		if (intoRequeridAction) {
 			queryName = "select i from SummaryDocumentsEntity i where i.organization.id = :organizationId and :requeridAction in elements(i.requeridAction) order by i.summaryDocumentTypeCode ";
@@ -195,7 +194,8 @@ public class JpaSummaryDocumentsProvider extends AbstractHibernateStorage implem
 	@Override
 	public List<SummaryDocumentModel> searchForSummaryDocument(OrganizationModel organization, String filterText,
 			Integer firstResult, Integer maxResults) {
-		TypedQuery<SummaryDocumentsEntity> query = em.createNamedQuery("searchForSummaryDocument", SummaryDocumentsEntity.class);
+		TypedQuery<SummaryDocumentsEntity> query = em.createNamedQuery("searchForSummaryDocument",
+				SummaryDocumentsEntity.class);
 		query.setParameter("organizationId", organization.getId());
 		query.setParameter("search", "%" + filterText.toLowerCase() + "%");
 		if (firstResult != -1) {
@@ -231,8 +231,8 @@ public class JpaSummaryDocumentsProvider extends AbstractHibernateStorage implem
 			SearchCriteriaModel criteria, String filterText) {
 		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
 
-		SearchResultsModel<SummaryDocumentsEntity> entityResult = findFullText(criteria, SummaryDocumentsEntity.class, filterText,
-				DOCUMENT_ID);
+		SearchResultsModel<SummaryDocumentsEntity> entityResult = findFullText(criteria, SummaryDocumentsEntity.class,
+				filterText, DOCUMENT_ID);
 		List<SummaryDocumentsEntity> entities = entityResult.getModels();
 
 		SearchResultsModel<SummaryDocumentModel> searchResult = new SearchResultsModel<>();
@@ -256,32 +256,32 @@ public class JpaSummaryDocumentsProvider extends AbstractHibernateStorage implem
 	@Override
 	public ScrollModel<SummaryDocumentModel> getSummaryDocumentsScroll(OrganizationModel organization, boolean asc,
 			int scrollSize) {
-		return getSummaryDocumentsScroll(organization, asc, scrollSize, -1);
-	}
-
-	@Override
-	public ScrollModel<SummaryDocumentModel> getSummaryDocumentsScroll(OrganizationModel organization, boolean asc,
-			int scrollSize, int fetchSize) {
 		if (scrollSize == -1) {
-			scrollSize = 5;
-		}
-		if (fetchSize == -1) {
-			scrollSize = 1;
+			scrollSize = 10;
 		}
 
-		Criteria criteria = getSession().createCriteria(SummaryDocumentsEntity.class)
-				.add(Restrictions.eq("organization.id", organization.getId()))
-				.addOrder(asc ? Order.asc("createdTimestamp") : Order.desc("createdTimestamp"));
+		TypedQuery<String> query = em.createNamedQuery("getAllSummaryDocumentsByOrganization", String.class);
+		query.setParameter("organizationId", organization.getId());
 
-		JpaScrollAdapter<SummaryDocumentModel, SummaryDocumentsEntity> result = new JpaScrollAdapter<>(criteria, scrollSize,
-				f -> new SummaryDocumentAdapter(session, organization, em, f));
+		ScrollAdapter<SummaryDocumentModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
+			SummaryDocumentsEntity entity = em.find(SummaryDocumentsEntity.class, f);
+			return new SummaryDocumentAdapter(session, organization, em, entity);
+		});
+
+		// Iterator<RetentionModel> iterator = result.iterator();
+		// while (iterator.hasNext()) {
+		// SummaryDocumentModel perceptionModel = iterator.next();
+		// System.out.println("-------------------");
+		// System.out.println(perceptionModel.getRequiredActions());
+		// }
+
 		return result;
 	}
+	
 
 	@Override
 	protected EntityManager getEntityManager() {
 		return em;
 	}
-
 
 }

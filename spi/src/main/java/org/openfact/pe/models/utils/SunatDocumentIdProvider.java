@@ -22,8 +22,6 @@ import org.openfact.pe.models.SummaryDocumentProvider;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 
-import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
-
 public class SunatDocumentIdProvider {
 
 	public static String generateInvoiceDocumentId(OpenfactSession session, OrganizationModel organization,
@@ -76,8 +74,7 @@ public class SunatDocumentIdProvider {
 		CodigoTipoDocumento creditNoteCode = CodigoTipoDocumento.NOTA_CREDITO;
 
 		CreditNoteModel lastCreditNote = null;
-		ScrollModel<CreditNoteModel> creditNotes = session.creditNotes().getCreditNotesScroll(organization, false, 4,
-				2);
+		ScrollModel<CreditNoteModel> creditNotes = session.creditNotes().getCreditNotesScroll(organization, false, 4);
 		Iterator<CreditNoteModel> iterator = creditNotes.iterator();
 
 		Pattern pattern = Pattern.compile(creditNoteCode.getMask());
@@ -115,7 +112,7 @@ public class SunatDocumentIdProvider {
 		CodigoTipoDocumento debitNoteCode = CodigoTipoDocumento.NOTA_DEBITO;
 
 		DebitNoteModel lastDebitNote = null;
-		ScrollModel<DebitNoteModel> debitNotes = session.debitNotes().getDebitNotesScroll(organization, false, 4, 2);
+		ScrollModel<DebitNoteModel> debitNotes = session.debitNotes().getDebitNotesScroll(organization, false, 4);
 		Iterator<DebitNoteModel> iterator = debitNotes.iterator();
 
 		Pattern pattern = Pattern.compile(debitNoteCode.getMask());
@@ -153,7 +150,7 @@ public class SunatDocumentIdProvider {
 		CodigoTipoDocumento perceptionCode = CodigoTipoDocumento.PERCEPCION;
 		PerceptionModel lastPerception = null;
 		ScrollModel<PerceptionModel> perceptions = session.getProvider(PerceptionProvider.class)
-				.getPerceptionsScroll(organization, false, 4, 2);
+				.getPerceptionsScroll(organization, false, 4);
 		Iterator<PerceptionModel> iterator = perceptions.iterator();
 
 		Pattern pattern = Pattern.compile(perceptionCode.getMask());
@@ -191,7 +188,7 @@ public class SunatDocumentIdProvider {
 		CodigoTipoDocumento retentionCode = CodigoTipoDocumento.RETENCION;
 		RetentionModel lastRetention = null;
 		ScrollModel<RetentionModel> retentions = session.getProvider(RetentionProvider.class)
-				.getRetentionsScroll(organization, false, 4, 2);
+				.getRetentionsScroll(organization, false, 4);
 		Iterator<RetentionModel> iterator = retentions.iterator();
 
 		Pattern pattern = Pattern.compile(retentionCode.getMask());
@@ -229,7 +226,7 @@ public class SunatDocumentIdProvider {
 		CodigoTipoDocumento summaryDocumentCode = CodigoTipoDocumento.RESUMEN_DIARIO;
 		SummaryDocumentModel lastSummaryDocument = null;
 		ScrollModel<SummaryDocumentModel> summaryDocuments = session.getProvider(SummaryDocumentProvider.class)
-				.getSummaryDocumentsScroll(organization, false, 4, 2);
+				.getSummaryDocumentsScroll(organization, false, 4);
 		Iterator<SummaryDocumentModel> iterator = summaryDocuments.iterator();
 
 		Pattern pattern = Pattern.compile(summaryDocumentCode.getMask());
@@ -271,7 +268,7 @@ public class SunatDocumentIdProvider {
 		CodigoTipoDocumento voidedDocumentCode = CodigoTipoDocumento.BAJA;
 		VoidedDocumentModel lastVoidedDocument = null;
 		ScrollModel<VoidedDocumentModel> voidedDocuments = session.getProvider(VoidedDocumentProvider.class)
-				.getVoidedDocumentsScroll(organization, false, 4, 2);
+				.getVoidedDocumentsScroll(organization, false, 4);
 		Iterator<VoidedDocumentModel> iterator = voidedDocuments.iterator();
 
 		Pattern pattern = Pattern.compile(voidedDocumentCode.getMask());

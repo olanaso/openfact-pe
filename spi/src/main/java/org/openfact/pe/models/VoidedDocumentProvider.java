@@ -49,7 +49,5 @@ public interface VoidedDocumentProvider extends Provider {
 	ScrollModel<VoidedDocumentModel> getVoidedDocumentsScroll(OrganizationModel organization, boolean asc,
 			int scrollSize);
 
-	ScrollModel<VoidedDocumentModel> getVoidedDocumentsScroll(OrganizationModel organization, boolean asc,
-			int scrollSize, int fetchSize);
 
 }

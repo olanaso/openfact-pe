@@ -46,8 +46,4 @@ public interface SummaryDocumentProvider extends Provider {
 	    ScrollModel<SummaryDocumentModel> getSummaryDocumentsScroll(OrganizationModel organization, boolean asc);
 
 	    ScrollModel<SummaryDocumentModel> getSummaryDocumentsScroll(OrganizationModel organization, boolean asc, int scrollSize);
-
-	    ScrollModel<SummaryDocumentModel> getSummaryDocumentsScroll(OrganizationModel organization, boolean asc, int scrollSize,
-	            int fetchSize);
-
 }

@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.jboss.logging.Logger;
 import org.openfact.models.CreditNoteModel;
 import org.openfact.models.DebitNoteModel;
@@ -22,8 +20,8 @@ import org.openfact.models.jpa.AbstractHibernateStorage;
 import org.openfact.models.jpa.CreditNoteAdapter;
 import org.openfact.models.jpa.DebitNoteAdapter;
 import org.openfact.models.jpa.InvoiceAdapter;
-import org.openfact.models.jpa.JpaScrollAdapter;
 import org.openfact.models.jpa.OrganizationAdapter;
+import org.openfact.models.jpa.ScrollAdapter;
 import org.openfact.models.jpa.SendEventAdapter;
 import org.openfact.models.jpa.entities.CreditNoteSendEventEntity;
 import org.openfact.models.jpa.entities.DebitNoteSendEventEntity;
@@ -125,8 +123,9 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 	@Override
 	public int getSendEventsCount(OrganizationModel organization) {
-		// TODO Auto-generated method stub
-		return 0;
+		Query query = em.createNamedQuery("getOrganizationSendEventCount");
+		Long result = (Long) query.getSingleResult();
+		return result.intValue();
 	}
 
 	@Override
@@ -181,25 +180,25 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 	@Override
 	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc,
 			int scrollSize) {
-		return getSendEventsScroll(organization, asc, scrollSize, -1);
-	}
-
-	@Override
-	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc, int scrollSize,
-			int fetchSize) {
 		if (scrollSize == -1) {
-			scrollSize = 5;
-		}
-		if (fetchSize == -1) {
-			scrollSize = 1;
+			scrollSize = 10;
 		}
 
-		Criteria criteria = getSession().createCriteria(SendEventEntity.class)
-				.add(Restrictions.eq("organization.id", organization.getId()))
-				.addOrder(asc ? Order.asc("createdTimestamp") : Order.desc("createdTimestamp"));
+		TypedQuery<String> query = em.createNamedQuery("getAllSendEventsByOrganization", String.class);
+		query.setParameter("organizationId", organization.getId());
 
-		JpaScrollAdapter<SendEventModel, SendEventEntity> result = new JpaScrollAdapter<>(criteria, scrollSize,
-				f -> new SendEventAdapter(session, organization, em, f));
+		ScrollAdapter<SendEventModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
+			SendEventEntity entity = em.find(SendEventEntity.class, f);
+			return new SendEventAdapter(session, organization, em, entity);
+		});
+
+		// Iterator<SendEventModel> iterator = result.iterator();
+		// while (iterator.hasNext()) {
+		// SendEventModel perceptionModel = iterator.next();
+		// System.out.println("-------------------");
+		// System.out.println(perceptionModel.getRequiredActions());
+		// }
+
 		return result;
 	}
 
@@ -254,6 +253,12 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 		sendEvent.setCreatedTimestamp(LocalDateTime.now());
 		sendEvent.setResult(type.equals(SendResultType.SUCCESS));
 		sendEvent.setOrganization(OrganizationAdapter.toEntity(organization, em));
+	}
+
+	@Override
+	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc, int scrollSize,
+			int fetchSize) {
+		return null;
 	}
 
 }

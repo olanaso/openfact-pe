@@ -8,9 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
@@ -18,8 +15,8 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.AbstractHibernateStorage;
-import org.openfact.models.jpa.JpaScrollAdapter;
 import org.openfact.models.jpa.OrganizationAdapter;
+import org.openfact.models.jpa.ScrollAdapter;
 import org.openfact.models.search.SearchCriteriaFilterOperator;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
@@ -259,27 +256,27 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 	@Override
 	public ScrollModel<VoidedDocumentModel> getVoidedDocumentsScroll(OrganizationModel organization, boolean asc,
 			int scrollSize) {
-		return getVoidedDocumentsScroll(organization, asc, scrollSize, -1);
-	}
-
-	@Override
-	public ScrollModel<VoidedDocumentModel> getVoidedDocumentsScroll(OrganizationModel organization, boolean asc,
-			int scrollSize, int fetchSize) {
 		if (scrollSize == -1) {
-			scrollSize = 5;
-		}
-		if (fetchSize == -1) {
-			scrollSize = 1;
+			scrollSize = 10;
 		}
 
-		Criteria criteria = getSession().createCriteria(VoidedDocumentsEntity.class)
-				.add(Restrictions.eq("organization.id", organization.getId()))
-				.addOrder(asc ? Order.asc("createdTimestamp") : Order.desc("createdTimestamp"));
+		TypedQuery<String> query = em.createNamedQuery("getAllSendEventsByOrganization", String.class);
+		query.setParameter("organizationId", organization.getId());
 
-		JpaScrollAdapter<VoidedDocumentModel, VoidedDocumentsEntity> result = new JpaScrollAdapter<>(criteria,
-				scrollSize, f -> new VoidedDocumentAdapter(session, organization, em, f));
+		ScrollAdapter<VoidedDocumentModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
+			VoidedDocumentsEntity entity = em.find(VoidedDocumentsEntity.class, f);
+			return new VoidedDocumentAdapter(session, organization, em, entity);
+		});
+
+		// Iterator<VoidedDocumentModel> iterator = result.iterator();
+		// while (iterator.hasNext()) {
+		// VoidedDocumentModel perceptionModel = iterator.next();
+		// System.out.println("-------------------");
+		// System.out.println(perceptionModel.getRequiredActions());
+		// }
+
 		return result;
-	}
+	}	
 
 	@Override
 	protected EntityManager getEntityManager() {

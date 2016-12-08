@@ -46,8 +46,6 @@ public interface RetentionProvider extends Provider {
 	    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc);
 
 	    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc, int scrollSize);
-
-	    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc, int scrollSize,
-	            int fetchSize);
+	 
 
 }

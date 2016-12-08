@@ -47,7 +47,4 @@ public interface PerceptionProvider extends Provider {
 
 	ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc, int scrollSize);
 
-	ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc, int scrollSize,
-			int fetchSize);
-
 }

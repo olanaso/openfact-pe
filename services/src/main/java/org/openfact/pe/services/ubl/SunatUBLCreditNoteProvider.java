@@ -77,8 +77,17 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 			}
 
 			@Override
-			public String generateID(OrganizationModel organization, CreditNoteType creditNoteType) {		
-				String documentId = SunatDocumentIdProvider.generateCreditNoteDocumentId(session, organization);
+			public String generateID(OrganizationModel organization, CreditNoteType creditNoteType) {
+				String codeType = null, code = "";
+				if (creditNoteType.getDiscrepancyResponseCount() > 0) {
+					codeType = creditNoteType.getDiscrepancyResponse().get(0).getReferenceIDValue();
+				} else if (creditNoteType.getBillingReferenceCount() > 0) {
+					codeType = creditNoteType.getBillingReference().get(0).getInvoiceDocumentReference().getIDValue();
+				}
+				if (codeType != null) {
+					code = codeType.substring(0, 1);
+				}
+				String documentId = SunatDocumentIdProvider.generateCreditNoteDocumentId(session, organization, code);
 				return documentId;
 			}
 		};

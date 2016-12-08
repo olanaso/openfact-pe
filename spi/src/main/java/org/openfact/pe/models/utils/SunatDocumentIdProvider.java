@@ -70,7 +70,8 @@ public class SunatDocumentIdProvider {
 		return documentId.toString();
 	}
 
-	public static String generateCreditNoteDocumentId(OpenfactSession session, OrganizationModel organization) {
+	public static String generateCreditNoteDocumentId(OpenfactSession session, OrganizationModel organization,
+			String codeType) {
 		CodigoTipoDocumento creditNoteCode = CodigoTipoDocumento.NOTA_CREDITO;
 
 		CreditNoteModel lastCreditNote = null;
@@ -100,7 +101,7 @@ public class SunatDocumentIdProvider {
 		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
 		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(creditNoteCode.getMask().substring(0, 1));
+		documentId.append(codeType/* creditNoteCode.getMask().substring(0, 1) */);
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
@@ -108,7 +109,8 @@ public class SunatDocumentIdProvider {
 		return documentId.toString();
 	}
 
-	public static String generateDebitNoteDocumentId(OpenfactSession session, OrganizationModel organization) {
+	public static String generateDebitNoteDocumentId(OpenfactSession session, OrganizationModel organization,
+			String codeType) {
 		CodigoTipoDocumento debitNoteCode = CodigoTipoDocumento.NOTA_DEBITO;
 
 		DebitNoteModel lastDebitNote = null;
@@ -138,7 +140,7 @@ public class SunatDocumentIdProvider {
 		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
 		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(debitNoteCode.getMask().substring(0, 1));
+		documentId.append(codeType/* debitNoteCode.getMask().substring(0, 1) */);
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));

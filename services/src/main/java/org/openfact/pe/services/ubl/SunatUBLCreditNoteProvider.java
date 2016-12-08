@@ -33,6 +33,7 @@ import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
+import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
@@ -76,43 +77,9 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 			}
 
 			@Override
-			public String generateID(OrganizationModel organization, CreditNoteType creditNoteType) {
-				CodigoTipoDocumento creditNoteCode = CodigoTipoDocumento.NOTA_CREDITO;
-
-				CreditNoteModel lastCreditNote = null;
-				ScrollModel<CreditNoteModel> creditNotes = session.creditNotes().getCreditNotesScroll(organization,
-						false, 4, 2);
-				Iterator<CreditNoteModel> iterator = creditNotes.iterator();
-
-				Pattern pattern = Pattern.compile(creditNoteCode.getMask());
-				while (iterator.hasNext()) {
-					CreditNoteModel creditNote = iterator.next();
-					String documentId = creditNote.getDocumentId();
-
-					Matcher matcher = pattern.matcher(documentId);
-					if (matcher.find()) {
-						lastCreditNote = creditNote;
-						break;
-					}
-				}
-
-				int series = 0;
-				int number = 0;
-				if (lastCreditNote != null) {
-					String[] splits = lastCreditNote.getDocumentId().split("-");
-					series = Integer.parseInt(splits[0].substring(1));
-					number = Integer.parseInt(splits[1]);
-				}
-
-				int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-				int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
-				StringBuilder documentId = new StringBuilder();
-				documentId.append(creditNoteCode.getMask().substring(0, 1));
-				documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
-				documentId.append("-");
-				documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
-
-				return documentId.toString();
+			public String generateID(OrganizationModel organization, CreditNoteType creditNoteType) {		
+				String documentId = SunatDocumentIdProvider.generateCreditNoteDocumentId(session, organization);
+				return documentId;
 			}
 		};
 	}
@@ -233,9 +200,9 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					throws SendException {
 				SendEventModel model = null;
 				byte[] zip = null;
-				String fileName="";
+				String fileName = "";
 				try {
-					 fileName = SunatTemplateUtils.generateXmlFileName(organization, creditNote);
+					fileName = SunatTemplateUtils.generateXmlFileName(organization, creditNote);
 					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);

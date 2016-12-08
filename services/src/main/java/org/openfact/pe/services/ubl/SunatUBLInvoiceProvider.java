@@ -34,6 +34,7 @@ import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
+import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
@@ -80,48 +81,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 
 			@Override
 			public String generateID(OrganizationModel organization, InvoiceType invoiceType) {
-				CodigoTipoDocumento invoiceCode;
-				if (CodigoTipoDocumento.FACTURA.getCodigo().equals(invoiceType.getInvoiceTypeCode())) {
-					invoiceCode = CodigoTipoDocumento.FACTURA;
-				} else if (CodigoTipoDocumento.BOLETA.getCodigo().equals(invoiceType.getInvoiceTypeCode())) {
-					invoiceCode = CodigoTipoDocumento.BOLETA;
-				} else {
-					throw new ModelException("Invalid invoiceTypeCode");
-				}
-
-				InvoiceModel lastInvoice = null;
-				ScrollModel<InvoiceModel> invoices = session.invoices().getInvoicesScroll(organization, false, 4, 2);
-				Iterator<InvoiceModel> iterator = invoices.iterator();
-
-				Pattern pattern = Pattern.compile(invoiceCode.getMask());
-				while (iterator.hasNext()) {
-					InvoiceModel invoice = iterator.next();
-					String documentId = invoice.getDocumentId();
-
-					Matcher matcher = pattern.matcher(documentId);
-					if (matcher.find()) {
-						lastInvoice = invoice;
-						break;
-					}
-				}
-
-				int series = 0;
-				int number = 0;
-				if (lastInvoice != null) {
-					String[] splits = lastInvoice.getDocumentId().split("-");
-					series = Integer.parseInt(splits[0].substring(1));
-					number = Integer.parseInt(splits[1]);
-				}
-
-				int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-				int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
-				StringBuilder documentId = new StringBuilder();
-				documentId.append(invoiceCode.getMask().substring(0, 1));
-				documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
-				documentId.append("-");
-				documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
-
-				return documentId.toString();
+				String documentId = SunatDocumentIdProvider.generateInvoiceDocumentId(session, organization,
+						invoiceType.getInvoiceTypeCodeValue());
+				return documentId;
 			}
 		};
 	}
@@ -195,9 +157,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					throws SendException {
 				byte[] zip = null;
 				SendEventModel model = null;
-				String fileName="";
+				String fileName = "";
 				try {
-					 fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
+					fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
 					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
@@ -245,10 +207,13 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					throws SendException {
 				CustomerPartyModel customerParty = invoice.getAccountingCustomerParty();
 
-				SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, invoice);
+				SendEventModel sendEvent = session.getProvider(SendEventProvider.class).addSendEvent(organization,
+						SendResultType.ERROR, invoice);
 				sendEvent.setType("EMAIL");
 
-				if (customerParty == null || customerParty.getParty() == null || customerParty.getParty().getContact() == null || customerParty.getParty().getContact().getElectronicMail() == null) {
+				if (customerParty == null || customerParty.getParty() == null
+						|| customerParty.getParty().getContact() == null
+						|| customerParty.getParty().getContact().getElectronicMail() == null) {
 					sendEvent.setDescription("Could not find a valid email for the customer.");
 					return sendEvent;
 				}
@@ -263,7 +228,8 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					@Override
 					public String getFullName() {
 						List<PartyLegalEntityModel> partyLegalEntities = customerParty.getParty().getPartyLegalEntity();
-						return partyLegalEntities.stream().map(f -> f.getRegistrationName()).reduce((t, u) -> t + "," + u).get();
+						return partyLegalEntities.stream().map(f -> f.getRegistrationName())
+								.reduce((t, u) -> t + "," + u).get();
 					}
 
 					@Override
@@ -282,13 +248,12 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					FileModel pdfFile = new SimpleFileModel();
 
 					pdfFile.setFileName(invoice.getDocumentId() + ".pdf");
-					pdfFile.setFile(session.getProvider(UBLReportProvider.class).invoice().setOrganization(organization).getReportAsPdf(invoice));
+					pdfFile.setFile(session.getProvider(UBLReportProvider.class).invoice().setOrganization(organization)
+							.getReportAsPdf(invoice));
 					pdfFile.setMimeType("application/pdf");
 
-					session.getProvider(EmailTemplateProvider.class)
-							.setOrganization(organization).setUser(user)
-							.setAttachments(Arrays.asList(xmlFile, pdfFile))
-							.sendInvoice(invoice);
+					session.getProvider(EmailTemplateProvider.class).setOrganization(organization).setUser(user)
+							.setAttachments(Arrays.asList(xmlFile, pdfFile)).sendInvoice(invoice);
 
 					// Write event to the database
 					sendEvent.setDescription("Ivoice successfully sended");

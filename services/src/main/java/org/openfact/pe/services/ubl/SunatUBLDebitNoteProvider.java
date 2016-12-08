@@ -33,6 +33,7 @@ import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.CodigoTipoDocumento;
+import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
@@ -77,42 +78,8 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 
 			@Override
 			public String generateID(OrganizationModel organization, DebitNoteType debitNoteType) {
-				CodigoTipoDocumento debitNoteCode = CodigoTipoDocumento.NOTA_DEBITO;
-
-				DebitNoteModel lastDebitNote = null;
-				ScrollModel<DebitNoteModel> debitNotes = session.debitNotes().getDebitNotesScroll(organization, false,
-						4, 2);
-				Iterator<DebitNoteModel> iterator = debitNotes.iterator();
-
-				Pattern pattern = Pattern.compile(debitNoteCode.getMask());
-				while (iterator.hasNext()) {
-					DebitNoteModel debitNote = iterator.next();
-					String documentId = debitNote.getDocumentId();
-
-					Matcher matcher = pattern.matcher(documentId);
-					if (matcher.find()) {
-						lastDebitNote = debitNote;
-						break;
-					}
-				}
-
-				int series = 0;
-				int number = 0;
-				if (lastDebitNote != null) {
-					String[] splits = lastDebitNote.getDocumentId().split("-");
-					series = Integer.parseInt(splits[0].substring(1));
-					number = Integer.parseInt(splits[1]);
-				}
-
-				int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-				int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
-				StringBuilder documentId = new StringBuilder();
-				documentId.append(debitNoteCode.getMask().substring(0, 1));
-				documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
-				documentId.append("-");
-				documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
-
-				return documentId.toString();
+				String documentId = SunatDocumentIdProvider.generateDebitNoteDocumentId(session, organization);
+				return documentId;
 			}
 		};
 	}

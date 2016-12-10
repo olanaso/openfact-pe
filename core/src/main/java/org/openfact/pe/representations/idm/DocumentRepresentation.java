@@ -7,16 +7,20 @@ import java.util.List;
 public class DocumentRepresentation {
 
 	protected String tipo;
+
 	protected String serie;
 	protected String numero;
+
 	protected String entidadNumeroDeDocumento;
 	protected String entidadTipoDeDocumento;
 	protected String entidadDenominacion;
 	protected String entidadDireccion;
 	protected String entidadEmail;
+
 	protected LocalDateTime fechaDeEmision;
 	protected LocalDateTime fechaDeVencimiento;
 	protected LocalDateTime fechaDeReferencia;
+
 	protected String moneda;
 	protected BigDecimal tipoDeCambio;
 	protected boolean operacionGratuita;

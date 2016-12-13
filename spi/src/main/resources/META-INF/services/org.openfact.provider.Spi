@@ -3,7 +3,6 @@ org.openfact.pe.models.UBLSummaryDocumentSpi
 org.openfact.pe.models.UBLRetentionSpi
 org.openfact.pe.models.UBLPerceptionSpi
 org.openfact.pe.models.SunatSendEventSpi
-org.openfact.pe.models.SunatResponseSpi
 org.openfact.pe.models.SummaryDocumentSpi
 org.openfact.pe.models.VoidedDocumentSpi
 org.openfact.pe.models.RetentionSpi

@@ -1,6 +1,8 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.AbstractHibernateStorage;
 import org.openfact.models.jpa.OrganizationAdapter;
 import org.openfact.models.jpa.ScrollAdapter;
+import org.openfact.models.jpa.ScrollPagingAdapter;
 import org.openfact.models.search.SearchCriteriaFilterOperator;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
@@ -299,6 +302,23 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	@Override
 	protected EntityManager getEntityManager() {
 		return em;
+	}
+
+	@Override
+	public ScrollModel<List<RetentionModel>> getRetentionsScroll(OrganizationModel organization, int scrollSize,
+			String... requiredAction) {
+		 if (scrollSize == -1) {
+	            scrollSize = 10;
+	        }
+
+	        TypedQuery<RetentionEntity> query = em.createNamedQuery("getAllRetentionsByRequiredActionAndOrganization", RetentionEntity.class);
+	        query.setParameter("organizationId", organization.getId());
+	        query.setParameter("requiredAction", new ArrayList<>(Arrays.asList(requiredAction)));
+
+	        ScrollModel<List<RetentionModel>> result = new ScrollPagingAdapter<>(RetentionEntity.class, query, f -> {
+	            return f.stream().map(m -> new RetentionAdapter(session, organization, em, m)).collect(Collectors.toList());
+	        });
+	        return result;
 	}
 
 }

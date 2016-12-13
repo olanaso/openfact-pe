@@ -40,6 +40,7 @@ import org.openfact.models.jpa.entities.PartyEntity;
 @NamedQueries({
 		@NamedQuery(name = "getAllRetentionsByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId order by r.issueDate"),
 		@NamedQuery(name = "getOrganizationRetentionById", query = "select r from RetentionEntity r where r.id = :id and r.organizationId = :organizationId"),
+		@NamedQuery(name = "getAllRetentionsByRequiredActionAndOrganization", query = "select c from RetentionEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
 		@NamedQuery(name = "getOrganizationRetentionByDocumentId", query = "select r from RetentionEntity i where r.documentId = :documentId and r.organizationId = :organizationId"),
 		@NamedQuery(name = "searchForRetention", query = "select r from RetentionEntity i where r.organizationId = :organizationId and r.documentId like :search order by r.issueDate"),
 		@NamedQuery(name = "getOrganizationRetentionCount", query = "select count(r) from RetentionEntity r where r.organizationId = :organizationId"),

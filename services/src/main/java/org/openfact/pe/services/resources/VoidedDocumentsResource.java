@@ -54,6 +54,7 @@ import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.ubl.SendEventModel;
+import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 
 public class VoidedDocumentsResource {
@@ -133,6 +134,11 @@ public class VoidedDocumentsResource {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Could not create voidedDocument");
+		} catch (SendException e) {
+			if (session.getTransactionManager().isActive()) {
+				session.getTransactionManager().setRollbackOnly();
+			}
+			return ErrorResponse.exists("Could not send invoice");
 		}
 	}
 
@@ -191,6 +197,11 @@ public class VoidedDocumentsResource {
 					session.getTransactionManager().setRollbackOnly();
 				}
 				return ErrorResponse.exists("Could not create invoice");
+			} catch (SendException e) {
+				if (session.getTransactionManager().isActive()) {
+					session.getTransactionManager().setRollbackOnly();
+				}
+				return ErrorResponse.exists("Could not send invoice");
 			}
 		}
 

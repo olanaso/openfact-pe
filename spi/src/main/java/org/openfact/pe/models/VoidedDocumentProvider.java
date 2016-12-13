@@ -2,6 +2,7 @@ package org.openfact.pe.models;
 
 import java.util.List;
 
+import org.openfact.models.DebitNoteModel;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.enums.RequiredAction;
@@ -48,6 +49,7 @@ public interface VoidedDocumentProvider extends Provider {
 
 	ScrollModel<VoidedDocumentModel> getVoidedDocumentsScroll(OrganizationModel organization, boolean asc,
 			int scrollSize);
+	ScrollModel<List<VoidedDocumentModel>> getVoidedDocumentsScroll(OrganizationModel organization, int scrollSize, String... requiredAction);
 
 
 }

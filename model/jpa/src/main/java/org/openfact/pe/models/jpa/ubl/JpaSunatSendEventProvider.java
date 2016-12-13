@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.jboss.logging.Logger;
@@ -14,22 +13,17 @@ import org.openfact.models.DebitNoteModel;
 import org.openfact.models.InvoiceModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.ScrollModel;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.models.jpa.AbstractHibernateStorage;
 import org.openfact.models.jpa.CreditNoteAdapter;
 import org.openfact.models.jpa.DebitNoteAdapter;
 import org.openfact.models.jpa.InvoiceAdapter;
 import org.openfact.models.jpa.OrganizationAdapter;
-import org.openfact.models.jpa.ScrollAdapter;
 import org.openfact.models.jpa.SendEventAdapter;
 import org.openfact.models.jpa.entities.CreditNoteSendEventEntity;
 import org.openfact.models.jpa.entities.DebitNoteSendEventEntity;
 import org.openfact.models.jpa.entities.InvoiceSendEventEntity;
 import org.openfact.models.jpa.entities.SendEventEntity;
-import org.openfact.models.search.SearchCriteriaFilterOperator;
-import org.openfact.models.search.SearchCriteriaModel;
-import org.openfact.models.search.SearchResultsModel;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SummaryDocumentModel;
@@ -121,12 +115,7 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 		return true;
 	}
 
-	@Override
-	public int getSendEventsCount(OrganizationModel organization) {
-		Query query = em.createNamedQuery("getOrganizationSendEventCount");
-		Long result = (Long) query.getSingleResult();
-		return result.intValue();
-	}
+
 
 	@Override
 	public List<SendEventModel> getSendEvents(OrganizationModel organization) {
@@ -151,56 +140,56 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 		return invoices;
 	}
 
-	@Override
-	public SearchResultsModel<SendEventModel> searchForSendEvent(OrganizationModel organization,
-			SearchCriteriaModel criteria) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+//	@Override
+//	public SearchResultsModel<SendEventModel> searchForSendEvent(OrganizationModel organization,
+//			SearchCriteriaModel criteria) {
+//		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+//
+//		SearchResultsModel<SendEventEntity> entityResult = find(criteria, SendEventEntity.class);
+//		List<SendEventEntity> entities = entityResult.getModels();
+//
+//		SearchResultsModel<SendEventModel> searchResult = new SearchResultsModel<>();
+//		List<SendEventModel> models = searchResult.getModels();
+//
+//		entities.forEach(f -> models.add(new SendEventAdapter(session, organization, em, f)));
+//		searchResult.setTotalSize(entityResult.getTotalSize());
+//		return searchResult;
+//	}
 
-		SearchResultsModel<SendEventEntity> entityResult = find(criteria, SendEventEntity.class);
-		List<SendEventEntity> entities = entityResult.getModels();
+//	@Override
+//	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization) {
+//		return getSendEventsScroll(organization, true);
+//	}
 
-		SearchResultsModel<SendEventModel> searchResult = new SearchResultsModel<>();
-		List<SendEventModel> models = searchResult.getModels();
+//	@Override
+//	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc) {
+//		return getSendEventsScroll(organization, asc, -1);
+//	}
 
-		entities.forEach(f -> models.add(new SendEventAdapter(session, organization, em, f)));
-		searchResult.setTotalSize(entityResult.getTotalSize());
-		return searchResult;
-	}
-
-	@Override
-	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization) {
-		return getSendEventsScroll(organization, true);
-	}
-
-	@Override
-	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc) {
-		return getSendEventsScroll(organization, asc, -1);
-	}
-
-	@Override
-	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc,
-			int scrollSize) {
-		if (scrollSize == -1) {
-			scrollSize = 10;
-		}
-
-		TypedQuery<String> query = em.createNamedQuery("getAllSendEventsByOrganization", String.class);
-		query.setParameter("organizationId", organization.getId());
-
-		ScrollAdapter<SendEventModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
-			SendEventEntity entity = em.find(SendEventEntity.class, f);
-			return new SendEventAdapter(session, organization, em, entity);
-		});
-
-		// Iterator<SendEventModel> iterator = result.iterator();
-		// while (iterator.hasNext()) {
-		// SendEventModel perceptionModel = iterator.next();
-		// System.out.println("-------------------");
-		// System.out.println(perceptionModel.getRequiredActions());
-		// }
-
-		return result;
-	}
+//	@Override
+//	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc,
+//			int scrollSize) {
+//		if (scrollSize == -1) {
+//			scrollSize = 10;
+//		}
+//
+//		TypedQuery<String> query = em.createNamedQuery("getAllSendEventsByOrganization", String.class);
+//		query.setParameter("organizationId", organization.getId());
+//
+//		ScrollAdapter<SendEventModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
+//			SendEventEntity entity = em.find(SendEventEntity.class, f);
+//			return new SendEventAdapter(session, organization, em, entity);
+//		});
+//
+//		// Iterator<SendEventModel> iterator = result.iterator();
+//		// while (iterator.hasNext()) {
+//		// SendEventModel perceptionModel = iterator.next();
+//		// System.out.println("-------------------");
+//		// System.out.println(perceptionModel.getRequiredActions());
+//		// }
+//
+//		return result;
+//	}
 
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
@@ -255,10 +244,10 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 		sendEvent.setOrganization(OrganizationAdapter.toEntity(organization, em));
 	}
 
-	@Override
-	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc, int scrollSize,
-			int fetchSize) {
-		return null;
-	}
+//	@Override
+//	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc, int scrollSize,
+//			int fetchSize) {
+//		return null;
+//	}
 
 }

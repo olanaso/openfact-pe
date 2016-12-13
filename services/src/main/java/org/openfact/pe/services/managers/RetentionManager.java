@@ -28,12 +28,14 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
+import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.RetentionRepresentation;
+import org.openfact.ubl.SendEventModel;
+import org.openfact.ubl.SendException;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -45,10 +47,12 @@ public class RetentionManager {
 
 	protected OpenfactSession session;
 	protected RetentionProvider model;
+	protected UBLRetentionProvider ubl;
 
 	public RetentionManager(OpenfactSession session) {
 		this.session = session;
 		this.model = session.getProvider(RetentionProvider.class);
+		this.ubl = session.getProvider(UBLRetentionProvider.class);
 	}
 
 	public RetentionModel getRetentionByDocumentId(String documentId, OrganizationModel organization) {
@@ -56,7 +60,7 @@ public class RetentionManager {
 	}
 
 	public RetentionModel addRetention(OrganizationModel organization, RetentionRepresentation rep) {
-		RetentionType type = SunatRepresentationToType.toRetentionType(organization,rep);
+		RetentionType type = SunatRepresentationToType.toRetentionType(organization, rep);
 		return addRetention(organization, type);
 	}
 
@@ -99,14 +103,14 @@ public class RetentionManager {
 		return false;
 	}
 
-	public void sendToCustomerParty(OrganizationModel organization, RetentionModel retention) {
-		// TODO Auto-generated method stub
-
+	public SendEventModel sendToCustomerParty(OrganizationModel organization, RetentionModel retention)
+			throws SendException {
+		return ubl.sender().sendToCustomer(organization, retention);
 	}
 
-	public void sendToTrirdParty(OrganizationModel organization, RetentionModel retention) {
-		// TODO Auto-generated method stub
-
+	public SendEventModel sendToTrirdParty(OrganizationModel organization, RetentionModel retention)
+			throws SendException {
+		return ubl.sender().sendToThridParty(organization, retention);
 	}
 
 }

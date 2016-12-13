@@ -26,6 +26,7 @@ import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.VoidedDocumentsType;
+import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
@@ -34,7 +35,10 @@ import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
+import org.openfact.ubl.SendEventModel;
+import org.openfact.ubl.SendException;
 import org.openfact.ubl.SignerProvider;
+import org.openfact.ubl.UBLDebitNoteProvider;
 import org.w3c.dom.Document;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
@@ -45,10 +49,12 @@ public class VoidedDocumentManager {
 
 	protected OpenfactSession session;
 	protected VoidedDocumentProvider model;
+	protected UBLVoidedDocumentProvider ubl;
 
 	public VoidedDocumentManager(OpenfactSession session) {
 		this.session = session;
 		this.model = session.getProvider(VoidedDocumentProvider.class);
+		this.ubl = session.getProvider(UBLVoidedDocumentProvider.class);
 	}
 
 	public VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId, OrganizationModel organization) {
@@ -99,14 +105,14 @@ public class VoidedDocumentManager {
 		return false;
 	}
 
-	public void sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
-		// TODO Auto-generated method stub
-
+	public SendEventModel sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
+			throws SendException {
+		return ubl.sender().sendToCustomer(organization, voidedDocument);
 	}
 
-	public void sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
-		// TODO Auto-generated method stub
-
+	public SendEventModel sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
+			throws SendException {
+		return ubl.sender().sendToThridParty(organization, voidedDocument);
 	}
 
 }

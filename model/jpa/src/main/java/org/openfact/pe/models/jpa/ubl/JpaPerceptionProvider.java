@@ -1,6 +1,8 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.AbstractHibernateStorage;
 import org.openfact.models.jpa.OrganizationAdapter;
 import org.openfact.models.jpa.ScrollAdapter;
+import org.openfact.models.jpa.ScrollPagingAdapter;
 import org.openfact.models.search.SearchCriteriaFilterOperator;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
@@ -280,6 +283,24 @@ public class JpaPerceptionProvider extends AbstractHibernateStorage implements P
 	@Override
 	protected EntityManager getEntityManager() {
 		return em;
+	}
+
+	@Override
+	public ScrollModel<List<PerceptionModel>> getPerceptionsScroll(OrganizationModel organization, int scrollSize,
+			String... requiredAction) {
+
+		 if (scrollSize == -1) {
+	            scrollSize = 10;
+	        }
+
+	        TypedQuery<PerceptionEntity> query = em.createNamedQuery("getAllPerceptionsByRequiredActionAndOrganization", PerceptionEntity.class);
+	        query.setParameter("organizationId", organization.getId());
+	        query.setParameter("requiredAction", new ArrayList<>(Arrays.asList(requiredAction)));
+
+	        ScrollModel<List<PerceptionModel>> result = new ScrollPagingAdapter<>(PerceptionEntity.class, query, f -> {
+	            return f.stream().map(m -> new PerceptionAdapter(session, organization, em, m)).collect(Collectors.toList());
+	        });
+	        return result;
 	}
 
 }

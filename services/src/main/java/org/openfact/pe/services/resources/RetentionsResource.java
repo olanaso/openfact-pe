@@ -50,6 +50,7 @@ import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.ubl.SendEventModel;
+import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 
 @Consumes(MediaType.APPLICATION_JSON)
@@ -129,6 +130,11 @@ public class RetentionsResource {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Could not create retention");
+		} catch (SendException e) {
+			if (session.getTransactionManager().isActive()) {
+				session.getTransactionManager().setRollbackOnly();
+			}
+			return ErrorResponse.exists("Could not send invoice");
 		}
 	}
 
@@ -186,6 +192,11 @@ public class RetentionsResource {
 					session.getTransactionManager().setRollbackOnly();
 				}
 				return ErrorResponse.exists("Could not create invoice");
+			} catch (SendException e) {
+				if (session.getTransactionManager().isActive()) {
+					session.getTransactionManager().setRollbackOnly();
+				}
+				return ErrorResponse.exists("Could not send invoice");
 			}
 		}
 

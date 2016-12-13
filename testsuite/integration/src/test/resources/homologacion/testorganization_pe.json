@@ -1,0 +1,27 @@
+{
+	"id": "AHREN",
+	"organization": "AHREN SAC",
+	"description": "AHREN CONTRATISTAS GENERALES SAC",
+	"enabled": true,
+	"assignedIdentificationId": "20494637074",
+	"additionalAccountId": "RUC",
+	"supplierName": "AHREN CONTRATISTAS GENERALES S.A.C",
+	"registrationName": "AHREN CONTRATISTAS GENERALES S.A.C",
+	"postalAddress": {
+		"streetName": "MZA. A LOTE. 3",
+		"citySubdivisionName": "ASOC. SANTA TERESA",
+		"cityName": "AYACUCHO",
+		"countrySubentity": "HUAMANGA",
+		"district": "AYACUCHO",
+		"countryIdentificationCode": "PE"
+	},
+	"smtpServer": {
+		"auth": true,
+		"from": "noreply@ahrensac.com",
+		"host": "mail.ahrensac.com",
+		"port": "25",
+		"ssl": "true",
+		"starttls": "false",
+		"password": "15963.0"
+	}
+}

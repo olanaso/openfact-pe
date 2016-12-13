@@ -28,12 +28,14 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.SummaryDocumentsType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
+import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.SummaryRepresentation;
+import org.openfact.ubl.SendEventModel;
+import org.openfact.ubl.SendException;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -45,10 +47,12 @@ public class SummaryDocumentManager {
 
 	protected OpenfactSession session;
 	protected SummaryDocumentProvider model;
+	protected UBLSummaryDocumentProvider ubl;
 
 	public SummaryDocumentManager(OpenfactSession session) {
 		this.session = session;
 		this.model = session.getProvider(SummaryDocumentProvider.class);
+		this.ubl = session.getProvider(UBLSummaryDocumentProvider.class);
 	}
 
 	public SummaryDocumentModel getSummaryDocumentByDocumentId(String documentId, OrganizationModel organization) {
@@ -99,13 +103,14 @@ public class SummaryDocumentManager {
 		return false;
 	}
 
-	public void sendToCustomerParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
-		// TODO Auto-generated method stub
-
+	public SendEventModel sendToCustomerParty(OrganizationModel organization, SummaryDocumentModel summaryDocument)
+			throws SendException {
+		return ubl.sender().sendToCustomer(organization, summaryDocument);
 	}
 
-	public void sendToTrirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocument) {
-		// TODO Auto-generated method stub
+	public SendEventModel sendToTrirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocument)
+			throws SendException {
+		return ubl.sender().sendToThridParty(organization, summaryDocument);
 
 	}
 

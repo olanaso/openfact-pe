@@ -28,12 +28,14 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
+import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.RetentionRepresentation;
+import org.openfact.ubl.SendEventModel;
+import org.openfact.ubl.SendException;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -45,10 +47,12 @@ public class PerceptionManager {
 
 	protected OpenfactSession session;
 	protected PerceptionProvider model;
+	protected UBLPerceptionProvider ubl;
 
 	public PerceptionManager(OpenfactSession session) {
 		this.session = session;
 		this.model = session.getProvider(PerceptionProvider.class);
+		this.ubl = session.getProvider(UBLPerceptionProvider.class);
 	}
 
 	public PerceptionModel getPerceptionByDocumentId(String documentId, OrganizationModel organization) {
@@ -99,14 +103,14 @@ public class PerceptionManager {
 		return false;
 	}
 
-	public void sendToCustomerParty(OrganizationModel organization, PerceptionModel perception) {
-		// TODO Auto-generated method stub
-
+	public SendEventModel sendToCustomerParty(OrganizationModel organization, PerceptionModel perception)
+			throws SendException {
+		return ubl.sender().sendToCustomer(organization, perception);
 	}
 
-	public void sendToTrirdParty(OrganizationModel organization, PerceptionModel perception) {
-		// TODO Auto-generated method stub
-
+	public SendEventModel sendToTrirdParty(OrganizationModel organization, PerceptionModel perception)
+			throws SendException {
+		return ubl.sender().sendToThridParty(organization, perception);
 	}
 
 }

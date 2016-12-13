@@ -1,0 +1,266 @@
+{
+	"invoice":
+		{
+			"ublExtensions": {
+				"ublExtension": [
+					{
+						"extensionContent": {
+							"additionalInformation": {
+								"additionalMonetaryTotal": [
+									{
+										"id": {
+											"value": "1001"
+										},
+										"payableAmount": {
+											"currencyID": "PEN",
+											"value": "348199.15"
+										}
+									},
+									{
+										"id": {
+											"value": "1003"
+										},
+										"payableAmount": {
+											"currencyID": "PEN",
+											"value": "12350.00"
+										}
+									}
+								],
+								"additionalProperty": {
+									"id": {
+										"value": "1000"
+									},
+									"Value": {
+										"value": "CUATROCIENTOS VEINTITRES MIL DOSCIENTOS VEINTICINCO Y 00/100"
+									}
+								}
+							}
+						}
+					}
+				]
+			},
+			"ublVersionID": {
+				"value": "2.0"
+			},
+			"customizationID": {
+				"value": "1.0"
+			},
+			"id": {
+				"value": "FF01-00000001"
+			},
+			"issueDate": {
+				"value": "2016-05-15T13:34:03.595Z"
+			},
+			"invoiceTypeCode": {
+				"value": "01"
+			},
+			"documentCurrencyCode": {
+				"value": "PEN"
+			},
+			"signature": [
+				{
+					"id": {
+						"value": "IDSignAHREN"
+					},
+					"signatoryParty": {
+						"partyIdentification": [
+							{
+								"id": {
+									"value": "20494637074"
+								}
+							}
+						],
+						"partyName": [
+							{
+								"name": {
+									"value": "AHREN CONTRATISTAS GENERALES S.A.C"
+								}
+							}
+						]
+					},
+					"digitalSignatureAttachment": {
+						"externalReference": {
+							"uri": {
+								"value": "#SignatureAHREN"
+							}
+						}
+					}
+				}
+			],
+			"accountingSupplierParty": {
+				"customerAssignedAccountID": {
+					"value": "20494637074"
+				},
+				"additionalAccountID": [
+					{
+						"value": "6"
+					}
+				],
+				"party": {
+					"postalAddress": {
+						"id": {
+							"value": "050101"
+						},
+						"streetName": {
+							"value": "MZA. A LOTE. 3"
+						},
+						"citySubdivisionName": {
+							"value": "ASOC. SANTA TERESA"
+						},
+						"cityName": {
+							"value": "AYACUCHO"
+						},
+						"countrySubentity": {
+							"value": "HUAMANGA"
+						},
+						"district": {
+							"value": "AYACUCHO"
+						},
+						"country": {
+							"identificationCode": {
+								"value": "PE"
+							}
+						}
+					},
+					"partyLegalEntity": [
+						{
+							"registrationName": {
+								"value": "AHREN CONTRATISTAS GENERALES S.A.C"
+							}
+						}
+					]
+				}
+			},
+			"accountingCustomerParty": {
+				"customerAssignedAccountID": {
+					"value": "20452840775"
+				},
+				"additionalAccountID": [
+					{
+						"value": "6"
+					}
+				],
+				"party": {
+					"partyLegalEntity": [
+						{
+							"registrationName": {
+								"value": "CHV INGENIEROS CONTRATISTAS GENERALES S.A.C."
+							}
+						}
+					],
+					"contact": {
+						"electronicMail": {
+							"value": "carlosthe19916@gmail.com"
+						}
+					}
+				}
+			},
+			"taxTotal": {
+				"taxAmount": {
+					"currencyID": "PEN",
+					"value": "62675.85"
+				},
+				"taxSubtotal": [
+					{
+						"taxAmount": {
+							"currencyID": "PEN",
+							"value": "62675.85"
+						},
+						"taxCategory": {
+							"taxScheme": {
+								"id": {
+									"value": "1000"
+								},
+								"name": {
+									"value": "IGV"
+								},
+								"taxTypeCode": {
+									"value": "VAT"
+								}
+							}
+						}
+					}
+				]
+			},
+			"legalMonetaryTotal": {
+				"payableAmount": {
+					"currencyID": "PEN",
+					"value": "423225.00"
+				}
+			},
+			"invoiceLine": [
+				{
+					"id": {
+						"value": "1"
+					},
+					"invoicedQuantity": {
+						"unitCode": "NIU",
+						"value": "2000"
+					},
+					"lineExtensionAmount": {
+						"currencyID": "PEN",
+						"value": "149491.53"
+					},
+					"pricingReference": {
+						"alternativeConditionPrice": [
+							{
+								"priceAmount": {
+									"currencyID": "PEN",
+									"value": "98.00"
+								},
+								"priceTypeCode": {
+									"value": "01"
+								}
+							}
+						]
+					},
+					"taxTotal": {
+						"taxAmount": {
+							"currencyID": "PEN",
+							"value": "26908.47"
+						},
+						"taxSubtotal": {
+							"taxAmount": {
+								"currencyID": "PEN",
+								"value": "26908.47"
+							},
+							"taxCategory": {
+								"taxExemptionReasonCode": {
+									"value": "10"
+								},
+								"taxScheme": {
+									"id": {
+										"value": "1000"
+									},
+									"name": {
+										"value": "IGV"
+									},
+									"taxTypeCode": {
+										"value": "VAT"
+									}
+								}
+							}
+						}
+					},
+					"item": {
+						"description": [
+							{
+								"value": "Grabadora LG Externo Modelo: GE20LU10"
+							}
+						],
+						"sellersItemIdentification": {
+							"id": {
+								"value": "GLG199"
+							}
+						}
+					},
+					"price": {
+						"priceAmount": {
+							"currencyID": "PEN",
+							"value": "83.05"
+						}
+					}
+				}
+			]
+		}
+}

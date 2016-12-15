@@ -24,26 +24,37 @@ public class DocumentRepresentation {
 	protected String moneda;
 	protected BigDecimal tipoDeCambio;
 	protected boolean operacionGratuita;
+
 	protected BigDecimal totalGravada;
 	protected BigDecimal totalInafecta;
 	protected BigDecimal totalExonerada;
 	protected BigDecimal totalIgv;
 	protected BigDecimal totalGratuita;
+
+	private BigDecimal igv;
+	private BigDecimal porcentajeDescuento;
+
 	protected BigDecimal descuentoGlobal;
 	protected BigDecimal totalOtrosCargos;
 	protected BigDecimal total;
+
 	protected boolean detraccion;
+
 	protected String observaciones;
+
 	protected String documentoQueSeModificaTipo;
 	protected String documentoQueSeModificaSerie;
 	protected String documentoQueSeModificaNumero;
+
 	protected String tipoDeNotaDeCredito;
 	protected String tipoDeNotaDeDebito;
+
 	protected boolean enviarAutomaticamenteASunat;
 	protected boolean enviarAutomaticamenteAlCliente;
+
 	protected boolean cancelado;
 	protected String codigoUnico;
-	List<LineRepresentation> lines;
+	private List<LineRepresentation> detalle;
 
 	public String getTipo() {
 		return tipo;
@@ -301,14 +312,6 @@ public class DocumentRepresentation {
 		this.codigoUnico = codigoUnico;
 	}
 
-	public List<LineRepresentation> getLines() {
-		return lines;
-	}
-
-	public void setLines(List<LineRepresentation> lines) {
-		this.lines = lines;
-	}
-
 	public LocalDateTime getFechaDeReferencia() {
 		return fechaDeReferencia;
 	}
@@ -317,4 +320,27 @@ public class DocumentRepresentation {
 		this.fechaDeReferencia = fechaDeReferencia;
 	}
 
+	public BigDecimal getIgv() {
+		return igv;
+	}
+
+	public void setIgv(BigDecimal igv) {
+		this.igv = igv;
+	}
+
+	public BigDecimal getPorcentajeDescuento() {
+		return porcentajeDescuento;
+	}
+
+	public void setPorcentajeDescuento(BigDecimal porcentajeDescuento) {
+		this.porcentajeDescuento = porcentajeDescuento;
+	}
+
+	public List<LineRepresentation> getDetalle() {
+		return detalle;
+	}
+
+	public void setDetalle(List<LineRepresentation> detalle) {
+		this.detalle = detalle;
+	}
 }

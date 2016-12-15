@@ -15,8 +15,7 @@
     "jboss-logging" : {
       "success-level": "debug",
       "error-level": "warn"
-    },
-    "event-queue": {}
+    }
   },
 
   "organization": {
@@ -35,6 +34,10 @@
     "provider": "${openfact.debitNote.provider:jpa}"
   },
 
+  "storageFile": {
+    "provider": "${openfact.storageFile.provider:jpa}"
+  },
+
   "timer": {
     "provider": "basic"
   },
@@ -48,10 +51,6 @@
     }
   },
 
-  "email": {
-    "provider": "freemarker"
-  },
-  
   "scheduled": {
     "interval": 900
   },
@@ -59,6 +58,7 @@
   "connectionsHttpClient": {
     "default": {}
   },
+
 
   "connectionsJpa": {
     "default": {
@@ -82,6 +82,7 @@
     }
   },
 
+
   "signer": {
     "provider": "sunat"
   },
@@ -89,19 +90,22 @@
   "ublInvoice": {
     "provider": "sunat"
   },
-  "invoice-id-generator": {
+
+  "ublCreditNote": {
     "provider": "sunat"
   },
-  "credit-note-reader-writer": {
+
+  "ublDebitNote": {
     "provider": "sunat"
   },
-  "credit-note-id-generator": {
-    "provider": "sunat"
-  },
-  "debit-note-reader-writer": {
-    "provider": "sunat"
-  },
-  "debit-note-id-generator": {
-    "provider": "sunat"
+
+  "organizationScheduleTask": {
+    "sendToThridParty": {
+      "active": false
+    },
+    "sendToCustomer": {
+      "active": false
+    }
   }
+
 }

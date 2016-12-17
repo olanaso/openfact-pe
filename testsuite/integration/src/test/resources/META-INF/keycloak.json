@@ -11,48 +11,55 @@
 		"user-managed-access": {},
 		"paths": [
 			{
-				"path": "/admin/serverinfo",
+				"name": "Admin Organizations Resource",
+				"path": "/admin/organizations",
 				"methods": [
 					{
 						"method": "GET",
 						"scopes": [
-							"urn:openfact.com:scopes:serverinfo:view"
-						]
-					}
-				]
-			},
-			{
-				"path" : "/admin/organizations",
-				"methods": [
-					{
-						"method": "GET",
-						"scopes": [
-							"urn:openfact.com:scopes:organization:view"
+							"urn:openfact.com:scopes:admin:organization:view"
 						]
 					},
 					{
 						"method": "POST",
 						"scopes": [
-							"urn:openfact.com:scopes:organization:create"
+							"urn:openfact.com:scopes:admin:organization:create"
 						]
 					}
 				]
 			},
 			{
-				"name" : "Admin One Organization Resource",
-				"path" : "/admin/organizations/{organization}",
-				"methods" : [
+				"name": "Admin Organizations Resource",
+				"path": "/admin/organizations/{organization}",
+				"methods": [
 					{
 						"method": "GET",
-						"scopes" : ["urn:openfact.com:scopes:organization:view"]
+						"scopes": [
+							"urn:openfact.com:scopes:admin:organization:view"
+						]
 					},
 					{
 						"method": "PUT",
-						"scopes" : ["urn:openfact.com:scopes:organization:manage"]
+						"scopes": [
+							"urn:openfact.com:scopes:admin:organization:manage"
+						]
 					},
 					{
 						"method": "DELETE",
-						"scopes" : ["urn:openfact.com:scopes:organization:delete"]
+						"scopes": [
+							"urn:openfact.com:scopes:admin:organization:delete"
+						]
+					}
+				]
+			},
+			{
+				"path": "/admin/serverinfo",
+				"methods": [
+					{
+						"method": "GET",
+						"scopes": [
+							"urn:openfact.com:scopes:admin:serverinfo:view"
+						]
 					}
 				]
 			}

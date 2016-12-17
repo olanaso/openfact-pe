@@ -105,6 +105,12 @@
     },
     "sendToCustomer": {
       "active": false
+    },
+    "sendToThridPartySunat": {
+      "active": false
+    },
+    "sendToCustomerSunat": {
+      "active": false
     }
   }
 

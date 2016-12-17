@@ -198,7 +198,7 @@ public class SunatRepresentationToType {
 		type.setUBLExtensions(ublExtensionsType);
 
 		// Lines
-		if (rep.getLines() != null) {
+		if (rep.getDetalle() != null) {
 			type.setInvoiceLine(toInvoiceLineType(rep));
 		}
 
@@ -207,8 +207,8 @@ public class SunatRepresentationToType {
 
 	private static List<InvoiceLineType> toInvoiceLineType(DocumentRepresentation rep) {
 		List<InvoiceLineType> invoiceLineTypes = new ArrayList<>();
-		for (int i = 0; i < rep.getLines().size(); i++) {
-			LineRepresentation lineRep = rep.getLines().get(i);
+		for (int i = 0; i < rep.getDetalle().size(); i++) {
+			LineRepresentation lineRep = rep.getDetalle().get(i);
 
 			InvoiceLineType invoiceLineType = new InvoiceLineType();
 

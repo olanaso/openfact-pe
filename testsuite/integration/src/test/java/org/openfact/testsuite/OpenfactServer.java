@@ -285,6 +285,7 @@ public class OpenfactServer {
             kcFilter.addInitParam("keycloak.config.file", kcConfigURL.getPath().toString());
             di.addFilter(kcFilter);
             di.addFilterUrlMapping("KeycloakFilter", "/admin/*", DispatcherType.REQUEST);
+            di.addFilterUrlMapping("KeycloakFilter", "/organizations/*", DispatcherType.REQUEST);
 
             /**
              * Add Security Filter*/

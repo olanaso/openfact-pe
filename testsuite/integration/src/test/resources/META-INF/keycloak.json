@@ -62,6 +62,36 @@
 						]
 					}
 				]
+			},
+			{
+				"name": "Organizations Resource",
+				"path": "/organizations/{organization}/{extension}",
+				"methods": [
+					{
+						"method": "GET",
+						"scopes": [
+							"urn:openfact.com:scopes:organizations:extension:view"
+						]
+					},
+					{
+						"method": "POST",
+						"scopes": [
+							"urn:openfact.com:scopes:organizations:extension:manage"
+						]
+					},
+					{
+						"method": "PUT",
+						"scopes": [
+							"urn:openfact.com:scopes:organizations:extension:manage"
+						]
+					},
+					{
+						"method": "DELETE",
+						"scopes": [
+							"urn:openfact.com:scopes:organizations:extension:manage"
+						]
+					}
+				]
 			}
 		]
 	},

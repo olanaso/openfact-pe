@@ -2,6 +2,7 @@ package org.openfact.pe.models.utils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.dom.DOMResult;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
 import org.openfact.common.finance.MoneyConverters;
 import org.openfact.models.ModelException;
 import org.openfact.models.OrganizationModel;
@@ -50,39 +53,6 @@ import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AllowanceChargeType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ContactType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExchangeRateType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.MonetaryTotalType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyIdentificationType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyLegalEntityType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PaymentType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PriceType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PricingReferenceType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxCategoryType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSchemeType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSubtotalType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxTotalType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AdditionalAccountIDType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaidAmountType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableAmountType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxAmountType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ValueType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
@@ -101,8 +71,21 @@ public class SunatRepresentationToType {
 		}
 	}
 
+	public static XMLGregorianCalendar toGregorianCalendarTime(LocalDateTime date) {
+		GregorianCalendar gcal = GregorianCalendar.from(date.atZone(ZoneId.systemDefault()));
+		try {
+			return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+		} catch (DatatypeConfigurationException e) {
+			throw new ModelException(e);
+		}
+	}
+
 	public static InvoiceType toInvoiceType(OrganizationModel organization, DocumentRepresentation rep) {
 		InvoiceType type = new InvoiceType();
+
+		type.setUBLVersionID("2.0");
+		type.setCustomizationID("1.0");
+		type.setSignature(Arrays.asList(toSignatureType(organization)));
 
 		// Supplier
 		type.setAccountingSupplierParty(toSupplierParty(organization));
@@ -130,6 +113,10 @@ public class SunatRepresentationToType {
 		// Date
 		if (rep.getFechaDeEmision() != null) {
 			type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+			type.setIssueTime(toGregorianCalendarTime(rep.getFechaDeEmision()));
+		} else {
+			type.setIssueDate(toGregorianCalendar(LocalDate.now()));
+			type.setIssueTime(toGregorianCalendarTime(LocalDateTime.now()));
 		}
 		if (rep.getFechaDeVencimiento() != null) {
 			type.setDueDate(toGregorianCalendar(rep.getFechaDeVencimiento().toLocalDate()));
@@ -138,10 +125,14 @@ public class SunatRepresentationToType {
 		// Legal monetary total
 		MonetaryTotalType monetaryTotalType = new MonetaryTotalType();
 		if (rep.getTotal() != null) {
-			monetaryTotalType.setPayableAmount(rep.getTotal());
+			PayableAmountType payableAmountType = new PayableAmountType(rep.getTotal());
+			payableAmountType.setCurrencyID(rep.getMoneda());
+			monetaryTotalType.setPayableAmount(payableAmountType);
 		}
 		if (rep.getTotalOtrosCargos() != null) {
-			monetaryTotalType.setChargeTotalAmount(rep.getTotalOtrosCargos());
+			ChargeTotalAmountType chargeTotalAmountType = new ChargeTotalAmountType(rep.getTotalOtrosCargos());
+			chargeTotalAmountType.setCurrencyID(rep.getMoneda());
+			monetaryTotalType.setChargeTotalAmount(chargeTotalAmountType);
 		}
 		type.setLegalMonetaryTotal(monetaryTotalType);
 
@@ -149,10 +140,20 @@ public class SunatRepresentationToType {
 		List<TaxTotalType> taxTotalTypes = new ArrayList<>();
 		if (rep.getTotalIgv() != null) {
 			TaxTotalType taxTotalType = new TaxTotalType();
-			taxTotalType.setTaxAmount(rep.getTotalIgv());
+			TaxAmountType taxAmountType = new TaxAmountType(rep.getTotalIgv());
+			taxAmountType.setCurrencyID(rep.getMoneda());
+			taxTotalType.setTaxAmount(taxAmountType);
 
 			TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
-			taxSubtotalType.setTaxableAmount(rep.getTotalIgv());
+			taxSubtotalType.setTaxAmount(taxAmountType);
+			TaxCategoryType taxCategoryType = new TaxCategoryType();
+			TaxSchemeType taxSchemeType = new TaxSchemeType();
+			taxSchemeType.setID("1000");
+			taxSchemeType.setName("IGV");
+			taxSchemeType.setTaxTypeCode("VAT");
+			taxCategoryType.setTaxScheme(taxSchemeType);
+			taxSubtotalType.setTaxCategory(taxCategoryType);
+
 			taxTotalType.setTaxSubtotal(new ArrayList<>(Arrays.asList(taxSubtotalType)));
 
 			taxTotalTypes.add(taxTotalType);
@@ -167,29 +168,39 @@ public class SunatRepresentationToType {
 		AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
 		if (rep.getTotalGravada() != null) {
 			gravado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
-			gravado.setPayableAmount(new PayableAmountType(rep.getTotalGravada()));
+
+			PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
+			payableAmountType.setCurrencyID(rep.getMoneda());
+			gravado.setPayableAmount(payableAmountType);
 		}
 		AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
 		if (rep.getTotalInafecta() != null) {
 			inafecto.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
-			inafecto.setPayableAmount(new PayableAmountType(rep.getTotalInafecta()));
+
+			PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
+			payableAmountType.setCurrencyID(rep.getMoneda());
+			inafecto.setPayableAmount(payableAmountType);
 		}
 		AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
 		if (rep.getTotalExonerada() != null) {
-			exonerado
-					.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
-			exonerado.setPayableAmount(new PayableAmountType(rep.getTotalExonerada()));
+			exonerado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
+
+			PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
+			payableAmountType.setCurrencyID(rep.getMoneda());
+			exonerado.setPayableAmount(payableAmountType);
 		}
 		AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
 		if (rep.getTotalGratuita() != null) {
 			gratuito.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
-			gratuito.setPayableAmount(new PayableAmountType(rep.getTotalGratuita()));
+
+			PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
+			payableAmountType.setCurrencyID(rep.getMoneda());
+			gratuito.setPayableAmount(payableAmountType);
 		}
 		AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
 
 		AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
-		additionalInformation.getAdditionalMonetaryTotal()
-				.addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
+		additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
 		additionalInformation.getAdditionalProperty().add(additionalProperty);
 
 		extensionContentType.setAny(generateElement(additionalInformation));
@@ -213,27 +224,73 @@ public class SunatRepresentationToType {
 			InvoiceLineType invoiceLineType = new InvoiceLineType();
 
 			// ID
-			invoiceLineType.setID(new IDType(String.valueOf(i)));
+			invoiceLineType.setID(new IDType("1"));
 
 			// Quantity
 			InvoicedQuantityType invoicedQuantityType = new InvoicedQuantityType(lineRep.getCantidad());
 			if (lineRep.getUnitCode() != null) {
 				invoicedQuantityType.setUnitCode(lineRep.getUnitCode());
+			} else {
+				invoicedQuantityType.setUnitCode("NIU");
 			}
 			invoiceLineType.setInvoicedQuantity(invoicedQuantityType);
 
 			// Subtotal
-			LineExtensionAmountType lineExtensionAmountType = new LineExtensionAmountType();
+			LineExtensionAmountType lineExtensionAmountType = new LineExtensionAmountType(lineRep.getSubtotal());
 			lineExtensionAmountType.setCurrencyID(rep.getMoneda());
-			lineExtensionAmountType.setValue(lineRep.getSubtotal());
 			invoiceLineType.setLineExtensionAmount(lineExtensionAmountType);
 
 			// Precio y valor unitario
 			PricingReferenceType pricingReferenceType = new PricingReferenceType();
 			PriceType priceType = new PriceType();
-			priceType.setPriceAmount(lineRep.getPrecioUnitario());
+
+			PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
+			priceAmountType.setCurrencyID(rep.getMoneda());
+			priceType.setPriceAmount(priceAmountType);
+			if(!rep.isOperacionGratuita()) {
+				priceType.setPriceTypeCode("01");
+			} else {
+				priceType.setPriceTypeCode("02");
+			}
 			pricingReferenceType.setAlternativeConditionPrice(Arrays.asList(priceType));
 			invoiceLineType.setPricingReference(pricingReferenceType);
+
+			// Item
+			ItemType itemType = new ItemType();
+			itemType.setDescription(Arrays.asList(new DescriptionType(lineRep.getDescripcion())));
+			invoiceLineType.setItem(itemType);
+
+			// Tax Total
+			TaxTotalType taxTotalType = new TaxTotalType();
+			TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getTotal());
+			taxAmountType1.setCurrencyID(rep.getMoneda());
+			taxTotalType.setTaxAmount(taxAmountType1);
+
+			TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
+			TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getTotal());
+			taxAmountType2.setCurrencyID(rep.getMoneda());
+			taxSubtotalType.setTaxAmount(taxAmountType2);
+
+			TaxCategoryType taxCategoryType = new TaxCategoryType();
+			taxCategoryType.setTaxExemptionReasonCode(lineRep.getTipoDeIgv());
+			TaxSchemeType taxSchemeType = new TaxSchemeType();
+			taxSchemeType.setID("1000");
+			taxSchemeType.setName("IGV");
+			taxSchemeType.setTaxTypeCode("VAT");
+			taxCategoryType.setTaxScheme(taxSchemeType);
+			taxSubtotalType.setTaxCategory(taxCategoryType);
+
+			taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
+			invoiceLineType.setTaxTotal(Arrays.asList(taxTotalType));
+
+			// Price
+			PriceType priceType1 = new PriceType();
+			PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getValorUnitario());
+			priceAmountType1.setCurrencyID(rep.getMoneda());
+			priceType1.setPriceAmount(priceAmountType1);
+			invoiceLineType.setPrice(priceType1);
+
+			invoiceLineTypes.add(invoiceLineType);
 		}
 		return invoiceLineTypes;
 	}
@@ -831,11 +888,11 @@ public class SunatRepresentationToType {
 		SupplierPartyType supplierPartyType = new SupplierPartyType();
 		if (organization.getAssignedIdentificationId() != null) {
 			List<AdditionalAccountIDType> additionalAccountIDType = new ArrayList<>();
-			additionalAccountIDType.add(new AdditionalAccountIDType(organization.getAssignedIdentificationId()));
+			additionalAccountIDType.add(new AdditionalAccountIDType(organization.getAdditionalAccountId()));
 			supplierPartyType.setAdditionalAccountID(additionalAccountIDType);
 		}
 		if (organization.getAdditionalAccountId() != null) {
-			supplierPartyType.setCustomerAssignedAccountID(organization.getAdditionalAccountId());
+			supplierPartyType.setCustomerAssignedAccountID(organization.getAssignedIdentificationId());
 		}
 
 		PartyType partyType = new PartyType();

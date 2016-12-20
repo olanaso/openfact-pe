@@ -24,8 +24,7 @@ import org.openfact.pe.models.VoidedDocumentProvider;
 
 public class SunatDocumentIdProvider {
 
-	public static String generateInvoiceDocumentId(OpenfactSession session, OrganizationModel organization,
-			String invoiceType) {
+	public static String generateInvoiceDocumentId(OpenfactSession session, OrganizationModel organization, String invoiceType) {
 		CodigoTipoDocumento invoiceCode;
 		if (CodigoTipoDocumento.FACTURA.getCodigo().equals(invoiceType)) {
 			invoiceCode = CodigoTipoDocumento.FACTURA;
@@ -36,7 +35,7 @@ public class SunatDocumentIdProvider {
 		}
 
 		InvoiceModel lastInvoice = null;
-		ScrollModel<InvoiceModel> invoices = session.invoices().getInvoicesScroll(organization, false, 4);
+		ScrollModel<InvoiceModel> invoices = session.invoices().getInvoicesScroll(organization, false, 10);
 		Iterator<InvoiceModel> iterator = invoices.iterator();
 
 		Pattern pattern = Pattern.compile(invoiceCode.getMask());
@@ -62,7 +61,7 @@ public class SunatDocumentIdProvider {
 		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
 		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(invoiceCode.getMask().substring(0, 1));
+		documentId.append(invoiceCode.getMask().substring(2, 3));
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
@@ -70,12 +69,11 @@ public class SunatDocumentIdProvider {
 		return documentId.toString();
 	}
 
-	public static String generateCreditNoteDocumentId(OpenfactSession session, OrganizationModel organization,
-			String codeType) {
+	public static String generateCreditNoteDocumentId(OpenfactSession session, OrganizationModel organization, String codeType) {
 		CodigoTipoDocumento creditNoteCode = CodigoTipoDocumento.NOTA_CREDITO;
 
 		CreditNoteModel lastCreditNote = null;
-		ScrollModel<CreditNoteModel> creditNotes = session.creditNotes().getCreditNotesScroll(organization, false, 4);
+		ScrollModel<CreditNoteModel> creditNotes = session.creditNotes().getCreditNotesScroll(organization, false, 10);
 		Iterator<CreditNoteModel> iterator = creditNotes.iterator();
 
 		Pattern pattern = Pattern.compile(creditNoteCode.getMask());
@@ -101,7 +99,7 @@ public class SunatDocumentIdProvider {
 		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
 		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(codeType/* creditNoteCode.getMask().substring(0, 1) */);
+		documentId.append(codeType);
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
@@ -109,8 +107,7 @@ public class SunatDocumentIdProvider {
 		return documentId.toString();
 	}
 
-	public static String generateDebitNoteDocumentId(OpenfactSession session, OrganizationModel organization,
-			String codeType) {
+	public static String generateDebitNoteDocumentId(OpenfactSession session, OrganizationModel organization, String codeType) {
 		CodigoTipoDocumento debitNoteCode = CodigoTipoDocumento.NOTA_DEBITO;
 
 		DebitNoteModel lastDebitNote = null;
@@ -140,7 +137,7 @@ public class SunatDocumentIdProvider {
 		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
 		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(codeType/* debitNoteCode.getMask().substring(0, 1) */);
+		documentId.append(codeType);
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));

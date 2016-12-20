@@ -25,6 +25,7 @@ import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.StorageFileModel;
+import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -44,9 +45,6 @@ public class InvoicesResource {
 
 	private final OpenfactSession session;
 	private final OrganizationModel organization;
-
-	@Context
-	protected UriInfo uriInfo;
 
 	public InvoicesResource(OpenfactSession session, OrganizationModel organization) {
 		this.session = session;
@@ -71,35 +69,37 @@ public class InvoicesResource {
 
 			// Enviar a Cliente
 			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				invoiceManager.sendToCustomerParty(organization, invoice);
+				try {
+					invoiceManager.sendToCustomerParty(organization, invoice);
+				} catch (SendException e) {
+					logger.error("Error sending to Customer");
+				}
 			}
 
 			// Enviar Sunat
 			if (rep.isEnviarAutomaticamenteASunat()) {
-				invoiceManager.sendToTrirdParty(organization, invoice);
+				try {
+					invoiceManager.sendToTrirdParty(organization, invoice);
+				} catch (SendException e) {
+					if (session.getTransactionManager().isActive()) {
+						session.getTransactionManager().setRollbackOnly();
+					}
+					return ErrorResponse.error("Could not send to sunat", Response.Status.BAD_REQUEST);
+				}
 			}
 
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().commit();
-			}
-
-			URI location = uriInfo.getAbsolutePathBuilder().path(invoice.getId()).build();
-			return Response.created(location).build();
+			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(invoice.getId()).build();
+			return Response.created(location).entity(ModelToRepresentation.toRepresentation(invoice)).build();
 		} catch (ModelDuplicateException e) {
 			if (session.getTransactionManager().isActive()) {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Invoice exists with same id or documentId");
-		} catch (ModelException me) {
+		} catch (ModelException e) {
 			if (session.getTransactionManager().isActive()) {
 				session.getTransactionManager().setRollbackOnly();
 			}
-			return ErrorResponse.exists("Could not create invoice");
-		} catch (SendException me) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not send invoice");
+			return ErrorResponse.exists("Invoice could not be created");
 		}
 	}
 

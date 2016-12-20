@@ -25,6 +25,7 @@ import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.StorageFileModel;
+import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -44,9 +45,6 @@ public class DebitNotesResource {
 
 	private final OpenfactSession session;
 	private final OrganizationModel organization;
-
-	@Context
-	protected UriInfo uriInfo;
 
 	public DebitNotesResource(OpenfactSession session, OrganizationModel organization) {
 		this.session = session;
@@ -68,24 +66,31 @@ public class DebitNotesResource {
 
 		try {
 			DebitNoteType debitNoteType = SunatRepresentationToType.toDebitNoteType(rep);
-			DebitNoteModel debitNote = debitNoteManager.addDebitNote(organization, debitNoteType,
-					Collections.emptyMap());
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().commit();
-			}
+			DebitNoteModel debitNote = debitNoteManager.addDebitNote(organization, debitNoteType, Collections.emptyMap());
 
 			// Enviar a Cliente
 			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				debitNoteManager.sendToCustomerParty(organization, debitNote);
+				try {
+					debitNoteManager.sendToCustomerParty(organization, debitNote);
+				} catch (SendException e) {
+					logger.error("Error sending to Customer");
+				}
 			}
 
 			// Enviar Sunat
 			if (rep.isEnviarAutomaticamenteASunat()) {
-				debitNoteManager.sendToTrirdParty(organization, debitNote);
+				try {
+					debitNoteManager.sendToTrirdParty(organization, debitNote);
+				} catch (SendException e) {
+					if (session.getTransactionManager().isActive()) {
+						session.getTransactionManager().setRollbackOnly();
+					}
+					return ErrorResponse.error("Could not send to sunat", Response.Status.BAD_REQUEST);
+				}
 			}
 
-			URI location = uriInfo.getAbsolutePathBuilder().path(debitNote.getId()).build();
-			return Response.created(location).build();
+			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(debitNote.getId()).build();
+			return Response.created(location).entity(ModelToRepresentation.toRepresentation(debitNote)).build();
 		} catch (ModelDuplicateException e) {
 			if (session.getTransactionManager().isActive()) {
 				session.getTransactionManager().setRollbackOnly();
@@ -96,11 +101,6 @@ public class DebitNotesResource {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Could not create debit note");
-		} catch (SendException me) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not send Debit note");
 		}
 	}
 

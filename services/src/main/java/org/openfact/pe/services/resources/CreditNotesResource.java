@@ -25,6 +25,7 @@ import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.StorageFileModel;
+import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.services.ErrorResponse;
@@ -44,9 +45,6 @@ public class CreditNotesResource {
 
 	private final OpenfactSession session;
 	private final OrganizationModel organization;
-
-	@Context
-	protected UriInfo uriInfo;
 
 	public CreditNotesResource(OpenfactSession session, OrganizationModel organization) {
 		this.session = session;
@@ -68,24 +66,31 @@ public class CreditNotesResource {
 
 		try {
 			CreditNoteType creditNoteType = SunatRepresentationToType.toCreditNoteType(rep);
-			CreditNoteModel creditNote = creditNoteManager.addCreditNote(organization, creditNoteType,
-					Collections.emptyMap());
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().commit();
-			}
+			CreditNoteModel creditNote = creditNoteManager.addCreditNote(organization, creditNoteType, Collections.emptyMap());
 
 			// Enviar a Cliente
 			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				creditNoteManager.sendToCustomerParty(organization, creditNote);
+				try {
+					creditNoteManager.sendToCustomerParty(organization, creditNote);
+				} catch (SendException e) {
+					logger.error("Error sending to Customer");
+				}
 			}
 
 			// Enviar Sunat
 			if (rep.isEnviarAutomaticamenteASunat()) {
-				creditNoteManager.sendToTrirdParty(organization, creditNote);
+				try {
+					creditNoteManager.sendToTrirdParty(organization, creditNote);
+				} catch (SendException e) {
+					if (session.getTransactionManager().isActive()) {
+						session.getTransactionManager().setRollbackOnly();
+					}
+					return ErrorResponse.error("Could not send to sunat", Response.Status.BAD_REQUEST);
+				}
 			}
 
-			URI location = uriInfo.getAbsolutePathBuilder().path(creditNote.getId()).build();
-			return Response.created(location).build();
+			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(creditNote.getId()).build();
+			return Response.created(location).entity(ModelToRepresentation.toRepresentation(creditNote)).build();
 		} catch (ModelDuplicateException e) {
 			if (session.getTransactionManager().isActive()) {
 				session.getTransactionManager().setRollbackOnly();
@@ -96,11 +101,6 @@ public class CreditNotesResource {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Could not create credit note");
-		} catch (SendException me) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not send credit note");
 		}
 	}	
 

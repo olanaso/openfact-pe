@@ -81,8 +81,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 				if (codeType != null) {
 					code = codeType.substring(0, 1);
 				}
-				String documentId = SunatDocumentIdProvider.generateCreditNoteDocumentId(session, organization, code);
-				return documentId;
+				return SunatDocumentIdProvider.generateCreditNoteDocumentId(session, organization, code);
 			}
 		};
 	}

@@ -81,8 +81,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 
 			@Override
 			public String generateID(OrganizationModel organization, InvoiceType invoiceType) {
-				String documentId = SunatDocumentIdProvider.generateInvoiceDocumentId(session, organization,
-						invoiceType.getInvoiceTypeCodeValue());
+				String documentId = SunatDocumentIdProvider.generateInvoiceDocumentId(session, organization, invoiceType.getInvoiceTypeCodeValue());
 				return documentId;
 			}
 		};
@@ -203,12 +202,10 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, InvoiceModel invoice)
-					throws SendException {
+			public SendEventModel sendToCustomer(OrganizationModel organization, InvoiceModel invoice) throws SendException {
 				CustomerPartyModel customerParty = invoice.getAccountingCustomerParty();
 
-				SendEventModel sendEvent = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-						SendResultType.ERROR, invoice);
+				SendEventModel sendEvent = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, invoice);
 				sendEvent.setType("EMAIL");
 
 				if (customerParty == null || customerParty.getParty() == null

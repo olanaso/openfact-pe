@@ -81,8 +81,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 				if (codeType != null) {
 					code = codeType.substring(0, 1);
 				}
-				String documentId = SunatDocumentIdProvider.generateDebitNoteDocumentId(session, organization, code);
-				return documentId;
+				return SunatDocumentIdProvider.generateDebitNoteDocumentId(session, organization, code);
 			}
 		};
 	}

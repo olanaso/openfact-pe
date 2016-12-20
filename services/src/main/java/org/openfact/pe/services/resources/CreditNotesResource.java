@@ -65,7 +65,7 @@ public class CreditNotesResource {
 		}
 
 		try {
-			CreditNoteType creditNoteType = SunatRepresentationToType.toCreditNoteType(rep);
+			CreditNoteType creditNoteType = SunatRepresentationToType.toCreditNoteType(organization, rep);
 			CreditNoteModel creditNote = creditNoteManager.addCreditNote(organization, creditNoteType, Collections.emptyMap());
 
 			// Enviar a Cliente

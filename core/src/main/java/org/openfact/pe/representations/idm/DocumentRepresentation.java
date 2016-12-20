@@ -31,8 +31,8 @@ public class DocumentRepresentation {
 	protected BigDecimal totalIgv;
 	protected BigDecimal totalGratuita;
 
-	private BigDecimal igv;
-	private BigDecimal porcentajeDescuento;
+	protected BigDecimal igv;
+	protected BigDecimal porcentajeDescuento;
 
 	protected BigDecimal descuentoGlobal;
 	protected BigDecimal totalOtrosCargos;
@@ -42,9 +42,7 @@ public class DocumentRepresentation {
 
 	protected String observaciones;
 
-	protected String documentoQueSeModificaTipo;
-	protected String documentoQueSeModificaSerie;
-	protected String documentoQueSeModificaNumero;
+	protected String documentoQueSeModifica;
 
 	protected String tipoDeNotaDeCredito;
 	protected String tipoDeNotaDeDebito;
@@ -240,30 +238,6 @@ public class DocumentRepresentation {
 		this.observaciones = observaciones;
 	}
 
-	public String getDocumentoQueSeModificaTipo() {
-		return documentoQueSeModificaTipo;
-	}
-
-	public void setDocumentoQueSeModificaTipo(String documentoQueSeModificaTipo) {
-		this.documentoQueSeModificaTipo = documentoQueSeModificaTipo;
-	}
-
-	public String getDocumentoQueSeModificaSerie() {
-		return documentoQueSeModificaSerie;
-	}
-
-	public void setDocumentoQueSeModificaSerie(String documentoQueSeModificaSerie) {
-		this.documentoQueSeModificaSerie = documentoQueSeModificaSerie;
-	}
-
-	public String getDocumentoQueSeModificaNumero() {
-		return documentoQueSeModificaNumero;
-	}
-
-	public void setDocumentoQueSeModificaNumero(String documentoQueSeModificaNumero) {
-		this.documentoQueSeModificaNumero = documentoQueSeModificaNumero;
-	}
-
 	public String getTipoDeNotaDeCredito() {
 		return tipoDeNotaDeCredito;
 	}
@@ -342,5 +316,13 @@ public class DocumentRepresentation {
 
 	public void setDetalle(List<LineRepresentation> detalle) {
 		this.detalle = detalle;
+	}
+
+	public String getDocumentoQueSeModifica() {
+		return documentoQueSeModifica;
+	}
+
+	public void setDocumentoQueSeModifica(String documentoQueSeModifica) {
+		this.documentoQueSeModifica = documentoQueSeModifica;
 	}
 }

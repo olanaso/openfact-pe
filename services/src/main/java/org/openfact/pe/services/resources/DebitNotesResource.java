@@ -65,7 +65,7 @@ public class DebitNotesResource {
 		}
 
 		try {
-			DebitNoteType debitNoteType = SunatRepresentationToType.toDebitNoteType(rep);
+			DebitNoteType debitNoteType = SunatRepresentationToType.toDebitNoteType(organization, rep);
 			DebitNoteModel debitNote = debitNoteManager.addDebitNote(organization, debitNoteType, Collections.emptyMap());
 
 			// Enviar a Cliente

@@ -722,7 +722,7 @@ public class SunatRepresentationToType {
         SUNATPerceptionDocumentReferenceType type = new SUNATPerceptionDocumentReferenceType();
         type.setId(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado().toLocalDate()));
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
             type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
@@ -737,7 +737,7 @@ public class SunatRepresentationToType {
         SUNATPerceptionInformationType type = new SUNATPerceptionInformationType();
         type.setSunatPerceptionAmount(toSUNATRetentionAmountType(rep, currencyCode, perception));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSunatPerceptionDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado().toLocalDate()));
+            type.setSunatPerceptionDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
         }
         type.setSunatNetTotalCashed(tosetSUNATNetTotalPaidType(rep, currencyCode, perception));
         type.setExchangeRate(toExchangeRateType(rep, currencyCode));
@@ -796,7 +796,7 @@ public class SunatRepresentationToType {
         SUNATRetentionDocumentReferenceType type = new SUNATRetentionDocumentReferenceType();
         type.setID(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado().toLocalDate()));
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
             type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
@@ -812,7 +812,7 @@ public class SunatRepresentationToType {
         SUNATRetentionInformationType type = new SUNATRetentionInformationType();
         type.setSUNATRetentionAmount(toSUNATRetentionAmountType(rep, currencyCode, retencion));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSUNATRetentionDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado().toLocalDate()));
+            type.setSUNATRetentionDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
         }
         type.setSUNATNetTotalPaid(tosetSUNATNetTotalPaidType(rep, currencyCode, retencion));
         if (rep.getTipoCambio() != null) {
@@ -867,7 +867,7 @@ public class SunatRepresentationToType {
 
 
             if (rep.getFechaCambio() != null) {
-                type.setDate(toGregorianCalendar(rep.getFechaCambio().toLocalDate()));
+                type.setDate(toGregorianCalendar(rep.getFechaCambio()));
             }
         }
         return type;
@@ -880,7 +880,7 @@ public class SunatRepresentationToType {
         }
         type.setPaidAmount(toPaidAmountType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setPaidDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado().toLocalDate()));
+            type.setPaidDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
         }
         return type;
     }

@@ -1,20 +1,20 @@
 package org.openfact.pe.representations.idm;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class DocumentoSunatLineRepresentation {
     private String tipoDocumentoRelacionado;
-    private String serieDocumentoRelacionado;
     private String numeroDocumentoRelacionado;
-    private LocalDateTime fechaDocumentoRelacionado;
+    private LocalDate fechaDocumentoRelacionado;
     private String monedaDocumentoRelacionado;
     private BigDecimal totalDocumentoRelacionado;
     private BigDecimal tipoCambio;
-    private LocalDateTime fechaCambio;
+    private LocalDate fechaCambio;
     private BigDecimal pagoDocumentoSunat;
     private String numeroPago;
-    private LocalDateTime fechaDocumentoSunat;
+    private LocalDate fechaDocumentoSunat;
     private BigDecimal importeDocumentoSunat;
     private BigDecimal importePago;
 
@@ -26,14 +26,6 @@ public class DocumentoSunatLineRepresentation {
         this.tipoDocumentoRelacionado = tipoDocumentoRelacionado;
     }
 
-    public String getSerieDocumentoRelacionado() {
-        return serieDocumentoRelacionado;
-    }
-
-    public void setSerieDocumentoRelacionado(String serieDocumentoRelacionado) {
-        this.serieDocumentoRelacionado = serieDocumentoRelacionado;
-    }
-
     public String getNumeroDocumentoRelacionado() {
         return numeroDocumentoRelacionado;
     }
@@ -42,11 +34,11 @@ public class DocumentoSunatLineRepresentation {
         this.numeroDocumentoRelacionado = numeroDocumentoRelacionado;
     }
 
-    public LocalDateTime getFechaDocumentoRelacionado() {
+    public LocalDate getFechaDocumentoRelacionado() {
         return fechaDocumentoRelacionado;
     }
 
-    public void setFechaDocumentoRelacionado(LocalDateTime fechaDocumentoRelacionado) {
+    public void setFechaDocumentoRelacionado(LocalDate fechaDocumentoRelacionado) {
         this.fechaDocumentoRelacionado = fechaDocumentoRelacionado;
     }
 
@@ -74,11 +66,11 @@ public class DocumentoSunatLineRepresentation {
         this.tipoCambio = tipoCambio;
     }
 
-    public LocalDateTime getFechaCambio() {
+    public LocalDate getFechaCambio() {
         return fechaCambio;
     }
 
-    public void setFechaCambio(LocalDateTime fechaCambio) {
+    public void setFechaCambio(LocalDate fechaCambio) {
         this.fechaCambio = fechaCambio;
     }
 
@@ -98,11 +90,11 @@ public class DocumentoSunatLineRepresentation {
         this.numeroPago = numeroPago;
     }
 
-    public LocalDateTime getFechaDocumentoSunat() {
+    public LocalDate getFechaDocumentoSunat() {
         return fechaDocumentoSunat;
     }
 
-    public void setFechaDocumentoSunat(LocalDateTime fechaDocumentoSunat) {
+    public void setFechaDocumentoSunat(LocalDate fechaDocumentoSunat) {
         this.fechaDocumentoSunat = fechaDocumentoSunat;
     }
 

@@ -18,14 +18,11 @@ public class SunatJpaEntityProvider implements JpaEntityProvider {
         entities.add(PerceptionEntity.class);
         entities.add(PerceptionRequiredActionEntity.class);
         entities.add(PerceptionSendEventEntity.class);
-        entities.add(PerceptionInformationEntity.class);
-        entities.add(PerceptionDocumentReferenceEntity.class);
-
+        entities.add(PerceptionLineEntity.class);
         entities.add(RetentionEntity.class);
         entities.add(RetentionRequiredActionEntity.class);
         entities.add(RetentionSendEventEntity.class);
-        entities.add(RetentionInformationEntity.class);
-        entities.add(RetentionDocumentReferenceEntity.class);
+        entities.add(RetentionLineEntity.class);
 
         entities.add(SummaryDocumentsEntity.class);
         entities.add(SummaryDocumentsRequiredActionEntity.class);

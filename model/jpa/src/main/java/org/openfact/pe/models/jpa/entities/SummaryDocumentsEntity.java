@@ -89,10 +89,6 @@ public class SummaryDocumentsEntity {
 	@Column(name = "ORGANIZATION_ID")
 	private String organizationId;
 
-	/*@ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
-	@JoinColumn(name = "ACCOUNTINGSUPPLIERPARTY_SUMMARYDOCUMENTS_ID")
-	private SupplierPartyEntity accountingSupplierParty;*/
-
 	public String getId() {
 		return id;
 	}

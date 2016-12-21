@@ -3,9 +3,9 @@ package org.openfact.pe.models.utils;
 import org.openfact.models.ContactModel;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
-import org.openfact.pe.models.PerceptionDocumentReferenceModel;
+import org.openfact.pe.models.PerceptionLineModel;
 import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.RetentionDocumentReferenceModel;
+import org.openfact.pe.models.RetentionLineModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.VoidedDocumentModel;
@@ -16,178 +16,225 @@ import org.openfact.pe.representations.idm.VoidedRepresentation;
 
 public class SunatModelToRepresentation {
 
-	public static DocumentoSunatRepresentation toRepresentation(OrganizationModel organization, PerceptionModel model) {
-		DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
+    public static DocumentoSunatRepresentation toRepresentation(PerceptionModel model) {
+        DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
 
-		if (model.getDocumentId() != null) {
-			String[] splits = model.getDocumentId().split("-");
-			rep.setSerieDocumento(splits[0].substring(1, 4));
-			rep.setNumeroDocumento(splits[1]);
-		}
-		if (organization.getAssignedIdentificationId() != null) {
-			rep.setEntidadNumeroDeDocumento(organization.getAssignedIdentificationId());
-		}
-		if (organization.getAdditionalAccountId() != null) {
-			rep.setEntidadTipoDeDocumento(organization.getAdditionalAccountId());
-		}
-		if (organization.getRegistrationName() != null) {
-			rep.setEntidadDenominacion(organization.getRegistrationName());
-		}
-		if (organization.getStreetName() != null) {
-			rep.setEntidadDireccion(organization.getStreetName());
-		}
-		if (model.getAgentParty() != null) {
-			toRepresentation(rep, model.getAgentParty());
-		}
-		if (model.getIssueDate() != null) {
-			rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
-		}
-		if (model.getDocumentCurrencyCode() != null) {
-			rep.setMonedaDocumento(model.getDocumentCurrencyCode());
-		}
-	/*	if (model.getSUNATPerceptionSystemCode() != null) {
-			rep.setCodigoDocumento(model.getSUNATPerceptionSystemCode());
-		}*/
-		if (model.getSUNATPerceptionPercent() != null) {
-			rep.setTasaDocumento(model.getSUNATPerceptionPercent());
-		}
-		if (model.getNotes() != null) {
-			rep.setObservaciones(String.join(", ", model.getNotes()));
-		}
-		if (model.getId() != null) {
-			rep.setCodigoUnico(model.getId());
-		}
-		if (model.getSunatPerceptionDocumentReference() != null) {
-			for (PerceptionDocumentReferenceModel item : model.getSunatPerceptionDocumentReference()) {
-				rep.addDetalle(toRepresentation(item));
-			}
-		}
-		return rep;
-	}
+        if (model.getEntityDocumentType() != null) {
+            rep.setEntidadTipoDeDocumento(model.getEntityDocumentType());
+        }
+        if (model.getEntityDocumentNuber() != null) {
+            rep.setEntidadNumeroDeDocumento(model.getEntityDocumentNuber());
+        }
+        if (model.getEntityName() != null) {
+            rep.setEntidadDenominacion(model.getEntityName());
+        }
+        if (model.getEntityAddress() != null) {
+            rep.setEntidadDireccion(model.getEntityAddress());
+        }
+        if (model.getEntityEmail() != null) {
+            rep.setEntidadEmail(model.getEntityEmail());
+        }
+        if (model.getPerceptionDocumentNumber() != null) {
+            String[] splits = model.getPerceptionDocumentNumber().split("-");
+            rep.setSerieDocumento(splits[0].substring(1, 4));
+            rep.setNumeroDocumento(splits[1]);
+        }
+        if (model.getPerceptionDocumentCurrency() != null) {
+            rep.setMonedaDocumento(model.getPerceptionDocumentCurrency());
+        }
+        if (model.getSunatPerceptionPercent() != null) {
+            rep.setTasaDocumento(model.getSunatPerceptionPercent());
+        }
+        if (model.getNote() != null) {
+            rep.setObservaciones(model.getNote());
+        }
+        if (model.getTotalPerceptionAmount() != null) {
+            rep.setTotalDocumentoSunat(model.getTotalPerceptionAmount());
+        }
+        if (model.getTotalCashed() != null) {
+            rep.setTotalPago(model.getTotalCashed());
+        }
+        if (model.getIssueDate() != null) {
+            rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
+        }
+        if (model.getId() != null) {
+            rep.setCodigoUnico(model.getId());
+        }
 
-	private static DocumentoSunatLineRepresentation toRepresentation(PerceptionDocumentReferenceModel model) {
-		DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
+        if (model.getPerceptionLines() != null) {
+            for (PerceptionLineModel item : model.getPerceptionLines()) {
+                rep.addDetalle(toRepresentation(item));
+            }
+        }
+        return rep;
+    }
 
-		if (model.getIssueDate() != null) {
-			rep.setFechaDocumentoRelacionado(model.getIssueDate().atStartOfDay());
-		}
-		if (model.getDocumentId() != null) {
-			rep.setNumeroDocumentoRelacionado(model.getDocumentId());
-		}
-		if (model.getTotalInvoiceAmount() != null) {
-			rep.setTotalDocumentoRelacionado(model.getTotalInvoiceAmount());
-		}
-		return rep;
-	}
+    private static DocumentoSunatLineRepresentation toRepresentation(PerceptionLineModel model) {
+        DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
+        if (model.getRelatedDocumentType() != null) {
+            rep.setTipoDocumentoRelacionado(model.getRelatedDocumentType());
+        }
+        if (model.getRelatedDocumentNumber() != null) {
+            rep.setNumeroDocumentoRelacionado(model.getRelatedDocumentNumber());
+        }
+        if (model.getRelatedIssueDate() != null) {
+            rep.setFechaDocumentoRelacionado(model.getRelatedIssueDate());
+        }
+        if (model.getRelatedDocumentCurrency() != null) {
+            rep.setMonedaDocumentoRelacionado(model.getRelatedDocumentCurrency());
+        }
+        if (model.getTotalDocumentRelated() != null) {
+            rep.setTotalDocumentoRelacionado(model.getTotalDocumentRelated());
+        }
+        if (model.getTypeChange() != null) {
+            rep.setTipoCambio(model.getTypeChange());
+        }
+        if (model.getChangeIssueDate() != null) {
+            rep.setFechaCambio(model.getChangeIssueDate());
+        }
+        if (model.getTotalPerceptionPayment() != null) {
+            rep.setPagoDocumentoSunat(model.getTotalPerceptionPayment());
+        }
+        if (model.getPerceptionPaymentNumber() != null) {
+            rep.setNumeroPago(model.getPerceptionPaymentNumber());
+        }
+        if (model.getPerceptionIssueDate() != null) {
+            rep.setFechaDocumentoSunat(model.getPerceptionIssueDate());
+        }
+        if (model.getSunatNetPerceptionAmount() != null) {
+            rep.setImporteDocumentoSunat(model.getSunatNetPerceptionAmount());
+        }
+        if (model.getSunatNetCashed() != null) {
+            rep.setImportePago(model.getSunatNetCashed());
+        }
+        return rep;
+    }
 
-	private static void toRepresentation(DocumentoSunatRepresentation rep, PartyModel model) {
-		if (model.getContact() != null) {
-			toRepresentation(rep, model.getContact());
-		}
-	}
 
-	private static void toRepresentation(DocumentoSunatRepresentation rep, ContactModel model) {
-		if (model.getElectronicMail() != null) {
-			rep.setEntidadEmail(model.getElectronicMail());
-		}
-	}
+    public static DocumentoSunatRepresentation toRepresentation(RetentionModel model) {
+        DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
+        if (model.getEntityDocumentType() != null) {
+            rep.setEntidadTipoDeDocumento(model.getEntityDocumentType());
+        }
+        if (model.getEntityDocumentNuber() != null) {
+            rep.setEntidadNumeroDeDocumento(model.getEntityDocumentNuber());
+        }
+        if (model.getEntityName() != null) {
+            rep.setEntidadDenominacion(model.getEntityName());
+        }
+        if (model.getEntityAddress() != null) {
+            rep.setEntidadDireccion(model.getEntityAddress());
+        }
+        if (model.getEntityEmail() != null) {
+            rep.setEntidadEmail(model.getEntityEmail());
+        }
+        if (model.getRetentionDocumentNumber() != null) {
+            String[] splits = model.getRetentionDocumentNumber().split("-");
+            rep.setSerieDocumento(splits[0].substring(1, 4));
+            rep.setNumeroDocumento(splits[1]);
+        }
+        if (model.getRetentionDocumentCurrency() != null) {
+            rep.setMonedaDocumento(model.getRetentionDocumentCurrency());
+        }
+        if (model.getSunatRetentionPercent() != null) {
+            rep.setTasaDocumento(model.getSunatRetentionPercent());
+        }
+        if (model.getNote() != null) {
+            rep.setObservaciones(model.getNote());
+        }
+        if (model.getTotalRetentionAmount() != null) {
+            rep.setTotalDocumentoSunat(model.getTotalRetentionAmount());
+        }
+        if (model.getTotalCashed() != null) {
+            rep.setTotalPago(model.getTotalCashed());
+        }
+        if (model.getIssueDate() != null) {
+            rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
+        }
+        if (model.getId() != null) {
+            rep.setCodigoUnico(model.getId());
+        }
+        if (model.getRetentionLines() != null) {
+            for (RetentionLineModel item : model.getRetentionLines()) {
+                rep.addDetalle(toRepresentation(item));
+            }
+        }
+        return rep;
+    }
 
-	public static DocumentoSunatRepresentation toRepresentation(OrganizationModel organization, RetentionModel model) {
-		DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
+    private static DocumentoSunatLineRepresentation toRepresentation(RetentionLineModel model) {
+        DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
+        if (model.getRelatedDocumentType() != null) {
+            rep.setTipoDocumentoRelacionado(model.getRelatedDocumentType());
+        }
+        if (model.getRelatedDocumentNumber() != null) {
+            rep.setNumeroDocumentoRelacionado(model.getRelatedDocumentNumber());
+        }
+        if (model.getRelatedIssueDate() != null) {
+            rep.setFechaDocumentoRelacionado(model.getRelatedIssueDate());
+        }
+        if (model.getRelatedDocumentCurrency() != null) {
+            rep.setMonedaDocumentoRelacionado(model.getRelatedDocumentCurrency());
+        }
+        if (model.getTotalDocumentRelated() != null) {
+            rep.setTotalDocumentoRelacionado(model.getTotalDocumentRelated());
+        }
+        if (model.getTypeChange() != null) {
+            rep.setTipoCambio(model.getTypeChange());
+        }
+        if (model.getChangeIssueDate() != null) {
+            rep.setFechaCambio(model.getChangeIssueDate());
+        }
+        if (model.getTotalRetentionPayment() != null) {
+            rep.setPagoDocumentoSunat(model.getTotalRetentionPayment());
+        }
+        if (model.getRetentionPaymentNumber() != null) {
+            rep.setNumeroPago(model.getRetentionPaymentNumber());
+        }
+        if (model.getRetentionIssueDate() != null) {
+            rep.setFechaDocumentoSunat(model.getRetentionIssueDate());
+        }
+        if (model.getSunatNetRetentionAmount() != null) {
+            rep.setImporteDocumentoSunat(model.getSunatNetRetentionAmount());
+        }
+        if (model.getSunatNetCashed() != null) {
+            rep.setImportePago(model.getSunatNetCashed());
+        }
+        return rep;
+    }
 
-		if (model.getDocumentId() != null) {
-			String[] splits = model.getDocumentId().split("-");
-			rep.setSerieDocumento(splits[0].substring(1, 4));
-			rep.setNumeroDocumento(splits[1]);
-		}
-		if (organization.getAssignedIdentificationId() != null) {
-			rep.setEntidadNumeroDeDocumento(organization.getAssignedIdentificationId());
-		}
-		if (organization.getAdditionalAccountId() != null) {
-			rep.setEntidadTipoDeDocumento(organization.getAdditionalAccountId());
-		}
-		if (organization.getRegistrationName() != null) {
-			rep.setEntidadDenominacion(organization.getRegistrationName());
-		}
-		if (organization.getStreetName() != null) {
-			rep.setEntidadDireccion(organization.getStreetName());
-		}
-		if (model.getAgentParty() != null) {
-			toRepresentation(rep, model.getAgentParty());
-		}
-		if (model.getIssueDate() != null) {
-			rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
-		}
-		if (model.getDocumentCurrencyCode() != null) {
-			rep.setMonedaDocumento(model.getDocumentCurrencyCode());
-		}
-		/*if (model.getSunatRetentionSystemCode() != null) {
-			rep.setCodigoDocumento(model.getSunatRetentionSystemCode());
-		}*/
-		if (model.getSunatRetentionPercent() != null) {
-			rep.setTasaDocumento(model.getSunatRetentionPercent());
-		}
-		if (model.getNotes() != null) {
-			rep.setObservaciones(String.join(", ", model.getNotes()));
-		}
-		if (model.getId() != null) {
-			rep.setCodigoUnico(model.getId());
-		}
-		if (model.getSunatRetentionDocumentReference() != null) {
-			for (RetentionDocumentReferenceModel item : model.getSunatRetentionDocumentReference()) {
-				rep.addDetalle(toRepresentation(item));
-			}
-		}
-		return rep;
-	}
+    public static SummaryRepresentation toRepresentation(SummaryDocumentModel model) {
+        SummaryRepresentation rep = new SummaryRepresentation();
+        rep.setCodigoUnico(model.getId());
+        if (model.getDocumentId() != null) {
+            String[] splits = model.getDocumentId().split("-");
+            rep.setSerie(splits[1]);
+            rep.setNumero(splits[2]);
+        }
+        if (model.getIssueDate() != null) {
+            rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
+        }
+        if (model.getReferenceDate() != null) {
+            rep.setFechaDeReferencia(model.getReferenceDate().atStartOfDay());
+        }
+        return rep;
+    }
 
-	private static DocumentoSunatLineRepresentation toRepresentation(RetentionDocumentReferenceModel model) {
-		DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
-
-		if (model.getIssueDate() != null) {
-			rep.setFechaDocumentoRelacionado(model.getIssueDate().atStartOfDay());
-		}
-		if (model.getDocumentId() != null) {
-			rep.setNumeroDocumentoRelacionado(model.getDocumentId());
-		}
-		if (model.getTotalInvoiceAmount() != null) {
-			rep.setTotalDocumentoRelacionado(model.getTotalInvoiceAmount());
-		}
-		return rep;
-	}
-
-	public static SummaryRepresentation toRepresentation(SummaryDocumentModel model) {
-		SummaryRepresentation rep = new SummaryRepresentation();
-		rep.setCodigoUnico(model.getId());
-		if (model.getDocumentId() != null) {
-			String[] splits = model.getDocumentId().split("-");
-			rep.setSerie(splits[1]);
-			rep.setNumero(splits[2]);
-		}
-		if (model.getIssueDate() != null) {
-			rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
-		}
-		if (model.getReferenceDate() != null) {
-			rep.setFechaDeReferencia(model.getReferenceDate().atStartOfDay());
-		}
-		return rep;
-	}
-
-	public static VoidedRepresentation toRepresentation(VoidedDocumentModel model) {
-		VoidedRepresentation rep = new VoidedRepresentation();
-		rep.setCodigoUnico(model.getId());
-		if (model.getDocumentId() != null) {
-			String[] splits = model.getDocumentId().split("-");
-			rep.setSerie(splits[1]);
-			rep.setNumero(splits[2]);
-		}
-		if (model.getIssueDate() != null) {
-			rep.setFechaDeDocumento(model.getIssueDate().atStartOfDay());
-		}
-		if (model.getReferenceDate() != null) {
-			rep.setFechaReferencia(model.getReferenceDate().atStartOfDay());
-		}
-		return rep;
-	}
+    public static VoidedRepresentation toRepresentation(VoidedDocumentModel model) {
+        VoidedRepresentation rep = new VoidedRepresentation();
+        rep.setCodigoUnico(model.getId());
+        if (model.getDocumentId() != null) {
+            String[] splits = model.getDocumentId().split("-");
+            rep.setSerie(splits[1]);
+            rep.setNumero(splits[2]);
+        }
+        if (model.getIssueDate() != null) {
+            rep.setFechaDeDocumento(model.getIssueDate().atStartOfDay());
+        }
+        if (model.getReferenceDate() != null) {
+            rep.setFechaReferencia(model.getReferenceDate().atStartOfDay());
+        }
+        return rep;
+    }
 
 }

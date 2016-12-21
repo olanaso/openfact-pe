@@ -156,9 +156,9 @@ public class JpaPerceptionProvider extends AbstractHibernateStorage implements P
 			boolean intoRequeridAction) {
 		String queryName = "";
 		if (intoRequeridAction) {
-			queryName = "select i from PerceptionEntity i where i.organization.id = :organizationId and :requeridAction in elements(i.requeridAction) order by i.perceptionTypeCode ";
+			queryName = "select i from PerceptionEntity i where i.organizationId = :organizationId and :requeridAction in elements(i.requeridAction) order by i.perceptionTypeCode ";
 		} else {
-			queryName = "select i from PerceptionEntity i where i.organization.id = :organizationId and :requeridAction not in elements(i.requeridAction) order by i.perceptionTypeCode ";
+			queryName = "select i from PerceptionEntity i where i.organizationId = :organizationId and :requeridAction not in elements(i.requeridAction) order by i.perceptionTypeCode ";
 
 		}
 		TypedQuery<PerceptionEntity> query = em.createQuery(queryName, PerceptionEntity.class);
@@ -215,7 +215,7 @@ public class JpaPerceptionProvider extends AbstractHibernateStorage implements P
 	@Override
 	public SearchResultsModel<PerceptionModel> searchForPerception(OrganizationModel organization,
 			SearchCriteriaModel criteria) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
 		SearchResultsModel<PerceptionEntity> entityResult = find(criteria, PerceptionEntity.class);
 		List<PerceptionEntity> entities = entityResult.getModels();
@@ -231,7 +231,7 @@ public class JpaPerceptionProvider extends AbstractHibernateStorage implements P
 	@Override
 	public SearchResultsModel<PerceptionModel> searchForPerception(OrganizationModel organization,
 			SearchCriteriaModel criteria, String filterText) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
 		SearchResultsModel<PerceptionEntity> entityResult = findFullText(criteria, PerceptionEntity.class, filterText,
 				DOCUMENT_ID);

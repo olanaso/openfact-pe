@@ -85,7 +85,7 @@ public class RetentionsResource {
 		} else {
 			retentions = retentionProvider.searchForRetention(organization, filterText.trim(), firstResult, maxResults);
 		}
-		return retentions.stream().map(f -> SunatModelToRepresentation.toRepresentation(organization, f))
+		return retentions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
 				.collect(Collectors.toList());
 	}
 
@@ -220,7 +220,7 @@ public class RetentionsResource {
 		}
 		SearchResultsRepresentation<DocumentoSunatRepresentation> rep = new SearchResultsRepresentation<>();
 		List<DocumentoSunatRepresentation> items = new ArrayList<>();
-		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(organization, f)));
+		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation( f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
 		return rep;
@@ -237,7 +237,7 @@ public class RetentionsResource {
 			throw new NotFoundException("Retention not found");
 		}
 
-		DocumentoSunatRepresentation rep = SunatModelToRepresentation.toRepresentation(organization, retention);
+		DocumentoSunatRepresentation rep = SunatModelToRepresentation.toRepresentation(retention);
 		return rep;
 	}
 

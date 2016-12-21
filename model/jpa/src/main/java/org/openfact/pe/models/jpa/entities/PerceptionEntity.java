@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.openfact.models.jpa.entities.*;
 
 @Entity
 @Table(name = "PERCEPTION", uniqueConstraints = {
@@ -22,10 +21,8 @@ import org.openfact.models.jpa.entities.*;
 		@NamedQuery(name = "getAllPerceptionsByOrganization", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.createdTimestamp"),
 		@NamedQuery(name = "getAllPerceptionsByOrganizationDesc", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationPerceptionById", query = "select p from PerceptionEntity p where p.id = :id and p.organizationId = :organizationId"),
-		//@NamedQuery(name = "getAllPerceptionsByRequiredActionAndOrganization", query = "select c from PerceptionEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
 		@NamedQuery(name = "getOrganizationPerceptionByDocumentId", query = "select p from PerceptionEntity p where p.documentId = :documentId and p.organizationId = :organizationId"),
-		//@NamedQuery(name = "searchForPerception", query = "select p from PerceptionEntity p where p.organizationId = :organizationId and p.ID like :search order by p.issueDate"),
-		@NamedQuery(name = "getOrganizationPerceptionCount", query = "select count(i) from PerceptionEntity p where p.organizationId = :organizationId"),
+		@NamedQuery(name = "getOrganizationPerceptionCount", query = "select count(p) from PerceptionEntity p where p.organizationId = :organizationId"),
 		@NamedQuery(name = "getLastPerceptionByOrganization", query = "select p from PerceptionEntity p where p.organizationId = :organizationId and length(p.documentId)=:documentIdLength and p.documentId like :formatter order by p.issueDate desc") })
 public class PerceptionEntity {
 
@@ -45,41 +42,65 @@ public class PerceptionEntity {
 	@Column(name = "CUSTOMIZATION_ID")
 	private String customizationId;
 
-	@Column(name = "DOCUMENT_CURRENCY_CODE")
-	private String documentCurrencyCode;
+	@NotNull
+	@Column(name = "ORGANIZATION_ID")
+	private String organizationId;
+
+	@Column(name = "SUNAT_PERCEPTION_SYSTEM_CODE")
+	private String sunatPerceptionSystemCode;
+
+	@NotNull
+	@Column(name = "ENTITY_DOCUMENT_TYPE")
+	private String entityDocumentType;
+
+	@NotNull
+	@Column(name = "ENTITY_DOCUMENT_NUMBER")
+	private String entityDocumentNuber;
+
+	@NotNull
+	@Column(name = "ENTITY_NAME")
+	private String entityName;
+
+	@NotNull
+	@Column(name = "ENTITY_ADDRESS")
+	private String entityAddress;
+
+	@NotNull
+	@Column(name = "ENTITY_EMAIL")
+	private String entityEmail;
+
+	@NotNull
+	@Column(name = "PERCEPTION_DOCUMENT_NUMBER")
+	private String perceptionDocumentNumber;
+
+	@NotNull
+	@Column(name = "PERCEPTION_DOCUMENT_CURRENCY")
+	private String perceptionDocumentCurrency;
+
+	@Column(name = "SUNAT_PERCEPTION_PERCENT")
+	private BigDecimal sunatPerceptionPercent;
+
+	@NotNull
+	@Column(name = "NOTE")
+	private String note;
+
+	@Column(name = "TOTAL_PERCEPTION_AMOUNT")
+	private BigDecimal totalPerceptionAmount;
+
+	@Column(name = "SUNAT_TOTAL_CASHED")
+	private BigDecimal totalCashed;
 
 	@Column(name = "ISSUE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
 	private LocalDate issueDate;
 
-	@Column(name = "SUNAT_PERCEPTION_SYSTEM_CODE")
-	private String sunatPerceptionSystemCode;
-
-	@Column(name = "SUNAT_PERCEPTION_PERCENT")
-	private BigDecimal sunatPerceptionPercent;
-
-	@Column(name = "TOTAL_INVOICE_AMOUNT")
-	private BigDecimal totalInvoiceAmount;
-
-	@Column(name = "SUNAT_TOTAL_CASHED")
-	private BigDecimal sunatTotalCashed;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception")
+	private List<PerceptionLineEntity> perceptionLines = new ArrayList<>();
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "XML_DOCUMENT")
 	private byte[] xmlDocument;
-
-	@NotNull
-	@Column(name = "ORGANIZATION_ID")
-	private String organizationId;
-
-	@ElementCollection
-	@Column(name = "VALUE")
-	@CollectionTable(name = "PERCEPTION_NOTE", joinColumns = { @JoinColumn(name = "PERCEPTION_ID") })
-	private List<String> notes = new ArrayList<>();
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception")
-	private List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences = new ArrayList<>();
 
 	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy="perception")
 	private Collection<PerceptionRequiredActionEntity> requiredActions = new ArrayList<>();
@@ -90,14 +111,6 @@ public class PerceptionEntity {
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	@Column(name = "CREATED_TIMESTAMP")
 	private LocalDateTime createdTimestamp;
-
-	/*@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
-	@JoinColumn(name = "AGENTPARTY_PERCEPTION_ID")
-	private PartyEntity agentParty;*/
-
-	/*@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
-	@JoinColumn(name = "RECEIVERPARTY_PERCEPTION_ID")
-	private PartyEntity receiverParty;*/
 
 
 	public String getId() {
@@ -132,20 +145,12 @@ public class PerceptionEntity {
 		this.customizationId = customizationId;
 	}
 
-	public String getDocumentCurrencyCode() {
-		return documentCurrencyCode;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setDocumentCurrencyCode(String documentCurrencyCode) {
-		this.documentCurrencyCode = documentCurrencyCode;
-	}
-
-	public LocalDate getIssueDate() {
-		return issueDate;
-	}
-
-	public void setIssueDate(LocalDate issueDate) {
-		this.issueDate = issueDate;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public String getSunatPerceptionSystemCode() {
@@ -156,6 +161,62 @@ public class PerceptionEntity {
 		this.sunatPerceptionSystemCode = sunatPerceptionSystemCode;
 	}
 
+	public String getEntityDocumentType() {
+		return entityDocumentType;
+	}
+
+	public void setEntityDocumentType(String entityDocumentType) {
+		this.entityDocumentType = entityDocumentType;
+	}
+
+	public String getEntityDocumentNuber() {
+		return entityDocumentNuber;
+	}
+
+	public void setEntityDocumentNuber(String entityDocumentNuber) {
+		this.entityDocumentNuber = entityDocumentNuber;
+	}
+
+	public String getEntityName() {
+		return entityName;
+	}
+
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
+	}
+
+	public String getEntityAddress() {
+		return entityAddress;
+	}
+
+	public void setEntityAddress(String entityAddress) {
+		this.entityAddress = entityAddress;
+	}
+
+	public String getEntityEmail() {
+		return entityEmail;
+	}
+
+	public void setEntityEmail(String entityEmail) {
+		this.entityEmail = entityEmail;
+	}
+
+	public String getPerceptionDocumentNumber() {
+		return perceptionDocumentNumber;
+	}
+
+	public void setPerceptionDocumentNumber(String perceptionDocumentNumber) {
+		this.perceptionDocumentNumber = perceptionDocumentNumber;
+	}
+
+	public String getPerceptionDocumentCurrency() {
+		return perceptionDocumentCurrency;
+	}
+
+	public void setPerceptionDocumentCurrency(String perceptionDocumentCurrency) {
+		this.perceptionDocumentCurrency = perceptionDocumentCurrency;
+	}
+
 	public BigDecimal getSunatPerceptionPercent() {
 		return sunatPerceptionPercent;
 	}
@@ -164,20 +225,44 @@ public class PerceptionEntity {
 		this.sunatPerceptionPercent = sunatPerceptionPercent;
 	}
 
-	public BigDecimal getTotalInvoiceAmount() {
-		return totalInvoiceAmount;
+	public String getNote() {
+		return note;
 	}
 
-	public void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount) {
-		this.totalInvoiceAmount = totalInvoiceAmount;
+	public void setNote(String note) {
+		this.note = note;
 	}
 
-	public BigDecimal getSunatTotalCashed() {
-		return sunatTotalCashed;
+	public BigDecimal getTotalPerceptionAmount() {
+		return totalPerceptionAmount;
 	}
 
-	public void setSunatTotalCashed(BigDecimal sunatTotalCashed) {
-		this.sunatTotalCashed = sunatTotalCashed;
+	public void setTotalPerceptionAmount(BigDecimal totalPerceptionAmount) {
+		this.totalPerceptionAmount = totalPerceptionAmount;
+	}
+
+	public BigDecimal getTotalCashed() {
+		return totalCashed;
+	}
+
+	public void setTotalCashed(BigDecimal totalCashed) {
+		this.totalCashed = totalCashed;
+	}
+
+	public LocalDate getIssueDate() {
+		return issueDate;
+	}
+
+	public void setIssueDate(LocalDate issueDate) {
+		this.issueDate = issueDate;
+	}
+
+	public List<PerceptionLineEntity> getPerceptionLines() {
+		return perceptionLines;
+	}
+
+	public void setPerceptionLines(List<PerceptionLineEntity> perceptionLines) {
+		this.perceptionLines = perceptionLines;
 	}
 
 	public byte[] getXmlDocument() {
@@ -186,30 +271,6 @@ public class PerceptionEntity {
 
 	public void setXmlDocument(byte[] xmlDocument) {
 		this.xmlDocument = xmlDocument;
-	}
-
-	public String getOrganizationId() {
-		return organizationId;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
-
-	public List<String> getNotes() {
-		return notes;
-	}
-
-	public void setNotes(List<String> notes) {
-		this.notes = notes;
-	}
-
-	public List<PerceptionDocumentReferenceEntity> getSunatPerceptionDocumentReferences() {
-		return sunatPerceptionDocumentReferences;
-	}
-
-	public void setSunatPerceptionDocumentReferences(List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences) {
-		this.sunatPerceptionDocumentReferences = sunatPerceptionDocumentReferences;
 	}
 
 	public Collection<PerceptionRequiredActionEntity> getRequiredActions() {
@@ -228,9 +289,6 @@ public class PerceptionEntity {
 		this.sendEvents = sendEvents;
 	}
 
-	/**
-	 * Openfact core
-	 */
 	public LocalDateTime getCreatedTimestamp() {
 		return createdTimestamp;
 	}
@@ -263,4 +321,6 @@ public class PerceptionEntity {
 			return false;
 		return true;
 	}
+
+
 }

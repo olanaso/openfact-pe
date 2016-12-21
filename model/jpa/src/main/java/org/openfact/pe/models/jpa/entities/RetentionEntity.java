@@ -7,25 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -40,13 +22,13 @@ import org.openfact.models.jpa.entities.PartyEntity;
 		@NamedQuery(name = "getAllRetentionsByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId order by r.createdTimestamp"),
 		@NamedQuery(name = "getAllRetentionsByOrganizationDesc", query = "select r from RetentionEntity r where r.organizationId = :organizationId order by r.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationRetentionById", query = "select r from RetentionEntity r where r.id = :id and r.organizationId = :organizationId"),
-//		@NamedQuery(name = "getAllRetentionsByRequiredActionAndOrganization", query = "select c from RetentionEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
 		@NamedQuery(name = "getOrganizationRetentionByDocumentId", query = "select r from RetentionEntity r where r.documentId = :documentId and r.organizationId = :organizationId"),
 		@NamedQuery(name = "searchForRetention", query = "select r from RetentionEntity r where r.organizationId = :organizationId and r.documentId like :search order by r.issueDate"),
 		@NamedQuery(name = "getOrganizationRetentionCount", query = "select count(r) from RetentionEntity r where r.organizationId = :organizationId"),
 		@NamedQuery(name = "getLastRetentionByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId and length(r.documentId)=:documentIdLength and r.documentId like :formatter order by r.issueDate desc"),
 	})
 public class RetentionEntity {
+
 
 	@Id
 	@Column(name = "ID")
@@ -58,35 +40,71 @@ public class RetentionEntity {
 	@Column(name = "DOCUMENT_ID")
 	private String documentId;
 
-	@Column(name = "UBL_VERSION_ID")
+	@Column(name = "UBL_VERSIONID")
 	private String ublVersionId;
-
-	@Column(name = "DOCUMENT_CURRENCY_CODE")
-	private String documentCurrencyCode;
 
 	@Column(name = "CUSTOMIZATION_ID")
 	private String customizationId;
+
+	@NotNull
+	@Column(name = "ORGANIZATION_ID")
+	private String organizationId;
+
+	@Column(name = "SUNAT_RETENTION_SYSTEM_CODE")
+	private String sunatRetentionSystemCode;
+
+	@NotNull
+	@Column(name = "ENTITY_DOCUMENT_TYPE")
+	private String entityDocumentType;
+
+	@NotNull
+	@Column(name = "ENTITY_DOCUMENT_NUMBER")
+	private String entityDocumentNuber;
+
+	@NotNull
+	@Column(name = "ENTITY_NAME")
+	private String entityName;
+
+	@NotNull
+	@Column(name = "ENTITY_ADDRESS")
+	private String entityAddress;
+
+	@NotNull
+	@Column(name = "ENTITY_EMAIL")
+	private String entityEmail;
+
+	@NotNull
+	@Column(name = "RETENTION_DOCUMENT_NUMBER")
+	private String retentionDocumentNumber;
+
+	@NotNull
+	@Column(name = "RETENTION_DOCUMENT_CURRENCY")
+	private String retentionDocumentCurrency;
+
+	@Column(name = "SUNAT_RETENTION_PERCENT")
+	private BigDecimal sunatRetentionPercent;
+
+	@NotNull
+	@Column(name = "NOTE")
+	private String note;
+
+	@Column(name = "TOTAL_RETENTION_AMOUNT")
+	private BigDecimal totalRetentionAmount;
+
+	@Column(name = "SUNAT_TOTAL_CASHED")
+	private BigDecimal totalCashed;
 
 	@Column(name = "ISSUE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
 	private LocalDate issueDate;
 
-	@Column(name = "TOTAL_INVOICE_AMOUNT")
-	private BigDecimal totalInvoiceAmount;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention")
+	private List<RetentionLineEntity> retentionLines = new ArrayList<>();
 
-	@Column(name = "TOTAL_PAID")
-	private BigDecimal totalPaid;
-
-	@Column(name = "SUNAT_RETENTION_SYSTEM_CODE")
-	private String sunatRetentionSystemCode;
-
-	@Column(name = "SUNAT_RETENTION_PERCENT")
-	private BigDecimal sunatRetentionPercent;
-
-	@ElementCollection
-	@Column(name = "VALUE")
-	@CollectionTable(name = "RETENTION_NOTE", joinColumns = { @JoinColumn(name = "RETENTION_ID") })
-	private List<String> notes = new ArrayList<>();
+	@Lob
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "XML_DOCUMENT")
+	private byte[] xmlDocument;
 
 	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy="retention")
 	private Collection<RetentionRequiredActionEntity> requiredActions = new ArrayList<>();
@@ -94,27 +112,9 @@ public class RetentionEntity {
 	@OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true, mappedBy = "retention", fetch = FetchType.LAZY)
 	private Collection<RetentionSendEventEntity> sendEvents = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention", cascade = CascadeType.ALL)
-	private List<RetentionDocumentReferenceEntity> sunatRetentionDocumentReferences = new ArrayList<>();
-
-	/*@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
-	@JoinColumn(name = "AGENTPARTY_PERCEPTION_ID")
-	private PartyEntity agentParty;
-
-	@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
-	@JoinColumn(name = "RECEIVERPARTY_PERCEPTION_ID")
-	private PartyEntity receiverParty;*/
-
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	@Column(name = "CREATED_TIMESTAMP")
 	private LocalDateTime createdTimestamp;
-	@Lob
-	@Column(name = "XML_DOCUMENT")
-	private byte[] xmlDocument;
-
-	@NotNull
-	@Column(name = "ORGANIZATION_ID")
-	private String organizationId;
 
 	public String getId() {
 		return id;
@@ -140,14 +140,6 @@ public class RetentionEntity {
 		this.ublVersionId = ublVersionId;
 	}
 
-	public String getDocumentCurrencyCode() {
-		return documentCurrencyCode;
-	}
-
-	public void setDocumentCurrencyCode(String documentCurrencyCode) {
-		this.documentCurrencyCode = documentCurrencyCode;
-	}
-
 	public String getCustomizationId() {
 		return customizationId;
 	}
@@ -156,28 +148,12 @@ public class RetentionEntity {
 		this.customizationId = customizationId;
 	}
 
-	public LocalDate getIssueDate() {
-		return issueDate;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setIssueDate(LocalDate issueDate) {
-		this.issueDate = issueDate;
-	}
-
-	public BigDecimal getTotalInvoiceAmount() {
-		return totalInvoiceAmount;
-	}
-
-	public void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount) {
-		this.totalInvoiceAmount = totalInvoiceAmount;
-	}
-
-	public BigDecimal getTotalPaid() {
-		return totalPaid;
-	}
-
-	public void setTotalPaid(BigDecimal totalPaid) {
-		this.totalPaid = totalPaid;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public String getSunatRetentionSystemCode() {
@@ -188,6 +164,62 @@ public class RetentionEntity {
 		this.sunatRetentionSystemCode = sunatRetentionSystemCode;
 	}
 
+	public String getEntityDocumentType() {
+		return entityDocumentType;
+	}
+
+	public void setEntityDocumentType(String entityDocumentType) {
+		this.entityDocumentType = entityDocumentType;
+	}
+
+	public String getEntityDocumentNuber() {
+		return entityDocumentNuber;
+	}
+
+	public void setEntityDocumentNuber(String entityDocumentNuber) {
+		this.entityDocumentNuber = entityDocumentNuber;
+	}
+
+	public String getEntityName() {
+		return entityName;
+	}
+
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
+	}
+
+	public String getEntityAddress() {
+		return entityAddress;
+	}
+
+	public void setEntityAddress(String entityAddress) {
+		this.entityAddress = entityAddress;
+	}
+
+	public String getEntityEmail() {
+		return entityEmail;
+	}
+
+	public void setEntityEmail(String entityEmail) {
+		this.entityEmail = entityEmail;
+	}
+
+	public String getRetentionDocumentNumber() {
+		return retentionDocumentNumber;
+	}
+
+	public void setRetentionDocumentNumber(String retentionDocumentNumber) {
+		this.retentionDocumentNumber = retentionDocumentNumber;
+	}
+
+	public String getRetentionDocumentCurrency() {
+		return retentionDocumentCurrency;
+	}
+
+	public void setRetentionDocumentCurrency(String retentionDocumentCurrency) {
+		this.retentionDocumentCurrency = retentionDocumentCurrency;
+	}
+
 	public BigDecimal getSunatRetentionPercent() {
 		return sunatRetentionPercent;
 	}
@@ -196,12 +228,52 @@ public class RetentionEntity {
 		this.sunatRetentionPercent = sunatRetentionPercent;
 	}
 
-	public List<String> getNotes() {
-		return notes;
+	public String getNote() {
+		return note;
 	}
 
-	public void setNotes(List<String> notes) {
-		this.notes = notes;
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public BigDecimal getTotalRetentionAmount() {
+		return totalRetentionAmount;
+	}
+
+	public void setTotalRetentionAmount(BigDecimal totalRetentionAmount) {
+		this.totalRetentionAmount = totalRetentionAmount;
+	}
+
+	public BigDecimal getTotalCashed() {
+		return totalCashed;
+	}
+
+	public void setTotalCashed(BigDecimal totalCashed) {
+		this.totalCashed = totalCashed;
+	}
+
+	public LocalDate getIssueDate() {
+		return issueDate;
+	}
+
+	public void setIssueDate(LocalDate issueDate) {
+		this.issueDate = issueDate;
+	}
+
+	public List<RetentionLineEntity> getRetentionLines() {
+		return retentionLines;
+	}
+
+	public void setRetentionLines(List<RetentionLineEntity> retentionLines) {
+		this.retentionLines = retentionLines;
+	}
+
+	public byte[] getXmlDocument() {
+		return xmlDocument;
+	}
+
+	public void setXmlDocument(byte[] xmlDocument) {
+		this.xmlDocument = xmlDocument;
 	}
 
 	public Collection<RetentionRequiredActionEntity> getRequiredActions() {
@@ -220,36 +292,12 @@ public class RetentionEntity {
 		this.sendEvents = sendEvents;
 	}
 
-	public List<RetentionDocumentReferenceEntity> getSunatRetentionDocumentReferences() {
-		return sunatRetentionDocumentReferences;
-	}
-
-	public void setSunatRetentionDocumentReferences(List<RetentionDocumentReferenceEntity> sunatRetentionDocumentReferences) {
-		this.sunatRetentionDocumentReferences = sunatRetentionDocumentReferences;
-	}
-
 	public LocalDateTime getCreatedTimestamp() {
 		return createdTimestamp;
 	}
 
 	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
-	}
-
-	public byte[] getXmlDocument() {
-		return xmlDocument;
-	}
-
-	public void setXmlDocument(byte[] xmlDocument) {
-		this.xmlDocument = xmlDocument;
-	}
-
-	public String getOrganizationId() {
-		return organizationId;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
 	}
 
 	@Override

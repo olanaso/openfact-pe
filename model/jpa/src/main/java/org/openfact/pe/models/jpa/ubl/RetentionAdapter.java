@@ -16,12 +16,9 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
-import org.openfact.models.jpa.PartyAdapter;
-import org.openfact.models.jpa.SendEventAdapter;
-import org.openfact.models.jpa.entities.PartyEntity;
-import org.openfact.pe.models.RetentionDocumentReferenceModel;
+import org.openfact.pe.models.RetentionLineModel;
 import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.jpa.entities.RetentionDocumentReferenceEntity;
+import org.openfact.pe.models.jpa.entities.RetentionLineEntity;
 import org.openfact.pe.models.jpa.entities.RetentionEntity;
 import org.openfact.pe.models.jpa.entities.RetentionRequiredActionEntity;
 import org.openfact.ubl.SendEventModel;
@@ -42,13 +39,6 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 		this.retention = retention;
 	}
 
-	public static RetentionEntity toEntity(RetentionModel model, EntityManager em) {
-		if (model instanceof RetentionAdapter) {
-			return ((RetentionAdapter) model).getEntity();
-		}
-		return em.getReference(RetentionEntity.class, model.getId());
-	}
-
 	@Override
 	public RetentionEntity getEntity() {
 		return retention;
@@ -60,43 +50,149 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 	}
 
 	@Override
-	public String getDocumentId() {
-		return retention.getDocumentId();
-	}
-
-	@Override
 	public String getOrganizationId() {
 		return retention.getOrganizationId();
 	}
 
 	@Override
-	public String getUblVersionId() {
+	public String getUblVersionID() {
 		return retention.getUblVersionId();
 	}
 
 	@Override
-	public void setUblVersionId(String ublVersionId) {
-		retention.setUblVersionId(ublVersionId);
+	public void setUblVersionID(String ublVersionID) {
+		retention.setUblVersionId(ublVersionID);
 	}
 
 	@Override
-	public String getCustomizationId() {
+	public String getCustomizationID() {
 		return retention.getCustomizationId();
 	}
 
 	@Override
-	public void setCustomizationId(String customizationId) {
-		retention.setCustomizationId(customizationId);
+	public void setCustomizationID(String customizationID) {
+		retention.setCustomizationId(customizationID);
 	}
 
 	@Override
-	public String getDocumentCurrencyCode() {
-		return retention.getDocumentCurrencyCode();
+	public String getSunatRetentionSystemCode() {
+		return retention.getSunatRetentionSystemCode();
 	}
 
 	@Override
-	public void setDocumentCurrencyCode(String value) {
-		retention.setDocumentCurrencyCode(value);
+	public void setSunatRetentionSystemCode(String sunatRetentionSystemCode) {
+		retention.setSunatRetentionSystemCode(sunatRetentionSystemCode);
+	}
+
+	@Override
+	public String getEntityDocumentType() {
+		return retention.getEntityDocumentType();
+	}
+
+	@Override
+	public void setEntityDocumentType(String entityDocumentType) {
+		retention.setEntityDocumentType(entityDocumentType);
+	}
+
+	@Override
+	public String getEntityDocumentNuber() {
+		return retention.getEntityDocumentNuber();
+	}
+
+	@Override
+	public void setEntityDocumentNuber(String entityDocumentNuber) {
+		retention.setEntityDocumentNuber(entityDocumentNuber);
+	}
+
+	@Override
+	public String getEntityName() {
+		return retention.getEntityName();
+	}
+
+	@Override
+	public void setEntityName(String entityName) {
+		retention.setEntityName(entityName);
+	}
+
+	@Override
+	public String getEntityAddress() {
+		return retention.getEntityAddress();
+	}
+
+	@Override
+	public void setEntityAddress(String entityAddress) {
+		retention.setEntityAddress(entityAddress);
+	}
+
+	@Override
+	public String getEntityEmail() {
+		return retention.getEntityEmail();
+	}
+
+	@Override
+	public void setEntityEmail(String entityEmail) {
+		retention.setEntityEmail(entityEmail);
+	}
+
+	@Override
+	public String getRetentionDocumentNumber() {
+		return retention.getEntityDocumentNuber();
+	}
+
+	@Override
+	public void setRetentionDocumentNumber(String retentionDocumentNumber) {
+		retention.setRetentionDocumentNumber(retentionDocumentNumber);
+	}
+
+	@Override
+	public String getRetentionDocumentCurrency() {
+		return retention.getRetentionDocumentCurrency();
+	}
+
+	@Override
+	public void setRetentionDocumentCurrency(String retentionDocumentCurrency) {
+		retention.setRetentionDocumentCurrency(retentionDocumentCurrency);
+	}
+
+	@Override
+	public BigDecimal getSunatRetentionPercent() {
+		return retention.getSunatRetentionPercent();
+	}
+
+	@Override
+	public void setSunatRetentionPercent(BigDecimal sunatRetentionPercent) {
+		retention.setSunatRetentionPercent(sunatRetentionPercent);
+	}
+
+
+	@Override
+	public String getNote() {
+		return retention.getNote();
+	}
+
+	@Override
+	public void setNote(String note) {
+		retention.setNote(note);
+	}
+
+	@Override
+	public BigDecimal getTotalRetentionAmount() {
+		return retention.getTotalRetentionAmount();
+	}
+
+	@Override
+	public void setTotalRetentionAmount(BigDecimal totalRetentionAmount) {
+		retention.setTotalRetentionAmount(totalRetentionAmount);
+	}
+
+	@Override
+	public BigDecimal getTotalCashed() {
+		return retention.getTotalCashed();
+	}
+
+	@Override
+	public void setTotalCashed(BigDecimal totalCashed) {
+		retention.setTotalCashed(totalCashed);
 	}
 
 	@Override
@@ -110,68 +206,24 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 	}
 
 	@Override
-	public String getSunatRetentionSystemCode() {
-		return retention.getSunatRetentionSystemCode();
+	public List<RetentionLineModel> getRetentionLines() {
+		return retention.getRetentionLines().stream()
+				.map(f -> new RetentionLineAdapter(session, em, f)).collect(Collectors.toList());
 	}
 
 	@Override
-	public void setSunatRetentionSystemCode(String code) {
-		retention.setSunatRetentionSystemCode(code);
-	}
-
-	@Override
-	public BigDecimal getSunatRetentionPercent() {
-		return retention.getSunatRetentionPercent();
-	}
-
-	@Override
-	public void setSunatRetentionPercent(BigDecimal percent) {
-		retention.setSunatRetentionPercent(percent);
-	}
-
-	@Override
-	public BigDecimal getTotalInvoiceAmount() {
-		return retention.getTotalInvoiceAmount();
-	}
-
-	@Override
-	public void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount) {
-		retention.setTotalInvoiceAmount(totalInvoiceAmount);
-	}
-
-	@Override
-	public BigDecimal getSunatTotalPaid() {
-		return retention.getTotalPaid();
-	}
-
-	@Override
-	public void setSunatTotalPaid(BigDecimal totalPaid) {
-		retention.setTotalPaid(totalPaid);
-	}
-
-	@Override
-	public List<String> getNotes() {
-		return retention.getNotes();
-	}
-
-	@Override
-	public void setNotes(List<String> notes) {
-		retention.setNotes(notes);
-	}
-
-	@Override
-	public List<RetentionDocumentReferenceModel> getSunatRetentionDocumentReference() {
-		return retention.getSunatRetentionDocumentReferences().stream()
-				.map(f -> new RetentionDocumentReferenceAdapter(session, em, f)).collect(Collectors.toList());
-	}
-
-	@Override
-	public RetentionDocumentReferenceModel addSunatRetentionDocumentReference() {
-		List<RetentionDocumentReferenceEntity> entities = retention.getSunatRetentionDocumentReferences();
-
-		RetentionDocumentReferenceEntity entity = new RetentionDocumentReferenceEntity();
+	public RetentionLineModel addRetentionLine() {
+		List<RetentionLineEntity> entities = retention.getRetentionLines();
+		RetentionLineEntity entity = new RetentionLineEntity();
 		entities.add(entity);
-		return new RetentionDocumentReferenceAdapter(session, em, entity);
+		return new RetentionLineAdapter(session, em, entity);
+	}
+
+	public static RetentionEntity toEntity(RetentionModel model, EntityManager em) {
+		if (model instanceof RetentionAdapter) {
+			return ((RetentionAdapter) model).getEntity();
+		}
+		return em.getReference(RetentionEntity.class, model.getId());
 	}
 
 	@Override
@@ -180,8 +232,8 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 	}
 
 	@Override
-	public void setXmlDocument(byte[] bytes) {
-		retention.setXmlDocument(bytes);
+	public void setXmlDocument(byte[] object) {
+		retention.setXmlDocument(object);
 	}
 
 	@Override
@@ -205,6 +257,7 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 		attr.setRetention(retention);
 		em.persist(attr);
 		retention.getRequiredActions().add(attr);
+
 	}
 
 	@Override
@@ -220,44 +273,6 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 	}
 
 	@Override
-	public PartyModel getAgentParty() {
-		/*if (retention.getAgentParty() == null) {
-			return null;
-		}
-		return new PartyAdapter(session, em, retention.getAgentParty());*/
-		return null;
-	}
-
-	@Override
-	public PartyModel getAgentPartyAsNotNull() {
-		/*if (retention.getAgentParty() == null) {
-			PartyEntity entity = new PartyEntity();
-			retention.setAgentParty(entity);
-		}
-		return new PartyAdapter(session, em, retention.getAgentParty());*/
-		return null;
-	}
-
-	@Override
-	public PartyModel getReceiverParty() {
-		/*if (retention.getReceiverParty() == null) {
-			return null;
-		}
-		return new PartyAdapter(session, em, retention.getReceiverParty());*/
-		return null;
-	}
-
-	@Override
-	public PartyModel getReceiverPartyAsNotNull() {
-		/*if (retention.getReceiverParty() == null) {
-			PartyEntity entity = new PartyEntity();
-			retention.setReceiverParty(entity);
-		}
-		return new PartyAdapter(session, em, retention.getReceiverParty());*/
-		return null;
-	}
-
-	@Override
 	public void addRequiredAction(RequiredAction action) {
 		String actionName = action.name();
 		addRequiredAction(actionName);
@@ -267,19 +282,13 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 	public void removeRequiredAction(RequiredAction action) {
 		String actionName = action.name();
 		removeRequiredAction(actionName);
-
 	}
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-//		return retention.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-//				.collect(Collectors.toList());
+    /*	return retention.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+                .collect(Collectors.toList());*/
 		return null;
-	}
-
-	@Override
-	public void setDocumentId(String documentId) {
-		 retention.setDocumentId(documentId);
 	}
 
 }

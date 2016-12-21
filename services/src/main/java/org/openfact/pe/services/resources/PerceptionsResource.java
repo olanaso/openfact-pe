@@ -89,7 +89,7 @@ public class PerceptionsResource {
 			perceptions = perceptionProvider.searchForPerception(organization, filterText.trim(), firstResult,
 					maxResults);
 		}
-		return perceptions.stream().map(f -> SunatModelToRepresentation.toRepresentation(organization,f))
+		return perceptions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
 				.collect(Collectors.toList());
 	}
 
@@ -224,7 +224,7 @@ public class PerceptionsResource {
 		}
 		SearchResultsRepresentation<DocumentoSunatRepresentation> rep = new SearchResultsRepresentation<>();
 		List<DocumentoSunatRepresentation> items = new ArrayList<>();
-		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(organization,f)));
+		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
 		return rep;
@@ -241,7 +241,7 @@ public class PerceptionsResource {
 			throw new NotFoundException("Perception not found");
 		}
 
-		DocumentoSunatRepresentation rep = SunatModelToRepresentation.toRepresentation(organization,perception);
+		DocumentoSunatRepresentation rep = SunatModelToRepresentation.toRepresentation(perception);
 		return rep;
 	}
 

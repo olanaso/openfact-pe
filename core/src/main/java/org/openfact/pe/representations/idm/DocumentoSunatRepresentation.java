@@ -71,16 +71,16 @@ public class DocumentoSunatRepresentation {
         this.entidadEmail = entidadEmail;
     }
 
+    public String getNumeroDocumento() {
+        return numeroDocumento;
+    }
+
     public String getSerieDocumento() {
         return serieDocumento;
     }
 
     public void setSerieDocumento(String serieDocumento) {
         this.serieDocumento = serieDocumento;
-    }
-
-    public String getNumeroDocumento() {
-        return numeroDocumento;
     }
 
     public void setNumeroDocumento(String numeroDocumento) {

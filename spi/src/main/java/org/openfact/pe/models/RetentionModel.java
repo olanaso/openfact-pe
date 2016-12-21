@@ -16,59 +16,72 @@ public interface RetentionModel {
 
 	String getId();
 
-	String getDocumentId();
-
-	void setDocumentId(String documentId);
-
 	String getOrganizationId();
 
-	String getUblVersionId();
+	String getUblVersionID();
 
-	void setUblVersionId(String ublVersionId);
+	void setUblVersionID(String ublVersionID);
 
-	String getCustomizationId();
+	String getCustomizationID();
 
-	void setCustomizationId(String customizationId);
+	void setCustomizationID(String customizationID);
 
-	String getDocumentCurrencyCode();
+	String getSunatRetentionSystemCode();
 
-	void setDocumentCurrencyCode(String value);
+	void setSunatRetentionSystemCode(String sunatRetentionSystemCode);
+
+	String getEntityDocumentType();
+
+	void setEntityDocumentType(String entityDocumentType);
+
+	String getEntityDocumentNuber();
+
+	void setEntityDocumentNuber(String numberEntityDocument);
+
+	String getEntityName();
+
+	void setEntityName(String entityName);
+
+	String getEntityAddress();
+
+	void setEntityAddress(String entityAddress);
+
+	String getEntityEmail();
+
+	void setEntityEmail(String entityEmail);
+
+	String getRetentionDocumentNumber();
+
+	void setRetentionDocumentNumber(String retentionDocumentNumber);
+
+	String getRetentionDocumentCurrency();
+
+	void setRetentionDocumentCurrency(String retentionDocumentCurrency);
+
+	BigDecimal getSunatRetentionPercent();
+
+	void setSunatRetentionPercent(BigDecimal sunatRetentionPercent);
+
+	String getNote();
+
+	void setNote(String note);
+
+	BigDecimal getTotalRetentionAmount();
+
+	void setTotalRetentionAmount(BigDecimal totalRetentionAmount);
+
+	BigDecimal getTotalCashed();
+
+	void setTotalCashed(BigDecimal totalCashed);
 
 	LocalDate getIssueDate();
 
 	void setIssueDate(LocalDate issueDate);
 
-	String getSunatRetentionSystemCode();
+	List<RetentionLineModel> getRetentionLines();
 
-	void setSunatRetentionSystemCode(String code);
-
-	BigDecimal getSunatRetentionPercent();
-
-	void setSunatRetentionPercent(BigDecimal percent);
-
-	BigDecimal getTotalInvoiceAmount();
-
-	void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
-
-	BigDecimal getSunatTotalPaid();
-
-	void setSunatTotalPaid(BigDecimal totalPaid);
-
-	PartyModel getAgentParty();
-
-	PartyModel getAgentPartyAsNotNull();
-
-	PartyModel getReceiverParty();
-
-	PartyModel getReceiverPartyAsNotNull();
-
-	List<String> getNotes();
-
-	void setNotes(List<String> notes);
-
-	List<RetentionDocumentReferenceModel> getSunatRetentionDocumentReference();
-
-	RetentionDocumentReferenceModel addSunatRetentionDocumentReference();
+	RetentionLineModel addRetentionLine();
+	
 
 	/**
 	 * Xml

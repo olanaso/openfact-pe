@@ -117,15 +117,7 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 		voidedDocuments.setIssueDate(issueDate);
 	}
 
-	@Override
-	public List<String> getNotes() {
-		return voidedDocuments.getNotes();
-	}
 
-	@Override
-	public void setNote(List<String> notes) {
-		voidedDocuments.setNotes(notes);
-	}
 
 	@Override
 	public byte[] getXmlDocument() {
@@ -173,24 +165,6 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 		}
 	}
 
-	@Override
-	public SupplierPartyModel getAccountingSupplierParty() {
-		/*if (voidedDocuments.getAccountingSupplierParty() == null) {
-			return null;
-		}
-		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());*/
-		return null;
-	}
-
-	@Override
-	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
-		/*if (voidedDocuments.getAccountingSupplierParty() == null) {
-			SupplierPartyEntity entity = new SupplierPartyEntity();
-			voidedDocuments.setAccountingSupplierParty(entity);
-		}
-		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());*/
-		return null;
-	}
 
 	@Override
 	public void addRequiredAction(RequiredAction action) {

@@ -37,21 +37,6 @@ public interface SummaryDocumentsLineModel {
 
     void setTotalAmount(BigDecimal value);
 
-    CustomerPartyModel getAccountingCustomerParty();
-
-    CustomerPartyModel getAccountingCustomerPartyAsNotNull();
-
-    /*BillingReferenceModel getBillingReference();
-
-    BillingReferenceModel getBillingReferenceAsNotNull();
-
-    StatusModel getStatus();
-
-    StatusModel getStatusAsNotNull();
-
-    List<PaymentModel> getBillingPayment();
-
-    PaymentModel addBillingPayment();*/
 
     List<AllowanceChargeModel> getAllowanceCharge();
 

@@ -164,25 +164,6 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 	}
 
 	@Override
-	public SupplierPartyModel getAccountingSupplierParty() {
-		/*if (summaryDocuments.getAccountingSupplierParty() == null) {
-			return null;
-		}
-		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());*/
-		return null;
-	}
-
-	@Override
-	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
-		/*if (summaryDocuments.getAccountingSupplierParty() == null) {
-			SupplierPartyEntity entity = new SupplierPartyEntity();
-			summaryDocuments.setAccountingSupplierParty(entity);
-		}
-		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());*/
-		return null;
-	}
-
-	@Override
 	public void addRequiredAction(RequiredAction action) {
 		String actionName = action.name();
 		addRequiredAction(actionName);

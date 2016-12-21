@@ -155,9 +155,9 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 			boolean intoRequeridAction) {
 		String queryName = "";
 		if (intoRequeridAction) {
-			queryName = "select i from RetentionEntity i where i.organization.id = :organizationId and :requeridAction in elements(i.requeridAction) order by i.retentionTypeCode ";
+			queryName = "select i from RetentionEntity i where i.organizationId = :organizationId and :requeridAction in elements(i.requeridAction) order by i.retentionTypeCode ";
 		} else {
-			queryName = "select i from RetentionEntity i where i.organization.id = :organizationId and :requeridAction not in elements(i.requeridAction) order by i.retentionTypeCode ";
+			queryName = "select i from RetentionEntity i where i.organizationId = :organizationId and :requeridAction not in elements(i.requeridAction) order by i.retentionTypeCode ";
 
 		}
 		TypedQuery<RetentionEntity> query = em.createQuery(queryName, RetentionEntity.class);
@@ -213,7 +213,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	@Override
 	public SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization,
 			SearchCriteriaModel criteria) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
 		SearchResultsModel<RetentionEntity> entityResult = find(criteria, RetentionEntity.class);
 		List<RetentionEntity> entities = entityResult.getModels();
@@ -229,7 +229,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	@Override
 	public SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization,
 			SearchCriteriaModel criteria, String filterText) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
 		SearchResultsModel<RetentionEntity> entityResult = findFullText(criteria, RetentionEntity.class, filterText,
 				DOCUMENT_ID);
@@ -289,7 +289,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 		//
 		// Criteria criteria =
 		// getSession().createCriteria(RetentionEntity.class)
-		// .add(Restrictions.eq("organization.id", organization.getId()))
+		// .add(Restrictions.eq("organizationId", organization.getId()))
 		// .addOrder(asc ? Order.asc("createdTimestamp") :
 		// Order.desc("createdTimestamp"));
 		//

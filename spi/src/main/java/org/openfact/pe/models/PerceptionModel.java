@@ -2,116 +2,131 @@ package org.openfact.pe.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.PartyModel;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.pe.representations.idm.DocumentoSunatLineRepresentation;
 import org.openfact.provider.ProviderEvent;
 import org.openfact.ubl.SendEventModel;
 
 public interface PerceptionModel {
 
-	String getId();
+    String getId();
 
-	String getDocumentId();
+    String getOrganizationId();
 
-	String getOrganizationId();
+    String getUblVersionID();
 
-	void setDocumentId(String documentId);
+    void setUblVersionID(String ublVersionID);
 
-	String getUblVersionID();
+    String getCustomizationID();
 
-	void setUblVersionID(String ublVersionID);
+    void setCustomizationID(String customizationID);
 
-	String getCustomizationID();
+    String getSunatPerceptionSystemCode();
 
-	void setCustomizationID(String customizationID);
+    void setSunatPerceptionSystemCode(String sunatPerceptionSystemCode);
 
-	String getDocumentCurrencyCode();
+    String getEntityDocumentType();
 
-	void setDocumentCurrencyCode(String value);
+    void setEntityDocumentType(String entityDocumentType);
 
-	LocalDate getIssueDate();
+    String getEntityDocumentNuber();
 
-	void setIssueDate(LocalDate issueDate);
+    void setEntityDocumentNuber(String numberEntityDocument);
 
-	String getSUNATPerceptionSystemCode();
+    String getEntityName();
 
-	void setSUNATPerceptionSystemCode(String sUNATPerceptionSystemCode);
+    void setEntityName(String entityName);
 
-	BigDecimal getSUNATPerceptionPercent();
+    String getEntityAddress();
 
-	void setSUNATPerceptionPercent(BigDecimal sUNATPerceptionPercent);
+    void setEntityAddress(String entityAddress);
 
-	BigDecimal getTotalInvoiceAmount();
+    String getEntityEmail();
 
-	void setTotalInvoiceAmount(BigDecimal totalInvoiceAmount);
+    void setEntityEmail(String entityEmail);
 
-	BigDecimal getSUNATTotalCashed();
+    String getPerceptionDocumentNumber();
 
-	void setSUNATTotalCashed(BigDecimal sUNATTotalCashed);
+    void setPerceptionDocumentNumber(String perceptionDocumentNumber);
 
-	PartyModel getAgentParty();
+    String getPerceptionDocumentCurrency();
 
-	PartyModel getAgentPartyAsNotNull();
+    void setPerceptionDocumentCurrency(String perceptionDocumentCurrency);
 
-	PartyModel getReceiverParty();
+    BigDecimal getSunatPerceptionPercent();
 
-	PartyModel getReceiverPartyAsNotNull();
+    void setSunatPerceptionPercent(BigDecimal sunatPerceptionPercent);
 
-	List<String> getNotes();
+    String getNote();
 
-	void setNotes(List<String> notes);
+    void setNote(String note);
 
-	List<PerceptionDocumentReferenceModel> getSunatPerceptionDocumentReference();
+    BigDecimal getTotalPerceptionAmount();
 
-	PerceptionDocumentReferenceModel addSunatPerceptionDocumentReference();
+    void setTotalPerceptionAmount(BigDecimal totalPerceptionAmount);
 
-	/**
-	 * Xml
-	 **/
+    BigDecimal getTotalCashed();
 
-	byte[] getXmlDocument();
+    void setTotalCashed(BigDecimal totalCashed);
 
-	void setXmlDocument(byte[] object);
+    LocalDate getIssueDate();
 
-	/**
-	 * Send events
-	 */
-	List<SendEventModel> getSendEvents();
+    void setIssueDate(LocalDate issueDate);
 
-	/**
-	 * Required Actions
-	 */
-	Set<String> getRequiredActions();
+    List<PerceptionLineModel> getPerceptionLines();
 
-	void addRequiredAction(String action);
+    PerceptionLineModel addPerceptionLine();
 
-	void removeRequiredAction(String action);
 
-	void addRequiredAction(RequiredAction action);
+    /**
+     * Xml
+     **/
 
-	void removeRequiredAction(RequiredAction action);
+    byte[] getXmlDocument();
 
-	/**
-	 * Events interfaces
-	 */
-	interface PerceptionCreationEvent extends ProviderEvent {
-		PerceptionModel getCreatedPerception();
-	}
+    void setXmlDocument(byte[] object);
 
-	interface PerceptionPostCreateEvent extends ProviderEvent {
-		PerceptionModel getCreatedPerception();
+    /**
+     * Send events
+     */
+    List<SendEventModel> getSendEvents();
 
-		OpenfactSession getOpenfactSession();
-	}
+    /**
+     * Required Actions
+     */
+    Set<String> getRequiredActions();
 
-	interface PerceptionRemovedEvent extends ProviderEvent {
-		PerceptionModel getPerception();
+    void addRequiredAction(String action);
 
-		OpenfactSession getOpenfactSession();
-	}
+    void removeRequiredAction(String action);
+
+    void addRequiredAction(RequiredAction action);
+
+    void removeRequiredAction(RequiredAction action);
+
+    /**
+     * Events interfaces
+     */
+    interface PerceptionCreationEvent extends ProviderEvent {
+        PerceptionModel getCreatedPerception();
+    }
+
+    interface PerceptionPostCreateEvent extends ProviderEvent {
+        PerceptionModel getCreatedPerception();
+
+        OpenfactSession getOpenfactSession();
+    }
+
+    interface PerceptionRemovedEvent extends ProviderEvent {
+        PerceptionModel getPerception();
+
+        OpenfactSession getOpenfactSession();
+    }
 
 }

@@ -137,30 +137,23 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 			@Override
 			public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perception)
 					throws SendException {
-				PartyModel perceptionParty = perception.getReceiverParty();
-				if (perceptionParty == null || perceptionParty.getContact() == null
-						|| perceptionParty.getContact().getElectronicMail() == null) {
-					return null;
-				}
 
 				// User where the email will be send
 				UserSenderModel user = new UserSenderModel() {
 					@Override
 					public String getFullName() {
-						List<PartyLegalEntityModel> partyLegalEntities = perceptionParty.getPartyLegalEntity();
-						return partyLegalEntities.stream().map(f -> f.getRegistrationName())
-								.reduce((t, u) -> t + "," + u).get();
+						return perception.getEntityName();
 					}
 
 					@Override
 					public String getEmail() {
-						return perceptionParty.getContact().getElectronicMail();
+						return perception.getEntityEmail();
 					}
 				};
 
 				// Attatchments
 				FileModel file = new SimpleFileModel();
-				file.setFileName(perception.getDocumentId());
+				file.setFileName(perception.getPerceptionDocumentNumber());
 				file.setFile(perception.getXmlDocument());
 				file.setMimeType("application/xml");
 

@@ -140,30 +140,22 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 			@Override
 			public SendEventModel sendToCustomer(OrganizationModel organization, RetentionModel retention)
 					throws SendException {
-				PartyModel retentionParty = retention.getReceiverParty();
-				if (retentionParty == null || retentionParty.getContact() == null
-						|| retentionParty.getContact().getElectronicMail() == null) {
-					return null;
-				}
-
 				// User where the email will be send
 				UserSenderModel user = new UserSenderModel() {
 					@Override
 					public String getFullName() {
-						List<PartyLegalEntityModel> partyLegalEntities = retentionParty.getPartyLegalEntity();
-						return partyLegalEntities.stream().map(f -> f.getRegistrationName())
-								.reduce((t, u) -> t + "," + u).get();
+						return retention.getEntityName();
 					}
 
 					@Override
 					public String getEmail() {
-						return retentionParty.getContact().getElectronicMail();
+						return retention.getEntityEmail();
 					}
 				};
 
 				// Attatchments
 				FileModel file = new SimpleFileModel();
-				file.setFileName(retention.getDocumentId());
+				file.setFileName(retention.getRetentionDocumentNumber());
 				file.setFile(retention.getXmlDocument());
 				file.setMimeType("application/xml");
 

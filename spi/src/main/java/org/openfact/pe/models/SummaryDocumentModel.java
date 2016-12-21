@@ -41,9 +41,6 @@ public interface SummaryDocumentModel {
 
 	void setIssueDate(LocalDate issueDate);
 
-	SupplierPartyModel getAccountingSupplierParty();
-
-	SupplierPartyModel getAccountingSupplierPartyAsNotNull();
 
 	// List<SummaryDocumentsLineModel> getSummaryDocumentsLines();
 	//

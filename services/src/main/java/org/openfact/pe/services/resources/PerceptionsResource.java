@@ -43,7 +43,7 @@ import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
-import org.openfact.pe.representations.idm.RetentionRepresentation;
+import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.services.managers.PerceptionManager;
 import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
@@ -76,8 +76,8 @@ public class PerceptionsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<RetentionRepresentation> getPerceptions(@QueryParam("filterText") String filterText,
-			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
+	public List<DocumentoSunatRepresentation> getPerceptions(@QueryParam("filterText") String filterText,
+                                                             @QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
 		firstResult = firstResult != null ? firstResult : -1;
 		maxResults = maxResults != null ? maxResults : -1;
 
@@ -97,12 +97,12 @@ public class PerceptionsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createPerception(RetentionRepresentation rep) {
+	public Response createPerception(DocumentoSunatRepresentation rep) {
 		PerceptionManager perceptionManager = new PerceptionManager(session);
 
 		// Double-check duplicated ID
-		if (rep.getSerie() != null && rep.getNumero() != null && perceptionManager
-				.getPerceptionByDocumentId(rep.getSerie() + "-" + rep.getNumero(), organization) != null) {
+		if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null && perceptionManager
+				.getPerceptionByDocumentId(rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
 			return ErrorResponse.exists("Perception exists with same documentId");
 		}
 
@@ -211,7 +211,7 @@ public class PerceptionsResource {
 	@Path("search")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResultsRepresentation<RetentionRepresentation> search(final SearchCriteriaRepresentation criteria) {
+	public SearchResultsRepresentation<DocumentoSunatRepresentation> search(final SearchCriteriaRepresentation criteria) {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 
 		SearchCriteriaModel criteriaModel = RepresentationToModel.toModel(criteria);
@@ -222,8 +222,8 @@ public class PerceptionsResource {
 		} else {
 			results = perceptionProvider.searchForPerception(organization, criteriaModel);
 		}
-		SearchResultsRepresentation<RetentionRepresentation> rep = new SearchResultsRepresentation<>();
-		List<RetentionRepresentation> items = new ArrayList<>();
+		SearchResultsRepresentation<DocumentoSunatRepresentation> rep = new SearchResultsRepresentation<>();
+		List<DocumentoSunatRepresentation> items = new ArrayList<>();
 		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(organization,f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
@@ -234,14 +234,14 @@ public class PerceptionsResource {
 	@Path("{perceptionId}")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public RetentionRepresentation getPerception(@PathParam("perceptionId") final String perceptionId) {
+	public DocumentoSunatRepresentation getPerception(@PathParam("perceptionId") final String perceptionId) {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
 		if (perception == null) {
 			throw new NotFoundException("Perception not found");
 		}
 
-		RetentionRepresentation rep = SunatModelToRepresentation.toRepresentation(organization,perception);
+		DocumentoSunatRepresentation rep = SunatModelToRepresentation.toRepresentation(organization,perception);
 		return rep;
 	}
 

@@ -33,7 +33,7 @@ import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
-import org.openfact.pe.representations.idm.RetentionRepresentation;
+import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
 import org.openfact.ubl.SignerProvider;
@@ -59,7 +59,7 @@ public class RetentionManager {
 		return model.getRetentionById(organization, documentId);
 	}
 
-	public RetentionModel addRetention(OrganizationModel organization, RetentionRepresentation rep) {
+	public RetentionModel addRetention(OrganizationModel organization, DocumentoSunatRepresentation rep) {
 		RetentionType type = SunatRepresentationToType.toRetentionType(organization, rep);
 		return addRetention(organization, type);
 	}

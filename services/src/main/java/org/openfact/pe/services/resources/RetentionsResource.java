@@ -43,7 +43,7 @@ import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
-import org.openfact.pe.representations.idm.RetentionRepresentation;
+import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.services.managers.RetentionManager;
 import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
@@ -73,8 +73,8 @@ public class RetentionsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<RetentionRepresentation> getRetentions(@QueryParam("filterText") String filterText,
-			@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
+	public List<DocumentoSunatRepresentation> getRetentions(@QueryParam("filterText") String filterText,
+															@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
 		firstResult = firstResult != null ? firstResult : -1;
 		maxResults = maxResults != null ? maxResults : -1;
 
@@ -93,12 +93,12 @@ public class RetentionsResource {
 	@Path("")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createRetention(RetentionRepresentation rep) {
+	public Response createRetention(DocumentoSunatRepresentation rep) {
 		RetentionManager retentionManager = new RetentionManager(session);
 
 		// Double-check duplicated ID
-		if (rep.getSerie() != null && rep.getNumero() != null && retentionManager
-				.getRetentionByDocumentId(rep.getSerie() + "-" + rep.getNumero(), organization) != null) {
+		if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null && retentionManager
+				.getRetentionByDocumentId(rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
 			return ErrorResponse.exists("Retention exists with same documentId");
 		}
 
@@ -207,7 +207,7 @@ public class RetentionsResource {
 	@Path("search")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResultsRepresentation<RetentionRepresentation> search(final SearchCriteriaRepresentation criteria) {
+	public SearchResultsRepresentation<DocumentoSunatRepresentation> search(final SearchCriteriaRepresentation criteria) {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 
 		SearchCriteriaModel criteriaModel = RepresentationToModel.toModel(criteria);
@@ -218,8 +218,8 @@ public class RetentionsResource {
 		} else {
 			results = retentionProvider.searchForRetention(organization, criteriaModel);
 		}
-		SearchResultsRepresentation<RetentionRepresentation> rep = new SearchResultsRepresentation<>();
-		List<RetentionRepresentation> items = new ArrayList<>();
+		SearchResultsRepresentation<DocumentoSunatRepresentation> rep = new SearchResultsRepresentation<>();
+		List<DocumentoSunatRepresentation> items = new ArrayList<>();
 		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(organization, f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
@@ -230,14 +230,14 @@ public class RetentionsResource {
 	@Path("{retentionId}")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public RetentionRepresentation getRetention(@PathParam("retentionId") final String retentionId) {
+	public DocumentoSunatRepresentation getRetention(@PathParam("retentionId") final String retentionId) {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
 		if (retention == null) {
 			throw new NotFoundException("Retention not found");
 		}
 
-		RetentionRepresentation rep = SunatModelToRepresentation.toRepresentation(organization, retention);
+		DocumentoSunatRepresentation rep = SunatModelToRepresentation.toRepresentation(organization, retention);
 		return rep;
 	}
 

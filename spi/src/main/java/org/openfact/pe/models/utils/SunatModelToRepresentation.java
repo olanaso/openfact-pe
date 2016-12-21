@@ -9,20 +9,20 @@ import org.openfact.pe.models.RetentionDocumentReferenceModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.VoidedDocumentModel;
-import org.openfact.pe.representations.idm.DocumentReferenceRepresentation;
-import org.openfact.pe.representations.idm.RetentionRepresentation;
+import org.openfact.pe.representations.idm.DocumentoSunatLineRepresentation;
+import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.representations.idm.SummaryRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 
 public class SunatModelToRepresentation {
 
-	public static RetentionRepresentation toRepresentation(OrganizationModel organization, PerceptionModel model) {
-		RetentionRepresentation rep = new RetentionRepresentation();
+	public static DocumentoSunatRepresentation toRepresentation(OrganizationModel organization, PerceptionModel model) {
+		DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
 
 		if (model.getDocumentId() != null) {
 			String[] splits = model.getDocumentId().split("-");
-			rep.setSerie(splits[0].substring(1, 4));
-			rep.setNumero(splits[1]);
+			rep.setSerieDocumento(splits[0].substring(1, 4));
+			rep.setNumeroDocumento(splits[1]);
 		}
 		if (organization.getAssignedIdentificationId() != null) {
 			rep.setEntidadNumeroDeDocumento(organization.getAssignedIdentificationId());
@@ -43,11 +43,11 @@ public class SunatModelToRepresentation {
 			rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
 		}
 		if (model.getDocumentCurrencyCode() != null) {
-			rep.setMoneda(model.getDocumentCurrencyCode());
+			rep.setMonedaDocumento(model.getDocumentCurrencyCode());
 		}
-		if (model.getSUNATPerceptionSystemCode() != null) {
+	/*	if (model.getSUNATPerceptionSystemCode() != null) {
 			rep.setCodigoDocumento(model.getSUNATPerceptionSystemCode());
-		}
+		}*/
 		if (model.getSUNATPerceptionPercent() != null) {
 			rep.setTasaDocumento(model.getSUNATPerceptionPercent());
 		}
@@ -59,20 +59,20 @@ public class SunatModelToRepresentation {
 		}
 		if (model.getSunatPerceptionDocumentReference() != null) {
 			for (PerceptionDocumentReferenceModel item : model.getSunatPerceptionDocumentReference()) {
-				rep.addDocumentReference(toRepresentation(item));
+				rep.addDetalle(toRepresentation(item));
 			}
 		}
 		return rep;
 	}
 
-	private static DocumentReferenceRepresentation toRepresentation(PerceptionDocumentReferenceModel model) {
-		DocumentReferenceRepresentation rep = new DocumentReferenceRepresentation();
+	private static DocumentoSunatLineRepresentation toRepresentation(PerceptionDocumentReferenceModel model) {
+		DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
 
 		if (model.getIssueDate() != null) {
-			rep.setFechaDeDocumentoRelacionado(model.getIssueDate().atStartOfDay());
+			rep.setFechaDocumentoRelacionado(model.getIssueDate().atStartOfDay());
 		}
 		if (model.getDocumentId() != null) {
-			rep.setNumeroDocumentRelacionado(model.getDocumentId());
+			rep.setNumeroDocumentoRelacionado(model.getDocumentId());
 		}
 		if (model.getTotalInvoiceAmount() != null) {
 			rep.setTotalDocumentoRelacionado(model.getTotalInvoiceAmount());
@@ -80,25 +80,25 @@ public class SunatModelToRepresentation {
 		return rep;
 	}
 
-	private static void toRepresentation(RetentionRepresentation rep, PartyModel model) {
+	private static void toRepresentation(DocumentoSunatRepresentation rep, PartyModel model) {
 		if (model.getContact() != null) {
 			toRepresentation(rep, model.getContact());
 		}
 	}
 
-	private static void toRepresentation(RetentionRepresentation rep, ContactModel model) {
+	private static void toRepresentation(DocumentoSunatRepresentation rep, ContactModel model) {
 		if (model.getElectronicMail() != null) {
 			rep.setEntidadEmail(model.getElectronicMail());
 		}
 	}
 
-	public static RetentionRepresentation toRepresentation(OrganizationModel organization, RetentionModel model) {
-		RetentionRepresentation rep = new RetentionRepresentation();
+	public static DocumentoSunatRepresentation toRepresentation(OrganizationModel organization, RetentionModel model) {
+		DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
 
 		if (model.getDocumentId() != null) {
 			String[] splits = model.getDocumentId().split("-");
-			rep.setSerie(splits[0].substring(1, 4));
-			rep.setNumero(splits[1]);
+			rep.setSerieDocumento(splits[0].substring(1, 4));
+			rep.setNumeroDocumento(splits[1]);
 		}
 		if (organization.getAssignedIdentificationId() != null) {
 			rep.setEntidadNumeroDeDocumento(organization.getAssignedIdentificationId());
@@ -119,11 +119,11 @@ public class SunatModelToRepresentation {
 			rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
 		}
 		if (model.getDocumentCurrencyCode() != null) {
-			rep.setMoneda(model.getDocumentCurrencyCode());
+			rep.setMonedaDocumento(model.getDocumentCurrencyCode());
 		}
-		if (model.getSunatRetentionSystemCode() != null) {
+		/*if (model.getSunatRetentionSystemCode() != null) {
 			rep.setCodigoDocumento(model.getSunatRetentionSystemCode());
-		}
+		}*/
 		if (model.getSunatRetentionPercent() != null) {
 			rep.setTasaDocumento(model.getSunatRetentionPercent());
 		}
@@ -135,20 +135,20 @@ public class SunatModelToRepresentation {
 		}
 		if (model.getSunatRetentionDocumentReference() != null) {
 			for (RetentionDocumentReferenceModel item : model.getSunatRetentionDocumentReference()) {
-				rep.addDocumentReference(toRepresentation(item));
+				rep.addDetalle(toRepresentation(item));
 			}
 		}
 		return rep;
 	}
 
-	private static DocumentReferenceRepresentation toRepresentation(RetentionDocumentReferenceModel model) {
-		DocumentReferenceRepresentation rep = new DocumentReferenceRepresentation();
+	private static DocumentoSunatLineRepresentation toRepresentation(RetentionDocumentReferenceModel model) {
+		DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
 
 		if (model.getIssueDate() != null) {
-			rep.setFechaDeDocumentoRelacionado(model.getIssueDate().atStartOfDay());
+			rep.setFechaDocumentoRelacionado(model.getIssueDate().atStartOfDay());
 		}
 		if (model.getDocumentId() != null) {
-			rep.setNumeroDocumentRelacionado(model.getDocumentId());
+			rep.setNumeroDocumentoRelacionado(model.getDocumentId());
 		}
 		if (model.getTotalInvoiceAmount() != null) {
 			rep.setTotalDocumentoRelacionado(model.getTotalInvoiceAmount());

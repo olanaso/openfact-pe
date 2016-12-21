@@ -52,8 +52,21 @@ import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
 public class SunatRepresentationToType {
 
+    public static final String UBL_VERSION_ID = "2.0";
+    public static final String CUSTOMIZATION_ID = "1.0";
+    public static final String QUANTITY_UNKNOW = "NIU";
+
     public static XMLGregorianCalendar toGregorianCalendar(LocalDate date) {
         GregorianCalendar gcal = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()));
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+        } catch (DatatypeConfigurationException e) {
+            throw new ModelException(e);
+        }
+    }
+
+    public static XMLGregorianCalendar toGregorianCalendarTime(LocalDateTime date) {
+        GregorianCalendar gcal = GregorianCalendar.from(date.atZone(ZoneId.systemDefault()));
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
         } catch (DatatypeConfigurationException e) {
@@ -64,60 +77,66 @@ public class SunatRepresentationToType {
     public static InvoiceType toInvoiceType(OrganizationModel organization, DocumentRepresentation rep) {
         InvoiceType type = new InvoiceType();
 
+        // General config
+        type.setUBLVersionID(SunatRepresentationToType.UBL_VERSION_ID);
+        type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
+
+        // ID
+        if (rep.getNumero() != null && rep.getSerie() != null) {
+            type.setID(rep.getNumero() + "-" + rep.getSerie());
+        }
+
+        // Issue Date
+        if (rep.getFechaDeEmision() != null) {
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+            type.setIssueTime(toGregorianCalendarTime(rep.getFechaDeEmision()));
+        } else {
+            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
+            type.setIssueTime(toGregorianCalendarTime(LocalDateTime.now()));
+        }
+        if (rep.getFechaDeVencimiento() != null) {
+            type.setDueDate(toGregorianCalendar(rep.getFechaDeVencimiento().toLocalDate()));
+        }
+
+        // Currency
+        if (rep.getMoneda() != null) {
+            type.setDocumentCurrencyCode(rep.getMoneda());
+        }
+
         // Supplier
         type.setAccountingSupplierParty(toSupplierParty(organization));
 
         // Customer
         type.setAccountingCustomerParty(toCustomerPartyType(rep));
 
-        if (rep.getNumero() != null && rep.getSerie() != null) {
-            type.setID(rep.getNumero() + "-" + rep.getSerie());
-        }
+        // Tax Total
+        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+
+        // Legal monetary total
+        type.setLegalMonetaryTotal(toLegalMonetaryTotalType(rep));
+
+        // Invoice type code
         if (rep.getTipo() != null) {
             type.setInvoiceTypeCode(rep.getTipo());
         }
-        if (rep.getMoneda() != null) {
-            type.setDocumentCurrencyCode(rep.getMoneda());
-        }
+
         if (rep.getTipoDeCambio() != null) {
         }
+
+        // Notes type
         if (rep.getObservaciones() != null) {
             List<NoteType> noteTypes = new ArrayList<>();
             noteTypes.add(new NoteType(rep.getObservaciones()));
             type.setNote(noteTypes);
         }
 
-        // Date
-        if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
-        }
-        if (rep.getFechaDeVencimiento() != null) {
-            type.setDueDate(toGregorianCalendar(rep.getFechaDeVencimiento().toLocalDate()));
-        }
+        // Signature
+        type.setSignature(Arrays.asList(toSignatureType(organization)));
 
-        // Legal monetary total
-        MonetaryTotalType monetaryTotalType = new MonetaryTotalType();
-        if (rep.getTotal() != null) {
-            monetaryTotalType.setPayableAmount(rep.getTotal());
+        // Lines
+        if (rep.getDetalle() != null) {
+            type.setInvoiceLine(toInvoiceLineType(rep));
         }
-        if (rep.getTotalOtrosCargos() != null) {
-            monetaryTotalType.setChargeTotalAmount(rep.getTotalOtrosCargos());
-        }
-        type.setLegalMonetaryTotal(monetaryTotalType);
-
-        // IGV
-        List<TaxTotalType> taxTotalTypes = new ArrayList<>();
-        if (rep.getTotalIgv() != null) {
-            TaxTotalType taxTotalType = new TaxTotalType();
-            taxTotalType.setTaxAmount(rep.getTotalIgv());
-
-            TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
-            taxSubtotalType.setTaxableAmount(rep.getTotalIgv());
-            taxTotalType.setTaxSubtotal(new ArrayList<>(Arrays.asList(taxSubtotalType)));
-
-            taxTotalTypes.add(taxTotalType);
-        }
-        type.setTaxTotal(taxTotalTypes);
 
         // Extensions
         UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
@@ -127,40 +146,45 @@ public class SunatRepresentationToType {
         AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
         if (rep.getTotalGravada() != null) {
             gravado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
-            gravado.setPayableAmount(new PayableAmountType(rep.getTotalGravada()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gravado.setPayableAmount(payableAmountType);
         }
         AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
         if (rep.getTotalInafecta() != null) {
             inafecto.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
-            inafecto.setPayableAmount(new PayableAmountType(rep.getTotalInafecta()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            inafecto.setPayableAmount(payableAmountType);
         }
         AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
         if (rep.getTotalExonerada() != null) {
-            exonerado
-                    .setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
-            exonerado.setPayableAmount(new PayableAmountType(rep.getTotalExonerada()));
+            exonerado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            exonerado.setPayableAmount(payableAmountType);
         }
         AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
         if (rep.getTotalGratuita() != null) {
             gratuito.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
-            gratuito.setPayableAmount(new PayableAmountType(rep.getTotalGratuita()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gratuito.setPayableAmount(payableAmountType);
         }
         AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
 
         AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
-        additionalInformation.getAdditionalMonetaryTotal()
-                .addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
+        additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
         additionalInformation.getAdditionalProperty().add(additionalProperty);
 
         extensionContentType.setAny(generateElement(additionalInformation));
         ublExtensionType.setExtensionContent(extensionContentType);
         ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
         type.setUBLExtensions(ublExtensionsType);
-
-        // Lines
-        if (rep.getDetalle() != null) {
-            type.setInvoiceLine(toInvoiceLineType(rep));
-        }
 
         return type;
     }
@@ -169,43 +193,481 @@ public class SunatRepresentationToType {
         List<InvoiceLineType> invoiceLineTypes = new ArrayList<>();
         for (int i = 0; i < rep.getDetalle().size(); i++) {
             LineRepresentation lineRep = rep.getDetalle().get(i);
-
             InvoiceLineType invoiceLineType = new InvoiceLineType();
 
             // ID
-            invoiceLineType.setID(new IDType(String.valueOf(i)));
+            invoiceLineType.setID(new IDType(String.valueOf(i + 1)));
 
             // Quantity
-            InvoicedQuantityType invoicedQuantityType = new InvoicedQuantityType(lineRep.getCantidad());
+            InvoicedQuantityType quantityType = new InvoicedQuantityType(lineRep.getCantidad());
             if (lineRep.getUnitCode() != null) {
-                invoicedQuantityType.setUnitCode(lineRep.getUnitCode());
+                quantityType.setUnitCode(lineRep.getUnitCode());
+            } else {
+                quantityType.setUnitCode(SunatRepresentationToType.QUANTITY_UNKNOW);
             }
-            invoiceLineType.setInvoicedQuantity(invoicedQuantityType);
+            invoiceLineType.setInvoicedQuantity(quantityType);
 
-            // Subtotal
-            LineExtensionAmountType lineExtensionAmountType = new LineExtensionAmountType();
+            // Line extension amount
+            LineExtensionAmountType lineExtensionAmountType = new LineExtensionAmountType(lineRep.getSubtotal());
             lineExtensionAmountType.setCurrencyID(rep.getMoneda());
-            lineExtensionAmountType.setValue(lineRep.getSubtotal());
             invoiceLineType.setLineExtensionAmount(lineExtensionAmountType);
 
-            // Precio y valor unitario
+            // Pricing reference
             PricingReferenceType pricingReferenceType = new PricingReferenceType();
             PriceType priceType = new PriceType();
-            priceType.setPriceAmount(lineRep.getPrecioUnitario());
+
+            PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
+            priceAmountType.setCurrencyID(rep.getMoneda());
+            priceType.setPriceAmount(priceAmountType);
+            if(!rep.isOperacionGratuita()) {
+                priceType.setPriceTypeCode("01");
+            } else {
+                priceType.setPriceTypeCode("02");
+            }
             pricingReferenceType.setAlternativeConditionPrice(Arrays.asList(priceType));
             invoiceLineType.setPricingReference(pricingReferenceType);
+
+            // Item
+            ItemType itemType = new ItemType();
+            itemType.setDescription(Arrays.asList(new DescriptionType(lineRep.getDescripcion())));
+            invoiceLineType.setItem(itemType);
+
+            // Tax Total
+            TaxTotalType taxTotalType = new TaxTotalType();
+            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getTotal());
+            taxAmountType1.setCurrencyID(rep.getMoneda());
+            taxTotalType.setTaxAmount(taxAmountType1);
+
+            TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
+            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getTotal());
+            taxAmountType2.setCurrencyID(rep.getMoneda());
+            taxSubtotalType.setTaxAmount(taxAmountType2);
+
+            TaxCategoryType taxCategoryType = new TaxCategoryType();
+            taxCategoryType.setTaxExemptionReasonCode(lineRep.getTipoDeIgv());
+            TaxSchemeType taxSchemeType = new TaxSchemeType();
+            taxSchemeType.setID(CodigoTipoTributo.IGV.getId());
+            taxSchemeType.setName(CodigoTipoTributo.IGV.toString());
+            taxSchemeType.setTaxTypeCode(CodigoTipoTributo.IGV.getCodigo());
+            taxCategoryType.setTaxScheme(taxSchemeType);
+            taxSubtotalType.setTaxCategory(taxCategoryType);
+
+            taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
+            invoiceLineType.setTaxTotal(Arrays.asList(taxTotalType));
+
+            taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
+            invoiceLineType.setTaxTotal(Arrays.asList(taxTotalType));
+
+            // Price
+            PriceType priceType1 = new PriceType();
+            PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getValorUnitario());
+            priceAmountType1.setCurrencyID(rep.getMoneda());
+            priceType1.setPriceAmount(priceAmountType1);
+            invoiceLineType.setPrice(priceType1);
+
+            invoiceLineTypes.add(invoiceLineType);
         }
         return invoiceLineTypes;
     }
 
-    public static CreditNoteType toCreditNoteType(DocumentRepresentation rep) {
-        // TODO Auto-generated method stub
-        return null;
+    public static CreditNoteType toCreditNoteType(OrganizationModel organization, DocumentRepresentation rep) {
+        CreditNoteType type = new CreditNoteType();
+
+        // General config
+        type.setUBLVersionID(SunatRepresentationToType.UBL_VERSION_ID);
+        type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
+
+        // ID
+        if (rep.getNumero() != null && rep.getSerie() != null) {
+            type.setID(rep.getNumero() + "-" + rep.getSerie());
+        }
+
+        // Issue Date
+        if (rep.getFechaDeEmision() != null) {
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+            type.setIssueTime(toGregorianCalendarTime(rep.getFechaDeEmision()));
+        } else {
+            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
+            type.setIssueTime(toGregorianCalendarTime(LocalDateTime.now()));
+        }
+
+        // Currency
+        if (rep.getMoneda() != null) {
+            type.setDocumentCurrencyCode(rep.getMoneda());
+        }
+
+        // Supplier
+        type.setAccountingSupplierParty(toSupplierParty(organization));
+
+        // Customer
+        type.setAccountingCustomerParty(toCustomerPartyType(rep));
+
+        // Tax Total
+        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+
+        // Legal monetary total
+        type.setLegalMonetaryTotal(toLegalMonetaryTotalType(rep));
+
+        // Notes type
+        if (rep.getObservaciones() != null) {
+            List<NoteType> noteTypes = new ArrayList<>();
+            noteTypes.add(new NoteType(rep.getObservaciones()));
+            type.setNote(noteTypes);
+        }
+
+        // Discrepancy response
+        ResponseType responseType = new ResponseType();
+        responseType.setReferenceID(rep.getDocumentoQueSeModifica());
+        responseType.setResponseCode(rep.getTipo());
+        responseType.setDescription(Arrays.asList(new DescriptionType(rep.getObservaciones())));
+
+        type.setDiscrepancyResponse(Arrays.asList());
+
+        // Billing reference
+        BillingReferenceType billingReferenceType = new BillingReferenceType();
+
+        DocumentReferenceType documentReferenceType = new DocumentReferenceType();
+        documentReferenceType.setID(rep.getTipo());
+
+        billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
+
+        type.setBillingReference(Arrays.asList(billingReferenceType));
+
+        // Signature
+        type.setSignature(Arrays.asList(toSignatureType(organization)));
+
+        // Lines
+        if (rep.getDetalle() != null) {
+            type.setCreditNoteLine(toCreditNoteLineType(rep));
+        }
+
+        // Extensions
+        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
+        UBLExtensionType ublExtensionType = new UBLExtensionType();
+        ExtensionContentType extensionContentType = new ExtensionContentType();
+
+        AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
+        if (rep.getTotalGravada() != null) {
+            gravado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gravado.setPayableAmount(payableAmountType);
+        }
+        AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
+        if (rep.getTotalInafecta() != null) {
+            inafecto.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            inafecto.setPayableAmount(payableAmountType);
+        }
+        AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
+        if (rep.getTotalExonerada() != null) {
+            exonerado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            exonerado.setPayableAmount(payableAmountType);
+        }
+        AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
+        if (rep.getTotalGratuita() != null) {
+            gratuito.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gratuito.setPayableAmount(payableAmountType);
+        }
+        AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
+
+        AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
+        additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
+        additionalInformation.getAdditionalProperty().add(additionalProperty);
+
+        extensionContentType.setAny(generateElement(additionalInformation));
+        ublExtensionType.setExtensionContent(extensionContentType);
+        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
+        type.setUBLExtensions(ublExtensionsType);
+
+        return type;
     }
 
-    public static DebitNoteType toDebitNoteType(DocumentRepresentation rep) {
-        // TODO Auto-generated method stub
-        return null;
+    private static List<CreditNoteLineType> toCreditNoteLineType(DocumentRepresentation rep) {
+        List<CreditNoteLineType> creditNoteLineTypes = new ArrayList<>();
+        for (int i = 0; i < rep.getDetalle().size(); i++) {
+            LineRepresentation lineRep = rep.getDetalle().get(i);
+            CreditNoteLineType creditNoteLineType = new CreditNoteLineType();
+
+            // ID
+            creditNoteLineType.setID(new IDType(String.valueOf(i + 1)));
+
+            // Quantity
+            CreditedQuantityType quantityType = new CreditedQuantityType(lineRep.getCantidad());
+            if (lineRep.getUnitCode() != null) {
+                quantityType.setUnitCode(lineRep.getUnitCode());
+            } else {
+                quantityType.setUnitCode(SunatRepresentationToType.QUANTITY_UNKNOW);
+            }
+            creditNoteLineType.setCreditedQuantity(quantityType);
+
+            // Line extension amount
+            LineExtensionAmountType lineExtensionAmountType = new LineExtensionAmountType(lineRep.getSubtotal());
+            lineExtensionAmountType.setCurrencyID(rep.getMoneda());
+            creditNoteLineType.setLineExtensionAmount(lineExtensionAmountType);
+
+            // Pricing reference
+            PricingReferenceType pricingReferenceType = new PricingReferenceType();
+            PriceType priceType = new PriceType();
+
+            PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
+            priceAmountType.setCurrencyID(rep.getMoneda());
+            priceType.setPriceAmount(priceAmountType);
+            if(!rep.isOperacionGratuita()) {
+                priceType.setPriceTypeCode("01");
+            } else {
+                priceType.setPriceTypeCode("02");
+            }
+            pricingReferenceType.setAlternativeConditionPrice(Arrays.asList(priceType));
+            creditNoteLineType.setPricingReference(pricingReferenceType);
+
+            // Item
+            ItemType itemType = new ItemType();
+            itemType.setDescription(Arrays.asList(new DescriptionType(lineRep.getDescripcion())));
+            creditNoteLineType.setItem(itemType);
+
+            // Tax Total
+            TaxTotalType taxTotalType = new TaxTotalType();
+            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getTotal());
+            taxAmountType1.setCurrencyID(rep.getMoneda());
+            taxTotalType.setTaxAmount(taxAmountType1);
+
+            TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
+            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getTotal());
+            taxAmountType2.setCurrencyID(rep.getMoneda());
+            taxSubtotalType.setTaxAmount(taxAmountType2);
+
+            TaxCategoryType taxCategoryType = new TaxCategoryType();
+            taxCategoryType.setTaxExemptionReasonCode(lineRep.getTipoDeIgv());
+            TaxSchemeType taxSchemeType = new TaxSchemeType();
+            taxSchemeType.setID(CodigoTipoTributo.IGV.getId());
+            taxSchemeType.setName(CodigoTipoTributo.IGV.toString());
+            taxSchemeType.setTaxTypeCode(CodigoTipoTributo.IGV.getCodigo());
+            taxCategoryType.setTaxScheme(taxSchemeType);
+            taxSubtotalType.setTaxCategory(taxCategoryType);
+
+            taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
+            creditNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
+
+            // Price
+            PriceType priceType1 = new PriceType();
+            PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getValorUnitario());
+            priceAmountType1.setCurrencyID(rep.getMoneda());
+            priceType1.setPriceAmount(priceAmountType1);
+            creditNoteLineType.setPrice(priceType1);
+
+            creditNoteLineTypes.add(creditNoteLineType);
+        }
+        return creditNoteLineTypes;
+    }
+
+    public static DebitNoteType toDebitNoteType(OrganizationModel organization, DocumentRepresentation rep) {
+        DebitNoteType type = new DebitNoteType();
+
+        // General config
+        type.setUBLVersionID(SunatRepresentationToType.UBL_VERSION_ID);
+        type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
+
+        // ID
+        if (rep.getNumero() != null && rep.getSerie() != null) {
+            type.setID(rep.getNumero() + "-" + rep.getSerie());
+        }
+
+        // Issue Date
+        if (rep.getFechaDeEmision() != null) {
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+            type.setIssueTime(toGregorianCalendarTime(rep.getFechaDeEmision()));
+        } else {
+            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
+            type.setIssueTime(toGregorianCalendarTime(LocalDateTime.now()));
+        }
+
+        // Currency
+        if (rep.getMoneda() != null) {
+            type.setDocumentCurrencyCode(rep.getMoneda());
+        }
+
+        // Supplier
+        type.setAccountingSupplierParty(toSupplierParty(organization));
+
+        // Customer
+        type.setAccountingCustomerParty(toCustomerPartyType(rep));
+
+        // Tax Total
+        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+
+        // Notes type
+        if (rep.getObservaciones() != null) {
+            List<NoteType> noteTypes = new ArrayList<>();
+            noteTypes.add(new NoteType(rep.getObservaciones()));
+            type.setNote(noteTypes);
+        }
+
+        // Discrepancy response
+        ResponseType responseType = new ResponseType();
+        responseType.setReferenceID(rep.getDocumentoQueSeModifica());
+        responseType.setResponseCode(rep.getTipo());
+        responseType.setDescription(Arrays.asList(new DescriptionType(rep.getObservaciones())));
+
+        type.setDiscrepancyResponse(Arrays.asList());
+
+        // Billing reference
+        BillingReferenceType billingReferenceType = new BillingReferenceType();
+
+        DocumentReferenceType documentReferenceType = new DocumentReferenceType();
+        documentReferenceType.setID(rep.getTipo());
+
+        billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
+
+        type.setBillingReference(Arrays.asList(billingReferenceType));
+
+        // Requested monetary total
+        type.setRequestedMonetaryTotal(toLegalMonetaryTotalType(rep));
+
+        // Signature
+        type.setSignature(Arrays.asList(toSignatureType(organization)));
+
+        // Lines
+        if (rep.getDetalle() != null) {
+            type.setDebitNoteLine(toDebitNoteLineType(rep));
+        }
+
+        // Extensions
+        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
+        UBLExtensionType ublExtensionType = new UBLExtensionType();
+        ExtensionContentType extensionContentType = new ExtensionContentType();
+
+        AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
+        if (rep.getTotalGravada() != null) {
+            gravado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gravado.setPayableAmount(payableAmountType);
+        }
+        AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
+        if (rep.getTotalInafecta() != null) {
+            inafecto.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            inafecto.setPayableAmount(payableAmountType);
+        }
+        AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
+        if (rep.getTotalExonerada() != null) {
+            exonerado.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            exonerado.setPayableAmount(payableAmountType);
+        }
+        AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
+        if (rep.getTotalGratuita() != null) {
+            gratuito.setID(new IDType(CodigoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gratuito.setPayableAmount(payableAmountType);
+        }
+        AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
+
+        AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
+        additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
+        additionalInformation.getAdditionalProperty().add(additionalProperty);
+
+        extensionContentType.setAny(generateElement(additionalInformation));
+        ublExtensionType.setExtensionContent(extensionContentType);
+        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
+        type.setUBLExtensions(ublExtensionsType);
+
+        return type;
+    }
+
+    private static List<DebitNoteLineType> toDebitNoteLineType(DocumentRepresentation rep) {
+        List<DebitNoteLineType> debitNoteLineTypes = new ArrayList<>();
+        for (int i = 0; i < rep.getDetalle().size(); i++) {
+            LineRepresentation lineRep = rep.getDetalle().get(i);
+            DebitNoteLineType debitNoteLineType = new DebitNoteLineType();
+
+            // ID
+            debitNoteLineType.setID(new IDType(String.valueOf(i + 1)));
+
+            // Quantity
+            DebitedQuantityType quantityType = new DebitedQuantityType(lineRep.getCantidad());
+            if (lineRep.getUnitCode() != null) {
+                quantityType.setUnitCode(lineRep.getUnitCode());
+            } else {
+                quantityType.setUnitCode(SunatRepresentationToType.QUANTITY_UNKNOW);
+            }
+            debitNoteLineType.setDebitedQuantity(quantityType);
+
+            // Line extension amount
+            LineExtensionAmountType lineExtensionAmountType = new LineExtensionAmountType(lineRep.getSubtotal());
+            lineExtensionAmountType.setCurrencyID(rep.getMoneda());
+            debitNoteLineType.setLineExtensionAmount(lineExtensionAmountType);
+
+            // Pricing reference
+            PricingReferenceType pricingReferenceType = new PricingReferenceType();
+            PriceType priceType = new PriceType();
+
+            PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
+            priceAmountType.setCurrencyID(rep.getMoneda());
+            priceType.setPriceAmount(priceAmountType);
+            if(!rep.isOperacionGratuita()) {
+                priceType.setPriceTypeCode("01");
+            } else {
+                priceType.setPriceTypeCode("02");
+            }
+            pricingReferenceType.setAlternativeConditionPrice(Arrays.asList(priceType));
+            debitNoteLineType.setPricingReference(pricingReferenceType);
+
+            // Item
+            ItemType itemType = new ItemType();
+            itemType.setDescription(Arrays.asList(new DescriptionType(lineRep.getDescripcion())));
+            debitNoteLineType.setItem(itemType);
+
+            // Tax Total
+            TaxTotalType taxTotalType = new TaxTotalType();
+            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getTotal());
+            taxAmountType1.setCurrencyID(rep.getMoneda());
+            taxTotalType.setTaxAmount(taxAmountType1);
+
+            TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
+            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getTotal());
+            taxAmountType2.setCurrencyID(rep.getMoneda());
+            taxSubtotalType.setTaxAmount(taxAmountType2);
+
+            TaxCategoryType taxCategoryType = new TaxCategoryType();
+            taxCategoryType.setTaxExemptionReasonCode(lineRep.getTipoDeIgv());
+            TaxSchemeType taxSchemeType = new TaxSchemeType();
+            taxSchemeType.setID(CodigoTipoTributo.IGV.getId());
+            taxSchemeType.setName(CodigoTipoTributo.IGV.toString());
+            taxSchemeType.setTaxTypeCode(CodigoTipoTributo.IGV.getCodigo());
+            taxCategoryType.setTaxScheme(taxSchemeType);
+            taxSubtotalType.setTaxCategory(taxCategoryType);
+
+            taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
+            debitNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
+
+            // Price
+            PriceType priceType1 = new PriceType();
+            PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getValorUnitario());
+            priceAmountType1.setCurrencyID(rep.getMoneda());
+            priceType1.setPriceAmount(priceAmountType1);
+            debitNoteLineType.setPrice(priceType1);
+
+            debitNoteLineTypes.add(debitNoteLineType);
+        }
+        return debitNoteLineTypes;
     }
 
     public static PerceptionType toPerceptionType(OrganizationModel organization, DocumentoSunatRepresentation rep) {
@@ -902,6 +1364,7 @@ public class SunatRepresentationToType {
 		additionalProperty.setValue(new ValueType(valueAsWords));
 		return additionalProperty;
 	}
+
     public static MonetaryTotalType toLegalMonetaryTotalType(DocumentRepresentation rep) {
         MonetaryTotalType monetaryTotalType = new MonetaryTotalType();
         if (rep.getTotal() != null) {

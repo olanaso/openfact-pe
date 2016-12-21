@@ -65,7 +65,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 		RetentionEntity retention = new RetentionEntity();
 		retention.setDocumentId(documentId);
 		retention.setCreatedTimestamp(LocalDateTime.now());
-		retention.setOrganization(OrganizationAdapter.toEntity(organization, em));
+		retention.setOrganizationId(organization.getId());
 		em.persist(retention);
 		em.flush();
 

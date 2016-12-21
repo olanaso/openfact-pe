@@ -22,7 +22,6 @@ public class PerceptionSpi implements Spi {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public Class<? extends ProviderFactory> getProviderFactoryClass() {
         return PerceptionProviderFactory.class;
     }

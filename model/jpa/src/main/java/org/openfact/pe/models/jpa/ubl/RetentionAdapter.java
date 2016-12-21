@@ -221,36 +221,40 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 
 	@Override
 	public PartyModel getAgentParty() {
-		if (retention.getAgentParty() == null) {
+		/*if (retention.getAgentParty() == null) {
 			return null;
 		}
-		return new PartyAdapter(session, em, retention.getAgentParty());
+		return new PartyAdapter(session, em, retention.getAgentParty());*/
+		return null;
 	}
 
 	@Override
 	public PartyModel getAgentPartyAsNotNull() {
-		if (retention.getAgentParty() == null) {
+		/*if (retention.getAgentParty() == null) {
 			PartyEntity entity = new PartyEntity();
 			retention.setAgentParty(entity);
 		}
-		return new PartyAdapter(session, em, retention.getAgentParty());
+		return new PartyAdapter(session, em, retention.getAgentParty());*/
+		return null;
 	}
 
 	@Override
 	public PartyModel getReceiverParty() {
-		if (retention.getReceiverParty() == null) {
+		/*if (retention.getReceiverParty() == null) {
 			return null;
 		}
-		return new PartyAdapter(session, em, retention.getReceiverParty());
+		return new PartyAdapter(session, em, retention.getReceiverParty());*/
+		return null;
 	}
 
 	@Override
 	public PartyModel getReceiverPartyAsNotNull() {
-		if (retention.getReceiverParty() == null) {
+		/*if (retention.getReceiverParty() == null) {
 			PartyEntity entity = new PartyEntity();
 			retention.setReceiverParty(entity);
 		}
-		return new PartyAdapter(session, em, retention.getReceiverParty());
+		return new PartyAdapter(session, em, retention.getReceiverParty());*/
+		return null;
 	}
 
 	@Override
@@ -268,8 +272,9 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-		return retention.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+//		return retention.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+//				.collect(Collectors.toList());
+		return null;
 	}
 
 	@Override

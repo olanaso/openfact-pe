@@ -14,7 +14,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @NamedQueries({
-		@NamedQuery(name = "deleteVoidedDocumentsRequiredActionsByOrganization", query = "delete from VoidedDocumentsRequiredActionEntity action where action.voidedDocuments IN (select u from VoidedDocumentsEntity u where u.organization.id=:organizationId)") })
+		@NamedQuery(name = "deleteVoidedDocumentsRequiredActionsByOrganization", query = "delete from VoidedDocumentsRequiredActionEntity action where action.voidedDocuments IN (select u from VoidedDocumentsEntity u where u.organizationId=:organizationId)")
+})
 @Entity
 @Table(name = "VOIDED_DOCUMENTS_REQUIRED_ACTION")
 @IdClass(VoidedDocumentsRequiredActionEntity.Key.class)

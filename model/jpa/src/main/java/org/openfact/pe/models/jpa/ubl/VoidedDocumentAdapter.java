@@ -175,19 +175,21 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 
 	@Override
 	public SupplierPartyModel getAccountingSupplierParty() {
-		if (voidedDocuments.getAccountingSupplierParty() == null) {
+		/*if (voidedDocuments.getAccountingSupplierParty() == null) {
 			return null;
 		}
-		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());
+		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());*/
+		return null;
 	}
 
 	@Override
 	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
-		if (voidedDocuments.getAccountingSupplierParty() == null) {
+		/*if (voidedDocuments.getAccountingSupplierParty() == null) {
 			SupplierPartyEntity entity = new SupplierPartyEntity();
 			voidedDocuments.setAccountingSupplierParty(entity);
 		}
-		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());
+		return new SupplierPartyAdapter(session, em, voidedDocuments.getAccountingSupplierParty());*/
+		return null;
 	}
 
 	@Override
@@ -204,8 +206,9 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-		return voidedDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+		/*return voidedDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());*/
+		return null;
 	}
 
 	@Override

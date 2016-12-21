@@ -194,48 +194,52 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
 			PerceptionModel perception) {
-		PerceptionSendEventEntity sendEvent = new PerceptionSendEventEntity();
+		/*PerceptionSendEventEntity sendEvent = new PerceptionSendEventEntity();
 		buildSendEvent(sendEvent, organization, type);
 		sendEvent.setPerception(PerceptionAdapter.toEntity(perception, em));
 		em.persist(sendEvent);
 		em.flush();
 
-		return new SendEventAdapter(session, organization, em, sendEvent);
+		return new SendEventAdapter(session, organization, em, sendEvent);*/
+		return null;
 	}
 
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type, RetentionModel retention) {
-		RetentionSendEventEntity sendEvent = new RetentionSendEventEntity();
+		/*RetentionSendEventEntity sendEvent = new RetentionSendEventEntity();
 		buildSendEvent(sendEvent, organization, type);
 		sendEvent.setRetention(RetentionAdapter.toEntity(retention, em));
 		em.persist(sendEvent);
 		em.flush();
 
-		return new SendEventAdapter(session, organization, em, sendEvent);
+		return new SendEventAdapter(session, organization, em, sendEvent);*/
+		return null;
 	}
 
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
 			SummaryDocumentModel summaryDocument) {
-		SummaryDocumentsSendEventEntity sendEvent = new SummaryDocumentsSendEventEntity();
+		/*SummaryDocumentsSendEventEntity sendEvent = new SummaryDocumentsSendEventEntity();
 		buildSendEvent(sendEvent, organization, type);
 		sendEvent.setSummaryDocuments(SummaryDocumentAdapter.toEntity(summaryDocument, em));
 		em.persist(sendEvent);
 		em.flush();
 
-		return new SendEventAdapter(session, organization, em, sendEvent);
+		return new SendEventAdapter(session, organization, em, sendEvent);*/
+		return null;
 	}
 
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
 			VoidedDocumentModel voidedDocument) {
-		VoidedDocumentsSendEventEntity sendEvent = new VoidedDocumentsSendEventEntity();
-		buildSendEvent(sendEvent, organization, type);
-		sendEvent.setVoidedDocuments(VoidedDocumentAdapter.toEntity(voidedDocument, em));
-		em.persist(sendEvent);
-		em.flush();
-
-		return new SendEventAdapter(session, organization, em, sendEvent);
+//		VoidedDocumentsSendEventEntity sendEvent = new VoidedDocumentsSendEventEntity();
+//		buildSendEvent(sendEvent, organization, type);
+//		sendEvent.setVoidedDocuments(VoidedDocumentAdapter.toEntity(voidedDocument, em));
+//		em.persist(sendEvent);
+//		em.flush();
+//
+//		return new SendEventAdapter(session, organization, em, sendEvent);
+		return null;
 	}
 
 	private void buildSendEvent(SendEventEntity sendEvent, OrganizationModel organization, SendResultType type) {

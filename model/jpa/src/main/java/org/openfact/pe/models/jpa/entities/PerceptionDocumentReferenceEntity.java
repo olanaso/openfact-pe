@@ -5,23 +5,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.openfact.models.jpa.entities.InvoiceEntity;
 
 @Entity
 @Table(name = "PERCEPTION_DOCUMENT_REFERENCE")
 public class PerceptionDocumentReferenceEntity {
+
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(generator = "uuid2")
@@ -40,13 +34,14 @@ public class PerceptionDocumentReferenceEntity {
 	@Column(name = "TOTAL_INVOICE_AMOUNT")
 	protected BigDecimal totalInvoiceAmount;
 
-//	@ManyToOne(targetEntity = PaymentEntity.class, cascade = { CascadeType.ALL })
-//	@JoinColumn(name = "PAYMENT_PERCEPTIONDOCUMENTREFERENCE")
-//	protected PaymentEntity payment = new PaymentEntity();
-
 	@ManyToOne(targetEntity = PerceptionInformationEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "PERCEPTIONINFORMATION_PERCEPTIONDOCUMENTREFERENCE")
 	protected PerceptionInformationEntity sunatPerceptionInformation=new PerceptionInformationEntity();
+
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey, name = "PERCEPTION_ID")
+	private PerceptionEntity perception;
 
 	public String getId() {
 		return id;
@@ -87,5 +82,37 @@ public class PerceptionDocumentReferenceEntity {
 	public void setSunatPerceptionInformation(PerceptionInformationEntity sunatPerceptionInformation) {
 		this.sunatPerceptionInformation = sunatPerceptionInformation;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PerceptionDocumentReferenceEntity other = (PerceptionDocumentReferenceEntity) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		return true;
+	}
+
+	public PerceptionEntity getPerception() {
+		return perception;
+	}
+
+	public void setPerception(PerceptionEntity perception) {
+		this.perception = perception;
+	}
 }

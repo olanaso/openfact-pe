@@ -65,7 +65,7 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 		VoidedDocumentsEntity retention = new VoidedDocumentsEntity();
 		retention.setDocumentId(documentId);
 		retention.setCreatedTimestamp(LocalDateTime.now());
-		retention.setOrganization(OrganizationAdapter.toEntity(organization, em));
+		retention.setOrganizationId(organization.getId());
 		em.persist(retention);
 		em.flush();
 

@@ -227,36 +227,40 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 
 	@Override
 	public PartyModel getAgentParty() {
-		if (perception.getAgentParty() == null) {
-			return null;
-		}
-		return new PartyAdapter(session, em, perception.getAgentParty());
+//		if (perception.getAgentParty() == null) {
+//			return null;
+//		}
+//		return new PartyAdapter(session, em, perception.getAgentParty());
+		return null;
 	}
 
 	@Override
 	public PartyModel getAgentPartyAsNotNull() {
-		if (perception.getAgentParty() == null) {
-			PartyEntity entity = new PartyEntity();
-			perception.setAgentParty(entity);
-		}
-		return new PartyAdapter(session, em, perception.getAgentParty());
+//		if (perception.getAgentParty() == null) {
+//			PartyEntity entity = new PartyEntity();
+//			perception.setAgentParty(entity);
+//		}
+//		return new PartyAdapter(session, em, perception.getAgentParty());
+		return null;
 	}
 
 	@Override
 	public PartyModel getReceiverParty() {
-		if (perception.getReceiverParty() == null) {
+		/*if (perception.getReceiverParty() == null) {
 			return null;
 		}
-		return new PartyAdapter(session, em, perception.getReceiverParty());
+		return new PartyAdapter(session, em, perception.getReceiverParty());*/
+		return null;
 	}
 
 	@Override
 	public PartyModel getReceiverPartyAsNotNull() {
-		if (perception.getReceiverParty() == null) {
+		/*if (perception.getReceiverParty() == null) {
 			PartyEntity entity = new PartyEntity();
 			perception.setReceiverParty(entity);
 		}
-		return new PartyAdapter(session, em, perception.getReceiverParty());
+		return new PartyAdapter(session, em, perception.getReceiverParty());*/
+		return null;
 	}
 
 	@Override
@@ -273,7 +277,8 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-		return perception.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+//		return perception.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+//				.collect(Collectors.toList());
+		return null;
 	}
 }

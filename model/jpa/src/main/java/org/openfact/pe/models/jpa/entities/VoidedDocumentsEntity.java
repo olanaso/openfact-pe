@@ -35,9 +35,11 @@ import org.openfact.models.jpa.entities.SupplierPartyEntity;
 
 @Entity
 @Table(name = "VOIDED_DOCUMENTS", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "ORGANIZATION_ID", "DOCUMENT_ID" }) })
+		@UniqueConstraint(columnNames = { "ORGANIZATION_ID", "DOCUMENT_ID" })
+})
 @NamedQueries({
-		@NamedQuery(name = "getAllVoidedDocumentsByOrganization", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId order by i.issueDate"),
+		@NamedQuery(name = "getAllVoidedDocumentsByOrganization", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId order by i.createdTimestamp"),
+		@NamedQuery(name = "getAllVoidedDocumentsByOrganizationDesc", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId order by i.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationVoidedDocumentsById", query = "select i from VoidedDocumentsEntity i where i.id = :id and i.organizationId = :organizationId"),
 		@NamedQuery(name = "getOrganizationVoidedDocumentsByID", query = "select i from VoidedDocumentsEntity i where i.documentId = :documentId and i.organizationId = :organizationId"),
 		@NamedQuery(name = "getAllVoidedDocumentsByRequiredActionAndOrganization", query = "select c from VoidedDocumentsEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
@@ -51,90 +53,54 @@ public class VoidedDocumentsEntity {
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Access(AccessType.PROPERTY)
-	protected String id;
-
-	@ManyToMany(mappedBy = "voidedDocuments", cascade = { CascadeType.ALL })
-	protected List<VoidedDocumentsSendEventEntity> sendEvents = new ArrayList<>();
+	private String id;
 
 	@Column(name = "DOCUMENT_ID")
-	protected String documentId;
+	private String documentId;
 
 	@Column(name = "UBL_VERSION_ID")
-	protected String ublVersionId;
+	private String ublVersionId;
 
 	@Column(name = "CUSTOMIZATION_ID")
-	protected String customizationId;
+	private String customizationId;
 
 	@Column(name = "REFERENCE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
-	protected LocalDate referenceDate;
+	private LocalDate referenceDate;
 
 	@Column(name = "ISSUE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
-	protected LocalDate issueDate;
+	private LocalDate issueDate;
 
 	@Column(name = "DOCUMENT_CURRENCY_CODE")
-	protected String documentCurrencyCode;
+	private String documentCurrencyCode;
 
 	@ElementCollection
 	@Column(name = "VALUE")
 	@CollectionTable(name = "BAJA_NOTE", joinColumns = { @JoinColumn(name = "BAJA_ID") })
-	protected List<String> notes = new ArrayList<>();
+	private List<String> notes = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "voidedDocument", cascade = CascadeType.REMOVE)
-	protected Collection<VoidedDocumentsRequiredActionEntity> requiredActions = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy="voidedDocuments")
+	private Collection<VoidedDocumentsRequiredActionEntity> requiredActions = new ArrayList<>();
 
-	// @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy =
-	// "voidedDocument", cascade = CascadeType.ALL)
-	// protected List<VoidedDocumentsLineEntity> voidedDocumentLines = new
-	// ArrayList<>();
+	@OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true, mappedBy = "voidedDocuments", fetch = FetchType.LAZY)
+	private Collection<VoidedDocumentsSendEventEntity> sendEvents = new ArrayList<>();
 
 	@Lob
 	@Column(name = "XML_DOCUMENT")
-	protected byte[] xmlDocument;
+	private byte[] xmlDocument;
 
 	@NotNull
 	@Column(name = "ORGANIZATION_ID")
-	protected String organizationId;
+	private String organizationId;
 
-	/** Openfact Core relations */
-	// @ManyToOne(targetEntity = UBLExtensionsEntity.class, cascade = {
-	// CascadeType.ALL })
-	// @JoinColumn(name = "UBLEXTENSIONS_VOIDED_DOCUMENTS_ID")
-	// protected UBLExtensionsEntity ublExtensions;
-	//
-	@ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
+	/*@ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "ACCOUNTINGSUPPLIERPARTY_VOIDEDDOCUMENTS")
-	protected SupplierPartyEntity accountingSupplierParty = new SupplierPartyEntity();
-	//
-	// @OneToMany(targetEntity = SignatureEntity.class, cascade = {
-	// CascadeType.ALL })
-	// @JoinColumn(name = "SIGNATURE_VOIDEDDOCUMENT")
-	// protected List<SignatureEntity> signature = new ArrayList<>();
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey, name = "ORGANIZATION_ID")
-	private OrganizationEntity organization;
+	private SupplierPartyEntity accountingSupplierParty = new SupplierPartyEntity();*/
 
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	@Column(name = "CREATED_TIMESTAMP")
 	private LocalDateTime createdTimestamp;
-
-	public OrganizationEntity getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(OrganizationEntity organization) {
-		this.organization = organization;
-	}
-
-	public LocalDateTime getCreatedTimestamp() {
-		return createdTimestamp;
-	}
-
-	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
-	}
 
 	public String getId() {
 		return id;
@@ -200,6 +166,22 @@ public class VoidedDocumentsEntity {
 		this.notes = notes;
 	}
 
+	public Collection<VoidedDocumentsRequiredActionEntity> getRequiredActions() {
+		return requiredActions;
+	}
+
+	public void setRequiredActions(Collection<VoidedDocumentsRequiredActionEntity> requiredActions) {
+		this.requiredActions = requiredActions;
+	}
+
+	public Collection<VoidedDocumentsSendEventEntity> getSendEvents() {
+		return sendEvents;
+	}
+
+	public void setSendEvents(Collection<VoidedDocumentsSendEventEntity> sendEvents) {
+		this.sendEvents = sendEvents;
+	}
+
 	public byte[] getXmlDocument() {
 		return xmlDocument;
 	}
@@ -216,59 +198,11 @@ public class VoidedDocumentsEntity {
 		this.organizationId = organizationId;
 	}
 
-	public List<VoidedDocumentsSendEventEntity> getSendEvents() {
-		return sendEvents;
+	public LocalDateTime getCreatedTimestamp() {
+		return createdTimestamp;
 	}
 
-	public void setSendEvents(List<VoidedDocumentsSendEventEntity> sendEvents) {
-		this.sendEvents = sendEvents;
+	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+		this.createdTimestamp = createdTimestamp;
 	}
-
-	public Collection<VoidedDocumentsRequiredActionEntity> getRequiredActions() {
-		return requiredActions;
-	}
-
-	public void setRequiredActions(Collection<VoidedDocumentsRequiredActionEntity> requiredActions) {
-		this.requiredActions = requiredActions;
-	}
-
-	public SupplierPartyEntity getAccountingSupplierParty() {
-		return accountingSupplierParty;
-	}
-
-	public void setAccountingSupplierParty(SupplierPartyEntity accountingSupplierParty) {
-		this.accountingSupplierParty = accountingSupplierParty;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((documentId == null) ? 0 : documentId.hashCode());
-		result = prime * result + ((organizationId == null) ? 0 : organizationId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		VoidedDocumentsEntity other = (VoidedDocumentsEntity) obj;
-		if (documentId == null) {
-			if (other.documentId != null)
-				return false;
-		} else if (!documentId.equals(other.documentId))
-			return false;
-		if (organizationId == null) {
-			if (other.organizationId != null)
-				return false;
-		} else if (!organizationId.equals(other.organizationId))
-			return false;
-		return true;
-	}
-
 }

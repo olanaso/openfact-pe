@@ -65,7 +65,7 @@ public class JpaPerceptionProvider extends AbstractHibernateStorage implements P
 		PerceptionEntity perception = new PerceptionEntity();
 		perception.setDocumentId(documentId);
 		perception.setCreatedTimestamp(LocalDateTime.now());
-		perception.setOrganization(OrganizationAdapter.toEntity(organization, em));
+		perception.setOrganizationId(organization.getId());
 		em.persist(perception);
 		em.flush();
 

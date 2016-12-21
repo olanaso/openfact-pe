@@ -35,10 +35,11 @@ import org.openfact.models.jpa.entities.SupplierPartyEntity;
 @Table(name = "SUMMARY_DOCUMENTS", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "ORGANIZATION_ID", "DOCUMENT_ID" }) })
 @NamedQueries({
-		@NamedQuery(name = "getAllSummaryDocumentsByOrganization", query = "select i from SummaryDocumentsEntity i where i.organizationId = :organizationId order by i.issueDate"),
+		@NamedQuery(name = "getAllSummaryDocumentsByOrganization", query = "select i from SummaryDocumentsEntity i where i.organizationId = :organizationId order by i.createdTimestamp"),
+		@NamedQuery(name = "getAllSummaryDocumentsByOrganizationDesc", query = "select i from SummaryDocumentsEntity i where i.organizationId = :organizationId order by i.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationSummaryDocumentsById", query = "select i from SummaryDocumentsEntity i where i.id = :id and i.organizationId = :organizationId"),
 		@NamedQuery(name = "getOrganizationSummaryDocumentsByID", query = "select i from SummaryDocumentsEntity i where i.documentId = :documentId and i.organizationId = :organizationId"),
-		@NamedQuery(name = "getAllSummaryDocumentsByRequiredActionAndOrganization", query = "select c from SummaryDocumentsEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
+		//@NamedQuery(name = "getAllSummaryDocumentsByRequiredActionAndOrganization", query = "select c from SummaryDocumentsEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
 		@NamedQuery(name = "searchForSummaryDocuments", query = "select i from SummaryDocumentsEntity i where i.organizationId = :organizationId and i.documentId like :search order by i.issueDate"),
 		@NamedQuery(name = "getOrganizationSummaryDocumentsCount", query = "select count(i) from SummaryDocumentsEntity i where i.organizationId = :organizationId"),
 		@NamedQuery(name = "getLastSummaryDocumentsByOrganization", query = "select i from SummaryDocumentsEntity i where i.organizationId = :organizationId and length(i.documentId)=:documentIdLength and i.documentId like :formatter order by i.issueDate desc"), })
@@ -49,79 +50,51 @@ public class SummaryDocumentsEntity {
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Access(AccessType.PROPERTY)
-	protected String id;
-
-	@ManyToMany(mappedBy = "summaryDocuments", cascade = { CascadeType.ALL })
-	protected List<SummaryDocumentsSendEventEntity> sendEvents = new ArrayList<>();
-
+	private String id;
+	
 	@Column(name = "DOCUMENT_ID")
-	protected String documentId;
+	private String documentId;
 
 	@Column(name = "UBL_VERSIONID")
-	protected String ublVersionId;
+	private String ublVersionId;
 
 	@Column(name = "CUSTOMIZATIONID")
-	protected String customizationId;
+	private String customizationId;
 
 	@Column(name = "REFERENCE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
-	protected LocalDate referenceDate;
+	private LocalDate referenceDate;
 
 	@Column(name = "DOCUMENT_CURRENCY_CODE")
-	protected String documentCurrencyCode;
+	private String documentCurrencyCode;
 
 	@Column(name = "ISSUE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
-	protected LocalDate issueDate;
+	private LocalDate issueDate;
 
-	// @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy =
-	// "summaryDocument", cascade = CascadeType.ALL)
-	// protected List<SumaryDocumenstLineEntity> summaryDocumentsLines = new
-	// ArrayList<>();
+	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy="summaryDocuments")
+	private Collection<SummaryDocumentsRequiredActionEntity> requiredActions = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "summaryDocument", cascade = CascadeType.REMOVE)
-	protected Collection<SummaryDocumentsRequiredActionEntity> requiredActions = new ArrayList<>();
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey, name = "ORGANIZATION_ID")
-	private OrganizationEntity organization;
+	@OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true, mappedBy = "summaryDocuments", fetch = FetchType.LAZY)
+	private Collection<SummaryDocumentsSendEventEntity> sendEvents = new ArrayList<>();
 
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	@Column(name = "CREATED_TIMESTAMP")
 	private LocalDateTime createdTimestamp;
 	@Lob
 	@Column(name = "XML_DOCUMENT")
-	protected byte[] xmlDocument;
+	private byte[] xmlDocument;
 
 	@NotNull
 	@Column(name = "ORGANIZATION_ID")
-	protected String organizationId;
+	private String organizationId;
 
-	/**
-	 * Openfact core
-	 */
-	@ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
+	/*@ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "ACCOUNTINGSUPPLIERPARTY_SUMMARYDOCUMENTS_ID")
-	protected SupplierPartyEntity accountingSupplierParty;
+	private SupplierPartyEntity accountingSupplierParty;*/
 
 	public String getId() {
 		return id;
-	}
-
-	public OrganizationEntity getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(OrganizationEntity organization) {
-		this.organization = organization;
-	}
-
-	public LocalDateTime getCreatedTimestamp() {
-		return createdTimestamp;
-	}
-
-	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
 	}
 
 	public void setId(String id) {
@@ -176,6 +149,30 @@ public class SummaryDocumentsEntity {
 		this.issueDate = issueDate;
 	}
 
+	public Collection<SummaryDocumentsRequiredActionEntity> getRequiredActions() {
+		return requiredActions;
+	}
+
+	public void setRequiredActions(Collection<SummaryDocumentsRequiredActionEntity> requiredActions) {
+		this.requiredActions = requiredActions;
+	}
+
+	public Collection<SummaryDocumentsSendEventEntity> getSendEvents() {
+		return sendEvents;
+	}
+
+	public void setSendEvents(Collection<SummaryDocumentsSendEventEntity> sendEvents) {
+		this.sendEvents = sendEvents;
+	}
+
+	public LocalDateTime getCreatedTimestamp() {
+		return createdTimestamp;
+	}
+
+	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+		this.createdTimestamp = createdTimestamp;
+	}
+
 	public byte[] getXmlDocument() {
 		return xmlDocument;
 	}
@@ -192,28 +189,7 @@ public class SummaryDocumentsEntity {
 		this.organizationId = organizationId;
 	}
 
-	public List<SummaryDocumentsSendEventEntity> getSendEvents() {
-		return sendEvents;
-	}
-
-	public void setSendEvents(List<SummaryDocumentsSendEventEntity> sendEvents) {
-		this.sendEvents = sendEvents;
-	}
-
-	public Collection<SummaryDocumentsRequiredActionEntity> getRequiredActions() {
-		return requiredActions;
-	}
-
-	public void setRequiredActions(Collection<SummaryDocumentsRequiredActionEntity> requiredActions) {
-		this.requiredActions = requiredActions;
-	}
-
-	public SupplierPartyEntity getAccountingSupplierParty() {
-		return accountingSupplierParty;
-	}
-
-	public void setAccountingSupplierParty(SupplierPartyEntity accountingSupplierParty) {
-		this.accountingSupplierParty = accountingSupplierParty;
-	}
-
+	/**
+	 * Openfact core
+	 */
 }

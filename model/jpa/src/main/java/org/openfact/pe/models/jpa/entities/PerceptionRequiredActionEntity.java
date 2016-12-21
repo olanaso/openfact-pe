@@ -14,7 +14,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @NamedQueries({
-		@NamedQuery(name = "deletePerceptionRequiredActionsByOrganization", query = "delete from PerceptionRequiredActionEntity action where action.perception IN (select u from PerceptionEntity u where u.organization.id=:organizationId)") })
+		@NamedQuery(name = "deletePerceptionRequiredActionsByOrganization", query = "delete from PerceptionRequiredActionEntity action where action.perception IN (select u from PerceptionEntity u where u.organizationId=:organizationId)")
+})
 @Entity
 @Table(name = "PERCEPTION_REQUIRED_ACTION")
 @IdClass(PerceptionRequiredActionEntity.Key.class)

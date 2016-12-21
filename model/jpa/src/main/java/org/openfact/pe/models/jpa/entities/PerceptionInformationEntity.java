@@ -14,10 +14,12 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.openfact.models.jpa.entities.InvoiceEntity;
 
 @Entity
 @Table(name = "PERCEPTION_INFORMATION")
 public class PerceptionInformationEntity {
+
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(generator = "uuid2")
@@ -34,11 +36,6 @@ public class PerceptionInformationEntity {
 
 	@Column(name = "NET_TOTAL_CASHED")
 	protected BigDecimal sunatNetTotalCashed;
-
-	// @ManyToOne(targetEntity = ExchangeRateEntity.class, cascade = {
-	// CascadeType.ALL })
-	// @JoinColumn(name = "EXCHANGERATE_PERCEPTIONINFORMATION_ID")
-	// protected ExchangeRateEntity exchangeRate=new ExchangeRateEntity();
 
 	public String getId() {
 		return id;
@@ -70,6 +67,31 @@ public class PerceptionInformationEntity {
 
 	public void setSunatNetTotalCashed(BigDecimal sunatNetTotalCashed) {
 		this.sunatNetTotalCashed = sunatNetTotalCashed;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PerceptionInformationEntity other = (PerceptionInformationEntity) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		return true;
 	}
 
 }

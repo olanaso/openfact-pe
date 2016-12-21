@@ -1,13 +1,393 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-	<changeSet author="admin (generated)" id="1480085547643-1">
-		<createTable tableName="SUNAT_PERCEPTION">
-			<column name="ID" type="VARCHAR(255)">
-				<constraints nullable="false"/>
-			</column>
-		</createTable>
-	</changeSet>
-	<changeSet author="admin (generated)" id="1480085547643-2">
-		<addPrimaryKey columnNames="ID" constraintName="SUNAT_PERCEPTIONPK" tableName="SUNAT_PERCEPTION"/>
-	</changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-1">
+        <createTable tableName="BAJA_NOTE">
+            <column name="BAJA_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-2">
+        <createTable tableName="PERCEPTION">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_TIMESTAMP" type="timestamp"/>
+            <column name="CUSTOMIZATION_ID" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_CURRENCY_CODE" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_ID" type="VARCHAR(255)"/>
+            <column name="ISSUE_DATE" type="date"/>
+            <column name="ORGANIZATION_ID" type="VARCHAR(255)"/>
+            <column name="SUNAT_PERCEPTION_PERCENT" type="DECIMAL(19, 2)"/>
+            <column name="SUNAT_PERCEPTION_SYSTEM_CODE" type="VARCHAR(255)"/>
+            <column name="SUNAT_TOTAL_CASHED" type="DECIMAL(19, 2)"/>
+            <column name="TOTAL_INVOICE_AMOUNT" type="DECIMAL(19, 2)"/>
+            <column name="UBL_VERSIONID" type="VARCHAR(255)"/>
+            <column name="XML_DOCUMENT" type="BLOB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-3">
+        <createTable tableName="PERCEPTION_DOCUMENT_REFERENCE">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_UBL" type="VARCHAR(255)"/>
+            <column name="ISSUE_DATE" type="date"/>
+            <column name="TOTAL_INVOICE_AMOUNT" type="DECIMAL(19, 2)"/>
+            <column name="PERCEPTION_ID" type="VARCHAR(255)"/>
+            <column name="PERCEPTIONINFORMATION_PERCEPTIONDOCUMENTREFERENCE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-4">
+        <createTable tableName="PERCEPTION_INFORMATION">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NET_TOTAL_CASHED" type="DECIMAL(19, 2)"/>
+            <column name="PERCEPTION_AMOUNT" type="DECIMAL(19, 2)"/>
+            <column name="PERCEPTION_DATE" type="date"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-5">
+        <createTable tableName="PERCEPTION_NOTE">
+            <column name="PERCEPTION_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-6">
+        <createTable tableName="PERCEPTION_REQUIRED_ACTION">
+            <column name="REQUIRED_ACTION" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PERCEPTION_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-7">
+        <createTable tableName="RETENTION">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_TIMESTAMP" type="timestamp"/>
+            <column name="CUSTOMIZATION_ID" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_CURRENCY_CODE" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_ID" type="VARCHAR(255)"/>
+            <column name="ISSUE_DATE" type="date"/>
+            <column name="ORGANIZATION_ID" type="VARCHAR(255)"/>
+            <column name="SUNAT_RETENTION_PERCENT" type="DECIMAL(19, 2)"/>
+            <column name="SUNAT_RETENTION_SYSTEM_CODE" type="VARCHAR(255)"/>
+            <column name="TOTAL_INVOICE_AMOUNT" type="DECIMAL(19, 2)"/>
+            <column name="TOTAL_PAID" type="DECIMAL(19, 2)"/>
+            <column name="UBL_VERSION_ID" type="VARCHAR(255)"/>
+            <column name="XML_DOCUMENT" type="BLOB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-8">
+        <createTable tableName="RETENTION_DOCUMENT_REFERENCE">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_UBL" type="VARCHAR(255)"/>
+            <column name="ISSUE_DATE" type="date"/>
+            <column name="TOTAL_INVOICE_AMOUNT" type="DECIMAL(19, 2)"/>
+            <column name="RETENTION_ID" type="VARCHAR(255)"/>
+            <column name="RETENTIONINFORMATION_RETENTIONDOCUMENTREFERENCE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-9">
+        <createTable tableName="RETENTION_INFORMATION">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NET_TOTAL_PAID" type="DECIMAL(19, 2)"/>
+            <column name="RETENTION_AMOUNT" type="DECIMAL(19, 2)"/>
+            <column name="RETENTION_DATE" type="date"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-10">
+        <createTable tableName="RETENTION_NOTE">
+            <column name="RETENTION_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-11">
+        <createTable tableName="RETENTION_REQUIRED_ACTION">
+            <column name="REQUIRED_ACTION" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RETENTION_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-12">
+        <createTable tableName="SUMMARY_DOCUMENTS">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_TIMESTAMP" type="timestamp"/>
+            <column name="CUSTOMIZATIONID" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_CURRENCY_CODE" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_ID" type="VARCHAR(255)"/>
+            <column name="ISSUE_DATE" type="date"/>
+            <column name="ORGANIZATION_ID" type="VARCHAR(255)"/>
+            <column name="REFERENCE_DATE" type="date"/>
+            <column name="UBL_VERSIONID" type="VARCHAR(255)"/>
+            <column name="XML_DOCUMENT" type="BLOB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-13">
+        <createTable tableName="SUMMARY_DOCUMENTS_REQUIRED_ACTION">
+            <column name="REQUIRED_ACTION" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SUMMARY_DOCUMENTS_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-14">
+        <createTable tableName="SUNAT_RESPONSE_EVENT_FILES">
+            <column name="SEND_EVENT_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fileResponseAttatchments_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FILE_TYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-15">
+        <createTable tableName="SUNAT_SEND_EVENT">
+            <column name="type" type="VARCHAR(31)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_TIMESTAMP" type="timestamp"/>
+            <column name="DESCRIPTION" type="VARCHAR(400)"/>
+            <column name="ORGANIZATION_ID" type="VARCHAR(255)"/>
+            <column name="RESULT" type="INT"/>
+            <column name="SEND_TYPE" type="VARCHAR(255)"/>
+            <column name="RETENTION_ID" type="VARCHAR(255)"/>
+            <column name="PERCEPTION_ID" type="VARCHAR(255)"/>
+            <column name="SUMMARY_DOCUMENT_ID" type="VARCHAR(255)"/>
+            <column name="VOIDED_ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-16">
+        <createTable tableName="SUNAT_SEND_EVENT_DESTINY">
+            <column name="SEND_EVENT_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-17">
+        <createTable tableName="SUNAT_SEND_EVENT_FILES">
+            <column name="SEND_EVENT_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fileAttatchments_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FILE_TYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-18">
+        <createTable tableName="SUNAT_SEND_EVENT_REPONSE">
+            <column name="SEND_EVENT_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-19">
+        <createTable tableName="SUNAT_STORAGE_FILE">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FILE" type="BLOB"/>
+            <column name="FILE_NAME" type="VARCHAR(255)"/>
+            <column name="MIME_TYPE" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-20">
+        <createTable tableName="VOIDED_DOCUMENTS">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_TIMESTAMP" type="timestamp"/>
+            <column name="CUSTOMIZATION_ID" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_CURRENCY_CODE" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_ID" type="VARCHAR(255)"/>
+            <column name="ISSUE_DATE" type="date"/>
+            <column name="ORGANIZATION_ID" type="VARCHAR(255)"/>
+            <column name="REFERENCE_DATE" type="date"/>
+            <column name="UBL_VERSION_ID" type="VARCHAR(255)"/>
+            <column name="XML_DOCUMENT" type="BLOB"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-21">
+        <createTable tableName="VOIDED_DOCUMENTS_REQUIRED_ACTION">
+            <column name="REQUIRED_ACTION" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VOIDED_DOCUMENTS_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-22">
+        <addPrimaryKey columnNames="SEND_EVENT_ID, FILE_TYPE" tableName="SUNAT_RESPONSE_EVENT_FILES"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-23">
+        <addPrimaryKey columnNames="SEND_EVENT_ID, NAME" tableName="SUNAT_SEND_EVENT_DESTINY"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-24">
+        <addPrimaryKey columnNames="SEND_EVENT_ID, FILE_TYPE" tableName="SUNAT_SEND_EVENT_FILES"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-25">
+        <addPrimaryKey columnNames="SEND_EVENT_ID, NAME" tableName="SUNAT_SEND_EVENT_REPONSE"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-26">
+        <addPrimaryKey columnNames="ID" constraintName="PERCEPTIONPK" tableName="PERCEPTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-27">
+        <addPrimaryKey columnNames="ID" constraintName="PERCEPTION_DOCUMENT_REFERENCEPK" tableName="PERCEPTION_DOCUMENT_REFERENCE"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-28">
+        <addPrimaryKey columnNames="ID" constraintName="PERCEPTION_INFORMATIONPK" tableName="PERCEPTION_INFORMATION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-29">
+        <addPrimaryKey columnNames="REQUIRED_ACTION, PERCEPTION_ID" constraintName="PERCEPTION_REQUIRED_ACTIONPK" tableName="PERCEPTION_REQUIRED_ACTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-30">
+        <addPrimaryKey columnNames="ID" constraintName="RETENTIONPK" tableName="RETENTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-31">
+        <addPrimaryKey columnNames="ID" constraintName="RETENTION_DOCUMENT_REFERENCEPK" tableName="RETENTION_DOCUMENT_REFERENCE"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-32">
+        <addPrimaryKey columnNames="ID" constraintName="RETENTION_INFORMATIONPK" tableName="RETENTION_INFORMATION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-33">
+        <addPrimaryKey columnNames="REQUIRED_ACTION, RETENTION_ID" constraintName="RETENTION_REQUIRED_ACTIONPK" tableName="RETENTION_REQUIRED_ACTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-34">
+        <addPrimaryKey columnNames="ID" constraintName="SUMMARY_DOCUMENTSPK" tableName="SUMMARY_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-35">
+        <addPrimaryKey columnNames="REQUIRED_ACTION, SUMMARY_DOCUMENTS_ID" constraintName="SUMMARY_DOCUMENTS_REQUIRED_ACTIONPK" tableName="SUMMARY_DOCUMENTS_REQUIRED_ACTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-36">
+        <addPrimaryKey columnNames="ID" constraintName="SUNAT_SEND_EVENTPK" tableName="SUNAT_SEND_EVENT"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-37">
+        <addPrimaryKey columnNames="ID" constraintName="SUNAT_STORAGE_FILEPK" tableName="SUNAT_STORAGE_FILE"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-38">
+        <addPrimaryKey columnNames="ID" constraintName="VOIDED_DOCUMENTSPK" tableName="VOIDED_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-39">
+        <addPrimaryKey columnNames="REQUIRED_ACTION, VOIDED_DOCUMENTS_ID" constraintName="VOIDED_DOCUMENTS_REQUIRED_ACTIONPK" tableName="VOIDED_DOCUMENTS_REQUIRED_ACTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-40">
+        <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="PERCEPTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-41">
+        <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="RETENTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-42">
+        <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="SUMMARY_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-43">
+        <addUniqueConstraint columnNames="fileResponseAttatchments_ID" tableName="SUNAT_RESPONSE_EVENT_FILES"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-44">
+        <addUniqueConstraint columnNames="fileAttatchments_ID" tableName="SUNAT_SEND_EVENT_FILES"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-45">
+        <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="VOIDED_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-46">
+        <addForeignKeyConstraint baseColumnNames="PERCEPTION_ID" baseTableName="PERCEPTION_DOCUMENT_REFERENCE" constraintName="FK_3qumr7epl0p2u27lmfp2b1615" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-47">
+        <addForeignKeyConstraint baseColumnNames="RETENTION_ID" baseTableName="RETENTION_DOCUMENT_REFERENCE" constraintName="FK_5c4bmggftgno9xyk2pu8scn09" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-48">
+        <addForeignKeyConstraint baseColumnNames="SUMMARY_DOCUMENT_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_5nr44ire2g16bk9t2uua19vyg" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUMMARY_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-49">
+        <addForeignKeyConstraint baseColumnNames="RETENTIONINFORMATION_RETENTIONDOCUMENTREFERENCE" baseTableName="RETENTION_DOCUMENT_REFERENCE" constraintName="FK_60l3t1nfrktx825nk8b44e0lw" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION_INFORMATION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-50">
+        <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_SEND_EVENT_REPONSE" constraintName="FK_d86nf5cusse8sarg16t0futh2" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-51">
+        <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_RESPONSE_EVENT_FILES" constraintName="FK_d8c86b2kq36xxq7k29g58ijcw" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-52">
+        <addForeignKeyConstraint baseColumnNames="PERCEPTION_ID" baseTableName="PERCEPTION_REQUIRED_ACTION" constraintName="FK_dfx92lnxj0l62h5noricfr0mg" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-53">
+        <addForeignKeyConstraint baseColumnNames="RETENTION_ID" baseTableName="RETENTION_NOTE" constraintName="FK_dka6xipx1nexsq54h9yti1wov" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-54">
+        <addForeignKeyConstraint baseColumnNames="VOIDED_DOCUMENTS_ID" baseTableName="VOIDED_DOCUMENTS_REQUIRED_ACTION" constraintName="FK_ffhbj2fahl1nmcy4rnoo9pee4" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="VOIDED_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-55">
+        <addForeignKeyConstraint baseColumnNames="RETENTION_ID" baseTableName="RETENTION_REQUIRED_ACTION" constraintName="FK_ibmr3h0hccidcj17fagoe84be" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-56">
+        <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_SEND_EVENT_FILES" constraintName="FK_kyrnv1gcg0ewukctcqwf4eibd" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-57">
+        <addForeignKeyConstraint baseColumnNames="RETENTION_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_m2kgmktjhn3gc3wd55ef8moj2" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-58">
+        <addForeignKeyConstraint baseColumnNames="fileAttatchments_ID" baseTableName="SUNAT_SEND_EVENT_FILES" constraintName="FK_mkmmtoc5i6am8mr78awlf82lb" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_STORAGE_FILE"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-59">
+        <addForeignKeyConstraint baseColumnNames="fileResponseAttatchments_ID" baseTableName="SUNAT_RESPONSE_EVENT_FILES" constraintName="FK_o3oxv8047r884yukek8ma6hnc" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_STORAGE_FILE"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-60">
+        <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_SEND_EVENT_DESTINY" constraintName="FK_o41f2xklxycn7ts2w5fqo8f41" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-61">
+        <addForeignKeyConstraint baseColumnNames="BAJA_ID" baseTableName="BAJA_NOTE" constraintName="FK_ok3t4528a7eq789ufcvkptiuw" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="VOIDED_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-62">
+        <addForeignKeyConstraint baseColumnNames="PERCEPTION_ID" baseTableName="PERCEPTION_NOTE" constraintName="FK_qqjvvfiw1u2g34t86xcu5rvlw" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-63">
+        <addForeignKeyConstraint baseColumnNames="PERCEPTION_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_ro2fokyyme1h7n681x0igaeqt" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-64">
+        <addForeignKeyConstraint baseColumnNames="VOIDED_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_sfab9sleqqyffxp0ghtnj90m0" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="VOIDED_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-65">
+        <addForeignKeyConstraint baseColumnNames="SUMMARY_DOCUMENTS_ID" baseTableName="SUMMARY_DOCUMENTS_REQUIRED_ACTION" constraintName="FK_tgfc9ol460gsvxsgdll7q5gbn" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUMMARY_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="admin (generated)" id="1482337315357-66">
+        <addForeignKeyConstraint baseColumnNames="PERCEPTIONINFORMATION_PERCEPTIONDOCUMENTREFERENCE" baseTableName="PERCEPTION_DOCUMENT_REFERENCE" constraintName="FK_xgwcu53sed9ogqdfahwmnqco" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION_INFORMATION"/>
+    </changeSet>
 </databaseChangeLog>

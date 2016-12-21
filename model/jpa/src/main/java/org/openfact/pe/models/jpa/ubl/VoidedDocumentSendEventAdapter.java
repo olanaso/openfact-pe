@@ -66,10 +66,7 @@ public class VoidedDocumentSendEventAdapter
 
 	@Override
 	public OrganizationModel getOrganization() {
-		if (sendEvent.getOrganization() == null) {
-			return null;
-		}
-		return new OrganizationAdapter(session, em, sendEvent.getOrganization());
+		return organization;
 	}
 
 	@Override

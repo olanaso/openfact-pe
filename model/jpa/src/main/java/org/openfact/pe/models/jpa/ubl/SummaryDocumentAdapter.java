@@ -165,19 +165,21 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 
 	@Override
 	public SupplierPartyModel getAccountingSupplierParty() {
-		if (summaryDocuments.getAccountingSupplierParty() == null) {
+		/*if (summaryDocuments.getAccountingSupplierParty() == null) {
 			return null;
 		}
-		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());
+		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());*/
+		return null;
 	}
 
 	@Override
 	public SupplierPartyModel getAccountingSupplierPartyAsNotNull() {
-		if (summaryDocuments.getAccountingSupplierParty() == null) {
+		/*if (summaryDocuments.getAccountingSupplierParty() == null) {
 			SupplierPartyEntity entity = new SupplierPartyEntity();
 			summaryDocuments.setAccountingSupplierParty(entity);
 		}
-		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());
+		return new SupplierPartyAdapter(session, em, summaryDocuments.getAccountingSupplierParty());*/
+		return null;
 	}
 
 	@Override
@@ -194,8 +196,9 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-		return summaryDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+		/*return summaryDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());*/
+		return null;
 	}
 
 	@Override

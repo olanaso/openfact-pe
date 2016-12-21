@@ -20,7 +20,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -38,13 +37,15 @@ import org.openfact.models.jpa.entities.PartyEntity;
 @Table(name = "RETENTION", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "ORGANIZATION_ID", "DOCUMENT_ID" }) })
 @NamedQueries({
-		@NamedQuery(name = "getAllRetentionsByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId order by r.issueDate"),
+		@NamedQuery(name = "getAllRetentionsByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId order by r.createdTimestamp"),
+		@NamedQuery(name = "getAllRetentionsByOrganizationDesc", query = "select r from RetentionEntity r where r.organizationId = :organizationId order by r.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationRetentionById", query = "select r from RetentionEntity r where r.id = :id and r.organizationId = :organizationId"),
-		@NamedQuery(name = "getAllRetentionsByRequiredActionAndOrganization", query = "select c from RetentionEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
-		@NamedQuery(name = "getOrganizationRetentionByDocumentId", query = "select r from RetentionEntity i where r.documentId = :documentId and r.organizationId = :organizationId"),
-		@NamedQuery(name = "searchForRetention", query = "select r from RetentionEntity i where r.organizationId = :organizationId and r.documentId like :search order by r.issueDate"),
+//		@NamedQuery(name = "getAllRetentionsByRequiredActionAndOrganization", query = "select c from RetentionEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
+		@NamedQuery(name = "getOrganizationRetentionByDocumentId", query = "select r from RetentionEntity r where r.documentId = :documentId and r.organizationId = :organizationId"),
+		@NamedQuery(name = "searchForRetention", query = "select r from RetentionEntity r where r.organizationId = :organizationId and r.documentId like :search order by r.issueDate"),
 		@NamedQuery(name = "getOrganizationRetentionCount", query = "select count(r) from RetentionEntity r where r.organizationId = :organizationId"),
-		@NamedQuery(name = "getLastRetentionByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId and length(r.documentId)=:documentIdLength and r.documentId like :formatter order by r.issueDate desc"), })
+		@NamedQuery(name = "getLastRetentionByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId and length(r.documentId)=:documentIdLength and r.documentId like :formatter order by r.issueDate desc"),
+	})
 public class RetentionEntity {
 
 	@Id
@@ -52,72 +53,68 @@ public class RetentionEntity {
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Access(AccessType.PROPERTY)
-	protected String id;
-
-	@ManyToMany(mappedBy = "retentions", cascade = { CascadeType.ALL })
-	protected List<RetentionSendEventEntity> sendEvents = new ArrayList<>();
+	private String id;
 
 	@Column(name = "DOCUMENT_ID")
-	protected String documentId;
+	private String documentId;
 
 	@Column(name = "UBL_VERSION_ID")
-	protected String ublVersionId;
+	private String ublVersionId;
 
 	@Column(name = "DOCUMENT_CURRENCY_CODE")
-	protected String documentCurrencyCode;
+	private String documentCurrencyCode;
 
 	@Column(name = "CUSTOMIZATION_ID")
-	protected String customizationId;
+	private String customizationId;
 
 	@Column(name = "ISSUE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
-	protected LocalDate issueDate;
+	private LocalDate issueDate;
 
 	@Column(name = "TOTAL_INVOICE_AMOUNT")
-	protected BigDecimal totalInvoiceAmount;
+	private BigDecimal totalInvoiceAmount;
 
 	@Column(name = "TOTAL_PAID")
-	protected BigDecimal totalPaid;
+	private BigDecimal totalPaid;
 
 	@Column(name = "SUNAT_RETENTION_SYSTEM_CODE")
-	protected String sunatRetentionSystemCode;
+	private String sunatRetentionSystemCode;
 
 	@Column(name = "SUNAT_RETENTION_PERCENT")
-	protected BigDecimal sunatRetentionPercent;
+	private BigDecimal sunatRetentionPercent;
 
 	@ElementCollection
 	@Column(name = "VALUE")
 	@CollectionTable(name = "RETENTION_NOTE", joinColumns = { @JoinColumn(name = "RETENTION_ID") })
-	protected List<String> notes = new ArrayList<>();
+	private List<String> notes = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention", cascade = CascadeType.REMOVE)
-	protected Collection<RetentionRequiredActionEntity> requiredActions = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy="retention")
+	private Collection<RetentionRequiredActionEntity> requiredActions = new ArrayList<>();
+
+	@OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true, mappedBy = "retention", fetch = FetchType.LAZY)
+	private Collection<RetentionSendEventEntity> sendEvents = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention", cascade = CascadeType.ALL)
-	protected List<RetentionDocumentReferenceEntity> sunatRetentionDocumentReferences = new ArrayList<>();
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey, name = "ORGANIZATION_ID")
-	private OrganizationEntity organization;
+	private List<RetentionDocumentReferenceEntity> sunatRetentionDocumentReferences = new ArrayList<>();
 
-	@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
+	/*@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "AGENTPARTY_PERCEPTION_ID")
-	protected PartyEntity agentParty;
+	private PartyEntity agentParty;
 
 	@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "RECEIVERPARTY_PERCEPTION_ID")
-	protected PartyEntity receiverParty;
+	private PartyEntity receiverParty;*/
 
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	@Column(name = "CREATED_TIMESTAMP")
 	private LocalDateTime createdTimestamp;
 	@Lob
 	@Column(name = "XML_DOCUMENT")
-	protected byte[] xmlDocument;
+	private byte[] xmlDocument;
 
 	@NotNull
 	@Column(name = "ORGANIZATION_ID")
-	protected String organizationId;
+	private String organizationId;
 
 	public String getId() {
 		return id;
@@ -141,6 +138,14 @@ public class RetentionEntity {
 
 	public void setUblVersionId(String ublVersionId) {
 		this.ublVersionId = ublVersionId;
+	}
+
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 	public String getCustomizationId() {
@@ -199,28 +204,28 @@ public class RetentionEntity {
 		this.notes = notes;
 	}
 
-	public byte[] getXmlDocument() {
-		return xmlDocument;
+	public Collection<RetentionRequiredActionEntity> getRequiredActions() {
+		return requiredActions;
 	}
 
-	public void setXmlDocument(byte[] xmlDocument) {
-		this.xmlDocument = xmlDocument;
+	public void setRequiredActions(Collection<RetentionRequiredActionEntity> requiredActions) {
+		this.requiredActions = requiredActions;
 	}
 
-	public List<RetentionSendEventEntity> getSendEvents() {
+	public Collection<RetentionSendEventEntity> getSendEvents() {
 		return sendEvents;
 	}
 
-	public void setSendEvents(List<RetentionSendEventEntity> sendEvents) {
+	public void setSendEvents(Collection<RetentionSendEventEntity> sendEvents) {
 		this.sendEvents = sendEvents;
 	}
 
-	public OrganizationEntity getOrganization() {
-		return organization;
+	public List<RetentionDocumentReferenceEntity> getSunatRetentionDocumentReferences() {
+		return sunatRetentionDocumentReferences;
 	}
 
-	public void setOrganization(OrganizationEntity organization) {
-		this.organization = organization;
+	public void setSunatRetentionDocumentReferences(List<RetentionDocumentReferenceEntity> sunatRetentionDocumentReferences) {
+		this.sunatRetentionDocumentReferences = sunatRetentionDocumentReferences;
 	}
 
 	public LocalDateTime getCreatedTimestamp() {
@@ -231,6 +236,14 @@ public class RetentionEntity {
 		this.createdTimestamp = createdTimestamp;
 	}
 
+	public byte[] getXmlDocument() {
+		return xmlDocument;
+	}
+
+	public void setXmlDocument(byte[] xmlDocument) {
+		this.xmlDocument = xmlDocument;
+	}
+
 	public String getOrganizationId() {
 		return organizationId;
 	}
@@ -239,53 +252,12 @@ public class RetentionEntity {
 		this.organizationId = organizationId;
 	}
 
-	public Collection<RetentionRequiredActionEntity> getRequiredActions() {
-		return requiredActions;
-	}
-
-	public void setRequiredActions(Collection<RetentionRequiredActionEntity> requiredActions) {
-		this.requiredActions = requiredActions;
-	}
-
-	public String getDocumentCurrencyCode() {
-		return documentCurrencyCode;
-	}
-
-	public void setDocumentCurrencyCode(String documentCurrencyCode) {
-		this.documentCurrencyCode = documentCurrencyCode;
-	}
-
-	public List<RetentionDocumentReferenceEntity> getSunatRetentionDocumentReferences() {
-		return sunatRetentionDocumentReferences;
-	}
-
-	public void setSunatRetentionDocumentReferences(
-			List<RetentionDocumentReferenceEntity> sunatRetentionDocumentReferences) {
-		this.sunatRetentionDocumentReferences = sunatRetentionDocumentReferences;
-	}
-
-	public PartyEntity getAgentParty() {
-		return agentParty;
-	}
-
-	public void setAgentParty(PartyEntity agentParty) {
-		this.agentParty = agentParty;
-	}
-
-	public PartyEntity getReceiverParty() {
-		return receiverParty;
-	}
-
-	public void setReceiverParty(PartyEntity receiverParty) {
-		this.receiverParty = receiverParty;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((documentId == null) ? 0 : documentId.hashCode());
-		result = prime * result + ((organizationId == null) ? 0 : organizationId.hashCode());
+		result = prime * result + ((getDocumentId() == null) ? 0 : getDocumentId().hashCode());
+		result = prime * result + ((getOrganizationId() == null) ? 0 : getOrganizationId().hashCode());
 		return result;
 	}
 
@@ -298,17 +270,16 @@ public class RetentionEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		RetentionEntity other = (RetentionEntity) obj;
-		if (documentId == null) {
-			if (other.documentId != null)
+		if (getDocumentId() == null) {
+			if (other.getDocumentId() != null)
 				return false;
-		} else if (!documentId.equals(other.documentId))
+		} else if (!getDocumentId().equals(other.getDocumentId()))
 			return false;
-		if (organizationId == null) {
-			if (other.organizationId != null)
+		if (getOrganizationId() == null) {
+			if (other.getOrganizationId() != null)
 				return false;
-		} else if (!organizationId.equals(other.organizationId))
+		} else if (!getOrganizationId().equals(other.getOrganizationId()))
 			return false;
 		return true;
 	}
-
 }

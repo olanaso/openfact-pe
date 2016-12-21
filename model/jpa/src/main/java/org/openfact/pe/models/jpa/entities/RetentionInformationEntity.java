@@ -18,6 +18,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "RETENTION_INFORMATION")
 public class RetentionInformationEntity {
+
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(generator = "uuid2")
@@ -34,10 +35,6 @@ public class RetentionInformationEntity {
 
 	@Column(name = "NET_TOTAL_PAID")
 	protected BigDecimal sunatNetTotalPaid;
-
-//	@ManyToOne(targetEntity = ExchangeRateEntity.class, cascade = { CascadeType.ALL })
-//	@JoinColumn(name = "EXCHANGERATE_RETENTIONINFORMATION_ID")
-//	protected ExchangeRateEntity exchangeRate=new ExchangeRateEntity();
 
 	public String getId() {
 		return id;
@@ -69,6 +66,31 @@ public class RetentionInformationEntity {
 
 	public void setSunatNetTotalPaid(BigDecimal sunatNetTotalPaid) {
 		this.sunatNetTotalPaid = sunatNetTotalPaid;
-	}	
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RetentionInformationEntity other = (RetentionInformationEntity) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 
 }

@@ -7,41 +7,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.openfact.models.jpa.entities.OrganizationEntity;
-import org.openfact.models.jpa.entities.PartyEntity;
+import org.openfact.models.jpa.entities.*;
 
 @Entity
-@Table(name = "PERCEPTION", uniqueConstraints = { @UniqueConstraint(columnNames = { "ORGANIZATION_ID", "ID_UBL" }) })
+@Table(name = "PERCEPTION", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "ORGANIZATION_ID", "DOCUMENT_ID" })
+})
 @NamedQueries({
-		@NamedQuery(name = "getAllPerceptionsByOrganization", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.issueDate"),
+		@NamedQuery(name = "getAllPerceptionsByOrganization", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.createdTimestamp"),
+		@NamedQuery(name = "getAllPerceptionsByOrganizationDesc", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationPerceptionById", query = "select p from PerceptionEntity p where p.id = :id and p.organizationId = :organizationId"),
-		@NamedQuery(name = "getAllPerceptionsByRequiredActionAndOrganization", query = "select c from PerceptionEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
+		//@NamedQuery(name = "getAllPerceptionsByRequiredActionAndOrganization", query = "select c from PerceptionEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
 		@NamedQuery(name = "getOrganizationPerceptionByDocumentId", query = "select p from PerceptionEntity p where p.documentId = :documentId and p.organizationId = :organizationId"),
-		@NamedQuery(name = "searchForPerception", query = "select p from PerceptionEntity p where p.organizationId = :organizationId and p.ID like :search order by p.issueDate"),
+		//@NamedQuery(name = "searchForPerception", query = "select p from PerceptionEntity p where p.organizationId = :organizationId and p.ID like :search order by p.issueDate"),
 		@NamedQuery(name = "getOrganizationPerceptionCount", query = "select count(i) from PerceptionEntity p where p.organizationId = :organizationId"),
 		@NamedQuery(name = "getLastPerceptionByOrganization", query = "select p from PerceptionEntity p where p.organizationId = :organizationId and length(p.documentId)=:documentIdLength and p.documentId like :formatter order by p.issueDate desc") })
 public class PerceptionEntity {
@@ -51,77 +34,71 @@ public class PerceptionEntity {
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Access(AccessType.PROPERTY)
-	protected String id;
-
-	@ManyToMany(mappedBy = "perceptions", cascade = { CascadeType.ALL })
-	protected List<PerceptionSendEventEntity> sendEvents = new ArrayList<>();
+	private String id;
 
 	@Column(name = "DOCUMENT_ID")
-	protected String documentId;
+	private String documentId;
 
 	@Column(name = "UBL_VERSIONID")
-	protected String ublVersionId;
+	private String ublVersionId;
 
 	@Column(name = "CUSTOMIZATION_ID")
-	protected String customizationId;
+	private String customizationId;
 
 	@Column(name = "DOCUMENT_CURRENCY_CODE")
-	protected String documentCurrencyCode;
+	private String documentCurrencyCode;
 
 	@Column(name = "ISSUE_DATE")
 	@Type(type = "org.hibernate.type.LocalDateType")
-	protected LocalDate issueDate;
+	private LocalDate issueDate;
 
 	@Column(name = "SUNAT_PERCEPTION_SYSTEM_CODE")
-	protected String sunatPerceptionSystemCode;
+	private String sunatPerceptionSystemCode;
 
 	@Column(name = "SUNAT_PERCEPTION_PERCENT")
-	protected BigDecimal sunatPerceptionPercent;
+	private BigDecimal sunatPerceptionPercent;
 
 	@Column(name = "TOTAL_INVOICE_AMOUNT")
-	protected BigDecimal totalInvoiceAmount;
+	private BigDecimal totalInvoiceAmount;
 
 	@Column(name = "SUNAT_TOTAL_CASHED")
-	protected BigDecimal sunatTotalCashed;
+	private BigDecimal sunatTotalCashed;
 
 	@Lob
+	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "XML_DOCUMENT")
-	protected byte[] xmlDocument;
+	private byte[] xmlDocument;
 
 	@NotNull
 	@Column(name = "ORGANIZATION_ID")
-	protected String organizationId;
+	private String organizationId;
 
 	@ElementCollection
 	@Column(name = "VALUE")
 	@CollectionTable(name = "PERCEPTION_NOTE", joinColumns = { @JoinColumn(name = "PERCEPTION_ID") })
-	protected List<String> notes = new ArrayList<>();
+	private List<String> notes = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception", cascade = CascadeType.REMOVE)
-	protected Collection<PerceptionRequiredActionEntity> requiredActions = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception")
+	private List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception", cascade = CascadeType.ALL)
-	protected List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy="perception")
+	private Collection<PerceptionRequiredActionEntity> requiredActions = new ArrayList<>();
 
-	/**
-	 * Openfact core
-	 */
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey, name = "ORGANIZATION_ID")
-	private OrganizationEntity organization;
+	@OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true, mappedBy = "perception", fetch = FetchType.LAZY)
+	private Collection<PerceptionSendEventEntity> sendEvents = new ArrayList<>();
 
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	@Column(name = "CREATED_TIMESTAMP")
 	private LocalDateTime createdTimestamp;
 
-	@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
+	/*@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "AGENTPARTY_PERCEPTION_ID")
-	protected PartyEntity agentParty;
+	private PartyEntity agentParty;*/
 
-	@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
+	/*@ManyToOne(targetEntity = PartyEntity.class, cascade = { CascadeType.ALL })
 	@JoinColumn(name = "RECEIVERPARTY_PERCEPTION_ID")
-	protected PartyEntity receiverParty;
+	private PartyEntity receiverParty;*/
+
 
 	public String getId() {
 		return id;
@@ -153,6 +130,14 @@ public class PerceptionEntity {
 
 	public void setCustomizationId(String customizationId) {
 		this.customizationId = customizationId;
+	}
+
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
+	}
+
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 	public LocalDate getIssueDate() {
@@ -219,28 +204,12 @@ public class PerceptionEntity {
 		this.notes = notes;
 	}
 
-	public List<PerceptionSendEventEntity> getSendEvents() {
-		return sendEvents;
+	public List<PerceptionDocumentReferenceEntity> getSunatPerceptionDocumentReferences() {
+		return sunatPerceptionDocumentReferences;
 	}
 
-	public void setSendEvents(List<PerceptionSendEventEntity> sendEvents) {
-		this.sendEvents = sendEvents;
-	}
-
-	public OrganizationEntity getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(OrganizationEntity organization) {
-		this.organization = organization;
-	}
-
-	public LocalDateTime getCreatedTimestamp() {
-		return createdTimestamp;
-	}
-
-	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
+	public void setSunatPerceptionDocumentReferences(List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences) {
+		this.sunatPerceptionDocumentReferences = sunatPerceptionDocumentReferences;
 	}
 
 	public Collection<PerceptionRequiredActionEntity> getRequiredActions() {
@@ -251,45 +220,30 @@ public class PerceptionEntity {
 		this.requiredActions = requiredActions;
 	}
 
-	public String getDocumentCurrencyCode() {
-		return documentCurrencyCode;
+	public Collection<PerceptionSendEventEntity> getSendEvents() {
+		return sendEvents;
 	}
 
-	public void setDocumentCurrencyCode(String documentCurrencyCode) {
-		this.documentCurrencyCode = documentCurrencyCode;
+	public void setSendEvents(Collection<PerceptionSendEventEntity> sendEvents) {
+		this.sendEvents = sendEvents;
 	}
 
-	public PartyEntity getAgentParty() {
-		return agentParty;
+	/**
+	 * Openfact core
+	 */
+	public LocalDateTime getCreatedTimestamp() {
+		return createdTimestamp;
 	}
 
-	public void setAgentParty(PartyEntity agentParty) {
-		this.agentParty = agentParty;
-	}
-
-	public PartyEntity getReceiverParty() {
-		return receiverParty;
-	}
-
-	public void setReceiverParty(PartyEntity receiverParty) {
-		this.receiverParty = receiverParty;
-	}
-
-	public List<PerceptionDocumentReferenceEntity> getSunatPerceptionDocumentReferences() {
-		return sunatPerceptionDocumentReferences;
-	}
-
-	public void setSunatPerceptionDocumentReferences(
-			List<PerceptionDocumentReferenceEntity> sunatPerceptionDocumentReferences) {
-		this.sunatPerceptionDocumentReferences = sunatPerceptionDocumentReferences;
+	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+		this.createdTimestamp = createdTimestamp;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((documentId == null) ? 0 : documentId.hashCode());
-		result = prime * result + ((organizationId == null) ? 0 : organizationId.hashCode());
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
 		return result;
 	}
 
@@ -302,17 +256,11 @@ public class PerceptionEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		PerceptionEntity other = (PerceptionEntity) obj;
-		if (documentId == null) {
-			if (other.documentId != null)
+		if (getId() == null) {
+			if (other.getId() != null)
 				return false;
-		} else if (!documentId.equals(other.documentId))
-			return false;
-		if (organizationId == null) {
-			if (other.organizationId != null)
-				return false;
-		} else if (!organizationId.equals(other.organizationId))
+		} else if (!getId().equals(other.getId()))
 			return false;
 		return true;
 	}
-
 }

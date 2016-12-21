@@ -65,7 +65,7 @@ public class JpaSummaryDocumentsProvider extends AbstractHibernateStorage implem
 		SummaryDocumentsEntity summaryDocument = new SummaryDocumentsEntity();
 		summaryDocument.setDocumentId(documentId);
 		summaryDocument.setCreatedTimestamp(LocalDateTime.now());
-		summaryDocument.setOrganization(OrganizationAdapter.toEntity(organization, em));
+		summaryDocument.setOrganizationId(organization.getId());
 		em.persist(summaryDocument);
 		em.flush();
 

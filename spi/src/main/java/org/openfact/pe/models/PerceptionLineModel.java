@@ -1,7 +1,6 @@
 package org.openfact.pe.models;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface PerceptionLineModel {
@@ -16,9 +15,9 @@ public interface PerceptionLineModel {
 
     void setRelatedDocumentNumber(String relatedDocumentNumber);
 
-    LocalDate getRelatedIssueDate();
+    LocalDateTime getRelatedIssueDateTime();
 
-    void setRelatedIssueDate(LocalDate relatedIssueDate);
+    void setRelatedIssueDateTime(LocalDateTime relatedIssueDateTime);
 
     String getRelatedDocumentCurrency();
 
@@ -32,9 +31,9 @@ public interface PerceptionLineModel {
 
     void setTypeChange(BigDecimal typeChange);
 
-    LocalDate getChangeIssueDate();
+    LocalDateTime getChangeIssueDateTime();
 
-    void setChangeIssueDate(LocalDate changeIssueDate);
+    void setChangeIssueDateTime(LocalDateTime changeIssueDateTime);
 
     BigDecimal getTotalPerceptionPayment();
 
@@ -44,9 +43,9 @@ public interface PerceptionLineModel {
 
     void setPerceptionPaymentNumber(String perceptionPaymentNumber);
 
-    LocalDate getPerceptionIssueDate();
+    LocalDateTime getPerceptionIssueDateTime();
 
-    void setPerceptionIssueDate(LocalDate perceptionIssueDate);
+    void setPerceptionIssueDateTime(LocalDateTime perceptionIssueDateTime);
 
     BigDecimal getSunatNetPerceptionAmount();
 

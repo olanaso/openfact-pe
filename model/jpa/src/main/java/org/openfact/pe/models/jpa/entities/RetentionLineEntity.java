@@ -1,7 +1,7 @@
 package org.openfact.pe.models.jpa.entities;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,15 +19,13 @@ public class RetentionLineEntity {
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Access(AccessType.PROPERTY)
 	protected String id;
-	@Column(name = "ID_UBL")
-	protected String ID;
-	@Column(name = "RELATED_DOCUMENT_TYPE")
+		@Column(name = "RELATED_DOCUMENT_TYPE")
 	protected String relatedDocumentType;
 	@Column(name = "RELATED_DOCUMENT_NUMBER")
 	protected String relatedDocumentNumber;
 	@Column(name = "RELATED_ISSUE_DATE")
-	@Type(type = "org.hibernate.type.LocalDateType")
-	protected LocalDate relatedIssueDate;
+	@Type(type = "org.hibernate.type.LocalDateTimeType")
+	protected LocalDateTime relatedIssueDateTime;
 	@Column(name = "RELATED_DOCUMENT_CURRENCY")
 	protected String relatedDocumentCurrency;
 	@Column(name = "TOTAL_DOCUMENT_RELATED")
@@ -35,13 +33,15 @@ public class RetentionLineEntity {
 	@Column(name = "TYPE_CHANGE")
 	protected BigDecimal typeChange;
 	@Column(name = "CHANGE_ISSUE_DATE")
-	protected LocalDate changeIssueDate;
+	@Type(type = "org.hibernate.type.LocalDateTimeType")
+	protected LocalDateTime changeIssueDateTime;
 	@Column(name = "TOTAL_RETENTION_PAYMENT")
 	protected BigDecimal totalRetentionPayment;
 	@Column(name = "RETENTION_PAYEMENT_NUMBER")
 	protected String retentionPaymentNumber;
 	@Column(name = "RETENTION_ISSUE_DATE")
-	protected LocalDate retentionIssueDate;
+	@Type(type = "org.hibernate.type.LocalDateTimeType")
+	protected LocalDateTime retentionIssueDateTime;
 	@Column(name = "SUNAT_NET_RETENTION_AMOUNT")
 	protected BigDecimal sunatNetRetentionAmount;
 	@Column(name = "SUNAT_NET_CASHED")
@@ -60,14 +60,6 @@ public class RetentionLineEntity {
 		this.id = id;
 	}
 
-	public String getID() {
-		return ID;
-	}
-
-	public void setID(String ID) {
-		this.ID = ID;
-	}
-
 	public String getRelatedDocumentType() {
 		return relatedDocumentType;
 	}
@@ -84,12 +76,28 @@ public class RetentionLineEntity {
 		this.relatedDocumentNumber = relatedDocumentNumber;
 	}
 
-	public LocalDate getRelatedIssueDate() {
-		return relatedIssueDate;
+	public LocalDateTime getRelatedIssueDateTime() {
+		return relatedIssueDateTime;
 	}
 
-	public void setRelatedIssueDate(LocalDate relatedIssueDate) {
-		this.relatedIssueDate = relatedIssueDate;
+	public void setRelatedIssueDateTime(LocalDateTime relatedIssueDateTime) {
+		this.relatedIssueDateTime = relatedIssueDateTime;
+	}
+
+	public LocalDateTime getChangeIssueDateTime() {
+		return changeIssueDateTime;
+	}
+
+	public void setChangeIssueDateTime(LocalDateTime changeIssueDateTime) {
+		this.changeIssueDateTime = changeIssueDateTime;
+	}
+
+	public LocalDateTime getRetentionIssueDateTime() {
+		return retentionIssueDateTime;
+	}
+
+	public void setRetentionIssueDateTime(LocalDateTime retentionIssueDateTime) {
+		this.retentionIssueDateTime = retentionIssueDateTime;
 	}
 
 	public String getRelatedDocumentCurrency() {
@@ -116,14 +124,6 @@ public class RetentionLineEntity {
 		this.typeChange = typeChange;
 	}
 
-	public LocalDate getChangeIssueDate() {
-		return changeIssueDate;
-	}
-
-	public void setChangeIssueDate(LocalDate changeIssueDate) {
-		this.changeIssueDate = changeIssueDate;
-	}
-
 	public BigDecimal getTotalRetentionPayment() {
 		return totalRetentionPayment;
 	}
@@ -138,15 +138,7 @@ public class RetentionLineEntity {
 
 	public void setRetentionPaymentNumber(String retentionPaymentNumber) {
 		this.retentionPaymentNumber = retentionPaymentNumber;
-	}
-
-	public LocalDate getRetentionIssueDate() {
-		return retentionIssueDate;
-	}
-
-	public void setRetentionIssueDate(LocalDate retentionIssueDate) {
-		this.retentionIssueDate = retentionIssueDate;
-	}
+	}	
 
 	public BigDecimal getSunatNetRetentionAmount() {
 		return sunatNetRetentionAmount;

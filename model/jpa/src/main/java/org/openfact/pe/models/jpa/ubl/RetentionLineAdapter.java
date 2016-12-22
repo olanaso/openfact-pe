@@ -1,7 +1,7 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.EntityManager;
 
@@ -57,13 +57,13 @@ public class RetentionLineAdapter
 	}
 
 	@Override
-	public LocalDate getRelatedIssueDate() {
-		return retentionLine.getRelatedIssueDate();
+	public LocalDateTime getRelatedIssueDateTime() {
+		return retentionLine.getRelatedIssueDateTime();
 	}
 
 	@Override
-	public void setRelatedIssueDate(LocalDate relatedIssueDate) {
-		retentionLine.setRelatedIssueDate(relatedIssueDate);
+	public void setRelatedIssueDateTime(LocalDateTime relatedIssueDateTime) {
+		retentionLine.setRelatedIssueDateTime(relatedIssueDateTime);
 	}
 
 	@Override
@@ -97,13 +97,13 @@ public class RetentionLineAdapter
 	}
 
 	@Override
-	public LocalDate getChangeIssueDate() {
-		return retentionLine.getChangeIssueDate();
+	public LocalDateTime getChangeIssueDateTime() {
+		return retentionLine.getChangeIssueDateTime();
 	}
 
 	@Override
-	public void setChangeIssueDate(LocalDate changeIssueDate) {
-		retentionLine.setChangeIssueDate(changeIssueDate);
+	public void setChangeIssueDateTime(LocalDateTime changeIssueDateTime) {
+		retentionLine.setChangeIssueDateTime(changeIssueDateTime);
 	}
 
 	@Override
@@ -127,13 +127,13 @@ public class RetentionLineAdapter
 	}
 
 	@Override
-	public LocalDate getRetentionIssueDate() {
-		return retentionLine.getRetentionIssueDate();
+	public LocalDateTime getRetentionIssueDateTime() {
+		return retentionLine.getRetentionIssueDateTime();
 	}
 
 	@Override
-	public void setRetentionIssueDate(LocalDate retentionIssueDate) {
-		retentionLine.setRetentionIssueDate(retentionIssueDate);
+	public void setRetentionIssueDateTime(LocalDateTime retentionIssueDateTime) {
+		retentionLine.setRetentionIssueDateTime(retentionIssueDateTime);
 	}
 
 	@Override

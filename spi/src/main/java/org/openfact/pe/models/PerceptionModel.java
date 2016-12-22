@@ -19,6 +19,10 @@ public interface PerceptionModel {
 
     String getOrganizationId();
 
+    String getDocumentId();
+
+    void setDocumentId(String documentId);
+
     String getUblVersionID();
 
     void setUblVersionID(String ublVersionID);
@@ -51,13 +55,9 @@ public interface PerceptionModel {
 
     void setEntityEmail(String entityEmail);
 
-    String getPerceptionDocumentNumber();
+    String getDocumentCurrencyCode();
 
-    void setPerceptionDocumentNumber(String perceptionDocumentNumber);
-
-    String getPerceptionDocumentCurrency();
-
-    void setPerceptionDocumentCurrency(String perceptionDocumentCurrency);
+    void setDocumentCurrencyCode(String documentCurrencyCode);
 
     BigDecimal getSunatPerceptionPercent();
 
@@ -75,9 +75,9 @@ public interface PerceptionModel {
 
     void setTotalCashed(BigDecimal totalCashed);
 
-    LocalDate getIssueDate();
+    LocalDateTime getIssueDateTime();
 
-    void setIssueDate(LocalDate issueDate);
+    void setIssueDateTime(LocalDateTime issueDateTime);
 
     List<PerceptionLineModel> getPerceptionLines();
 

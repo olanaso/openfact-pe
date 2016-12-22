@@ -3,6 +3,7 @@ package org.openfact.pe.models.jpa.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,29 +21,30 @@ public class PerceptionLineEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Access(AccessType.PROPERTY)
     protected String id;
-    @Column(name = "ID_UBL")
-    protected String ID;
     @Column(name = "RELATED_DOCUMENT_TYPE")
     protected String relatedDocumentType;
     @Column(name = "RELATED_DOCUMENT_NUMBER")
     protected String relatedDocumentNumber;
     @Column(name = "RELATED_ISSUE_DATE")
-    @Type(type = "org.hibernate.type.LocalDateType")
-    protected LocalDate relatedIssueDate;
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    protected LocalDateTime relatedIssueDateTime;
     @Column(name = "RELATED_DOCUMENT_CURRENCY")
     protected String relatedDocumentCurrency;
     @Column(name = "TOTAL_DOCUMENT_RELATED")
     protected BigDecimal totalDocumentRelated;
+
     @Column(name = "TYPE_CHANGE")
     protected BigDecimal typeChange;
     @Column(name = "CHANGE_ISSUE_DATE")
-    protected LocalDate changeIssueDate;
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    protected LocalDateTime changeIssueDateTime;
     @Column(name = "TOTAL_PERCEPTION_PAYMENT")
     protected BigDecimal totalPerceptionPayment;
     @Column(name = "PERCEPTION_PAYEMENT_NUMBER")
     protected String perceptionPaymentNumber;
     @Column(name = "PERCEPTION_ISSUE_DATE")
-    protected LocalDate perceptionIssueDate;
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    protected LocalDateTime perceptionIssueDateTime;
     @Column(name = "SUNAT_NET_PERCEPTION_AMOUNT")
     protected BigDecimal sunatNetPerceptionAmount;
     @Column(name = "SUNAT_NET_CASHED")
@@ -60,14 +62,6 @@ public class PerceptionLineEntity {
         this.id = id;
     }
 
-    public String getID() {
-        return ID;
-    }
-
-    public void setID(String ID) {
-        this.ID = ID;
-    }
-
     public String getRelatedDocumentType() {
         return relatedDocumentType;
     }
@@ -83,15 +77,6 @@ public class PerceptionLineEntity {
     public void setRelatedDocumentNumber(String relatedDocumentNumber) {
         this.relatedDocumentNumber = relatedDocumentNumber;
     }
-
-    public LocalDate getRelatedIssueDate() {
-        return relatedIssueDate;
-    }
-
-    public void setRelatedIssueDate(LocalDate relatedIssueDate) {
-        this.relatedIssueDate = relatedIssueDate;
-    }
-
     public String getRelatedDocumentCurrency() {
         return relatedDocumentCurrency;
     }
@@ -116,14 +101,6 @@ public class PerceptionLineEntity {
         this.typeChange = typeChange;
     }
 
-    public LocalDate getChangeIssueDate() {
-        return changeIssueDate;
-    }
-
-    public void setChangeIssueDate(LocalDate changeIssueDate) {
-        this.changeIssueDate = changeIssueDate;
-    }
-
     public BigDecimal getTotalPerceptionPayment() {
         return totalPerceptionPayment;
     }
@@ -140,12 +117,28 @@ public class PerceptionLineEntity {
         this.perceptionPaymentNumber = perceptionPaymentNumber;
     }
 
-    public LocalDate getPerceptionIssueDate() {
-        return perceptionIssueDate;
+    public LocalDateTime getRelatedIssueDateTime() {
+        return relatedIssueDateTime;
     }
 
-    public void setPerceptionIssueDate(LocalDate perceptionIssueDate) {
-        this.perceptionIssueDate = perceptionIssueDate;
+    public void setRelatedIssueDateTime(LocalDateTime relatedIssueDateTime) {
+        this.relatedIssueDateTime = relatedIssueDateTime;
+    }
+
+    public LocalDateTime getChangeIssueDateTime() {
+        return changeIssueDateTime;
+    }
+
+    public void setChangeIssueDateTime(LocalDateTime changeIssueDateTime) {
+        this.changeIssueDateTime = changeIssueDateTime;
+    }
+
+    public LocalDateTime getPerceptionIssueDateTime() {
+        return perceptionIssueDateTime;
+    }
+
+    public void setPerceptionIssueDateTime(LocalDateTime perceptionIssueDateTime) {
+        this.perceptionIssueDateTime = perceptionIssueDateTime;
     }
 
     public BigDecimal getSunatNetPerceptionAmount() {

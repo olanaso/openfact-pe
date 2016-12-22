@@ -20,6 +20,7 @@ import javax.xml.transform.dom.DOMResult;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
+import org.openfact.common.converts.DateUtils;
 import org.openfact.common.finance.MoneyConverters;
 import org.openfact.models.InvoiceModel;
 import org.openfact.models.ModelException;
@@ -219,7 +220,7 @@ public class SunatRepresentationToType {
             PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
             priceAmountType.setCurrencyID(rep.getMoneda());
             priceType.setPriceAmount(priceAmountType);
-            if(!rep.isOperacionGratuita()) {
+            if (!rep.isOperacionGratuita()) {
                 priceType.setPriceTypeCode("01");
             } else {
                 priceType.setPriceTypeCode("02");
@@ -422,7 +423,7 @@ public class SunatRepresentationToType {
             PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
             priceAmountType.setCurrencyID(rep.getMoneda());
             priceType.setPriceAmount(priceAmountType);
-            if(!rep.isOperacionGratuita()) {
+            if (!rep.isOperacionGratuita()) {
                 priceType.setPriceTypeCode("01");
             } else {
                 priceType.setPriceTypeCode("02");
@@ -622,7 +623,7 @@ public class SunatRepresentationToType {
             PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
             priceAmountType.setCurrencyID(rep.getMoneda());
             priceType.setPriceAmount(priceAmountType);
-            if(!rep.isOperacionGratuita()) {
+            if (!rep.isOperacionGratuita()) {
                 priceType.setPriceTypeCode("01");
             } else {
                 priceType.setPriceTypeCode("02");
@@ -678,7 +679,7 @@ public class SunatRepresentationToType {
         type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         // Date
         if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
         }
         type.setAgentParty(toAgentPartyType(organization));
         type.setReceiverParty(toReceiverPartyType(rep));
@@ -687,6 +688,12 @@ public class SunatRepresentationToType {
         //}
         if (rep.getTasaDocumento() != null) {
             type.setSunatPerceptionPercent(rep.getTasaDocumento());
+        }
+        if (rep.getObservaciones() != null) {
+            type.addNote(rep.getObservaciones());
+        }
+        if (rep.getMonedaDocumento() != null) {
+            type.setDocumentCurrencyCode(rep.getMonedaDocumento());
         }
         BigDecimal totalInvoiceAmount = new BigDecimal(0);
         BigDecimal totalPaid = new BigDecimal(0);
@@ -717,12 +724,13 @@ public class SunatRepresentationToType {
         }
         return type;
     }
+
     private static SUNATPerceptionDocumentReferenceType toPerceptionDocumentReferenceType(
             DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal perception) {
         SUNATPerceptionDocumentReferenceType type = new SUNATPerceptionDocumentReferenceType();
         type.setId(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
+            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
             type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
@@ -737,7 +745,7 @@ public class SunatRepresentationToType {
         SUNATPerceptionInformationType type = new SUNATPerceptionInformationType();
         type.setSunatPerceptionAmount(toSUNATRetentionAmountType(rep, currencyCode, perception));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSunatPerceptionDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
+            type.setSunatPerceptionDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
         }
         type.setSunatNetTotalCashed(tosetSUNATNetTotalPaidType(rep, currencyCode, perception));
         type.setExchangeRate(toExchangeRateType(rep, currencyCode));
@@ -752,38 +760,51 @@ public class SunatRepresentationToType {
         type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         // Date
         if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
         }
         type.setAgentParty(toAgentPartyType(organization));
         type.setReceiverParty(toReceiverPartyType(rep));
         //	if (rep.getCodigoDocumento() != null) {
-        type.setSunatRetentionSystemCode("1");
+        type.setSunatRetentionSystemCode("01");
         //}
         if (rep.getTasaDocumento() != null) {
             type.setSunatRetentionPercent(rep.getTasaDocumento());
         }
-        BigDecimal totalInvoiceAmount = new BigDecimal(0);
-        BigDecimal totalPaid = new BigDecimal(0);
+        if (rep.getObservaciones() != null) {
+            type.addNote(rep.getObservaciones());
+        }
+        if (rep.getMonedaDocumento() != null) {
+            type.setDocumentCurrencyCode(rep.getMonedaDocumento());
+        }
+        double totalInvoiceAmount = 0, totalPaid = 0;
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
-            BigDecimal amount = new BigDecimal(0);
-            BigDecimal paid = new BigDecimal(0);
-            if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null
-                    && reference.getMonedaDocumentoRelacionado() != rep.getMonedaDocumento()) {
-                if (reference.getTipoCambio() != null && reference.getTipoCambio() != new BigDecimal(0)) {
-                    amount = reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio())
-                            .multiply(rep.getTasaDocumento()).divide(new BigDecimal(100));
-                    paid = reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(amount);
+            double amount = 0, paid = 0;
+            boolean change = false;
+            if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null) {
+                if (!reference.getMonedaDocumentoRelacionado().equalsIgnoreCase(rep.getMonedaDocumento())) {
+                    if (reference.getTipoCambio() != null && reference.getTipoCambio().doubleValue() != 0) {
+                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio())
+                                .multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
+                        paid = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(new BigDecimal(amount))).doubleValue();
+                    } else {
+                        change = true;
+                    }
+                } else {
+                    change = true;
                 }
             } else {
-                reference.setTipoCambio(null);
-                amount = reference.getPagoDocumentoSunat().multiply(rep.getTasaDocumento()).divide(new BigDecimal(100));
-                paid = reference.getPagoDocumentoSunat().subtract(amount);
+                change = true;
             }
-            totalInvoiceAmount.add(amount);
-            totalPaid.add(paid);
+            if (change) {
+                reference.setTipoCambio(null);
+                amount = (reference.getPagoDocumentoSunat().multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
+                paid = (reference.getPagoDocumentoSunat().subtract(new BigDecimal(amount))).doubleValue();
+            }
+            totalInvoiceAmount = totalInvoiceAmount + amount;
+            totalPaid = totalPaid + paid;
         }
-        type.setTotalInvoiceAmount(totalInvoiceAmount, rep.getMonedaDocumento());
-        type.setSunatTotalPaid(totalPaid, rep.getMonedaDocumento());
+        type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount), rep.getMonedaDocumento());
+        type.setSunatTotalPaid(new BigDecimal(totalPaid), rep.getMonedaDocumento());
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
             type.addRetentionDocumentReference(
                     toRetentionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
@@ -796,7 +817,7 @@ public class SunatRepresentationToType {
         SUNATRetentionDocumentReferenceType type = new SUNATRetentionDocumentReferenceType();
         type.setID(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
+            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
             type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
@@ -812,7 +833,7 @@ public class SunatRepresentationToType {
         SUNATRetentionInformationType type = new SUNATRetentionInformationType();
         type.setSUNATRetentionAmount(toSUNATRetentionAmountType(rep, currencyCode, retencion));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSUNATRetentionDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
+            type.setSUNATRetentionDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
         }
         type.setSUNATNetTotalPaid(tosetSUNATNetTotalPaidType(rep, currencyCode, retencion));
         if (rep.getTipoCambio() != null) {
@@ -825,18 +846,25 @@ public class SunatRepresentationToType {
                                                          BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
-        BigDecimal retentionAmount = new BigDecimal(0);
-        BigDecimal totalPaid = new BigDecimal(0);
-        if (currencyCode != null && rep.getMonedaDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != currencyCode) {
-            if (rep.getTipoCambio() != null && rep.getTipoCambio() != new BigDecimal(0)) {
-                retentionAmount = rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).multiply(retencion).divide(new BigDecimal(100));
-                totalPaid = rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).subtract(retentionAmount);
+        double retentionAmount = 0, totalPaid = 0;
+        boolean change = false;
+        if (currencyCode != null && rep.getMonedaDocumentoRelacionado() != null) {
+            if (!rep.getMonedaDocumentoRelacionado().equalsIgnoreCase(currencyCode)) {
+                if (rep.getTipoCambio() != null && rep.getTipoCambio().doubleValue() != 0) {
+                    retentionAmount = (rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).multiply(retencion).divide(new BigDecimal(100))).doubleValue();
+                    totalPaid = (rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).subtract(new BigDecimal(retentionAmount))).doubleValue();
+                } else {
+                    change = true;
+                }
+            } else {
+                change = true;
             }
-        } else {
-            retentionAmount = rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100));
-            totalPaid = rep.getPagoDocumentoSunat().subtract(retentionAmount);
         }
-        type.setValue(totalPaid);
+        if (change) {
+            retentionAmount = (rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100))).doubleValue();
+            totalPaid = (rep.getPagoDocumentoSunat().subtract(new BigDecimal(retentionAmount))).doubleValue();
+        }
+        type.setValue(new BigDecimal(totalPaid));
         return type;
     }
 
@@ -844,16 +872,25 @@ public class SunatRepresentationToType {
                                                          BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
-        BigDecimal retentionAmount = new BigDecimal(0);
-        if (currencyCode != null && rep.getMonedaDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != currencyCode) {
-            if (rep.getTipoCambio() != null && rep.getTipoCambio() != new BigDecimal(0)) {
-                retentionAmount = rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).multiply(retencion).divide(new BigDecimal(100));
+        double retentionAmount = 0, totalPaid = 0;
+        boolean change = false;
+        if (currencyCode != null && rep.getMonedaDocumentoRelacionado() != null) {
+            if (!rep.getMonedaDocumentoRelacionado().equalsIgnoreCase(currencyCode)) {
+                if (rep.getTipoCambio() != null && rep.getTipoCambio().doubleValue() != 0) {
+                    retentionAmount = (rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).multiply(retencion).divide(new BigDecimal(100))).doubleValue();
+                } else {
+                    change = true;
+                }
+            } else {
+                change = true;
             }
-        } else {
-            retentionAmount = rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100));
         }
-        type.setValue(retentionAmount);
+        if (change) {
+            retentionAmount = (rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100))).doubleValue();
+        }
+        type.setValue(new BigDecimal(retentionAmount));
         return type;
+
     }
 
     private static ExchangeRateType toExchangeRateType(DocumentoSunatLineRepresentation rep, String currencyCode) {
@@ -864,10 +901,8 @@ public class SunatRepresentationToType {
                 type.setSourceCurrencyCode(rep.getMonedaDocumentoRelacionado());
             }
             type.setTargetCurrencyCode(currencyCode);
-
-
             if (rep.getFechaCambio() != null) {
-                type.setDate(toGregorianCalendar(rep.getFechaCambio()));
+                type.setDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaCambio())));
             }
         }
         return type;
@@ -880,7 +915,7 @@ public class SunatRepresentationToType {
         }
         type.setPaidAmount(toPaidAmountType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setPaidDate(toGregorianCalendar(rep.getFechaDocumentoRelacionado()));
+            type.setPaidDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
         }
         return type;
     }
@@ -1050,211 +1085,211 @@ public class SunatRepresentationToType {
         return type;
     }
 
-	private static PartyIdentificationType toPartyIdentificationType(OrganizationModel organization, boolean sign) {
-		PartyIdentificationType type = new PartyIdentificationType();
-		if (sign) {
-			if (organization.getAssignedIdentificationId() != null) {
-				type.setID(organization.getAssignedIdentificationId());
-			}
-		} else {
-			type.setID(toIDType(organization));
-		}
-		return type;
-	}
+    private static PartyIdentificationType toPartyIdentificationType(OrganizationModel organization, boolean sign) {
+        PartyIdentificationType type = new PartyIdentificationType();
+        if (sign) {
+            if (organization.getAssignedIdentificationId() != null) {
+                type.setID(organization.getAssignedIdentificationId());
+            }
+        } else {
+            type.setID(toIDType(organization));
+        }
+        return type;
+    }
 
-	private static IDType toIDType(OrganizationModel organization) {
-		IDType type = new IDType();
-		if (organization.getAssignedIdentificationId() != null) {
-			type.setValue(organization.getAssignedIdentificationId());
-		}
-		if (organization.getAdditionalAccountId() != null) {
-			type.setSchemeID(organization.getAdditionalAccountId());
-		}
-		return type;
-	}
+    private static IDType toIDType(OrganizationModel organization) {
+        IDType type = new IDType();
+        if (organization.getAssignedIdentificationId() != null) {
+            type.setValue(organization.getAssignedIdentificationId());
+        }
+        if (organization.getAdditionalAccountId() != null) {
+            type.setSchemeID(organization.getAdditionalAccountId());
+        }
+        return type;
+    }
 
-	public static SummaryDocumentsType toSummaryDocumentType(OrganizationModel organization,
-			SummaryRepresentation rep) {
-		SummaryDocumentsType type = new SummaryDocumentsType();
-		type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-		type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
-		type.setId(rep.getSerie() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumero());
-		if (rep.getFechaDeEmision() != null) {
-			type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
-		}
-		if (rep.getFechaDeReferencia() != null) {
-			type.setIssueDate(toGregorianCalendar(rep.getFechaDeReferencia().toLocalDate()));
-		}
-		type.addSignature(toSignatureType(organization));
-		type.setAccountingSupplierParty(toAccountingSupplierPartyType(organization));
-		for (SummaryLineRepresentation line : rep.getLine()) {
-			type.addSummaryDocumentsLine(toSummaryDocumentsLineType(line));
-		}
-		return type;
-	}
+    public static SummaryDocumentsType toSummaryDocumentType(OrganizationModel organization,
+                                                             SummaryRepresentation rep) {
+        SummaryDocumentsType type = new SummaryDocumentsType();
+        type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
+        type.setId(rep.getSerie() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumero());
+        if (rep.getFechaDeEmision() != null) {
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+        }
+        if (rep.getFechaDeReferencia() != null) {
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDeReferencia().toLocalDate()));
+        }
+        type.addSignature(toSignatureType(organization));
+        type.setAccountingSupplierParty(toAccountingSupplierPartyType(organization));
+        for (SummaryLineRepresentation line : rep.getLine()) {
+            type.addSummaryDocumentsLine(toSummaryDocumentsLineType(line));
+        }
+        return type;
+    }
 
-	private static SummaryDocumentsLineType toSummaryDocumentsLineType(SummaryLineRepresentation rep) {
-		SummaryDocumentsLineType type = new SummaryDocumentsLineType();
-		if (rep.getLineID() != null) {
-			type.setID(rep.getLineID());
-		}
-		if (rep.getCodigoDocumento() != null) {
-			type.setDocumentTypeCode(rep.getCodigoDocumento());
-		}
-		if (rep.getSerieDocumento() != null) {
-			type.setDocumentSerialID(rep.getSerieDocumento());
-		}
-		if (rep.getNumeroInicioDocumento() != null) {
-			type.setStartDocumentNumberID(rep.getNumeroInicioDocumento());
-		}
-		if (rep.getNumeroFinDocumento() != null) {
-			type.setEndDocumentNumberID(rep.getNumeroFinDocumento());
-		}
-		if (rep.getTotalAmount() != null && rep.getMoneda() != null) {
-			type.setTotalAmount(rep.getTotalAmount(), rep.getMoneda());
-		}
-		if (rep.getPayment() != null) {
-			for (BillingPaymentRepresentation payment : rep.getPayment()) {
-				type.addBillingPayment(toBillingPaymentType(payment, rep.getMoneda()));
-			}
-		}
-		type.addAllowanceCharge(toAllowanceChargeType(rep));
-		for (TaxTotalRepresentation tax : rep.getTaxTotal()) {
-			type.addTaxTotal(toTaxTotalType(tax, rep.getMoneda()));
-		}
-		return type;
-	}
+    private static SummaryDocumentsLineType toSummaryDocumentsLineType(SummaryLineRepresentation rep) {
+        SummaryDocumentsLineType type = new SummaryDocumentsLineType();
+        if (rep.getLineID() != null) {
+            type.setID(rep.getLineID());
+        }
+        if (rep.getCodigoDocumento() != null) {
+            type.setDocumentTypeCode(rep.getCodigoDocumento());
+        }
+        if (rep.getSerieDocumento() != null) {
+            type.setDocumentSerialID(rep.getSerieDocumento());
+        }
+        if (rep.getNumeroInicioDocumento() != null) {
+            type.setStartDocumentNumberID(rep.getNumeroInicioDocumento());
+        }
+        if (rep.getNumeroFinDocumento() != null) {
+            type.setEndDocumentNumberID(rep.getNumeroFinDocumento());
+        }
+        if (rep.getTotalAmount() != null && rep.getMoneda() != null) {
+            type.setTotalAmount(rep.getTotalAmount(), rep.getMoneda());
+        }
+        if (rep.getPayment() != null) {
+            for (BillingPaymentRepresentation payment : rep.getPayment()) {
+                type.addBillingPayment(toBillingPaymentType(payment, rep.getMoneda()));
+            }
+        }
+        type.addAllowanceCharge(toAllowanceChargeType(rep));
+        for (TaxTotalRepresentation tax : rep.getTaxTotal()) {
+            type.addTaxTotal(toTaxTotalType(tax, rep.getMoneda()));
+        }
+        return type;
+    }
 
-	private static TaxTotalType toTaxTotalType(TaxTotalRepresentation rep, String currencyCode) {
-		TaxTotalType type = new TaxTotalType();
-		type.setTaxAmount(toTaxAmountType(rep, currencyCode));
-		type.addTaxSubtotal(toTaxSubtotalType(rep, currencyCode));
-		return type;
-	}
+    private static TaxTotalType toTaxTotalType(TaxTotalRepresentation rep, String currencyCode) {
+        TaxTotalType type = new TaxTotalType();
+        type.setTaxAmount(toTaxAmountType(rep, currencyCode));
+        type.addTaxSubtotal(toTaxSubtotalType(rep, currencyCode));
+        return type;
+    }
 
-	private static TaxSubtotalType toTaxSubtotalType(TaxTotalRepresentation rep, String currencyCode) {
-		TaxSubtotalType type = new TaxSubtotalType();
-		type.setTaxAmount(toTaxAmountType(rep, currencyCode));
-		type.setTaxCategory(toTaxCategoryType(rep));
-		return type;
-	}
+    private static TaxSubtotalType toTaxSubtotalType(TaxTotalRepresentation rep, String currencyCode) {
+        TaxSubtotalType type = new TaxSubtotalType();
+        type.setTaxAmount(toTaxAmountType(rep, currencyCode));
+        type.setTaxCategory(toTaxCategoryType(rep));
+        return type;
+    }
 
-	private static TaxCategoryType toTaxCategoryType(TaxTotalRepresentation rep) {
-		TaxCategoryType type = new TaxCategoryType();
-		type.setTaxScheme(toTaxSchemeType(rep));
-		return type;
-	}
+    private static TaxCategoryType toTaxCategoryType(TaxTotalRepresentation rep) {
+        TaxCategoryType type = new TaxCategoryType();
+        type.setTaxScheme(toTaxSchemeType(rep));
+        return type;
+    }
 
-	private static TaxSchemeType toTaxSchemeType(TaxTotalRepresentation rep) {
-		TaxSchemeType type = new TaxSchemeType();
-		if (rep.getTaxSchemeID() != null) {
-			type.setID(rep.getTaxSchemeID());
-		}
-		if (rep.getTaxSchemeName() != null) {
-			type.setName(rep.getTaxSchemeName());
-		}
-		if (rep.getTaxTypeCode() != null) {
-			type.setTaxTypeCode(rep.getTaxTypeCode());
-		}
-		return type;
-	}
+    private static TaxSchemeType toTaxSchemeType(TaxTotalRepresentation rep) {
+        TaxSchemeType type = new TaxSchemeType();
+        if (rep.getTaxSchemeID() != null) {
+            type.setID(rep.getTaxSchemeID());
+        }
+        if (rep.getTaxSchemeName() != null) {
+            type.setName(rep.getTaxSchemeName());
+        }
+        if (rep.getTaxTypeCode() != null) {
+            type.setTaxTypeCode(rep.getTaxTypeCode());
+        }
+        return type;
+    }
 
-	private static TaxAmountType toTaxAmountType(TaxTotalRepresentation rep, String currencycode) {
-		TaxAmountType type = new TaxAmountType();
-		type.setCurrencyID(currencycode);
-		if (rep.getTaxAmount() != null) {
-			type.setValue(rep.getTaxAmount());
-		}
-		return type;
-	}
+    private static TaxAmountType toTaxAmountType(TaxTotalRepresentation rep, String currencycode) {
+        TaxAmountType type = new TaxAmountType();
+        type.setCurrencyID(currencycode);
+        if (rep.getTaxAmount() != null) {
+            type.setValue(rep.getTaxAmount());
+        }
+        return type;
+    }
 
-	private static AllowanceChargeType toAllowanceChargeType(SummaryLineRepresentation rep) {
-		AllowanceChargeType type = new AllowanceChargeType();
-		type.setChargeIndicator(rep.isChargeIndicator());
-		if (rep.getChargeAmount() != null) {
-			type.setAmount(rep.getChargeAmount());
-		}
-		return type;
-	}
+    private static AllowanceChargeType toAllowanceChargeType(SummaryLineRepresentation rep) {
+        AllowanceChargeType type = new AllowanceChargeType();
+        type.setChargeIndicator(rep.isChargeIndicator());
+        if (rep.getChargeAmount() != null) {
+            type.setAmount(rep.getChargeAmount());
+        }
+        return type;
+    }
 
-	private static PaymentType toBillingPaymentType(BillingPaymentRepresentation rep, String currencycode) {
-		PaymentType type = new PaymentType();
-		type.setPaidAmount(toPaidAmountType(rep, currencycode));
-		if (rep.getInstructionID() != null) {
-			type.setInstructionID(rep.getInstructionID());
-		}
-		return type;
-	}
+    private static PaymentType toBillingPaymentType(BillingPaymentRepresentation rep, String currencycode) {
+        PaymentType type = new PaymentType();
+        type.setPaidAmount(toPaidAmountType(rep, currencycode));
+        if (rep.getInstructionID() != null) {
+            type.setInstructionID(rep.getInstructionID());
+        }
+        return type;
+    }
 
-	private static PaidAmountType toPaidAmountType(BillingPaymentRepresentation rep, String currencycode) {
-		PaidAmountType type = new PaidAmountType();
-		type.setCurrencyID(currencycode);
-		if (rep.getPaidAmount() != null) {
-			type.setValue(rep.getPaidAmount());
-		}
-		return type;
-	}
+    private static PaidAmountType toPaidAmountType(BillingPaymentRepresentation rep, String currencycode) {
+        PaidAmountType type = new PaidAmountType();
+        type.setCurrencyID(currencycode);
+        if (rep.getPaidAmount() != null) {
+            type.setValue(rep.getPaidAmount());
+        }
+        return type;
+    }
 
-	public static VoidedDocumentsType toVoidedDocumentType(OrganizationModel organization, VoidedRepresentation rep) {
-		VoidedDocumentsType type = new VoidedDocumentsType();
-		type.setUBLVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-		type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
-		type.setID(rep.getSerie() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumero());
-		if (rep.getFechaDeDocumento() != null) {
-			type.setIssueDate(toGregorianCalendar(rep.getFechaDeDocumento().toLocalDate()));
-		}
-		if (rep.getFechaReferencia() != null) {
-			type.setIssueDate(toGregorianCalendar(rep.getFechaReferencia().toLocalDate()));
-		}
-		type.addSignature(toSignatureType(organization));
-		type.setAccountingSupplierParty(toAccountingSupplierPartyType(organization));
-		for (VoidedLineRepresentation line : rep.getLine()) {
-			type.addVoidedDocumentsLine(toVoidedDocumentsLineType(line));
-		}
-		return type;
-	}
+    public static VoidedDocumentsType toVoidedDocumentType(OrganizationModel organization, VoidedRepresentation rep) {
+        VoidedDocumentsType type = new VoidedDocumentsType();
+        type.setUBLVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
+        type.setID(rep.getSerie() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumero());
+        if (rep.getFechaDeDocumento() != null) {
+            type.setIssueDate(toGregorianCalendar(rep.getFechaDeDocumento().toLocalDate()));
+        }
+        if (rep.getFechaReferencia() != null) {
+            type.setIssueDate(toGregorianCalendar(rep.getFechaReferencia().toLocalDate()));
+        }
+        type.addSignature(toSignatureType(organization));
+        type.setAccountingSupplierParty(toAccountingSupplierPartyType(organization));
+        for (VoidedLineRepresentation line : rep.getLine()) {
+            type.addVoidedDocumentsLine(toVoidedDocumentsLineType(line));
+        }
+        return type;
+    }
 
-	private static VoidedDocumentsLineType toVoidedDocumentsLineType(VoidedLineRepresentation rep) {
-		VoidedDocumentsLineType type = new VoidedDocumentsLineType();
-		if (rep.getLineID() != null) {
-			type.setLineID(rep.getLineID());
-		}
-		if (rep.getCodigoDocumento() != null) {
-			type.setDocumentTypeCode(rep.getCodigoDocumento());
-		}
-		if (rep.getSerieDocumento() != null) {
-			type.setDocumentSerialID(rep.getSerieDocumento());
-		}
-		if (rep.getNumeroDocumento() != null) {
-			type.setDocumentNumberID(rep.getNumeroDocumento());
-		}
-		if (rep.getDescripcion() != null) {
-			type.setVoidReasonDescription(rep.getDescripcion());
-		}
-		return type;
-	}
+    private static VoidedDocumentsLineType toVoidedDocumentsLineType(VoidedLineRepresentation rep) {
+        VoidedDocumentsLineType type = new VoidedDocumentsLineType();
+        if (rep.getLineID() != null) {
+            type.setLineID(rep.getLineID());
+        }
+        if (rep.getCodigoDocumento() != null) {
+            type.setDocumentTypeCode(rep.getCodigoDocumento());
+        }
+        if (rep.getSerieDocumento() != null) {
+            type.setDocumentSerialID(rep.getSerieDocumento());
+        }
+        if (rep.getNumeroDocumento() != null) {
+            type.setDocumentNumberID(rep.getNumeroDocumento());
+        }
+        if (rep.getDescripcion() != null) {
+            type.setVoidReasonDescription(rep.getDescripcion());
+        }
+        return type;
+    }
 
-	private static SupplierPartyType toAccountingSupplierPartyType(OrganizationModel organization) {
-		SupplierPartyType type = new SupplierPartyType();
-		type.setCustomerAssignedAccountID(organization.getAssignedIdentificationId());
-		type.setAdditionalAccountID(toAdditionalAccountIDType(organization));
-		type.setParty(toPartyType(organization));
-		return type;
-	}
+    private static SupplierPartyType toAccountingSupplierPartyType(OrganizationModel organization) {
+        SupplierPartyType type = new SupplierPartyType();
+        type.setCustomerAssignedAccountID(organization.getAssignedIdentificationId());
+        type.setAdditionalAccountID(toAdditionalAccountIDType(organization));
+        type.setParty(toPartyType(organization));
+        return type;
+    }
 
-	private static PartyType toPartyType(OrganizationModel organization) {
-		PartyType type = new PartyType();
-		type.setPartyLegalEntity(Arrays.asList(toPartyLegalEntityType(organization)));
-		return type;
-	}
+    private static PartyType toPartyType(OrganizationModel organization) {
+        PartyType type = new PartyType();
+        type.setPartyLegalEntity(Arrays.asList(toPartyLegalEntityType(organization)));
+        return type;
+    }
 
-	private static List<AdditionalAccountIDType> toAdditionalAccountIDType(OrganizationModel organization) {
-		List<AdditionalAccountIDType> list = new ArrayList<>();
-		AdditionalAccountIDType type = new AdditionalAccountIDType();
-		type.setValue(organization.getAdditionalAccountId());
-		list.add(type);
-		return list;
-	}
+    private static List<AdditionalAccountIDType> toAdditionalAccountIDType(OrganizationModel organization) {
+        List<AdditionalAccountIDType> list = new ArrayList<>();
+        AdditionalAccountIDType type = new AdditionalAccountIDType();
+        type.setValue(organization.getAdditionalAccountId());
+        list.add(type);
+        return list;
+    }
 
     public static SupplierPartyType toSupplierParty(OrganizationModel organization) {
         SupplierPartyType supplierPartyType = new SupplierPartyType();
@@ -1267,103 +1302,103 @@ public class SunatRepresentationToType {
             supplierPartyType.setCustomerAssignedAccountID(organization.getAdditionalAccountId());
         }
 
-		PartyType partyType = new PartyType();
-		if (organization.getRegistrationName() != null) {
-			List<PartyLegalEntityType> partyLegalEntityTypes = new ArrayList<>();
-			PartyLegalEntityType partyLegalEntityType = new PartyLegalEntityType();
-			partyLegalEntityType.setRegistrationName(organization.getRegistrationName());
+        PartyType partyType = new PartyType();
+        if (organization.getRegistrationName() != null) {
+            List<PartyLegalEntityType> partyLegalEntityTypes = new ArrayList<>();
+            PartyLegalEntityType partyLegalEntityType = new PartyLegalEntityType();
+            partyLegalEntityType.setRegistrationName(organization.getRegistrationName());
 
-			partyLegalEntityTypes.add(partyLegalEntityType);
-			partyType.setPartyLegalEntity(partyLegalEntityTypes);
+            partyLegalEntityTypes.add(partyLegalEntityType);
+            partyType.setPartyLegalEntity(partyLegalEntityTypes);
 
-			// Address
-			AddressType addressType = new AddressType();
-			if (organization.getStreetName() == null || organization.getCitySubdivisionName() == null
-					|| organization.getCityName() == null || organization.getCountrySubentity() == null
-					|| organization.getDistrict() == null || organization.getCountryIdentificationCode() == null) {
-				throw new ModelException("Inssuficient information on organization");
-			}
+            // Address
+            AddressType addressType = new AddressType();
+            if (organization.getStreetName() == null || organization.getCitySubdivisionName() == null
+                    || organization.getCityName() == null || organization.getCountrySubentity() == null
+                    || organization.getDistrict() == null || organization.getCountryIdentificationCode() == null) {
+                throw new ModelException("Inssuficient information on organization");
+            }
 
-			addressType.setStreetName(organization.getStreetName());
-			addressType.setCitySubdivisionName(organization.getCitySubdivisionName());
-			addressType.setCityName(organization.getCityName());
-			addressType.setCountrySubentity(organization.getCountrySubentity());
+            addressType.setStreetName(organization.getStreetName());
+            addressType.setCitySubdivisionName(organization.getCitySubdivisionName());
+            addressType.setCityName(organization.getCityName());
+            addressType.setCountrySubentity(organization.getCountrySubentity());
 
-			CountryType countryType = new CountryType();
-			countryType.setIdentificationCode(organization.getCountryIdentificationCode());
-			addressType.setCountry(countryType);
+            CountryType countryType = new CountryType();
+            countryType.setIdentificationCode(organization.getCountryIdentificationCode());
+            addressType.setCountry(countryType);
 
-			partyType.setPostalAddress(addressType);
-		}
-		supplierPartyType.setParty(partyType);
+            partyType.setPostalAddress(addressType);
+        }
+        supplierPartyType.setParty(partyType);
 
-		return supplierPartyType;
-	}
+        return supplierPartyType;
+    }
 
-	public static CustomerPartyType toCustomerPartyType(DocumentRepresentation rep) {
-		CustomerPartyType customerPartyType = new CustomerPartyType();
-		if (rep.getEntidadTipoDeDocumento() != null) {
-			List<AdditionalAccountIDType> additionalAccountIDType = new ArrayList<>();
-			additionalAccountIDType.add(new AdditionalAccountIDType(rep.getEntidadTipoDeDocumento()));
-			customerPartyType.setAdditionalAccountID(additionalAccountIDType);
-		}
-		if (rep.getEntidadNumeroDeDocumento() != null) {
-			customerPartyType.setCustomerAssignedAccountID(rep.getEntidadNumeroDeDocumento());
-		}
+    public static CustomerPartyType toCustomerPartyType(DocumentRepresentation rep) {
+        CustomerPartyType customerPartyType = new CustomerPartyType();
+        if (rep.getEntidadTipoDeDocumento() != null) {
+            List<AdditionalAccountIDType> additionalAccountIDType = new ArrayList<>();
+            additionalAccountIDType.add(new AdditionalAccountIDType(rep.getEntidadTipoDeDocumento()));
+            customerPartyType.setAdditionalAccountID(additionalAccountIDType);
+        }
+        if (rep.getEntidadNumeroDeDocumento() != null) {
+            customerPartyType.setCustomerAssignedAccountID(rep.getEntidadNumeroDeDocumento());
+        }
 
-		PartyType partyType = new PartyType();
-		if (rep.getEntidadDenominacion() != null) {
-			List<PartyLegalEntityType> partyLegalEntityTypes = new ArrayList<>();
-			PartyLegalEntityType partyLegalEntityType = new PartyLegalEntityType();
-			partyLegalEntityType.setRegistrationName(rep.getEntidadDenominacion());
+        PartyType partyType = new PartyType();
+        if (rep.getEntidadDenominacion() != null) {
+            List<PartyLegalEntityType> partyLegalEntityTypes = new ArrayList<>();
+            PartyLegalEntityType partyLegalEntityType = new PartyLegalEntityType();
+            partyLegalEntityType.setRegistrationName(rep.getEntidadDenominacion());
 
-			partyLegalEntityTypes.add(partyLegalEntityType);
-			partyType.setPartyLegalEntity(partyLegalEntityTypes);
+            partyLegalEntityTypes.add(partyLegalEntityType);
+            partyType.setPartyLegalEntity(partyLegalEntityTypes);
 
-			// Address
-			if (rep.getEntidadDireccion() != null) {
-				AddressType addressType = new AddressType();
-				addressType.setStreetName(rep.getEntidadDireccion());
-				partyType.setPostalAddress(addressType);
-			}
-			// Contact
-			if (rep.getEntidadEmail() != null) {
-				ContactType contactType = new ContactType();
-				contactType.setElectronicMail(rep.getEntidadEmail());
-				partyType.setContact(contactType);
-			}
-		}
-		customerPartyType.setParty(partyType);
+            // Address
+            if (rep.getEntidadDireccion() != null) {
+                AddressType addressType = new AddressType();
+                addressType.setStreetName(rep.getEntidadDireccion());
+                partyType.setPostalAddress(addressType);
+            }
+            // Contact
+            if (rep.getEntidadEmail() != null) {
+                ContactType contactType = new ContactType();
+                contactType.setElectronicMail(rep.getEntidadEmail());
+                partyType.setContact(contactType);
+            }
+        }
+        customerPartyType.setParty(partyType);
 
-		return customerPartyType;
-	}
+        return customerPartyType;
+    }
 
     public static Element generateElement(AdditionalInformationTypeSunatAgg object) {
         try {
             InvoiceFactory factory = new InvoiceFactory();
             JAXBContext context = JAXBContext.newInstance(InvoiceFactory.class);
 
-			Marshaller marshallerElement = context.createMarshaller();
-			JAXBElement<AdditionalInformationTypeSunatAgg> jaxbElement = factory.createAdditionalInformation(object);
-			DOMResult res = new DOMResult();
-			marshallerElement.marshal(jaxbElement, res);
-			Element element = ((Document) res.getNode()).getDocumentElement();
-			return element;
-		} catch (JAXBException e) {
-			throw new ModelException(e);
-		}
+            Marshaller marshallerElement = context.createMarshaller();
+            JAXBElement<AdditionalInformationTypeSunatAgg> jaxbElement = factory.createAdditionalInformation(object);
+            DOMResult res = new DOMResult();
+            marshallerElement.marshal(jaxbElement, res);
+            Element element = ((Document) res.getNode()).getDocumentElement();
+            return element;
+        } catch (JAXBException e) {
+            throw new ModelException(e);
+        }
 
-	}
+    }
 
-	public static AdditionalPropertyType generateAdditionalInformationSunatTotal(BigDecimal amount) {
-		MoneyConverters converter = MoneyConverters.SPANISH_BANKING_MONEY_VALUE;
-		String valueAsWords = converter.asWords(amount);
+    public static AdditionalPropertyType generateAdditionalInformationSunatTotal(BigDecimal amount) {
+        MoneyConverters converter = MoneyConverters.SPANISH_BANKING_MONEY_VALUE;
+        String valueAsWords = converter.asWords(amount);
 
-		AdditionalPropertyType additionalProperty = new AdditionalPropertyType();
-		additionalProperty.setID(new IDType(CodigoElementosAdicionalesComprobante.MONTO_EN_LETRAS.getCodigo()));
-		additionalProperty.setValue(new ValueType(valueAsWords));
-		return additionalProperty;
-	}
+        AdditionalPropertyType additionalProperty = new AdditionalPropertyType();
+        additionalProperty.setID(new IDType(CodigoElementosAdicionalesComprobante.MONTO_EN_LETRAS.getCodigo()));
+        additionalProperty.setValue(new ValueType(valueAsWords));
+        return additionalProperty;
+    }
 
     public static MonetaryTotalType toLegalMonetaryTotalType(DocumentRepresentation rep) {
         MonetaryTotalType monetaryTotalType = new MonetaryTotalType();

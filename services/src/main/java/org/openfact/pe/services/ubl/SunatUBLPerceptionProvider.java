@@ -153,7 +153,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 
 				// Attatchments
 				FileModel file = new SimpleFileModel();
-				file.setFileName(perception.getPerceptionDocumentNumber());
+				file.setFileName(perception.getDocumentId());
 				file.setFile(perception.getXmlDocument());
 				file.setMimeType("application/xml");
 

@@ -19,10 +19,6 @@ public class SunatFactory {
     public SunatFactory() {
     }
 
-    /**
-     * Create an instance of {@link JAXBElement
-     * }{@code <}{@link AdditionalInformationTypeSunatAgg }{@code >}}
-     */
     @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1", name = "Perception")
     public JAXBElement<PerceptionType> createPerception(PerceptionType value) {
         return new JAXBElement<PerceptionType>(_Perception_QNAME, PerceptionType.class, null, value);

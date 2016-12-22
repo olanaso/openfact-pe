@@ -1,20 +1,19 @@
 package org.openfact.pe.representations.idm;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class DocumentoSunatLineRepresentation {
     private String tipoDocumentoRelacionado;
     private String numeroDocumentoRelacionado;
-    private LocalDate fechaDocumentoRelacionado;
+    private Date fechaDocumentoRelacionado;
     private String monedaDocumentoRelacionado;
     private BigDecimal totalDocumentoRelacionado;
     private BigDecimal tipoCambio;
-    private LocalDate fechaCambio;
+    private Date fechaCambio;
     private BigDecimal pagoDocumentoSunat;
     private String numeroPago;
-    private LocalDate fechaDocumentoSunat;
+    private Date fechaDocumentoSunat;
     private BigDecimal importeDocumentoSunat;
     private BigDecimal importePago;
 
@@ -34,11 +33,11 @@ public class DocumentoSunatLineRepresentation {
         this.numeroDocumentoRelacionado = numeroDocumentoRelacionado;
     }
 
-    public LocalDate getFechaDocumentoRelacionado() {
+    public Date getFechaDocumentoRelacionado() {
         return fechaDocumentoRelacionado;
     }
 
-    public void setFechaDocumentoRelacionado(LocalDate fechaDocumentoRelacionado) {
+    public void setFechaDocumentoRelacionado(Date fechaDocumentoRelacionado) {
         this.fechaDocumentoRelacionado = fechaDocumentoRelacionado;
     }
 
@@ -66,11 +65,11 @@ public class DocumentoSunatLineRepresentation {
         this.tipoCambio = tipoCambio;
     }
 
-    public LocalDate getFechaCambio() {
+    public Date getFechaCambio() {
         return fechaCambio;
     }
 
-    public void setFechaCambio(LocalDate fechaCambio) {
+    public void setFechaCambio(Date fechaCambio) {
         this.fechaCambio = fechaCambio;
     }
 
@@ -90,11 +89,11 @@ public class DocumentoSunatLineRepresentation {
         this.numeroPago = numeroPago;
     }
 
-    public LocalDate getFechaDocumentoSunat() {
+    public Date getFechaDocumentoSunat() {
         return fechaDocumentoSunat;
     }
 
-    public void setFechaDocumentoSunat(LocalDate fechaDocumentoSunat) {
+    public void setFechaDocumentoSunat(Date fechaDocumentoSunat) {
         this.fechaDocumentoSunat = fechaDocumentoSunat;
     }
 

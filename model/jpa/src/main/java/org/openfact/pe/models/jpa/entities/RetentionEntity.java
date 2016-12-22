@@ -23,9 +23,9 @@ import org.openfact.models.jpa.entities.PartyEntity;
 		@NamedQuery(name = "getAllRetentionsByOrganizationDesc", query = "select r from RetentionEntity r where r.organizationId = :organizationId order by r.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationRetentionById", query = "select r from RetentionEntity r where r.id = :id and r.organizationId = :organizationId"),
 		@NamedQuery(name = "getOrganizationRetentionByDocumentId", query = "select r from RetentionEntity r where r.documentId = :documentId and r.organizationId = :organizationId"),
-		@NamedQuery(name = "searchForRetention", query = "select r from RetentionEntity r where r.organizationId = :organizationId and r.documentId like :search order by r.issueDate"),
+		@NamedQuery(name = "searchForRetention", query = "select r from RetentionEntity r where r.organizationId = :organizationId and r.documentId like :search order by r.issueDateTime"),
 		@NamedQuery(name = "getOrganizationRetentionCount", query = "select count(r) from RetentionEntity r where r.organizationId = :organizationId"),
-		@NamedQuery(name = "getLastRetentionByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId and length(r.documentId)=:documentIdLength and r.documentId like :formatter order by r.issueDate desc"),
+		@NamedQuery(name = "getLastRetentionByOrganization", query = "select r from RetentionEntity r where r.organizationId = :organizationId and length(r.documentId)=:documentIdLength and r.documentId like :formatter order by r.issueDateTime desc"),
 	})
 public class RetentionEntity {
 
@@ -37,12 +37,11 @@ public class RetentionEntity {
 	@Access(AccessType.PROPERTY)
 	private String id;
 
+	@NotNull
 	@Column(name = "DOCUMENT_ID")
 	private String documentId;
-
 	@Column(name = "UBL_VERSIONID")
 	private String ublVersionId;
-
 	@Column(name = "CUSTOMIZATION_ID")
 	private String customizationId;
 
@@ -53,38 +52,27 @@ public class RetentionEntity {
 	@Column(name = "SUNAT_RETENTION_SYSTEM_CODE")
 	private String sunatRetentionSystemCode;
 
-	@NotNull
 	@Column(name = "ENTITY_DOCUMENT_TYPE")
 	private String entityDocumentType;
 
-	@NotNull
 	@Column(name = "ENTITY_DOCUMENT_NUMBER")
 	private String entityDocumentNuber;
 
-	@NotNull
 	@Column(name = "ENTITY_NAME")
 	private String entityName;
 
-	@NotNull
 	@Column(name = "ENTITY_ADDRESS")
 	private String entityAddress;
 
-	@NotNull
 	@Column(name = "ENTITY_EMAIL")
 	private String entityEmail;
 
-	@NotNull
-	@Column(name = "RETENTION_DOCUMENT_NUMBER")
-	private String retentionDocumentNumber;
-
-	@NotNull
-	@Column(name = "RETENTION_DOCUMENT_CURRENCY")
-	private String retentionDocumentCurrency;
+	@Column(name = "DOCUMENT_CURRENCY_CODE")
+	private String documentCurrencyCode;
 
 	@Column(name = "SUNAT_RETENTION_PERCENT")
 	private BigDecimal sunatRetentionPercent;
 
-	@NotNull
 	@Column(name = "NOTE")
 	private String note;
 
@@ -95,8 +83,8 @@ public class RetentionEntity {
 	private BigDecimal totalCashed;
 
 	@Column(name = "ISSUE_DATE")
-	@Type(type = "org.hibernate.type.LocalDateType")
-	private LocalDate issueDate;
+	@Type(type = "org.hibernate.type.LocalDateTimeType")
+	private LocalDateTime issueDateTime;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention")
 	private List<RetentionLineEntity> retentionLines = new ArrayList<>();
@@ -204,20 +192,12 @@ public class RetentionEntity {
 		this.entityEmail = entityEmail;
 	}
 
-	public String getRetentionDocumentNumber() {
-		return retentionDocumentNumber;
+	public String getDocumentCurrencyCode() {
+		return documentCurrencyCode;
 	}
 
-	public void setRetentionDocumentNumber(String retentionDocumentNumber) {
-		this.retentionDocumentNumber = retentionDocumentNumber;
-	}
-
-	public String getRetentionDocumentCurrency() {
-		return retentionDocumentCurrency;
-	}
-
-	public void setRetentionDocumentCurrency(String retentionDocumentCurrency) {
-		this.retentionDocumentCurrency = retentionDocumentCurrency;
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 	public BigDecimal getSunatRetentionPercent() {
@@ -252,12 +232,12 @@ public class RetentionEntity {
 		this.totalCashed = totalCashed;
 	}
 
-	public LocalDate getIssueDate() {
-		return issueDate;
+	public LocalDateTime getIssueDateTime() {
+		return issueDateTime;
 	}
 
-	public void setIssueDate(LocalDate issueDate) {
-		this.issueDate = issueDate;
+	public void setIssueDateTime(LocalDateTime issueDateTime) {
+		this.issueDateTime = issueDateTime;
 	}
 
 	public List<RetentionLineEntity> getRetentionLines() {

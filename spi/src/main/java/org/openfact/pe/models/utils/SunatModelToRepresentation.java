@@ -1,5 +1,6 @@
 package org.openfact.pe.models.utils;
 
+import org.openfact.common.converts.DateUtils;
 import org.openfact.models.ContactModel;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
@@ -34,13 +35,13 @@ public class SunatModelToRepresentation {
         if (model.getEntityEmail() != null) {
             rep.setEntidadEmail(model.getEntityEmail());
         }
-        if (model.getPerceptionDocumentNumber() != null) {
-            String[] splits = model.getPerceptionDocumentNumber().split("-");
+        if (model.getDocumentId() != null) {
+            String[] splits = model.getDocumentId().split("-");
             rep.setSerieDocumento(splits[0].substring(1, 4));
             rep.setNumeroDocumento(splits[1]);
         }
-        if (model.getPerceptionDocumentCurrency() != null) {
-            rep.setMonedaDocumento(model.getPerceptionDocumentCurrency());
+        if (model.getDocumentCurrencyCode() != null) {
+            rep.setMonedaDocumento(model.getDocumentCurrencyCode());
         }
         if (model.getSunatPerceptionPercent() != null) {
             rep.setTasaDocumento(model.getSunatPerceptionPercent());
@@ -54,8 +55,8 @@ public class SunatModelToRepresentation {
         if (model.getTotalCashed() != null) {
             rep.setTotalPago(model.getTotalCashed());
         }
-        if (model.getIssueDate() != null) {
-            rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
+        if (model.getIssueDateTime() != null) {
+            rep.setFechaDeEmision(DateUtils.asDate( model.getIssueDateTime()));
         }
         if (model.getId() != null) {
             rep.setCodigoUnico(model.getId());
@@ -77,8 +78,8 @@ public class SunatModelToRepresentation {
         if (model.getRelatedDocumentNumber() != null) {
             rep.setNumeroDocumentoRelacionado(model.getRelatedDocumentNumber());
         }
-        if (model.getRelatedIssueDate() != null) {
-            rep.setFechaDocumentoRelacionado(model.getRelatedIssueDate());
+        if (model.getRelatedIssueDateTime() != null) {
+            rep.setFechaDocumentoRelacionado(DateUtils.asDate(model.getRelatedIssueDateTime()));
         }
         if (model.getRelatedDocumentCurrency() != null) {
             rep.setMonedaDocumentoRelacionado(model.getRelatedDocumentCurrency());
@@ -89,8 +90,8 @@ public class SunatModelToRepresentation {
         if (model.getTypeChange() != null) {
             rep.setTipoCambio(model.getTypeChange());
         }
-        if (model.getChangeIssueDate() != null) {
-            rep.setFechaCambio(model.getChangeIssueDate());
+        if (model.getChangeIssueDateTime() != null) {
+            rep.setFechaCambio(DateUtils.asDate(model.getChangeIssueDateTime()) );
         }
         if (model.getTotalPerceptionPayment() != null) {
             rep.setPagoDocumentoSunat(model.getTotalPerceptionPayment());
@@ -98,8 +99,8 @@ public class SunatModelToRepresentation {
         if (model.getPerceptionPaymentNumber() != null) {
             rep.setNumeroPago(model.getPerceptionPaymentNumber());
         }
-        if (model.getPerceptionIssueDate() != null) {
-            rep.setFechaDocumentoSunat(model.getPerceptionIssueDate());
+        if (model.getPerceptionIssueDateTime() != null) {
+            rep.setFechaDocumentoSunat(DateUtils.asDate(model.getPerceptionIssueDateTime()));
         }
         if (model.getSunatNetPerceptionAmount() != null) {
             rep.setImporteDocumentoSunat(model.getSunatNetPerceptionAmount());
@@ -128,13 +129,13 @@ public class SunatModelToRepresentation {
         if (model.getEntityEmail() != null) {
             rep.setEntidadEmail(model.getEntityEmail());
         }
-        if (model.getRetentionDocumentNumber() != null) {
-            String[] splits = model.getRetentionDocumentNumber().split("-");
+        if (model.getDocumentId() != null) {
+            String[] splits = model.getDocumentId().split("-");
             rep.setSerieDocumento(splits[0].substring(1, 4));
             rep.setNumeroDocumento(splits[1]);
         }
-        if (model.getRetentionDocumentCurrency() != null) {
-            rep.setMonedaDocumento(model.getRetentionDocumentCurrency());
+        if (model.getDocumentCurrencyCode() != null) {
+            rep.setMonedaDocumento(model.getDocumentCurrencyCode());
         }
         if (model.getSunatRetentionPercent() != null) {
             rep.setTasaDocumento(model.getSunatRetentionPercent());
@@ -148,8 +149,8 @@ public class SunatModelToRepresentation {
         if (model.getTotalCashed() != null) {
             rep.setTotalPago(model.getTotalCashed());
         }
-        if (model.getIssueDate() != null) {
-            rep.setFechaDeEmision(model.getIssueDate().atStartOfDay());
+        if (model.getIssueDateTime() != null) {
+            rep.setFechaDeEmision(DateUtils.asDate(model.getIssueDateTime()));
         }
         if (model.getId() != null) {
             rep.setCodigoUnico(model.getId());
@@ -170,8 +171,8 @@ public class SunatModelToRepresentation {
         if (model.getRelatedDocumentNumber() != null) {
             rep.setNumeroDocumentoRelacionado(model.getRelatedDocumentNumber());
         }
-        if (model.getRelatedIssueDate() != null) {
-            rep.setFechaDocumentoRelacionado(model.getRelatedIssueDate());
+        if (model.getRelatedIssueDateTime() != null) {
+            rep.setFechaDocumentoRelacionado(DateUtils.asDate(model.getRelatedIssueDateTime()));
         }
         if (model.getRelatedDocumentCurrency() != null) {
             rep.setMonedaDocumentoRelacionado(model.getRelatedDocumentCurrency());
@@ -182,8 +183,8 @@ public class SunatModelToRepresentation {
         if (model.getTypeChange() != null) {
             rep.setTipoCambio(model.getTypeChange());
         }
-        if (model.getChangeIssueDate() != null) {
-            rep.setFechaCambio(model.getChangeIssueDate());
+        if (model.getChangeIssueDateTime() != null) {
+            rep.setFechaCambio(DateUtils.asDate(model.getChangeIssueDateTime()));
         }
         if (model.getTotalRetentionPayment() != null) {
             rep.setPagoDocumentoSunat(model.getTotalRetentionPayment());
@@ -191,8 +192,8 @@ public class SunatModelToRepresentation {
         if (model.getRetentionPaymentNumber() != null) {
             rep.setNumeroPago(model.getRetentionPaymentNumber());
         }
-        if (model.getRetentionIssueDate() != null) {
-            rep.setFechaDocumentoSunat(model.getRetentionIssueDate());
+        if (model.getRetentionIssueDateTime() != null) {
+            rep.setFechaDocumentoSunat(DateUtils.asDate(model.getRetentionIssueDateTime()));
         }
         if (model.getSunatNetRetentionAmount() != null) {
             rep.setImporteDocumentoSunat(model.getSunatNetRetentionAmount());

@@ -155,7 +155,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
 				// Attatchments
 				FileModel file = new SimpleFileModel();
-				file.setFileName(retention.getRetentionDocumentNumber());
+				file.setFileName(retention.getDocumentId());
 				file.setFile(retention.getXmlDocument());
 				file.setMimeType("application/xml");
 

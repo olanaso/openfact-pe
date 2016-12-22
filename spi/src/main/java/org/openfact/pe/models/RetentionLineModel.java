@@ -1,7 +1,6 @@
 package org.openfact.pe.models;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface RetentionLineModel {
@@ -15,9 +14,9 @@ public interface RetentionLineModel {
 
 	void setRelatedDocumentNumber(String relatedDocumentNumber);
 
-	LocalDate getRelatedIssueDate();
+	LocalDateTime getRelatedIssueDateTime();
 
-	void setRelatedIssueDate(LocalDate relatedIssueDate);
+	void setRelatedIssueDateTime(LocalDateTime relatedIssueDateTime);
 
 	String getRelatedDocumentCurrency();
 
@@ -31,9 +30,9 @@ public interface RetentionLineModel {
 
 	void setTypeChange(BigDecimal typeChange);
 
-	LocalDate getChangeIssueDate();
+	LocalDateTime getChangeIssueDateTime();
 
-	void setChangeIssueDate(LocalDate changeIssueDate);
+	void setChangeIssueDateTime(LocalDateTime changeIssueDateTime);
 
 	BigDecimal getTotalRetentionPayment();
 
@@ -43,9 +42,9 @@ public interface RetentionLineModel {
 
 	void setRetentionPaymentNumber(String retentionPaymentNumber);
 
-	LocalDate getRetentionIssueDate();
+	LocalDateTime getRetentionIssueDateTime();
 
-	void setRetentionIssueDate(LocalDate retentionIssueDate);
+	void setRetentionIssueDateTime(LocalDateTime retentionIssueDateTime);
 
 	BigDecimal getSunatNetRetentionAmount();
 

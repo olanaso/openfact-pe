@@ -2,6 +2,7 @@ package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -134,23 +135,23 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     }
 
     @Override
-    public String getPerceptionDocumentNumber() {
-        return perception.getEntityDocumentNuber();
+    public String getDocumentId() {
+        return perception.getDocumentId();
     }
 
     @Override
-    public void setPerceptionDocumentNumber(String perceptionDocumentNumber) {
-        perception.setPerceptionDocumentNumber(perceptionDocumentNumber);
+    public void setDocumentId(String documentId) {
+        perception.setDocumentId(documentId);
     }
 
     @Override
-    public String getPerceptionDocumentCurrency() {
-        return perception.getPerceptionDocumentCurrency();
+    public String getDocumentCurrencyCode() {
+        return perception.getDocumentCurrencyCode();
     }
 
     @Override
-    public void setPerceptionDocumentCurrency(String perceptionDocumentCurrency) {
-        perception.setPerceptionDocumentCurrency(perceptionDocumentCurrency);
+    public void setDocumentCurrencyCode(String documentCurrencyCode) {
+        perception.setDocumentCurrencyCode(documentCurrencyCode);
     }
 
     @Override
@@ -195,13 +196,13 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     }
 
     @Override
-    public LocalDate getIssueDate() {
-        return perception.getIssueDate();
+    public LocalDateTime getIssueDateTime() {
+        return perception.getIssueDateTime();
     }
 
     @Override
-    public void setIssueDate(LocalDate issueDate) {
-        perception.setIssueDate(issueDate);
+    public void setIssueDateTime(LocalDateTime issueDateTime) {
+        perception.setIssueDateTime(issueDateTime);
     }
 
     @Override

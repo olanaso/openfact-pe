@@ -38,14 +38,16 @@ public class SunatTypeToModel {
 		Date utilDate = xmlCal.toGregorianCalendar().getTime();
 		return LocalDateTime.ofInstant(utilDate.toInstant(), ZoneId.systemDefault()).toLocalDate();
 	}
-
+	public static LocalDateTime toDateTime(XMLGregorianCalendar date) {
+		return date.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
+	}
 	public static void importPerception(OpenfactSession session, OrganizationModel organization, PerceptionModel model,
 			PerceptionType type) {
 		if(type.getReceiverParty()!=null){
 			updateModel(model,type.getReceiverParty());
 		}
 		if (type.getId() != null && type.getId().getValue() != null) {
-			model.setPerceptionDocumentNumber(type.getId().getValue());
+			model.setDocumentId(type.getId().getValue());
 		}
 		if (type.getUblVersionID() != null && type.getUblVersionID().getValue() != null) {
 			model.setUblVersionID(type.getUblVersionID().getValue());
@@ -54,10 +56,10 @@ public class SunatTypeToModel {
 			model.setCustomizationID(type.getCustomizationID().getValue());
 		}
 		if (type.getDocumentCurrencyCode() != null && type.getDocumentCurrencyCode().getValue() != null) {
-			model.setPerceptionDocumentCurrency(type.getDocumentCurrencyCode().getValue());
+			model.setDocumentCurrencyCode(type.getDocumentCurrencyCode().getValue());
 		}
 		if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
-			model.setIssueDate(toDate(type.getIssueDate().getValue()));
+			model.setIssueDateTime(toDateTime(type.getIssueDate().getValue()));
 		}
 		if (type.getSunatPerceptionSystemCode() != null && type.getSunatPerceptionSystemCode().getValue() != null) {
 			model.setSunatPerceptionSystemCode(type.getSunatPerceptionSystemCode().getValue());
@@ -109,7 +111,7 @@ public class SunatTypeToModel {
 			model.setRelatedDocumentNumber(type.getId().getValue());
 		}
 		if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
-			model.setRelatedIssueDate(toDate(type.getIssueDate().getValue()));
+			model.setRelatedIssueDateTime(toDateTime(type.getIssueDate().getValue()));
 		}
 		if (type.getTotalInvoiceAmount() != null && type.getTotalInvoiceAmount().getValue() != null) {
 			model.setTotalDocumentRelated(type.getTotalInvoiceAmount().getValue());
@@ -127,7 +129,7 @@ public class SunatTypeToModel {
 			model.setSunatNetCashed(type.getSunatNetTotalCashed().getValue());
 		}
 		if (type.getSunatPerceptionDate() != null && type.getSunatPerceptionDate().getValue() != null) {
-			model.setPerceptionIssueDate(toDate(type.getSunatPerceptionDate().getValue()));
+			model.setPerceptionIssueDateTime(toDateTime(type.getSunatPerceptionDate().getValue()));
 		}
 	}
 
@@ -163,7 +165,7 @@ public class SunatTypeToModel {
 			updateModel(model,type.getReceiverParty());
 		}
 		if (type.getId() != null && type.getId().getValue() != null) {
-			model.setRetentionDocumentNumber(type.getId().getValue());
+			model.setDocumentId(type.getId().getValue());
 		}
 		if (type.getUblVersionID() != null && type.getUblVersionID().getValue() != null) {
 			model.setUblVersionID(type.getUblVersionID().getValue());
@@ -172,10 +174,10 @@ public class SunatTypeToModel {
 			model.setCustomizationID(type.getCustomizationID().getValue());
 		}
 		if (type.getDocumentCurrencyCode() != null && type.getDocumentCurrencyCode().getValue() != null) {
-			model.setRetentionDocumentCurrency(type.getDocumentCurrencyCode().getValue());
+			model.setDocumentCurrencyCode(type.getDocumentCurrencyCode().getValue());
 		}
 		if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
-			model.setIssueDate(toDate(type.getIssueDate().getValue()));
+			model.setIssueDateTime(toDateTime(type.getIssueDate().getValue()));
 		}
 		if (type.getSunatRetentionSystemCode() != null && type.getSunatRetentionSystemCode().getValue() != null) {
 			model.setSunatRetentionSystemCode(type.getSunatRetentionSystemCode().getValue());
@@ -228,7 +230,7 @@ public class SunatTypeToModel {
 			model.setRelatedDocumentNumber(type.getID().getValue());
 		}
 		if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
-			model.setRelatedIssueDate(toDate(type.getIssueDate().getValue()));
+			model.setRelatedIssueDateTime(toDateTime(type.getIssueDate().getValue()));
 		}
 		if (type.getTotalInvoiceAmount() != null && type.getTotalInvoiceAmount().getValue() != null) {
 			model.setTotalDocumentRelated(type.getTotalInvoiceAmount().getValue());
@@ -246,7 +248,7 @@ public class SunatTypeToModel {
 			model.setSunatNetCashed(type.getSUNATNetTotalPaid().getValue());
 		}
 		if (type.getSUNATRetentionDate() != null && type.getSUNATRetentionDate().getValue() != null) {
-			model.setRetentionIssueDate(toDate(type.getSUNATRetentionDate().getValue()));
+			model.setRetentionIssueDateTime(toDateTime(type.getSUNATRetentionDate().getValue()));
 		}
 	}
 

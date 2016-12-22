@@ -108,7 +108,7 @@ public class SunatTemplateUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(codigo).append("-");
-		sb.append(retention.getRetentionDocumentNumber());
+		sb.append(retention.getDocumentId());
 		return sb.toString();
 	}
 
@@ -121,7 +121,7 @@ public class SunatTemplateUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(codigo).append("-");
-		sb.append(perception.getPerceptionDocumentNumber());
+		sb.append(perception.getDocumentId());
 		return sb.toString();
 	}
 

@@ -2,6 +2,7 @@ package org.openfact.pe.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -14,116 +15,116 @@ import org.openfact.ubl.SendEventModel;
 
 public interface RetentionModel {
 
-	String getId();
+    String getId();
 
-	String getOrganizationId();
+    String getOrganizationId();
 
-	String getUblVersionID();
+    String getDocumentId();
 
-	void setUblVersionID(String ublVersionID);
+    void setDocumentId(String documentId);
 
-	String getCustomizationID();
+    String getUblVersionID();
 
-	void setCustomizationID(String customizationID);
+    void setUblVersionID(String ublVersionID);
 
-	String getSunatRetentionSystemCode();
+    String getCustomizationID();
 
-	void setSunatRetentionSystemCode(String sunatRetentionSystemCode);
+    void setCustomizationID(String customizationID);
 
-	String getEntityDocumentType();
+    String getSunatRetentionSystemCode();
 
-	void setEntityDocumentType(String entityDocumentType);
+    void setSunatRetentionSystemCode(String sunatRetentionSystemCode);
 
-	String getEntityDocumentNuber();
+    String getEntityDocumentType();
 
-	void setEntityDocumentNuber(String numberEntityDocument);
+    void setEntityDocumentType(String entityDocumentType);
 
-	String getEntityName();
+    String getEntityDocumentNuber();
 
-	void setEntityName(String entityName);
+    void setEntityDocumentNuber(String numberEntityDocument);
 
-	String getEntityAddress();
+    String getEntityName();
 
-	void setEntityAddress(String entityAddress);
+    void setEntityName(String entityName);
 
-	String getEntityEmail();
+    String getEntityAddress();
 
-	void setEntityEmail(String entityEmail);
+    void setEntityAddress(String entityAddress);
 
-	String getRetentionDocumentNumber();
+    String getEntityEmail();
 
-	void setRetentionDocumentNumber(String retentionDocumentNumber);
+    void setEntityEmail(String entityEmail);
 
-	String getRetentionDocumentCurrency();
+    String getDocumentCurrencyCode();
 
-	void setRetentionDocumentCurrency(String retentionDocumentCurrency);
+    void setDocumentCurrencyCode(String documentCurrencyCode);
 
-	BigDecimal getSunatRetentionPercent();
+    BigDecimal getSunatRetentionPercent();
 
-	void setSunatRetentionPercent(BigDecimal sunatRetentionPercent);
+    void setSunatRetentionPercent(BigDecimal sunatRetentionPercent);
 
-	String getNote();
+    String getNote();
 
-	void setNote(String note);
+    void setNote(String note);
 
-	BigDecimal getTotalRetentionAmount();
+    BigDecimal getTotalRetentionAmount();
 
-	void setTotalRetentionAmount(BigDecimal totalRetentionAmount);
+    void setTotalRetentionAmount(BigDecimal totalRetentionAmount);
 
-	BigDecimal getTotalCashed();
+    BigDecimal getTotalCashed();
 
-	void setTotalCashed(BigDecimal totalCashed);
+    void setTotalCashed(BigDecimal totalCashed);
 
-	LocalDate getIssueDate();
+    LocalDateTime getIssueDateTime();
 
-	void setIssueDate(LocalDate issueDate);
+    void setIssueDateTime(LocalDateTime issueDateTime);
 
-	List<RetentionLineModel> getRetentionLines();
+    List<RetentionLineModel> getRetentionLines();
 
-	RetentionLineModel addRetentionLine();
-	
+    RetentionLineModel addRetentionLine();
 
-	/**
-	 * Xml
-	 */
-	byte[] getXmlDocument();
 
-	void setXmlDocument(byte[] bytes);
+    /**
+     * Xml
+     */
+    byte[] getXmlDocument();
 
-	/**
-	 * Send events
-	 */
-	List<SendEventModel> getSendEvents();
+    void setXmlDocument(byte[] bytes);
 
-	/**
-	 * Required Actions
-	 */
-	Set<String> getRequiredActions();
+    /**
+     * Send events
+     */
+    List<SendEventModel> getSendEvents();
 
-	void addRequiredAction(String action);
+    /**
+     * Required Actions
+     */
+    Set<String> getRequiredActions();
 
-	void removeRequiredAction(String action);
+    void addRequiredAction(String action);
 
-	void addRequiredAction(RequiredAction action);
+    void removeRequiredAction(String action);
 
-	void removeRequiredAction(RequiredAction action);
+    void addRequiredAction(RequiredAction action);
 
-	/**
-	 * Events interfaces
-	 */
-	interface RetentionCreationEvent extends ProviderEvent {
-		RetentionModel getCreatedRetention();
-	}
+    void removeRequiredAction(RequiredAction action);
 
-	interface RetentionPostCreateEvent extends ProviderEvent {
-		RetentionModel getCreatedRetention();
+    /**
+     * Events interfaces
+     */
+    interface RetentionCreationEvent extends ProviderEvent {
+        RetentionModel getCreatedRetention();
+    }
 
-		OpenfactSession getOpenfactSession();
-	}
+    interface RetentionPostCreateEvent extends ProviderEvent {
+        RetentionModel getCreatedRetention();
 
-	interface RetentionRemovedEvent extends ProviderEvent {
-		RetentionModel getRetention();
+        OpenfactSession getOpenfactSession();
+    }
 
-		OpenfactSession getOpenfactSession();
-	}
+    interface RetentionRemovedEvent extends ProviderEvent {
+        RetentionModel getRetention();
+
+        OpenfactSession getOpenfactSession();
+    }
 }

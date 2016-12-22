@@ -155,7 +155,7 @@ public class SunatDocumentIdProvider {
 		Pattern pattern = Pattern.compile(perceptionCode.getMask());
 		while (iterator.hasNext()) {
 			PerceptionModel perception = iterator.next();
-			String documentId = perception.getPerceptionDocumentNumber();
+			String documentId = perception.getDocumentId();
 
 			Matcher matcher = pattern.matcher(documentId);
 			if (matcher.find()) {
@@ -167,7 +167,7 @@ public class SunatDocumentIdProvider {
 		int series = 0;
 		int number = 0;
 		if (lastPerception != null) {
-			String[] splits = lastPerception.getPerceptionDocumentNumber().split("-");
+			String[] splits = lastPerception.getDocumentId().split("-");
 			series = Integer.parseInt(splits[0].substring(1));
 			number = Integer.parseInt(splits[1]);
 		}
@@ -193,7 +193,7 @@ public class SunatDocumentIdProvider {
 		Pattern pattern = Pattern.compile(retentionCode.getMask());
 		while (iterator.hasNext()) {
 			RetentionModel retention = iterator.next();
-			String documentId = retention.getRetentionDocumentNumber();
+			String documentId = retention.getDocumentId();
 
 			Matcher matcher = pattern.matcher(documentId);
 			if (matcher.find()) {
@@ -205,7 +205,7 @@ public class SunatDocumentIdProvider {
 		int series = 0;
 		int number = 0;
 		if (lastRetention != null) {
-			String[] splits = lastRetention.getRetentionDocumentNumber().split("-");
+			String[] splits = lastRetention.getDocumentId().split("-");
 			series = Integer.parseInt(splits[0].substring(1));
 			number = Integer.parseInt(splits[1]);
 		}

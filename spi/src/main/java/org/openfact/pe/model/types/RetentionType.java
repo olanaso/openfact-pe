@@ -29,7 +29,7 @@ import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBL
 @XmlType(name = "RetentionType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1", propOrder = {
         "ublExtensions", "signature", "ublVersionID", "customizationID", "id", "issueDate", "agentParty",
         "receiverParty", "sunatRetentionSystemCode", "sunatRetentionPercent", "note", "documentCurrencyCode",
-        "totalInvoiceAmount", "sunatTotalCashed", "sunatRetentionDocumentReference"
+        "totalInvoiceAmount", "sunatTotalPaid", "sunatRetentionDocumentReference"
 
 })
 public class RetentionType {

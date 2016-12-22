@@ -1,7 +1,6 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.EntityManager;
@@ -59,13 +58,13 @@ public class PerceptionLineAdapter
 	}
 
 	@Override
-	public LocalDate getRelatedIssueDate() {
-		return perceptionLine.getRelatedIssueDate();
+	public LocalDateTime getRelatedIssueDateTime() {
+		return perceptionLine.getRelatedIssueDateTime();
 	}
 
 	@Override
-	public void setRelatedIssueDate(LocalDate relatedIssueDate) {
-		perceptionLine.setRelatedIssueDate(relatedIssueDate);
+	public void setRelatedIssueDateTime(LocalDateTime relatedIssueDateTime) {
+		perceptionLine.setRelatedIssueDateTime(relatedIssueDateTime);
 	}
 
 	@Override
@@ -99,13 +98,13 @@ public class PerceptionLineAdapter
 	}
 
 	@Override
-	public LocalDate getChangeIssueDate() {
-		return perceptionLine.getChangeIssueDate();
+	public LocalDateTime getChangeIssueDateTime() {
+		return perceptionLine.getChangeIssueDateTime();
 	}
 
 	@Override
-	public void setChangeIssueDate(LocalDate changeIssueDate) {
-		perceptionLine.setChangeIssueDate(changeIssueDate);
+	public void setChangeIssueDateTime(LocalDateTime changeIssueDateTime) {
+		perceptionLine.setChangeIssueDateTime(changeIssueDateTime);
 	}
 
 	@Override
@@ -129,13 +128,13 @@ public class PerceptionLineAdapter
 	}
 
 	@Override
-	public LocalDate getPerceptionIssueDate() {
-		return perceptionLine.getPerceptionIssueDate();
+	public LocalDateTime getPerceptionIssueDateTime() {
+		return perceptionLine.getPerceptionIssueDateTime();
 	}
 
 	@Override
-	public void setPerceptionIssueDate(LocalDate perceptionIssueDate) {
-		perceptionLine.setPerceptionIssueDate(perceptionIssueDate);
+	public void setPerceptionIssueDateTime(LocalDateTime perceptionIssueDateTime) {
+		perceptionLine.setPerceptionIssueDateTime(perceptionIssueDateTime);
 	}
 
 	@Override

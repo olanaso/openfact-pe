@@ -1,8 +1,8 @@
 package org.openfact.pe.representations.idm;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DocumentoSunatRepresentation {
@@ -20,7 +20,7 @@ public class DocumentoSunatRepresentation {
     private String observaciones;
     private BigDecimal totalPago;
     private BigDecimal totalDocumentoSunat;
-    private LocalDateTime fechaDeEmision;
+    private Date fechaDeEmision;
     private String codigoUnico;
     private List<DocumentoSunatLineRepresentation> detalle;
 
@@ -143,11 +143,11 @@ public class DocumentoSunatRepresentation {
         this.totalDocumentoSunat = totalDocumentoSunat;
     }
 
-    public LocalDateTime getFechaDeEmision() {
+    public Date getFechaDeEmision() {
         return fechaDeEmision;
     }
 
-    public void setFechaDeEmision(LocalDateTime fechaDeEmision) {
+    public void setFechaDeEmision(Date fechaDeEmision) {
         this.fechaDeEmision = fechaDeEmision;
     }
 

@@ -2,6 +2,7 @@ package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -135,23 +136,23 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 	}
 
 	@Override
-	public String getRetentionDocumentNumber() {
-		return retention.getEntityDocumentNuber();
+	public String getDocumentId() {
+		return retention.getDocumentId();
 	}
 
 	@Override
-	public void setRetentionDocumentNumber(String retentionDocumentNumber) {
-		retention.setRetentionDocumentNumber(retentionDocumentNumber);
+	public void setDocumentId(String documentId) {
+		retention.setDocumentId(documentId);
 	}
 
 	@Override
-	public String getRetentionDocumentCurrency() {
-		return retention.getRetentionDocumentCurrency();
+	public String getDocumentCurrencyCode() {
+		return retention.getDocumentCurrencyCode();
 	}
 
 	@Override
-	public void setRetentionDocumentCurrency(String retentionDocumentCurrency) {
-		retention.setRetentionDocumentCurrency(retentionDocumentCurrency);
+	public void setDocumentCurrencyCode(String documentCurrencyCode) {
+		retention.setDocumentCurrencyCode(documentCurrencyCode);
 	}
 
 	@Override
@@ -196,13 +197,13 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 	}
 
 	@Override
-	public LocalDate getIssueDate() {
-		return retention.getIssueDate();
+	public LocalDateTime getIssueDateTime() {
+		return retention.getIssueDateTime();
 	}
 
 	@Override
-	public void setIssueDate(LocalDate issueDate) {
-		retention.setIssueDate(issueDate);
+	public void setIssueDateTime(LocalDateTime issueDateTime) {
+		retention.setIssueDateTime(issueDateTime);
 	}
 
 	@Override

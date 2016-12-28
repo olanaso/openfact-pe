@@ -40,9 +40,9 @@ import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.models.utils.RepresentationToModel;
-import org.openfact.pe.model.types.SummaryDocumentsType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
+import org.openfact.pe.models.types.summary.SummaryDocumentsType;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.SummaryRepresentation;
 import org.openfact.pe.services.managers.SummaryDocumentManager;
@@ -323,7 +323,7 @@ public class SummaryDocumentsResource {
 	}
 
 	@GET
-	@Path("{summaryDocumentId}")
+	@Path("{summaryDocumentId}/send-events")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<SendEventRepresentation> getSendEvents(@QueryParam("summaryDocumentId") final String summaryDocumentId) {

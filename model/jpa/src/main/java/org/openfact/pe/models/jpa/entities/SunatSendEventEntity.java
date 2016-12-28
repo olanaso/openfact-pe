@@ -16,6 +16,7 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @NamedQueries({
+        @NamedQuery(name = "getOrganizationSunatSendEventById", query = "select i from SunatSendEventEntity i where i.organizationId = :organizationId and i.id=:id order by i.createdTimestamp"),
         @NamedQuery(name = "getAllSunatSendEventsByOrganization", query = "select i from SunatSendEventEntity i where i.organizationId = :organizationId order by i.createdTimestamp")
 })
 public class SunatSendEventEntity {

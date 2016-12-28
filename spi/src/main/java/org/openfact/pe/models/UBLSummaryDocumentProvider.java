@@ -1,7 +1,6 @@
 package org.openfact.pe.models;
 
-import org.openfact.pe.model.types.SummaryDocumentsType;
-import org.openfact.pe.models.SummaryDocumentModel;
+import org.openfact.pe.models.types.summary.SummaryDocumentsType;
 import org.openfact.provider.Provider;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;

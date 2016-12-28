@@ -8,15 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,9 +31,10 @@ import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.models.utils.RepresentationToModel;
-import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
+import org.openfact.pe.models.types.perception.PerceptionType;
+import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.services.managers.PerceptionManager;
@@ -49,13 +42,16 @@ import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
+import org.openfact.services.scheduled.ScheduledTaskRunner;
+import org.openfact.timer.ScheduledTask;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
-/**
- * @author carlosthe19916@sistcoop.com
- */
 @Consumes(MediaType.APPLICATION_JSON)
 public class PerceptionsResource {
 
@@ -77,7 +73,7 @@ public class PerceptionsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<DocumentoSunatRepresentation> getPerceptions(@QueryParam("filterText") String filterText,
-                                                             @QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
+															@QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
 		firstResult = firstResult != null ? firstResult : -1;
 		maxResults = maxResults != null ? maxResults : -1;
 
@@ -86,8 +82,7 @@ public class PerceptionsResource {
 		if (filterText == null) {
 			perceptions = perceptionProvider.getPerceptions(organization, firstResult, maxResults);
 		} else {
-			perceptions = perceptionProvider.searchForPerception(organization, filterText.trim(), firstResult,
-					maxResults);
+			perceptions = perceptionProvider.searchForPerception(organization, filterText.trim(), firstResult, maxResults);
 		}
 		return perceptions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
 				.collect(Collectors.toList());
@@ -108,22 +103,26 @@ public class PerceptionsResource {
 
 		try {
 			PerceptionModel perception = perceptionManager.addPerception(organization, rep);
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().commit();
-			}
-
 			// Enviar a Cliente
 			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				perceptionManager.sendToCustomerParty(organization, perception);
+				try {
+					perceptionManager.sendToCustomerParty(organization, perception);
+				} catch (SendException e) {
+					logger.error("Error sending to Customer");
+				}
 			}
 
 			// Enviar Sunat
 			if (rep.isEnviarAutomaticamenteASunat()) {
-				perceptionManager.sendToTrirdParty(organization, perception);
+				try {
+					perceptionManager.sendToTrirdParty(organization, perception);
+				} catch (SendException e) {
+					logger.error("Error sending to Sunat");
+				}
 			}
 
-			URI location = uriInfo.getAbsolutePathBuilder().path(perception.getId()).build();
-			return Response.created(location).build();
+			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(perception.getId()).build();
+			return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(perception)).build();
 		} catch (ModelDuplicateException e) {
 			if (session.getTransactionManager().isActive()) {
 				session.getTransactionManager().setRollbackOnly();
@@ -134,11 +133,6 @@ public class PerceptionsResource {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Could not create perception");
-		} catch (SendException e) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not send invoice");
 		}
 	}
 
@@ -146,7 +140,7 @@ public class PerceptionsResource {
 	@Path("upload")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createInvoice(final MultipartFormDataInput input) {
+	public Response createPerception(final MultipartFormDataInput input) {
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		List<InputPart> inputParts = uploadForm.get("file");
 
@@ -157,7 +151,7 @@ public class PerceptionsResource {
 
 				PerceptionType perceptionType = null;
 				if (perceptionType == null) {
-					throw new IOException("Invalid perception Xml");
+					throw new IOException("Invalid invoice Xml");
 				}
 
 				PerceptionManager perceptionManager = new PerceptionManager(session);
@@ -173,7 +167,7 @@ public class PerceptionsResource {
 					session.getTransactionManager().commit();
 				}
 
-				// Enviar a Cliente
+				// Enviar Cliente
 				perceptionManager.sendToCustomerParty(organization, perception);
 
 				// Enviar Sunat
@@ -224,11 +218,12 @@ public class PerceptionsResource {
 		}
 		SearchResultsRepresentation<DocumentoSunatRepresentation> rep = new SearchResultsRepresentation<>();
 		List<DocumentoSunatRepresentation> items = new ArrayList<>();
-		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
+		results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation( f)));
 		rep.setItems(items);
 		rep.setTotalSize(results.getTotalSize());
 		return rep;
 	}
+
 
 	@GET
 	@Path("{perceptionId}")
@@ -246,6 +241,28 @@ public class PerceptionsResource {
 	}
 
 	@GET
+	@Path("{perceptionId}/representation/json")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPerceptionAsJson(@PathParam("perceptionId") final String perceptionId) {
+		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
+		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+		if (perception == null) {
+			return ErrorResponse.exists("Perception not found");
+		}
+
+		Document document ;
+		try {
+			document = DocumentUtils.byteToDocument(perception.getXmlDocument());
+		} catch (Exception e) {
+			return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
+		}
+		PerceptionType type= SunatDocumentToType.toPerceptionType(document);
+		Response.ResponseBuilder response = Response.ok(type);
+		return response.build();
+
+	}
+	@GET
 	@Path("{perceptionId}/representation/text")
 	@NoCache
 	@Produces("application/text")
@@ -253,7 +270,7 @@ public class PerceptionsResource {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
 		if (perception == null) {
-			throw new NotFoundException("Perception not found");
+			return ErrorResponse.exists("Perception not found");
 		}
 
 		String result = null;
@@ -271,12 +288,12 @@ public class PerceptionsResource {
 	@GET
 	@Path("{perceptionId}/representation/xml")
 	@NoCache
-	@Produces("application/xml")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getPerceptionAsXml(@PathParam("perceptionId") final String perceptionId) {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
 		if (perception == null) {
-			throw new NotFoundException("Perception not found");
+			return ErrorResponse.exists("Perception not found");
 		}
 
 		Document document = null;
@@ -285,15 +302,16 @@ public class PerceptionsResource {
 		} catch (Exception e) {
 			return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
 		}
-
-		Response.ResponseBuilder response = Response.ok(document);
+		ResponseBuilder response = Response.ok(document);
+		response.type("application/xml");
+		response.header("content-disposition", "attachment; filename=\"" + perception.getDocumentId() + "\".xml");
 		return response.build();
 	}
 
 	@GET
 	@Path("{perceptionId}/representation/pdf")
 	@NoCache
-	@Produces("application/xml")
+	@Produces("application/pdf")
 	public Response getPerceptionAsPdf(@PathParam("perceptionId") final String perceptionId) {
 		return null;
 	}
@@ -306,7 +324,7 @@ public class PerceptionsResource {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
 		if (perception == null) {
-			throw new NotFoundException("Perception not found");
+			return ErrorResponse.exists("Perception not found");
 		}
 
 		boolean removed = new PerceptionManager(session).removePerception(organization, perception);
@@ -318,7 +336,8 @@ public class PerceptionsResource {
 	}
 
 	@GET
-	@Path("{perceptionId}")
+	@Path("{perceptionId}/send-events")
+	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<SendEventRepresentation> getSendEvents(@PathParam("perceptionId") final String perceptionId) {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
@@ -334,7 +353,7 @@ public class PerceptionsResource {
 	@Path("{perceptionId}/representation/cdr")
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getCdr(@QueryParam("perceptionId") final String perceptionId) {
+	public Response getCdr(@PathParam("perceptionId") final String perceptionId) {
 		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
 		if (perceptionId == null) {
 			throw new NotFoundException("Sunat response not found");
@@ -353,7 +372,91 @@ public class PerceptionsResource {
 		}
 		ResponseBuilder response = Response.ok(storageFile.getFile());
 		response.type(storageFile.getMimeType());
-		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
+		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() +".zip"+ "\"");
 		return response.build();
+	}
+
+	@POST
+	@Path("{perceptionId}/send-to-customer")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public void sendToCustomer(@PathParam("perceptionId") final String perceptionId) {
+		PerceptionManager perceptionManager = new PerceptionManager(session);
+		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
+		if (perceptionId == null) {
+			throw new NotFoundException("Perception Id not found");
+		}
+		try {
+			PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+			perceptionManager.sendToCustomerParty(organization, perception);
+		} catch (SendException e) {
+			throw new NotFoundException("Error sending email");
+		}
+
+	/*	ExecutorService executorService = null;
+		try {
+			executorService = Executors.newCachedThreadPool();
+
+			ScheduledTaskRunner scheduledTaskRunner = new ScheduledTaskRunner(session.getOpenfactSessionFactory(), new ScheduledTask() {
+				@Override
+				public void run(OpenfactSession session) {
+					PerceptionManager perceptionManager = new PerceptionManager(session);
+					try {
+						OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+						PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+						perceptionManager.sendToCustomerParty(organizationThread, perception);
+					} catch (SendException e) {
+						throw new InternalServerErrorException(e);
+					}
+				}
+			});
+			executorService.execute(scheduledTaskRunner);
+		} finally {
+			if(executorService != null) {
+				executorService.shutdown();
+			}
+		}*/
+	}
+
+	@POST
+	@Path("{perceptionId}/send-to-third-party")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public void sendToThridParty(@PathParam("perceptionId") final String perceptionId) {
+		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
+		if (perceptionId == null) {
+			throw new NotFoundException("Perception Id not found");
+		}
+		try {
+			PerceptionManager perceptionManager = new PerceptionManager(session);
+			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+			PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+			perceptionManager.sendToTrirdParty(organizationThread, perception);
+		} catch (SendException e) {
+			throw new NotFoundException("Error sending sunat");
+		}
+		/*ExecutorService executorService = null;
+		try {
+			executorService = Executors.newCachedThreadPool();
+			ScheduledTaskRunner scheduledTaskRunner = new ScheduledTaskRunner(session.getOpenfactSessionFactory(), new ScheduledTask() {
+				@Override
+				public void run(OpenfactSession session) {
+					PerceptionManager perceptionManager = new PerceptionManager(session);
+					try {
+						OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+						PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+						perceptionManager.sendToTrirdParty(organizationThread, perception);
+					} catch (SendException e) {
+						throw new InternalServerErrorException(e);
+					}
+				}
+			});
+			executorService.execute(scheduledTaskRunner);
+		} finally {
+			if(executorService != null) {
+				executorService.shutdown();
+			}
+		}*/
 	}
 }

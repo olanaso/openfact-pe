@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -20,17 +19,15 @@ import org.openfact.models.FileModel;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.PartyLegalEntityModel;
-import org.openfact.models.PartyModel;
 import org.openfact.models.SimpleFileModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
+import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
@@ -38,12 +35,7 @@ import org.openfact.pe.services.constants.SunatEventType;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
-import org.openfact.ubl.UBLIDGenerator;
-import org.openfact.ubl.UBLReader;
-import org.openfact.ubl.UBLSender;
-import org.openfact.ubl.UBLWriter;
+import org.openfact.ubl.*;
 import org.w3c.dom.Document;
 
 public class SunatUBLRetentionProvider implements UBLRetentionProvider {
@@ -155,10 +147,11 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
 				// Attatchments
 				FileModel file = new SimpleFileModel();
-				file.setFileName(retention.getDocumentId());
+				file.setFileName(retention.getDocumentId()+ InternetMediaType.XML.getExtension());
 				file.setFile(retention.getXmlDocument());
 				file.setMimeType("application/xml");
 
+				SendEventModel sendEvent = null;
 				try {
 					Map<String, Object> attributes = new HashMap<String, Object>();
 					attributes.put("user", new ProfileBean(user));
@@ -170,17 +163,26 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 									"event-" + SunatEventType.RETENTION.toString().toLowerCase() + ".ftl", attributes);
 
 					// Write event to the database
-					SendEventModel sendEvent = session.getProvider(SunatSendEventProvider.class)
+					 sendEvent = session.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, retention);
 					sendEvent.setDescription("Retention Sended by Email");
-
+					Map<String, String> destiny = new HashMap<>();
+					destiny.put("email", user.getEmail());
+					sendEvent.setDestiny(destiny);
 					if (sendEvent.getResult()) {
 						retention.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
 					}
-					return sendEvent;
 				} catch (EmailException e) {
-					throw new SendException(e);
+					sendEvent = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, retention);
+					sendEvent.addFileAttatchments(file);
+					Map<String, String> destiny = new HashMap<>();
+					destiny.put("email", user.getEmail());
+					sendEvent.setDestiny(destiny);
+					sendEvent.setType("EMAIL-CUSTOMER");
+					sendEvent.setDescription(e.getMessage());
 				}
+				return  sendEvent;
 			}
 
 			@Override

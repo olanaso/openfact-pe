@@ -1,7 +1,6 @@
 package org.openfact.pe.models;
 
-import org.openfact.pe.model.types.VoidedDocumentsType;
-import org.openfact.pe.models.VoidedDocumentModel;
+import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.provider.Provider;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;

@@ -1,7 +1,6 @@
 package org.openfact.pe.models;
 
-import org.openfact.pe.model.types.RetentionType;
-import org.openfact.pe.models.RetentionModel;
+import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.provider.Provider;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;

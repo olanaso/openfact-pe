@@ -22,24 +22,20 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
 import org.openfact.common.converts.DateUtils;
 import org.openfact.common.finance.MoneyConverters;
-import org.openfact.models.InvoiceModel;
 import org.openfact.models.ModelException;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.constants.*;
-import org.openfact.pe.model.types.PerceptionType;
-import org.openfact.pe.model.types.RetentionType;
-import org.openfact.pe.model.types.SUNATPerceptionDocumentReferenceType;
-import org.openfact.pe.model.types.SUNATPerceptionInformationType;
-import org.openfact.pe.model.types.SUNATRetentionDocumentReferenceType;
-import org.openfact.pe.model.types.SUNATRetentionInformationType;
-import org.openfact.pe.model.types.SummaryDocumentsLineType;
-import org.openfact.pe.model.types.SummaryDocumentsType;
-import org.openfact.pe.model.types.VoidedDocumentsLineType;
-import org.openfact.pe.model.types.VoidedDocumentsType;
-import org.openfact.pe.models.types.common.AdditionalInformationTypeSunatAgg;
-import org.openfact.pe.models.types.common.AdditionalMonetaryTotalType;
-import org.openfact.pe.models.types.common.AdditionalPropertyType;
-import org.openfact.pe.models.types.common.InvoiceFactory;
+import org.openfact.pe.models.types.*;
+import org.openfact.pe.models.types.perception.PerceptionType;
+import org.openfact.pe.models.types.perception.SUNATPerceptionDocumentReferenceType;
+import org.openfact.pe.models.types.perception.SUNATPerceptionInformationType;
+import org.openfact.pe.models.types.retention.RetentionType;
+import org.openfact.pe.models.types.retention.SUNATRetentionDocumentReferenceType;
+import org.openfact.pe.models.types.retention.SUNATRetentionInformationType;
+import org.openfact.pe.models.types.summary.SummaryDocumentsLineType;
+import org.openfact.pe.models.types.summary.SummaryDocumentsType;
+import org.openfact.pe.models.types.voided.VoidedDocumentsLineType;
+import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.pe.representations.idm.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -683,92 +679,11 @@ public class SunatRepresentationToType {
         }
         type.setAgentParty(toAgentPartyType(organization));
         type.setReceiverParty(toReceiverPartyType(rep));
-        //if (rep.getCodigoDocumento() != null) {
+        //	if (rep.getCodigoDocumento() != null) {
         type.setSunatPerceptionSystemCode("01");
         //}
         if (rep.getTasaDocumento() != null) {
-            type.setSunatPerceptionPercent(rep.getTasaDocumento());
-        }
-        if (rep.getObservaciones() != null) {
-            type.addNote(rep.getObservaciones());
-        }
-        if (rep.getMonedaDocumento() != null) {
-            type.setDocumentCurrencyCode(rep.getMonedaDocumento());
-        }
-        BigDecimal totalInvoiceAmount = new BigDecimal(0);
-        BigDecimal totalPaid = new BigDecimal(0);
-        for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
-            BigDecimal amount = new BigDecimal(0);
-            BigDecimal paid = new BigDecimal(0);
-            if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null
-                    && reference.getMonedaDocumentoRelacionado() != rep.getMonedaDocumento()) {
-                if (reference.getTipoCambio() != null && reference.getTipoCambio() != new BigDecimal(0)) {
-                    amount = reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio())
-                            .multiply(rep.getTasaDocumento()).divide(new BigDecimal(100));
-                    paid = reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(amount);
-                }
-            } else {
-                reference.setTipoCambio(null);
-                amount = reference.getPagoDocumentoSunat().multiply(rep.getTasaDocumento()).divide(new BigDecimal(100));
-                paid = reference.getPagoDocumentoSunat().subtract(amount);
-            }
-            totalInvoiceAmount.add(amount);
-            totalPaid.add(paid);
-        }
-
-        type.setTotalInvoiceAmount(totalInvoiceAmount, rep.getMonedaDocumento());
-        type.setSunatTotalCashed(totalPaid, rep.getMonedaDocumento());
-        for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
-            type.addPerceptionDocumentReference(
-                    toPerceptionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
-        }
-        return type;
-    }
-
-    private static SUNATPerceptionDocumentReferenceType toPerceptionDocumentReferenceType(
-            DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal perception) {
-        SUNATPerceptionDocumentReferenceType type = new SUNATPerceptionDocumentReferenceType();
-        type.setId(toIDType(rep));
-        if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
-        }
-        if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
-            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
-        }
-        type.setPayment(toPaymentType(rep));
-        type.setSunatPerceptionInformation(toSUNATPerceptionInformationType(rep, currencyCode, perception));
-        return type;
-    }
-
-    private static SUNATPerceptionInformationType toSUNATPerceptionInformationType(DocumentoSunatLineRepresentation rep,
-                                                                                   String currencyCode, BigDecimal perception) {
-        SUNATPerceptionInformationType type = new SUNATPerceptionInformationType();
-        type.setSunatPerceptionAmount(toSUNATRetentionAmountType(rep, currencyCode, perception));
-        if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSunatPerceptionDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
-        }
-        type.setSunatNetTotalCashed(tosetSUNATNetTotalPaidType(rep, currencyCode, perception));
-        type.setExchangeRate(toExchangeRateType(rep, currencyCode));
-        return type;
-    }
-
-    public static RetentionType toRetentionType(OrganizationModel organization, DocumentoSunatRepresentation rep) {
-        RetentionType type = new RetentionType();
-        type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
-        type.addSignature(toSignatureType(organization));
-        type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
-        // Date
-        if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
-        }
-        type.setAgentParty(toAgentPartyType(organization));
-        type.setReceiverParty(toReceiverPartyType(rep));
-        //	if (rep.getCodigoDocumento() != null) {
-        type.setSunatRetentionSystemCode("01");
-        //}
-        if (rep.getTasaDocumento() != null) {
-            type.setSunatRetentionPercent(rep.getTasaDocumento());
+            type.setSunatPerceptionPercent(rep.getTasaDocumento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         }
         if (rep.getObservaciones() != null) {
             type.addNote(rep.getObservaciones());
@@ -803,8 +718,97 @@ public class SunatRepresentationToType {
             totalInvoiceAmount = totalInvoiceAmount + amount;
             totalPaid = totalPaid + paid;
         }
-        type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount), rep.getMonedaDocumento());
-        type.setSunatTotalPaid(new BigDecimal(totalPaid), rep.getMonedaDocumento());
+        type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
+        type.setSunatTotalCashed(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
+
+        for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
+            type.addPerceptionDocumentReference(
+                    toPerceptionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
+        }
+        return type;
+    }
+
+    private static SUNATPerceptionDocumentReferenceType toPerceptionDocumentReferenceType(
+            DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal perception) {
+        SUNATPerceptionDocumentReferenceType type = new SUNATPerceptionDocumentReferenceType();
+        type.setId(toIDType(rep));
+        if (rep.getFechaDocumentoRelacionado() != null) {
+            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
+        }
+        if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
+            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado().setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumentoRelacionado());
+        }
+        type.setPayment(toPaymentType(rep));
+        type.setSunatPerceptionInformation(toSUNATPerceptionInformationType(rep, currencyCode, perception));
+        return type;
+    }
+
+    private static SUNATPerceptionInformationType toSUNATPerceptionInformationType(DocumentoSunatLineRepresentation rep,
+                                                                                   String currencyCode, BigDecimal perception) {
+        SUNATPerceptionInformationType type = new SUNATPerceptionInformationType();
+        type.setSunatPerceptionAmount(toSUNATAmountType(rep, currencyCode, perception));
+        if (rep.getFechaDocumentoRelacionado() != null) {
+            type.setSunatPerceptionDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
+        }
+        type.setSunatNetTotalCashed(tosetSUNATNetTotalPaidType(rep, currencyCode, perception));
+        type.setExchangeRate(toExchangeRateType(rep, currencyCode));
+        return type;
+    }
+
+    public static RetentionType toRetentionType(OrganizationModel organization, DocumentoSunatRepresentation rep) {
+        RetentionType type = new RetentionType();
+        type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
+        type.addSignature(toSignatureType(organization));
+        type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
+        // Date
+        if (rep.getFechaDeEmision() != null) {
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
+        }
+        type.setAgentParty(toAgentPartyType(organization));
+        type.setReceiverParty(toReceiverPartyType(rep));
+        //	if (rep.getCodigoDocumento() != null) {
+        type.setSunatRetentionSystemCode("01");
+        //}
+        if (rep.getTasaDocumento() != null) {
+            type.setSunatRetentionPercent(rep.getTasaDocumento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+        }
+        if (rep.getObservaciones() != null) {
+            type.addNote(rep.getObservaciones());
+        }
+        if (rep.getMonedaDocumento() != null) {
+            type.setDocumentCurrencyCode(rep.getMonedaDocumento());
+        }
+        double totalInvoiceAmount = 0, totalPaid = 0;
+        for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
+            double amount = 0, paid = 0;
+            boolean change = false;
+            if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null) {
+                if (!reference.getMonedaDocumentoRelacionado().equalsIgnoreCase(rep.getMonedaDocumento())) {
+                    if (reference.getTipoCambio() != null && reference.getTipoCambio().doubleValue() != 0) {
+                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio())
+                                .multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
+                        paid = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(new BigDecimal(amount))).doubleValue();
+                    } else {
+                        change = true;
+                    }
+                } else {
+                    change = true;
+                }
+            } else {
+                change = true;
+            }
+            if (change) {
+                reference.setTipoCambio(null);
+                amount = (reference.getPagoDocumentoSunat().multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
+                paid = (reference.getPagoDocumentoSunat().subtract(new BigDecimal(amount))).doubleValue();
+            }
+            totalInvoiceAmount = totalInvoiceAmount + amount;
+            totalPaid = totalPaid + paid;
+        }
+        type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
+        type.setSunatTotalPaid(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
+
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
             type.addRetentionDocumentReference(
                     toRetentionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
@@ -820,7 +824,7 @@ public class SunatRepresentationToType {
             type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
-            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
+            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado().setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumentoRelacionado());
         }
         type.setPayment(toPaymentType(rep));
         type.setSUNATRetentionInformation(toSUNATRetentionInformation(rep, currencyCode, retencion));
@@ -831,7 +835,7 @@ public class SunatRepresentationToType {
     private static SUNATRetentionInformationType toSUNATRetentionInformation(DocumentoSunatLineRepresentation rep,
                                                                              String currencyCode, BigDecimal retencion) {
         SUNATRetentionInformationType type = new SUNATRetentionInformationType();
-        type.setSUNATRetentionAmount(toSUNATRetentionAmountType(rep, currencyCode, retencion));
+        type.setSUNATRetentionAmount(toSUNATAmountType(rep, currencyCode, retencion));
         if (rep.getFechaDocumentoRelacionado() != null) {
             type.setSUNATRetentionDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
         }
@@ -864,11 +868,11 @@ public class SunatRepresentationToType {
             retentionAmount = (rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100))).doubleValue();
             totalPaid = (rep.getPagoDocumentoSunat().subtract(new BigDecimal(retentionAmount))).doubleValue();
         }
-        type.setValue(new BigDecimal(totalPaid));
+        type.setValue(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN));
         return type;
     }
 
-    private static AmountType toSUNATRetentionAmountType(DocumentoSunatLineRepresentation rep, String currencyCode,
+    private static AmountType toSUNATAmountType(DocumentoSunatLineRepresentation rep, String currencyCode,
                                                          BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
@@ -888,7 +892,7 @@ public class SunatRepresentationToType {
         if (change) {
             retentionAmount = (rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100))).doubleValue();
         }
-        type.setValue(new BigDecimal(retentionAmount));
+        type.setValue(new BigDecimal(retentionAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN));
         return type;
 
     }
@@ -896,7 +900,7 @@ public class SunatRepresentationToType {
     private static ExchangeRateType toExchangeRateType(DocumentoSunatLineRepresentation rep, String currencyCode) {
         ExchangeRateType type = new ExchangeRateType();
         if (rep.getTipoCambio() != null) {
-            type.setCalculationRate(rep.getTipoCambio());
+            type.setCalculationRate(rep.getTipoCambio().setScale(2, BigDecimal.ROUND_HALF_EVEN));
             if (rep.getMonedaDocumentoRelacionado() != null) {
                 type.setSourceCurrencyCode(rep.getMonedaDocumentoRelacionado());
             }
@@ -926,7 +930,7 @@ public class SunatRepresentationToType {
             type.setCurrencyID(rep.getMonedaDocumentoRelacionado());
         }
         if (rep.getPagoDocumentoSunat() != null) {
-            type.setValue(rep.getPagoDocumentoSunat());
+            type.setValue(rep.getPagoDocumentoSunat().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         }
         return type;
     }
@@ -948,6 +952,15 @@ public class SunatRepresentationToType {
         type.setPartyName(toPartyNameType(rep));
         type.setPostalAddress(toPostalAddressType(rep));
         type.setPartyLegalEntity(toPartyLegalEntityType(rep));
+        type.setContact(toContactType(rep));
+        return type;
+    }
+
+    private static ContactType toContactType(DocumentoSunatRepresentation rep) {
+        ContactType type = new ContactType();
+        if (rep.getEntidadEmail() != null) {
+            type.setElectronicMail(rep.getEntidadEmail());
+        }
         return type;
     }
 
@@ -1049,7 +1062,7 @@ public class SunatRepresentationToType {
     public static SignatureType toSignatureType(OrganizationModel organization) {
         SignatureType type = new SignatureType();
         if (organization.getName() != null) {
-            type.setID(UblSunatConfiguration.ID_SIGN.getCodigo() + organization.getName());
+            type.setID(UblSunatConfiguration.ID_SIGN.getCodigo() + organization.getName().toUpperCase().replaceAll("\\s", ""));
         }
         type.setSignatoryParty(toSignatoryPartyType(organization));
         type.setDigitalSignatureAttachment(toDigitalSignatureAttachmentType(organization));
@@ -1065,7 +1078,7 @@ public class SunatRepresentationToType {
     private static ExternalReferenceType toExternalReferenceType(OrganizationModel organization) {
         ExternalReferenceType type = new ExternalReferenceType();
         if (organization.getName() != null) {
-            type.setURI(UblSunatConfiguration.URI_SIGN.getCodigo() + organization.getName());
+            type.setURI(UblSunatConfiguration.URI_SIGN.getCodigo() + organization.getName().toUpperCase().replaceAll("\\s", ""));
         }
         return type;
     }

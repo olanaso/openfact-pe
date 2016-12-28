@@ -9,6 +9,8 @@ import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.ubl.SendEventProvider;
 
+import java.util.List;
+
 public interface SunatSendEventProvider extends SendEventProvider {
 	SendEventModel addSendEvent(OrganizationModel organization, SendResultType type, PerceptionModel perception);
 
@@ -19,4 +21,15 @@ public interface SunatSendEventProvider extends SendEventProvider {
 
 	SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
 			VoidedDocumentModel voidedDocument);
+
+
+	SendEventModel getSunatSendEventById(OrganizationModel organization, String id);
+
+	boolean removeSunatSendEvent(OrganizationModel organization, String id);
+
+	boolean removeSunatSendEvent(OrganizationModel organization, SendEventModel sendEvent);
+
+	List<SendEventModel> getSunatSendEvents(OrganizationModel organization);
+
+	List<SendEventModel> getSunatSendEvents(OrganizationModel organization, Integer firstResult, Integer maxResults);
 }

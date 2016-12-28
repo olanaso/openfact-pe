@@ -177,9 +177,8 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-		/*return summaryDocuments.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-				.collect(Collectors.toList());*/
-		return null;
+		return summaryDocuments.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
 	}
 
 	@Override

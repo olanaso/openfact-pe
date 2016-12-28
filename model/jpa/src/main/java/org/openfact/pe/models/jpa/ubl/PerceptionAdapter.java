@@ -286,8 +286,7 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 
     @Override
     public List<SendEventModel> getSendEvents() {
-    /*	return perception.getSendEvents().stream().map(f -> new SendEventAdapter(session, organization, em, f))
-                .collect(Collectors.toList());*/
-        return null;
+    	return perception.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+                .collect(Collectors.toList());
     }
 }

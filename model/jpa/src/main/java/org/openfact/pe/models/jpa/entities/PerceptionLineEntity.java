@@ -49,7 +49,7 @@ public class PerceptionLineEntity {
     protected BigDecimal sunatNetPerceptionAmount;
     @Column(name = "SUNAT_NET_CASHED")
     protected BigDecimal sunatNetCashed;
-    @NotNull
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey, name = "PERCEPTION_ID")
     private PerceptionEntity perception;

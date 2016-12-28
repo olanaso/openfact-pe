@@ -8,15 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,9 +31,10 @@ import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.models.utils.RepresentationToModel;
-import org.openfact.pe.model.types.RetentionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
+import org.openfact.pe.models.types.retention.RetentionType;
+import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.services.managers.RetentionManager;
@@ -49,9 +42,15 @@ import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
+import org.openfact.services.scheduled.ScheduledTaskRunner;
+import org.openfact.timer.ScheduledTask;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Consumes(MediaType.APPLICATION_JSON)
 public class RetentionsResource {
@@ -104,22 +103,26 @@ public class RetentionsResource {
 
 		try {
 			RetentionModel retention = retentionManager.addRetention(organization, rep);
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().commit();
-			}
-
 			// Enviar a Cliente
 			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				retentionManager.sendToCustomerParty(organization, retention);
+				try {
+					retentionManager.sendToCustomerParty(organization, retention);
+				} catch (SendException e) {
+					logger.error("Error sending to Customer");
+				}
 			}
 
 			// Enviar Sunat
 			if (rep.isEnviarAutomaticamenteASunat()) {
-				retentionManager.sendToTrirdParty(organization, retention);
+				try {
+					retentionManager.sendToTrirdParty(organization, retention);
+				} catch (SendException e) {
+					logger.error("Error sending to Sunat");
+				}
 			}
 
-			URI location = uriInfo.getAbsolutePathBuilder().path(retention.getId()).build();
-			return Response.created(location).build();
+			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(retention.getId()).build();
+			return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(retention)).build();
 		} catch (ModelDuplicateException e) {
 			if (session.getTransactionManager().isActive()) {
 				session.getTransactionManager().setRollbackOnly();
@@ -130,11 +133,6 @@ public class RetentionsResource {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Could not create retention");
-		} catch (SendException e) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not send invoice");
 		}
 	}
 
@@ -142,7 +140,7 @@ public class RetentionsResource {
 	@Path("upload")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createInvoice(final MultipartFormDataInput input) {
+	public Response createRetention(final MultipartFormDataInput input) {
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		List<InputPart> inputParts = uploadForm.get("file");
 
@@ -226,6 +224,7 @@ public class RetentionsResource {
 		return rep;
 	}
 
+
 	@GET
 	@Path("{retentionId}")
 	@NoCache
@@ -242,6 +241,28 @@ public class RetentionsResource {
 	}
 
 	@GET
+	@Path("{retentionId}/representation/json")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getRetentionAsJson(@PathParam("retentionId") final String retentionId) {
+		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
+		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
+		if (retention == null) {
+			return ErrorResponse.exists("Retention not found");
+		}
+
+		Document document ;
+		try {
+			 document = DocumentUtils.byteToDocument(retention.getXmlDocument());
+		} catch (Exception e) {
+			return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
+		}
+		RetentionType type= SunatDocumentToType.toRetentionType(document);
+		Response.ResponseBuilder response = Response.ok(type);
+		return response.build();
+
+	}
+	@GET
 	@Path("{retentionId}/representation/text")
 	@NoCache
 	@Produces("application/text")
@@ -249,7 +270,7 @@ public class RetentionsResource {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
 		if (retention == null) {
-			throw new NotFoundException("Retention not found");
+			return ErrorResponse.exists("Retention not found");
 		}
 
 		String result = null;
@@ -267,12 +288,12 @@ public class RetentionsResource {
 	@GET
 	@Path("{retentionId}/representation/xml")
 	@NoCache
-	@Produces("application/xml")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getRetentionAsXml(@PathParam("retentionId") final String retentionId) {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
 		if (retention == null) {
-			throw new NotFoundException("Retention not found");
+			return ErrorResponse.exists("Retention not found");
 		}
 
 		Document document = null;
@@ -281,15 +302,16 @@ public class RetentionsResource {
 		} catch (Exception e) {
 			return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
 		}
-
-		Response.ResponseBuilder response = Response.ok(document);
+		ResponseBuilder response = Response.ok(document);
+		response.type("application/xml");
+		response.header("content-disposition", "attachment; filename=\"" + retention.getDocumentId() + "\".xml");
 		return response.build();
 	}
 
 	@GET
 	@Path("{retentionId}/representation/pdf")
 	@NoCache
-	@Produces("application/xml")
+	@Produces("application/pdf")
 	public Response getRetentionAsPdf(@PathParam("retentionId") final String retentionId) {
 		return null;
 	}
@@ -302,7 +324,7 @@ public class RetentionsResource {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
 		if (retention == null) {
-			throw new NotFoundException("Retention not found");
+			return ErrorResponse.exists("Retention not found");
 		}
 
 		boolean removed = new RetentionManager(session).removeRetention(organization, retention);
@@ -314,10 +336,10 @@ public class RetentionsResource {
 	}
 
 	@GET
-	@Path("{retentionId}")
+	@Path("{retentionId}/send-events")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<SendEventRepresentation> getSendEvents(@QueryParam("retentionId") final String retentionId) {
+	public List<SendEventRepresentation> getSendEvents(@PathParam("retentionId") final String retentionId) {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
 		if (retention == null) {
@@ -331,7 +353,7 @@ public class RetentionsResource {
 	@Path("{retentionId}/representation/cdr")
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getCdr(@QueryParam("retentionId") final String retentionId) {
+	public Response getCdr(@PathParam("retentionId") final String retentionId) {
 		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
 		if (retentionId == null) {
 			throw new NotFoundException("Sunat response not found");
@@ -350,7 +372,91 @@ public class RetentionsResource {
 		}
 		ResponseBuilder response = Response.ok(storageFile.getFile());
 		response.type(storageFile.getMimeType());
-		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
+		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() +".zip"+ "\"");
 		return response.build();
+	}
+
+	@POST
+	@Path("{retentionId}/send-to-customer")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public void sendToCustomer(@PathParam("retentionId") final String retentionId) {
+		RetentionManager retentionManager = new RetentionManager(session);
+		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
+		if (retentionId == null) {
+			throw new NotFoundException("Retention Id not found");
+		}
+		try {
+		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
+		OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+		retentionManager.sendToCustomerParty(organization, retention);
+		} catch (SendException e) {
+			throw new NotFoundException("Error sending email");
+		}
+
+	/*	ExecutorService executorService = null;
+		try {
+			executorService = Executors.newCachedThreadPool();
+
+			ScheduledTaskRunner scheduledTaskRunner = new ScheduledTaskRunner(session.getOpenfactSessionFactory(), new ScheduledTask() {
+				@Override
+				public void run(OpenfactSession session) {
+					RetentionManager retentionManager = new RetentionManager(session);
+					try {
+						OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+						RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
+						retentionManager.sendToCustomerParty(organizationThread, retention);
+					} catch (SendException e) {
+						throw new InternalServerErrorException(e);
+					}
+				}
+			});
+			executorService.execute(scheduledTaskRunner);
+		} finally {
+			if(executorService != null) {
+				executorService.shutdown();
+			}
+		}*/
+	}
+
+	@POST
+	@Path("{retentionId}/send-to-third-party")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public void sendToThridParty(@PathParam("retentionId") final String retentionId) {
+		RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
+		if (retentionId == null) {
+			throw new NotFoundException("Retention Id not found");
+		}
+		try {
+		RetentionManager retentionManager = new RetentionManager(session);
+		OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+		RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
+		retentionManager.sendToTrirdParty(organizationThread, retention);
+		} catch (SendException e) {
+			throw new NotFoundException("Error sending sunat");
+		}
+		/*ExecutorService executorService = null;
+		try {
+			executorService = Executors.newCachedThreadPool();
+			ScheduledTaskRunner scheduledTaskRunner = new ScheduledTaskRunner(session.getOpenfactSessionFactory(), new ScheduledTask() {
+				@Override
+				public void run(OpenfactSession session) {
+					RetentionManager retentionManager = new RetentionManager(session);
+					try {
+						OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+						RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
+						retentionManager.sendToTrirdParty(organizationThread, retention);
+					} catch (SendException e) {
+						throw new InternalServerErrorException(e);
+					}
+				}
+			});
+			executorService.execute(scheduledTaskRunner);
+		} finally {
+			if(executorService != null) {
+				executorService.shutdown();
+			}
+		}*/
 	}
 }

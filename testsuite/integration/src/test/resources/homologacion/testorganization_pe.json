@@ -1,27 +1,128 @@
 {
-	"id": "AHREN",
-	"organization": "AHREN SAC",
-	"description": "AHREN CONTRATISTAS GENERALES SAC",
-	"enabled": true,
-	"assignedIdentificationId": "20494637074",
-	"additionalAccountId": "RUC",
-	"supplierName": "AHREN CONTRATISTAS GENERALES S.A.C",
-	"registrationName": "AHREN CONTRATISTAS GENERALES S.A.C",
-	"postalAddress": {
-		"streetName": "MZA. A LOTE. 3",
-		"citySubdivisionName": "ASOC. SANTA TERESA",
-		"cityName": "AYACUCHO",
-		"countrySubentity": "HUAMANGA",
-		"district": "AYACUCHO",
-		"countryIdentificationCode": "PE"
-	},
-	"smtpServer": {
-		"auth": true,
-		"from": "noreply@ahrensac.com",
-		"host": "mail.ahrensac.com",
-		"port": "25",
-		"ssl": "true",
-		"starttls": "false",
-		"password": "15963.0"
-	}
+  "ublVersionID": {
+    "value": "2.0"
+  },
+  "customizationID": {
+    "value": "1.0"
+  },
+  "id": {
+    "value": "P001-1111"
+  },
+  "issueDate": {
+    "value": "2016-12-27T05:00:00.000+0000"
+  },
+
+  "receiverParty": {
+    "partyIdentification": [
+      {
+        "id": {
+          "value": "45643123",
+          "schemeID": "1"
+        },
+        "idvalue": "45643123"
+      }
+    ],
+    "partyName": [
+      {
+        "name": {
+          "value": "asdasdasd"
+        },
+        "nameValue": "asdasdasd"
+      }
+    ],
+    "postalAddress": {
+      "streetName": {
+        "value": "asdasdasdas"
+      },
+      "addressLine": [],
+      "locationCoordinate": [],
+      "addressLineCount": 0,
+      "locationCoordinateCount": 0,
+      "streetNameValue": "asdasdasdas"
+    },
+    "partyTaxScheme": [],
+    "partyLegalEntity": [],
+    "contact": {
+      "note": [],
+      "otherCommunication": [],
+      "noteCount": 0,
+      "otherCommunicationCount": 0
+    },
+    "person": [],
+    "serviceProviderParty": [],
+    "powerOfAttorney": [],
+    "partyIdentificationCount": 1,
+    "partyNameCount": 1,
+    "partyTaxSchemeCount": 0,
+    "partyLegalEntityCount": 0,
+    "personCount": 0,
+    "serviceProviderPartyCount": 0,
+    "powerOfAttorneyCount": 0
+  },
+  "sunatPerceptionSystemCode": {
+    "value": "01"
+  },
+  "sunatPerceptionPercent": {
+    "value": 3.00
+  },
+  "note": [
+    {
+      "value": "ASDASDASDAS"
+    }
+  ],
+  "documentCurrencyCode": {
+    "value": "PEN"
+  },
+  "totalInvoiceAmount": {
+    "value": 150.00,
+    "currencyID": "PEN"
+  },
+  "sunatTotalCashed": {
+    "value": 4850.00,
+    "currencyID": "PEN"
+  },
+  "sunatPerceptionDocumentReference": [
+    {
+      "id": {
+        "value": "F001-22",
+        "schemeID": "01"
+      },
+      "issueDate": {
+        "value": "2016-12-27T05:00:00.000+0000"
+      },
+      "totalInvoiceAmount": {
+        "value": 5000.00,
+        "currencyID": "PEN"
+      },
+      "payment": {
+        "id": {
+          "value": "5"
+        },
+        "paidAmount": {
+          "value": 5000.00,
+          "currencyID": "PEN"
+        },
+        "paidDate": {
+          "value": "2016-12-27T05:00:00.000+0000"
+        },
+        "idvalue": "5",
+        "paidAmountValue": 5000.00,
+        "paidDateValue": "2016-12-27T05:00:00.000+0000"
+      },
+      "sunatPerceptionInformation": {
+        "sunatPerceptionAmount": {
+          "value": 150.00,
+          "currencyID": "PEN"
+        },
+        "sunatPerceptionDate": {
+          "value": "2016-12-27T05:00:00.000+0000"
+        },
+        "sunatNetTotalCashed": {
+          "value": 4850.00,
+          "currencyID": "PEN"
+        },
+        "exchangeRate": {}
+      }
+    }
+  ]
 }

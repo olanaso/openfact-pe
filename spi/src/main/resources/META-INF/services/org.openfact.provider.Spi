@@ -7,3 +7,4 @@ org.openfact.pe.models.SummaryDocumentSpi
 org.openfact.pe.models.VoidedDocumentSpi
 org.openfact.pe.models.RetentionSpi
 org.openfact.pe.models.PerceptionSpi
+org.openfact.pe.models.SunatStorageFileSpi

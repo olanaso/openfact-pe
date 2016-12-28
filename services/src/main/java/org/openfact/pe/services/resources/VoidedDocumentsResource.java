@@ -40,9 +40,9 @@ import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.models.utils.RepresentationToModel;
-import org.openfact.pe.model.types.VoidedDocumentsType;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
+import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.pe.services.managers.VoidedDocumentManager;
@@ -323,7 +323,7 @@ public class VoidedDocumentsResource {
 	}
 
 	@GET
-	@Path("{voidedDocumentId}")
+	@Path("{voidedDocumentId}/send-events")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<SendEventRepresentation> getSendEvents(@QueryParam("voidedDocumentId") final String voidedDocumentId) {

@@ -6,11 +6,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.openfact.models.ModelException;
-import org.openfact.pe.model.types.PerceptionType;
-import org.openfact.pe.model.types.RetentionType;
-import org.openfact.pe.model.types.SummaryDocumentsType;
-import org.openfact.pe.model.types.SunatFactory;
-import org.openfact.pe.model.types.VoidedDocumentsType;
+import org.openfact.pe.models.types.perception.PerceptionFactory;
+import org.openfact.pe.models.types.perception.PerceptionType;
+import org.openfact.pe.models.types.retention.RetentionFactory;
+import org.openfact.pe.models.types.retention.RetentionType;
+import org.openfact.pe.models.types.summary.SummaryDocumentFactory;
+import org.openfact.pe.models.types.summary.SummaryDocumentsType;
+import org.openfact.pe.models.types.voided.VoidedDocumentFactory;
+import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.w3c.dom.Document;
 
 public class SunatDocumentToType {
@@ -20,7 +23,7 @@ public class SunatDocumentToType {
 	public static VoidedDocumentsType toVoidedDocumentsType(Document document) {
 		try {
 			if (factory == null) {
-				factory = JAXBContext.newInstance(SunatFactory.class);
+				factory = JAXBContext.newInstance(VoidedDocumentFactory.class);
 			}
 			if (unmarshal == null) {
 				unmarshal = factory.createUnmarshaller();
@@ -38,7 +41,7 @@ public class SunatDocumentToType {
 	public static RetentionType toRetentionType(Document document) {
 		try {
 			if (factory == null) {
-				factory = JAXBContext.newInstance(SunatFactory.class);
+				factory = JAXBContext.newInstance(RetentionFactory.class);
 			}
 			if (unmarshal == null) {
 				unmarshal = factory.createUnmarshaller();
@@ -55,7 +58,7 @@ public class SunatDocumentToType {
 	public static SummaryDocumentsType toSummaryDocumentsType(Document document) {
 		try {
 			if (factory == null) {
-				factory = JAXBContext.newInstance(SunatFactory.class);
+				factory = JAXBContext.newInstance(SummaryDocumentFactory.class);
 			}
 			if (unmarshal == null) {
 				unmarshal = factory.createUnmarshaller();
@@ -73,7 +76,7 @@ public class SunatDocumentToType {
 	public static PerceptionType toPerceptionType(Document document) {
 		try {
 			if (factory == null) {
-				factory = JAXBContext.newInstance(SunatFactory.class);
+				factory = JAXBContext.newInstance(PerceptionFactory.class);
 			}
 			if (unmarshal == null) {
 				unmarshal = factory.createUnmarshaller();

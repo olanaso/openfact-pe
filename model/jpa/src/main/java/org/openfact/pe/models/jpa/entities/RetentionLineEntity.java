@@ -47,7 +47,6 @@ public class RetentionLineEntity {
 	@Column(name = "SUNAT_NET_CASHED")
 	protected BigDecimal sunatNetCashed;
 
-	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(foreignKey = @ForeignKey, name = "RETENTION_ID")
 	private RetentionEntity retention;

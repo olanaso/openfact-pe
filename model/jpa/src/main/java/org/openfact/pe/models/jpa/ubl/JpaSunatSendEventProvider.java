@@ -14,12 +14,7 @@ import org.openfact.models.InvoiceModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.models.jpa.AbstractHibernateStorage;
-import org.openfact.models.jpa.CreditNoteAdapter;
-import org.openfact.models.jpa.DebitNoteAdapter;
-import org.openfact.models.jpa.InvoiceAdapter;
-import org.openfact.models.jpa.OrganizationAdapter;
-import org.openfact.models.jpa.SendEventAdapter;
+import org.openfact.models.jpa.*;
 import org.openfact.models.jpa.entities.CreditNoteSendEventEntity;
 import org.openfact.models.jpa.entities.DebitNoteSendEventEntity;
 import org.openfact.models.jpa.entities.InvoiceSendEventEntity;
@@ -29,10 +24,7 @@ import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.VoidedDocumentModel;
-import org.openfact.pe.models.jpa.entities.PerceptionSendEventEntity;
-import org.openfact.pe.models.jpa.entities.RetentionSendEventEntity;
-import org.openfact.pe.models.jpa.entities.SummaryDocumentsSendEventEntity;
-import org.openfact.pe.models.jpa.entities.VoidedDocumentsSendEventEntity;
+import org.openfact.pe.models.jpa.entities.*;
 import org.openfact.ubl.SendEventModel;
 
 public class JpaSunatSendEventProvider extends AbstractHibernateStorage implements SunatSendEventProvider {
@@ -87,6 +79,9 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 
 		return new SendEventAdapter(session, organization, em, sendEvent);
 	}
+
+
+
 
 	@Override
 	public SendEventModel getSendEventById(OrganizationModel organization, String id) {
@@ -151,7 +146,7 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 //		SearchResultsModel<SendEventModel> searchResult = new SearchResultsModel<>();
 //		List<SendEventModel> models = searchResult.getModels();
 //
-//		entities.forEach(f -> models.add(new SendEventAdapter(session, organization, em, f)));
+//		entities.forEach(f -> models.add(new SunatSendEventAdapter(session, organization, em, f)));
 //		searchResult.setTotalSize(entityResult.getTotalSize());
 //		return searchResult;
 //	}
@@ -178,7 +173,7 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 //
 //		ScrollAdapter<SendEventModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
 //			SendEventEntity entity = em.find(SendEventEntity.class, f);
-//			return new SendEventAdapter(session, organization, em, entity);
+//			return new SunatSendEventAdapter(session, organization, em, entity);
 //		});
 //
 //		// Iterator<SendEventModel> iterator = result.iterator();
@@ -194,64 +189,105 @@ public class JpaSunatSendEventProvider extends AbstractHibernateStorage implemen
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
 			PerceptionModel perception) {
-		/*PerceptionSendEventEntity sendEvent = new PerceptionSendEventEntity();
+		PerceptionSendEventEntity sendEvent = new PerceptionSendEventEntity();
 		buildSendEvent(sendEvent, organization, type);
 		sendEvent.setPerception(PerceptionAdapter.toEntity(perception, em));
 		em.persist(sendEvent);
 		em.flush();
-
-		return new SendEventAdapter(session, organization, em, sendEvent);*/
-		return null;
+		return new SunatSendEventAdapter(session, organization, em, sendEvent);
 	}
 
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type, RetentionModel retention) {
-		/*RetentionSendEventEntity sendEvent = new RetentionSendEventEntity();
+		RetentionSendEventEntity sendEvent = new RetentionSendEventEntity();
 		buildSendEvent(sendEvent, organization, type);
 		sendEvent.setRetention(RetentionAdapter.toEntity(retention, em));
 		em.persist(sendEvent);
 		em.flush();
 
-		return new SendEventAdapter(session, organization, em, sendEvent);*/
-		return null;
+		return new SunatSendEventAdapter(session, organization, em, sendEvent);
 	}
 
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
 			SummaryDocumentModel summaryDocument) {
-		/*SummaryDocumentsSendEventEntity sendEvent = new SummaryDocumentsSendEventEntity();
+		SummaryDocumentsSendEventEntity sendEvent = new SummaryDocumentsSendEventEntity();
 		buildSendEvent(sendEvent, organization, type);
 		sendEvent.setSummaryDocuments(SummaryDocumentAdapter.toEntity(summaryDocument, em));
 		em.persist(sendEvent);
 		em.flush();
 
-		return new SendEventAdapter(session, organization, em, sendEvent);*/
-		return null;
+		return new SunatSendEventAdapter(session, organization, em, sendEvent);
 	}
 
 	@Override
 	public SendEventModel addSendEvent(OrganizationModel organization, SendResultType type,
 			VoidedDocumentModel voidedDocument) {
-//		VoidedDocumentsSendEventEntity sendEvent = new VoidedDocumentsSendEventEntity();
-//		buildSendEvent(sendEvent, organization, type);
-//		sendEvent.setVoidedDocuments(VoidedDocumentAdapter.toEntity(voidedDocument, em));
-//		em.persist(sendEvent);
-//		em.flush();
-//
-//		return new SendEventAdapter(session, organization, em, sendEvent);
-		return null;
+		VoidedDocumentsSendEventEntity sendEvent = new VoidedDocumentsSendEventEntity();
+		buildSendEvent(sendEvent, organization, type);
+		sendEvent.setVoidedDocuments(VoidedDocumentAdapter.toEntity(voidedDocument, em));
+		em.persist(sendEvent);
+		em.flush();
+		return new SunatSendEventAdapter(session, organization, em, sendEvent);
 	}
 
+	private void buildSendEvent(SunatSendEventEntity sendEvent, OrganizationModel organization, SendResultType type) {
+		sendEvent.setCreatedTimestamp(LocalDateTime.now());
+		sendEvent.setResult(type.equals(SendResultType.SUCCESS));
+		sendEvent.setOrganizationId(OrganizationAdapter.toEntity(organization, em).getId());
+	}
 	private void buildSendEvent(SendEventEntity sendEvent, OrganizationModel organization, SendResultType type) {
 		sendEvent.setCreatedTimestamp(LocalDateTime.now());
 		sendEvent.setResult(type.equals(SendResultType.SUCCESS));
 		sendEvent.setOrganization(OrganizationAdapter.toEntity(organization, em));
 	}
 
-//	@Override
-//	public ScrollModel<SendEventModel> getSendEventsScroll(OrganizationModel organization, boolean asc, int scrollSize,
-//			int fetchSize) {
-//		return null;
-//	}
+	@Override
+	public SendEventModel getSunatSendEventById(OrganizationModel organization, String id) {
+		TypedQuery<SunatSendEventEntity> query = em.createNamedQuery("getOrganizationSunatSendEventById", SunatSendEventEntity.class);
+		query.setParameter("id", id);
+		query.setParameter("organizationId", organization.getId());
+		List<SunatSendEventEntity> entities = query.getResultList();
+		if (entities.size() == 0)
+			return null;
+		return new SunatSendEventAdapter(session, organization, em, entities.get(0));
+	}
 
+	@Override
+	public boolean removeSunatSendEvent(OrganizationModel organization, String id) {
+		return removeSunatSendEvent(organization, getSendEventById(organization, id));	}
+
+	@Override
+	public boolean removeSunatSendEvent(OrganizationModel organization, SendEventModel sendEvent) {
+		SunatSendEventEntity sendEventEntity = em.find(SunatSendEventEntity.class, sendEvent.getId());
+		if (sendEventEntity == null)
+			return false;
+
+		em.remove(sendEventEntity);
+		em.flush();
+		return true;
+	}
+
+	@Override
+	public List<SendEventModel> getSunatSendEvents(OrganizationModel organization) {
+		return getSunatSendEvents(organization, -1, -1);
+	}
+
+	@Override
+	public List<SendEventModel> getSunatSendEvents(OrganizationModel organization, Integer firstResult, Integer maxResults) {
+		String queryName = "getAllSunatSendEventsByOrganization";
+
+		TypedQuery<SunatSendEventEntity> query = em.createNamedQuery(queryName, SunatSendEventEntity.class);
+		query.setParameter("organizationId", organization.getId());
+		if (firstResult != -1) {
+			query.setFirstResult(firstResult);
+		}
+		if (maxResults != -1) {
+			query.setMaxResults(maxResults);
+		}
+		List<SunatSendEventEntity> results = query.getResultList();
+		List<SendEventModel> invoices = results.stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());
+		return invoices;
+	}
 }

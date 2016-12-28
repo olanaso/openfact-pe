@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -20,17 +19,15 @@ import org.openfact.models.FileModel;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.PartyLegalEntityModel;
-import org.openfact.models.PartyModel;
 import org.openfact.models.SimpleFileModel;
 import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.model.types.PerceptionType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLPerceptionProvider;
+import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
@@ -153,10 +150,10 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 
 				// Attatchments
 				FileModel file = new SimpleFileModel();
-				file.setFileName(perception.getDocumentId());
+				file.setFileName(perception.getDocumentId()+ InternetMediaType.XML.getExtension());
 				file.setFile(perception.getXmlDocument());
 				file.setMimeType("application/xml");
-
+				SendEventModel sendEvent=null;
 				try {
 					Map<String, Object> attributes = new HashMap<String, Object>();
 					attributes.put("user", new ProfileBean(user));
@@ -168,17 +165,27 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 									"event-" + SunatEventType.PERCEPTION.toString().toLowerCase() + ".ftl", attributes);
 
 					// Write event to the database
-					SendEventModel sendEvent = session.getProvider(SunatSendEventProvider.class)
+					 sendEvent = session.getProvider(SunatSendEventProvider.class)
 							.addSendEvent(organization, SendResultType.SUCCESS, perception);
 					sendEvent.setDescription("Perception Sended by Email");
-
+					Map<String, String> destiny = new HashMap<>();
+					destiny.put("email", user.getEmail());
+					sendEvent.setDestiny(destiny);
 					if (sendEvent.getResult()) {
 						perception.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
 					}
 					return sendEvent;
 				} catch (EmailException e) {
-					throw new SendException(e);
+					sendEvent = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+							SendResultType.ERROR, perception);
+					sendEvent.addFileAttatchments(file);
+					Map<String, String> destiny = new HashMap<>();
+					destiny.put("email", user.getEmail());
+					sendEvent.setDestiny(destiny);
+					sendEvent.setType("EMAIL-CUSTOMER");
+					sendEvent.setDescription(e.getMessage());
 				}
+				return  sendEvent;
 			}
 
 			@Override

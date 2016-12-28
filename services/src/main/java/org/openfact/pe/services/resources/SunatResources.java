@@ -46,5 +46,8 @@ public class SunatResources {
     public VoidedDocumentsResource getVoidedDocumentsResource() {
         return new VoidedDocumentsResource(session, session.getContext().getOrganization());
     }
-
+    @Path("ubl-extensions/storage-files")
+    public SunatStorageFilesAdminResource getSunatStorageFilesAdminResource() {
+        return new SunatStorageFilesAdminResource(session, session.getContext().getOrganization());
+    }
 }

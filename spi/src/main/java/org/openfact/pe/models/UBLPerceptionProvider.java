@@ -1,7 +1,6 @@
 package org.openfact.pe.models;
 
-import org.openfact.pe.model.types.PerceptionType;
-import org.openfact.pe.models.PerceptionModel;
+import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.provider.Provider;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;

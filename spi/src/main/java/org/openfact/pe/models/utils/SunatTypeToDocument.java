@@ -1,134 +1,104 @@
 package org.openfact.pe.models.utils;
 
-import java.io.IOException;
-import java.io.StringWriter;
+
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
-import org.openfact.common.converts.DocumentUtils;
+import javax.xml.transform.dom.DOMResult;
+
 import org.openfact.models.ModelException;
-import org.openfact.pe.model.types.PerceptionType;
-import org.openfact.pe.model.types.RetentionType;
-import org.openfact.pe.model.types.SummaryDocumentsType;
-import org.openfact.pe.model.types.SunatFactory;
-import org.openfact.pe.model.types.VoidedDocumentsType;
+import org.openfact.pe.models.types.perception.PerceptionFactory;
+import org.openfact.pe.models.types.perception.PerceptionType;
+import org.openfact.pe.models.types.retention.RetentionFactory;
+import org.openfact.pe.models.types.retention.RetentionType;
+import org.openfact.pe.models.types.summary.SummaryDocumentFactory;
+import org.openfact.pe.models.types.summary.SummaryDocumentsType;
+import org.openfact.pe.models.types.voided.VoidedDocumentFactory;
+import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
 
 public class SunatTypeToDocument {
 
-	public static Document toDocument(PerceptionType type) throws JAXBException {
-		try {
-			SunatFactory factory = new SunatFactory();
-			JAXBContext context = JAXBContext.newInstance(SunatFactory.class);
-			Marshaller marshallerElement = context.createMarshaller();
-			JAXBElement<PerceptionType> jaxbElement = factory.createPerception(type);
-			StringWriter xmlWriter = new StringWriter();
-			XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
-			xmlStream.setNamespaceContext(SunatUtils
-					.getBasedNamespaceContext("urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1"));
-			marshallerElement.marshal(jaxbElement, xmlStream);
-			Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
-			return document;
-		} catch (XMLStreamException e) {
-			throw new ModelException(e);
-		} catch (FactoryConfigurationError e) {
-			throw new ModelException(e);
-		} catch (IOException e) {
-			throw new ModelException(e);
-		} catch (SAXException e) {
-			throw new ModelException(e);
-		} catch (ParserConfigurationException e) {
-			throw new ModelException(e);
-		}
-	}
+    public static Document toDocument(PerceptionType type) throws JAXBException {
+        try {
+            PerceptionFactory factory = new PerceptionFactory();
+            JAXBContext context = JAXBContext.newInstance(PerceptionFactory.class);
+            Marshaller marshallerElement = context.createMarshaller();
+            marshallerElement.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            JAXBElement<PerceptionType> jaxbElement = factory.createPerception(type);
+            DOMResult res = new DOMResult();
+            marshallerElement.marshal(jaxbElement, res);
+            Element element = ((Document) res.getNode()).getDocumentElement();
 
-	public static Document toDocument(RetentionType type) throws JAXBException {
-		SunatFactory factory = new SunatFactory();
-		JAXBContext context;
-		try {
-			context = JAXBContext.newInstance(SunatFactory.class);
-			Marshaller marshallerElement = context.createMarshaller();
-			JAXBElement<RetentionType> jaxbElement = factory.createRetention(type);
-			StringWriter xmlWriter = new StringWriter();
-			XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
-			xmlStream.setNamespaceContext(SunatUtils
-					.getBasedNamespaceContext("urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1"));
-			marshallerElement.marshal(jaxbElement, xmlStream);
-			Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
-			return document;
-		} catch (XMLStreamException e) {
-			throw new ModelException(e);
-		} catch (FactoryConfigurationError e) {
-			throw new ModelException(e);
-		} catch (IOException e) {
-			throw new ModelException(e);
-		} catch (SAXException e) {
-			throw new ModelException(e);
-		} catch (ParserConfigurationException e) {
-			throw new ModelException(e);
-		}
-	}
+            Document document = element.getOwnerDocument();
+            return document;
+        } catch (FactoryConfigurationError e) {
+            throw new ModelException(e);
+        }
+    }
 
-	public static Document toDocument(SummaryDocumentsType type) throws JAXBException {
-		SunatFactory factory = new SunatFactory();
-		JAXBContext context;
-		try {
-			context = JAXBContext.newInstance(SunatFactory.class);
-			Marshaller marshallerElement = context.createMarshaller();
-			JAXBElement<SummaryDocumentsType> jaxbElement = factory.createSummaryDocuments(type);
-			StringWriter xmlWriter = new StringWriter();
-			XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
-			xmlStream.setNamespaceContext(SunatUtils
-					.getBasedNamespaceContext("urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1"));
-			marshallerElement.marshal(jaxbElement, xmlStream);
-			Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
-			return document;
-		} catch (XMLStreamException e) {
-			throw new ModelException(e);
-		} catch (FactoryConfigurationError e) {
-			throw new ModelException(e);
-		} catch (IOException e) {
-			throw new ModelException(e);
-		} catch (SAXException e) {
-			throw new ModelException(e);
-		} catch (ParserConfigurationException e) {
-			throw new ModelException(e);
-		}
-	}
+    public static Document toDocument(RetentionType type) throws JAXBException {
+        try {
+            RetentionFactory factory = new RetentionFactory();
+            JAXBContext context = JAXBContext.newInstance(RetentionFactory.class);
 
-	public static Document toDocument(VoidedDocumentsType type) throws JAXBException {
-		SunatFactory factory = new SunatFactory();
-		JAXBContext context;
-		try {
-			context = JAXBContext.newInstance(SunatFactory.class);
-			Marshaller marshallerElement = context.createMarshaller();
-			JAXBElement<VoidedDocumentsType> jaxbElement = factory.createVoidedDocuments(type);
-			StringWriter xmlWriter = new StringWriter();
-			XMLStreamWriter xmlStream = XMLOutputFactory.newInstance().createXMLStreamWriter(xmlWriter);
-			xmlStream.setNamespaceContext(SunatUtils
-					.getBasedNamespaceContext("urn:sunat:names:specification:ubl:peru:schema:xsd:VoidedDocuments-1"));
-			marshallerElement.marshal(jaxbElement, xmlStream);
-			Document document = DocumentUtils.getStringToDocument(xmlWriter.toString());
-			return document;
-		} catch (XMLStreamException e) {
-			throw new ModelException(e);
-		} catch (FactoryConfigurationError e) {
-			throw new ModelException(e);
-		} catch (IOException e) {
-			throw new ModelException(e);
-		} catch (SAXException e) {
-			throw new ModelException(e);
-		} catch (ParserConfigurationException e) {
-			throw new ModelException(e);
-		}
-	}
+            Marshaller marshallerElement = context.createMarshaller();
+            marshallerElement.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshallerElement.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
+            JAXBElement<RetentionType> jaxbElement = factory.createRetention(type);
+            DOMResult res = new DOMResult();
+            marshallerElement.marshal(jaxbElement, System.out);
+            marshallerElement.marshal(jaxbElement, res);
+            Element element = ((Document) res.getNode()).getDocumentElement();
+
+            Document document = element.getOwnerDocument();
+            return document;
+
+        } catch (FactoryConfigurationError e) {
+            throw new ModelException(e);
+        }
+    }
+
+
+    public static Document toDocument(SummaryDocumentsType type) throws JAXBException {
+
+        try {
+            SummaryDocumentFactory factory = new SummaryDocumentFactory();
+            JAXBContext context = JAXBContext.newInstance(SummaryDocumentFactory.class);
+
+            Marshaller marshallerElement = context.createMarshaller();
+            JAXBElement<SummaryDocumentsType> jaxbElement = factory.createSummaryDocuments(type);
+            DOMResult res = new DOMResult();
+            marshallerElement.marshal(jaxbElement, res);
+            Element element = ((Document) res.getNode()).getDocumentElement();
+
+            Document document = element.getOwnerDocument();
+            return document;
+        } catch (FactoryConfigurationError e) {
+            throw new ModelException(e);
+        }
+    }
+
+    public static Document toDocument(VoidedDocumentsType type) throws JAXBException {
+
+        try {
+            VoidedDocumentFactory factory = new VoidedDocumentFactory();
+            JAXBContext context = JAXBContext.newInstance(VoidedDocumentFactory.class);
+            Marshaller marshallerElement = context.createMarshaller();
+            JAXBElement<VoidedDocumentsType> jaxbElement = factory.createVoidedDocuments(type);
+            DOMResult res = new DOMResult();
+            marshallerElement.marshal(jaxbElement, res);
+            Element element = ((Document) res.getNode()).getDocumentElement();
+
+            Document document = element.getOwnerDocument();
+            return document;
+        } catch (FactoryConfigurationError e) {
+            throw new ModelException(e);
+        }
+    }
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class DocumentoSunatRepresentation {
     private String entidadTipoDeDocumento;
@@ -22,6 +23,7 @@ public class DocumentoSunatRepresentation {
     private BigDecimal totalDocumentoSunat;
     private Date fechaDeEmision;
     private String codigoUnico;
+    protected Set<String> requiredActions;
     private List<DocumentoSunatLineRepresentation> detalle;
 
     public void addDetalle(DocumentoSunatLineRepresentation representation) {
@@ -165,5 +167,13 @@ public class DocumentoSunatRepresentation {
 
     public void setDetalle(List<DocumentoSunatLineRepresentation> detalle) {
         this.detalle = detalle;
+    }
+
+    public Set<String> getRequiredActions() {
+        return requiredActions;
+    }
+
+    public void setRequiredActions(Set<String> requiredActions) {
+        this.requiredActions = requiredActions;
     }
 }

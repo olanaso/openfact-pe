@@ -15,11 +15,16 @@ import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.representations.idm.SummaryRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 
+import java.util.HashSet;
+
 public class SunatModelToRepresentation {
 
     public static DocumentoSunatRepresentation toRepresentation(PerceptionModel model) {
         DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
-
+        if(model.getRequiredActions() != null) {
+            rep.setRequiredActions(new HashSet<>());
+            rep.getRequiredActions().addAll(model.getRequiredActions());
+        }
         if (model.getEntityDocumentType() != null) {
             rep.setEntidadTipoDeDocumento(model.getEntityDocumentType());
         }
@@ -37,7 +42,7 @@ public class SunatModelToRepresentation {
         }
         if (model.getDocumentId() != null) {
             String[] splits = model.getDocumentId().split("-");
-            rep.setSerieDocumento(splits[0].substring(1, 4));
+            rep.setSerieDocumento(splits[0]);
             rep.setNumeroDocumento(splits[1]);
         }
         if (model.getDocumentCurrencyCode() != null) {
@@ -114,6 +119,10 @@ public class SunatModelToRepresentation {
 
     public static DocumentoSunatRepresentation toRepresentation(RetentionModel model) {
         DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
+        if(model.getRequiredActions() != null) {
+            rep.setRequiredActions(new HashSet<>());
+            rep.getRequiredActions().addAll(model.getRequiredActions());
+        }
         if (model.getEntityDocumentType() != null) {
             rep.setEntidadTipoDeDocumento(model.getEntityDocumentType());
         }
@@ -131,7 +140,7 @@ public class SunatModelToRepresentation {
         }
         if (model.getDocumentId() != null) {
             String[] splits = model.getDocumentId().split("-");
-            rep.setSerieDocumento(splits[0].substring(1, 4));
+            rep.setSerieDocumento(splits[0]);
             rep.setNumeroDocumento(splits[1]);
         }
         if (model.getDocumentCurrencyCode() != null) {

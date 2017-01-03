@@ -20,6 +20,7 @@ import org.hibernate.annotations.Type;
 @NamedQueries({
         @NamedQuery(name = "getAllPerceptionsByOrganization", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.createdTimestamp"),
         @NamedQuery(name = "getAllPerceptionsByOrganizationDesc", query = "select p from PerceptionEntity p where p.organizationId = :organizationId order by p.createdTimestamp desc"),
+        @NamedQuery(name = "getAllPerceptionsIdsByOrganization", query = "select p.documentId from PerceptionEntity p where p.organizationId = :organizationId order by p.createdTimestamp"),
         @NamedQuery(name = "getOrganizationPerceptionById", query = "select p from PerceptionEntity p where p.id = :id and p.organizationId = :organizationId"),
         @NamedQuery(name = "getOrganizationPerceptionByDocumentId", query = "select p from PerceptionEntity p where p.documentId = :documentId and p.organizationId = :organizationId"),
         @NamedQuery(name = "getOrganizationPerceptionCount", query = "select count(p) from PerceptionEntity p where p.organizationId = :organizationId"),

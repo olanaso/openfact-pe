@@ -30,6 +30,7 @@ public class SunatTypeToDocument {
             JAXBContext context = JAXBContext.newInstance(PerceptionFactory.class);
             Marshaller marshallerElement = context.createMarshaller();
             marshallerElement.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshallerElement.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
             JAXBElement<PerceptionType> jaxbElement = factory.createPerception(type);
             DOMResult res = new DOMResult();
             marshallerElement.marshal(jaxbElement, res);
@@ -52,7 +53,6 @@ public class SunatTypeToDocument {
             marshallerElement.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
             JAXBElement<RetentionType> jaxbElement = factory.createRetention(type);
             DOMResult res = new DOMResult();
-            marshallerElement.marshal(jaxbElement, System.out);
             marshallerElement.marshal(jaxbElement, res);
             Element element = ((Document) res.getNode()).getDocumentElement();
 
@@ -70,8 +70,9 @@ public class SunatTypeToDocument {
         try {
             SummaryDocumentFactory factory = new SummaryDocumentFactory();
             JAXBContext context = JAXBContext.newInstance(SummaryDocumentFactory.class);
-
             Marshaller marshallerElement = context.createMarshaller();
+            marshallerElement.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshallerElement.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
             JAXBElement<SummaryDocumentsType> jaxbElement = factory.createSummaryDocuments(type);
             DOMResult res = new DOMResult();
             marshallerElement.marshal(jaxbElement, res);
@@ -90,6 +91,8 @@ public class SunatTypeToDocument {
             VoidedDocumentFactory factory = new VoidedDocumentFactory();
             JAXBContext context = JAXBContext.newInstance(VoidedDocumentFactory.class);
             Marshaller marshallerElement = context.createMarshaller();
+            marshallerElement.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshallerElement.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
             JAXBElement<VoidedDocumentsType> jaxbElement = factory.createVoidedDocuments(type);
             DOMResult res = new DOMResult();
             marshallerElement.marshal(jaxbElement, res);

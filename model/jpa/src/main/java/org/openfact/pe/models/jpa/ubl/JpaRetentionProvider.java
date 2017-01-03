@@ -10,16 +10,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.openfact.models.ModelDuplicateException;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.ScrollModel;
+import org.openfact.models.*;
 import org.openfact.models.enums.RequiredAction;
-import org.openfact.models.jpa.AbstractHibernateStorage;
-import org.openfact.models.jpa.OrganizationAdapter;
-import org.openfact.models.jpa.ScrollAdapter;
-import org.openfact.models.jpa.ScrollPagingAdapter;
+import org.openfact.models.jpa.*;
+import org.openfact.models.jpa.entities.DebitNoteEntity;
 import org.openfact.models.search.SearchCriteriaFilterOperator;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
@@ -259,21 +253,19 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 		if (scrollSize == -1) {
 			scrollSize = 10;
 		}
+		String queryName = null;
+		if(asc) {
+			queryName = "getAllRetentionsByOrganization";
+		} else {
+			queryName = "getAllRetentionsByOrganizationDesc";
+		}
 
-		TypedQuery<String> query = em.createNamedQuery("getAllRetentionsByOrganization", String.class);
+		TypedQuery<RetentionEntity> query = em.createNamedQuery(queryName, RetentionEntity.class);
 		query.setParameter("organizationId", organization.getId());
 
-		ScrollAdapter<RetentionModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
-			RetentionEntity entity = em.find(RetentionEntity.class, f);
-			return new RetentionAdapter(session, organization, em, entity);
+		ScrollAdapter<RetentionModel, RetentionEntity> result = new ScrollAdapter<>(RetentionEntity.class, query, f -> {
+			return new RetentionAdapter(session, organization, em, f);
 		});
-
-		// Iterator<RetentionModel> iterator = result.iterator();
-		// while (iterator.hasNext()) {
-		// RetentionModel perceptionModel = iterator.next();
-		// System.out.println("-------------------");
-		// System.out.println(perceptionModel.getRequiredActions());
-		// }
 
 		return result;
 	}

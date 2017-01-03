@@ -672,7 +672,9 @@ public class SunatRepresentationToType {
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
         type.addSignature(toSignatureType(organization));
-        type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
+        if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
+            type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
+        }
         // Date
         if (rep.getFechaDeEmision() != null) {
             type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
@@ -760,7 +762,9 @@ public class SunatRepresentationToType {
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
         type.addSignature(toSignatureType(organization));
-        type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
+        if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
+            type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
+        }
         // Date
         if (rep.getFechaDeEmision() != null) {
             type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
@@ -873,7 +877,7 @@ public class SunatRepresentationToType {
     }
 
     private static AmountType toSUNATAmountType(DocumentoSunatLineRepresentation rep, String currencyCode,
-                                                         BigDecimal retencion) {
+                                                BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
         double retentionAmount = 0, totalPaid = 0;
@@ -941,7 +945,7 @@ public class SunatRepresentationToType {
             type.setSchemeID(rep.getTipoDocumentoRelacionado());
         }
         if (rep.getNumeroDocumentoRelacionado() != null) {
-            type.setValue(rep.getNumeroDocumentoRelacionado());
+            type.setValue(rep.getNumeroDocumentoRelacionado().toUpperCase());
         }
         return type;
     }

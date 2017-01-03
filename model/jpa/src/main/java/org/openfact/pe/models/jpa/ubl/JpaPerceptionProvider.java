@@ -25,7 +25,9 @@ import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
+import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.jpa.entities.PerceptionEntity;
+import org.openfact.pe.models.jpa.entities.RetentionEntity;
 
 public class JpaPerceptionProvider extends AbstractHibernateStorage implements PerceptionProvider {
 
@@ -258,24 +260,23 @@ public class JpaPerceptionProvider extends AbstractHibernateStorage implements P
 	@Override
 	public ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc,
 			int scrollSize) {
+
 		if (scrollSize == -1) {
 			scrollSize = 10;
 		}
+		String queryName = null;
+		if(asc) {
+			queryName = "getAllPerceptionsByOrganization";
+		} else {
+			queryName = "getAllPerceptionsByOrganizationDesc";
+		}
 
-		TypedQuery<String> query = em.createNamedQuery("getAllPerceptionsByOrganization", String.class);
+		TypedQuery<PerceptionEntity> query = em.createNamedQuery(queryName, PerceptionEntity.class);
 		query.setParameter("organizationId", organization.getId());
 
-		ScrollAdapter<PerceptionModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
-			PerceptionEntity entity = em.find(PerceptionEntity.class, f);
-			return new PerceptionAdapter(session, organization, em, entity);
+		ScrollAdapter<PerceptionModel, PerceptionEntity> result = new ScrollAdapter<>(PerceptionEntity.class, query, f -> {
+			return new PerceptionAdapter(session, organization, em, f);
 		});
-
-//		Iterator<PerceptionModel> iterator = result.iterator();
-//		while (iterator.hasNext()) {
-//			PerceptionModel perceptionModel = iterator.next();
-//			System.out.println("-------------------");
-//			System.out.println(perceptionModel.getRequiredActions());
-//		}
 
 		return result;
 	}

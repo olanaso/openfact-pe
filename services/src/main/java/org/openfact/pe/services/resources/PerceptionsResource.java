@@ -148,8 +148,8 @@ public class PerceptionsResource {
 			try {
 				InputStream inputStream = inputPart.getBody(InputStream.class, null);
 				byte[] bytes = IOUtils.toByteArray(inputStream);
-
-				PerceptionType perceptionType = null;
+				Document document = DocumentUtils.byteToDocument(bytes);
+				PerceptionType perceptionType = SunatDocumentToType.toPerceptionType(document);;
 				if (perceptionType == null) {
 					throw new IOException("Invalid invoice Xml");
 				}
@@ -163,18 +163,13 @@ public class PerceptionsResource {
 				}
 
 				PerceptionModel perception = perceptionManager.addPerception(organization, perceptionType);
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().commit();
-				}
-
 				// Enviar Cliente
 				perceptionManager.sendToCustomerParty(organization, perception);
-
 				// Enviar Sunat
 				perceptionManager.sendToTrirdParty(organization, perception);
 
-				URI location = uriInfo.getAbsolutePathBuilder().path(perception.getId()).build();
-				return Response.created(location).build();
+				URI location = session.getContext().getUri().getAbsolutePathBuilder().path(perception.getId()).build();
+				return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(perception)).build();
 			} catch (IOException e) {
 				if (session.getTransactionManager().isActive()) {
 					session.getTransactionManager().setRollbackOnly();
@@ -189,13 +184,17 @@ public class PerceptionsResource {
 				if (session.getTransactionManager().isActive()) {
 					session.getTransactionManager().setRollbackOnly();
 				}
-				return ErrorResponse.exists("Could not create invoice");
+				return ErrorResponse.exists("Could not create perception");
 			} catch (SendException e) {
 				if (session.getTransactionManager().isActive()) {
 					session.getTransactionManager().setRollbackOnly();
 				}
-				return ErrorResponse.exists("Could not send invoice");
-			}
+				return ErrorResponse.exists("Could not send perception");
+			} catch (Exception e) {
+				if (session.getTransactionManager().isActive()) {
+					session.getTransactionManager().setRollbackOnly();
+				}
+				return ErrorResponse.exists("Could not send perception");			}
 		}
 
 		return Response.ok().build();

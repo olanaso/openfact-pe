@@ -175,7 +175,7 @@ public class SunatDocumentIdProvider {
 		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
 		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(perceptionCode.getMask().substring(0, 1));
+		documentId.append(perceptionCode.getMask().substring(2, 3));
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
@@ -213,7 +213,7 @@ public class SunatDocumentIdProvider {
 		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
 		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(retentionCode.getMask().substring(0, 1));
+		documentId.append(retentionCode.getMask().substring(2, 3));
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
@@ -254,7 +254,7 @@ public class SunatDocumentIdProvider {
 			nextNumber = SunatUtils.getNextNumber(0, 99999);
 		}
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(summaryDocumentCode.getMask().substring(0, 2));
+		documentId.append(summaryDocumentCode.getMask().substring(2, 4));
 		documentId.append("-");
 		documentId.append(nextSeries);
 		documentId.append("-");
@@ -296,7 +296,7 @@ public class SunatDocumentIdProvider {
 			nextNumber = SunatUtils.getNextNumber(0, 99999);
 		}
 		StringBuilder documentId = new StringBuilder();
-		documentId.append(voidedDocumentCode.getMask().substring(0, 2));
+		documentId.append(voidedDocumentCode.getMask().substring(2, 4));
 		documentId.append("-");
 		documentId.append(nextSeries);
 		documentId.append("-");

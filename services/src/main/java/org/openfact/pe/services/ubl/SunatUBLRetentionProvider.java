@@ -1,10 +1,6 @@
 package org.openfact.pe.services.ubl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.soap.SOAPFault;
@@ -105,7 +101,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
 			@Override
 			public Document write(OrganizationModel organization, RetentionType retentionType,
-					Map<String, String> attributes) {
+					Map<String, List<String>> attributes) {
 				try {
 					Document document = SunatTypeToDocument.toDocument(retentionType);
 					return document;

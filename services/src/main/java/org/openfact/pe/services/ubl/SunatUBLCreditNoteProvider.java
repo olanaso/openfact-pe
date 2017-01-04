@@ -107,7 +107,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 
 			@Override
 			public Document write(OrganizationModel organization, CreditNoteType creditNoteType,
-					Map<String, String> attributes) {
+					Map<String, List<String>> attributes) {
 				try {
 					MapBasedNamespaceContext mapBasedNamespace = SunatUtils.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2");
 					ByteArrayOutputStream out = new ByteArrayOutputStream();

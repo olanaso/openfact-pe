@@ -117,7 +117,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 
 			@Override
 			public Document write(OrganizationModel organization, DebitNoteType debitNoteType,
-					Map<String, String> attributes) {
+					Map<String, List<String>> attributes) {
 				try {
 					MapBasedNamespaceContext mapBasedNamespace = SunatUtils
 							.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2");
@@ -153,7 +153,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 			@Override
 			public SendEventModel sendToCustomer(OrganizationModel organization, DebitNoteModel debitNote)
 					throws SendException {
-				CustomerPartyModel customerParty = debitNote.getAccountingCustomerParty();
+				/*CustomerPartyModel customerParty = debitNote.getAccountingCustomerParty();
 				if (customerParty == null || customerParty.getParty() == null
 						|| customerParty.getParty().getContact() == null
 						|| customerParty.getParty().getContact().getElectronicMail() == null) {
@@ -193,7 +193,8 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					return sendEvent;
 				} catch (EmailException e) {
 					throw new SendException(e);
-				}
+				}*/
+				return  null;
 			}
 
 			@Override

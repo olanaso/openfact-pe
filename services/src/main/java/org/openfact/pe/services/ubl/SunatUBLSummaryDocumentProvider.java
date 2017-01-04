@@ -2,6 +2,7 @@ package org.openfact.pe.services.ubl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -97,7 +98,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 
 			@Override
 			public Document write(OrganizationModel organization, SummaryDocumentsType summaryDocumentsType,
-					Map<String, String> attributes) {
+					Map<String, List<String>> attributes) {
 				try {
 					Document document = SunatTypeToDocument.toDocument(summaryDocumentsType);
 					return document;

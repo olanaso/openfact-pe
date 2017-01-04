@@ -118,7 +118,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 
 			@Override
 			public Document write(OrganizationModel organization, InvoiceType invoiceType,
-					Map<String, String> attributes) {
+					Map<String, List<String>> attributes) {
 				try {
 					MapBasedNamespaceContext mapBasedNamespace = SunatUtils.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
 					ByteArrayOutputStream out = new ByteArrayOutputStream();

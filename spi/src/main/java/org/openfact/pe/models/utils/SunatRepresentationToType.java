@@ -1321,13 +1321,13 @@ public class SunatRepresentationToType {
 
     public static SupplierPartyType toSupplierParty(OrganizationModel organization) {
         SupplierPartyType supplierPartyType = new SupplierPartyType();
-        if (organization.getAssignedIdentificationId() != null) {
+        if (organization.getAdditionalAccountId() != null) {
             List<AdditionalAccountIDType> additionalAccountIDType = new ArrayList<>();
-            additionalAccountIDType.add(new AdditionalAccountIDType(organization.getAssignedIdentificationId()));
+            additionalAccountIDType.add(new AdditionalAccountIDType(organization.getAdditionalAccountId()));
             supplierPartyType.setAdditionalAccountID(additionalAccountIDType);
         }
-        if (organization.getAdditionalAccountId() != null) {
-            supplierPartyType.setCustomerAssignedAccountID(organization.getAdditionalAccountId());
+        if (organization.getAssignedIdentificationId() != null) {
+            supplierPartyType.setCustomerAssignedAccountID(organization.getAssignedIdentificationId());
         }
 
         PartyType partyType = new PartyType();

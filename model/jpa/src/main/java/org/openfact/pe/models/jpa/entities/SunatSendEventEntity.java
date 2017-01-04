@@ -32,7 +32,7 @@ public class SunatSendEventEntity {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean result;
 
-    @Column(name = "DESCRIPTION", length = 400)
+    @Column(name = "DESCRIPTION", length = 2000)
     private String description;
 
     @Column(name = "SEND_TYPE")

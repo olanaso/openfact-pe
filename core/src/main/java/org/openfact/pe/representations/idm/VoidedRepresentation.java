@@ -1,56 +1,45 @@
 package org.openfact.pe.representations.idm;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class VoidedRepresentation {
-	protected String serie;
-	protected String numero;
-	protected LocalDateTime fechaDeDocumento;
-	protected LocalDateTime fechaReferencia;
+
+	private String serieDocumento;
+	private String numeroDocumento;
+	private Date fechaDeEmision;
 	protected boolean enviarAutomaticamenteASunat;
 	protected boolean enviarAutomaticamenteAlCliente;
 	protected String codigoUnico;
-	protected List<VoidedLineRepresentation> line;
+	private String observaciones;
+	protected Set<String> requiredActions;
+	protected List<VoidedLineRepresentation> detalle;
 
-	public String getSerie() {
-		return serie;
+	public String getSerieDocumento() {
+		return serieDocumento;
 	}
 
-	public void setSerie(String serie) {
-		this.serie = serie;
+	public void setSerieDocumento(String serieDocumento) {
+		this.serieDocumento = serieDocumento;
 	}
 
-	public String getNumero() {
-		return numero;
+	public String getNumeroDocumento() {
+		return numeroDocumento;
 	}
 
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setNumeroDocumento(String numeroDocumento) {
+		this.numeroDocumento = numeroDocumento;
 	}
 
-	public LocalDateTime getFechaDeDocumento() {
-		return fechaDeDocumento;
+	public Date getFechaDeEmision() {
+		return fechaDeEmision;
 	}
 
-	public void setFechaDeDocumento(LocalDateTime fechaDeDocumento) {
-		this.fechaDeDocumento = fechaDeDocumento;
-	}
-
-	public LocalDateTime getFechaReferencia() {
-		return fechaReferencia;
-	}
-
-	public void setFechaReferencia(LocalDateTime fechaReferencia) {
-		this.fechaReferencia = fechaReferencia;
-	}
-
-	public List<VoidedLineRepresentation> getLine() {
-		return line;
-	}
-
-	public void setLine(List<VoidedLineRepresentation> line) {
-		this.line = line;
+	public void setFechaDeEmision(Date fechaDeEmision) {
+		this.fechaDeEmision = fechaDeEmision;
 	}
 
 	public boolean isEnviarAutomaticamenteASunat() {
@@ -73,8 +62,39 @@ public class VoidedRepresentation {
 		return codigoUnico;
 	}
 
+
 	public void setCodigoUnico(String codigoUnico) {
 		this.codigoUnico = codigoUnico;
 	}
 
+	public List<VoidedLineRepresentation> getDetalle() {
+		return detalle;
+	}
+
+	public void setDetalle(List<VoidedLineRepresentation> detalle) {
+		this.detalle = detalle;
+	}
+
+	public void addDetalle(VoidedLineRepresentation representation) {
+		if (detalle == null) {
+			detalle=new ArrayList<>();
+		}
+		detalle.add(representation);
+	}
+
+	public Set<String> getRequiredActions() {
+		return requiredActions;
+	}
+
+	public void setRequiredActions(Set<String> requiredActions) {
+		this.requiredActions = requiredActions;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
 }

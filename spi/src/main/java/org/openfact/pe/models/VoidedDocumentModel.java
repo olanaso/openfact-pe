@@ -1,11 +1,10 @@
 package org.openfact.pe.models;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import org.openfact.models.OpenfactSession;
-import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
 import org.openfact.ubl.SendEventModel;
@@ -20,29 +19,21 @@ public interface VoidedDocumentModel {
 
     String getOrganizationId();
 
-    String getDocumentCurrencyCode();
+    String getUblVersionID();
 
-    void setDocumentCurrencyCode(String value);
+    void setUblVersionID(String ublVersionID);
 
-    String getUblVersionId();
+    String getCustomizationID();
 
-    void setUblVersionId(String ublVersionId);
+    void setCustomizationID(String customizationID);
 
-    String getCustomizationId();
+    LocalDateTime getIssueDateTime();
 
-    void setCustomizationId(String customizationId);
+    void setIssueDateTime(LocalDateTime issueDateTime);
 
-    LocalDate getReferenceDate();
+   List<VoidedDocumentLineModel> getVoidedDocumentLines();
 
-    void setReferenceDate(LocalDate referenceDate);
-
-    LocalDate getIssueDate();
-
-    void setIssueDate(LocalDate issueDate);
-
-   /* List<VoidedDocumentsLineModel> getVoidedDocumentsLine();
-
-    VoidedDocumentsLineModel addVoidedDocumentsLine();*/
+    VoidedDocumentLineModel addVoidedDocumentLines();
 
     /**
      * Xml

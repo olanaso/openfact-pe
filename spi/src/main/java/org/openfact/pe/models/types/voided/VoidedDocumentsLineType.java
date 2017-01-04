@@ -13,34 +13,29 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VoidedDocumentsLineType", propOrder = { "lineID", "documentTypeCode", "documentSerialID",
-        "documentNumberID", "voidReasonDescription" })
+@XmlType(name = "VoidedDocumentsLineType", propOrder = {"lineID", "documentTypeCode", "documentSerialID",
+        "documentNumberID", "voidReasonDescription"})
 public class VoidedDocumentsLineType {
     @XmlElement(name = "LineID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected LineIDType lineID;
     @XmlElement(name = "DocumentTypeCode", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected DocumentTypeCodeType documentTypeCode;
-    @XmlElement(name = "DocumentSerialID", required = true)
+    @XmlElement(name = "DocumentSerialID", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", required = true)
     protected IdentifierType documentSerialID;
-    @XmlElement(name = "DocumentNumberID", required = true)
+    @XmlElement(name = "DocumentNumberID", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", required = true)
     protected IdentifierType documentNumberID;
-    @XmlElement(name = "VoidReasonDescription", required = true)
+    @XmlElement(name = "VoidReasonDescription", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", required = true)
     protected TextType voidReasonDescription;
 
     /**
-     * 
-     * 
      * <pre>
      * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ccts:Component xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;&lt;ccts:ComponentType&gt;BBIE&lt;/ccts:ComponentType&gt;&lt;ccts:DictionaryEntryName&gt;Consolidated Invoice Line. Identifier
      * 							&lt;/ccts:DictionaryEntryName&gt;&lt;ccts:Definition&gt;Identifies the Consolidated Invoice Line.
      * 							&lt;/ccts:Definition&gt;&lt;ccts:Cardinality&gt;1&lt;/ccts:Cardinality&gt;&lt;ccts:ObjectClass&gt;Consolidated Invoice Line&lt;/ccts:ObjectClass&gt;&lt;ccts:PropertyTerm&gt;Identifier&lt;/ccts:PropertyTerm&gt;&lt;ccts:RepresentationTerm&gt;Identifier&lt;/ccts:RepresentationTerm&gt;&lt;ccts:DataType&gt;Identifier. Type&lt;/ccts:DataType&gt;
      * 						&lt;/ccts:Component&gt;
      * </pre>
-     * 
-     * 
-     * 
+     *
      * @return possible object is {@link LineIDType }
-     * 
      */
     public LineIDType getLineID() {
         return lineID;
@@ -48,18 +43,14 @@ public class VoidedDocumentsLineType {
 
     /**
      * Sets the value of the lineID property.
-     * 
-     * @param value
-     *            allowed object is {@link LineIDType }
-     * 
+     *
+     * @param value allowed object is {@link LineIDType }
      */
     public void setLineID(LineIDType value) {
         this.lineID = value;
     }
 
     /**
-     * 
-     * 
      * <pre>
      * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ccts:Component xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;&lt;ccts:ComponentType&gt;BBIE&lt;/ccts:ComponentType&gt;&lt;ccts:DictionaryEntryName&gt;Consolidated Invoice Line Type Code.
      * 								Code
@@ -68,11 +59,8 @@ public class VoidedDocumentsLineType {
      * 							&lt;/ccts:PropertyTerm&gt;&lt;ccts:RepresentationTerm&gt;Code&lt;/ccts:RepresentationTerm&gt;&lt;ccts:DataType&gt;Code. Type&lt;/ccts:DataType&gt;
      * 						&lt;/ccts:Component&gt;
      * </pre>
-     * 
-     * 
-     * 
+     *
      * @return possible object is {@link DocumentTypeCodeType }
-     * 
      */
     public DocumentTypeCodeType getDocumentTypeCode() {
         return documentTypeCode;
@@ -80,18 +68,14 @@ public class VoidedDocumentsLineType {
 
     /**
      * Sets the value of the documentTypeCode property.
-     * 
-     * @param value
-     *            allowed object is {@link DocumentTypeCodeType }
-     * 
+     *
+     * @param value allowed object is {@link DocumentTypeCodeType }
      */
     public void setDocumentTypeCode(DocumentTypeCodeType value) {
         this.documentTypeCode = value;
     }
 
     /**
-     * 
-     * 
      * <pre>
      * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ccts:Component xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;&lt;ccts:ComponentType&gt;ASBIE&lt;/ccts:ComponentType&gt;&lt;ccts:DictionaryEntryName&gt;Consolidated Invoice Line Billing
      * 								Payment
@@ -100,11 +84,8 @@ public class VoidedDocumentsLineType {
      * 							&lt;/ccts:AssociatedObjectClass&gt;
      * 						&lt;/ccts:Component&gt;
      * </pre>
-     * 
-     * 
-     * 
+     *
      * @return possible object is {@link IdentifierType }
-     * 
      */
     public IdentifierType getDocumentSerialID() {
         return documentSerialID;
@@ -112,18 +93,14 @@ public class VoidedDocumentsLineType {
 
     /**
      * Sets the value of the documentSerialID property.
-     * 
-     * @param value
-     *            allowed object is {@link IdentifierType }
-     * 
+     *
+     * @param value allowed object is {@link IdentifierType }
      */
     public void setDocumentSerialID(IdentifierType value) {
         this.documentSerialID = value;
     }
 
     /**
-     * 
-     * 
      * <pre>
      * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ccts:Component xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;&lt;ccts:ComponentType&gt;ASBIE&lt;/ccts:ComponentType&gt;&lt;ccts:DictionaryEntryName&gt;Consolidated Invoice Line Billing
      * 								Payment
@@ -132,11 +109,8 @@ public class VoidedDocumentsLineType {
      * 							&lt;/ccts:AssociatedObjectClass&gt;
      * 						&lt;/ccts:Component&gt;
      * </pre>
-     * 
-     * 
-     * 
+     *
      * @return possible object is {@link IdentifierType }
-     * 
      */
     public IdentifierType getDocumentNumberID() {
         return documentNumberID;
@@ -144,18 +118,14 @@ public class VoidedDocumentsLineType {
 
     /**
      * Sets the value of the documentNumberID property.
-     * 
-     * @param value
-     *            allowed object is {@link IdentifierType }
-     * 
+     *
+     * @param value allowed object is {@link IdentifierType }
      */
     public void setDocumentNumberID(IdentifierType value) {
         this.documentNumberID = value;
     }
 
     /**
-     * 
-     * 
      * <pre>
      * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;ccts:Component xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;&lt;ccts:ComponentType&gt;ASBIE&lt;/ccts:ComponentType&gt;&lt;ccts:DictionaryEntryName&gt;Voided Document Line Void Reason
      * 								Description
@@ -163,11 +133,8 @@ public class VoidedDocumentsLineType {
      * 							&lt;/ccts:AssociatedObjectClass&gt;
      * 						&lt;/ccts:Component&gt;
      * </pre>
-     * 
-     * 
-     * 
+     *
      * @return possible object is {@link TextType }
-     * 
      */
     public TextType getVoidReasonDescription() {
         return voidReasonDescription;
@@ -175,10 +142,8 @@ public class VoidedDocumentsLineType {
 
     /**
      * Sets the value of the voidReasonDescription property.
-     * 
-     * @param value
-     *            allowed object is {@link TextType }
-     * 
+     *
+     * @param value allowed object is {@link TextType }
      */
     public void setVoidReasonDescription(TextType value) {
         this.voidReasonDescription = value;

@@ -388,7 +388,7 @@ public class PerceptionsResource {
 		try {
 			PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
 			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
-			perceptionManager.sendToCustomerParty(organization, perception);
+			perceptionManager.sendToCustomerParty(organizationThread, perception);
 		} catch (SendException e) {
 			throw new NotFoundException("Error sending email");
 		}

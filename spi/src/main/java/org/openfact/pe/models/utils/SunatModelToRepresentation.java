@@ -1,19 +1,8 @@
 package org.openfact.pe.models.utils;
 
 import org.openfact.common.converts.DateUtils;
-import org.openfact.models.ContactModel;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.PartyModel;
-import org.openfact.pe.models.PerceptionLineModel;
-import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.RetentionLineModel;
-import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.SummaryDocumentModel;
-import org.openfact.pe.models.VoidedDocumentModel;
-import org.openfact.pe.representations.idm.DocumentoSunatLineRepresentation;
-import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
-import org.openfact.pe.representations.idm.SummaryRepresentation;
-import org.openfact.pe.representations.idm.VoidedRepresentation;
+import org.openfact.pe.models.*;
+import org.openfact.pe.representations.idm.*;
 
 import java.util.HashSet;
 
@@ -21,7 +10,7 @@ public class SunatModelToRepresentation {
 
     public static DocumentoSunatRepresentation toRepresentation(PerceptionModel model) {
         DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
-        if(model.getRequiredActions() != null) {
+        if (model.getRequiredActions() != null) {
             rep.setRequiredActions(new HashSet<>());
             rep.getRequiredActions().addAll(model.getRequiredActions());
         }
@@ -61,7 +50,7 @@ public class SunatModelToRepresentation {
             rep.setTotalPago(model.getTotalCashed());
         }
         if (model.getIssueDateTime() != null) {
-            rep.setFechaDeEmision(DateUtils.asDate( model.getIssueDateTime()));
+            rep.setFechaDeEmision(DateUtils.asDate(model.getIssueDateTime()));
         }
         if (model.getId() != null) {
             rep.setCodigoUnico(model.getId());
@@ -96,7 +85,7 @@ public class SunatModelToRepresentation {
             rep.setTipoCambio(model.getTypeChange());
         }
         if (model.getChangeIssueDateTime() != null) {
-            rep.setFechaCambio(DateUtils.asDate(model.getChangeIssueDateTime()) );
+            rep.setFechaCambio(DateUtils.asDate(model.getChangeIssueDateTime()));
         }
         if (model.getTotalPerceptionPayment() != null) {
             rep.setPagoDocumentoSunat(model.getTotalPerceptionPayment());
@@ -119,7 +108,7 @@ public class SunatModelToRepresentation {
 
     public static DocumentoSunatRepresentation toRepresentation(RetentionModel model) {
         DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
-        if(model.getRequiredActions() != null) {
+        if (model.getRequiredActions() != null) {
             rep.setRequiredActions(new HashSet<>());
             rep.getRequiredActions().addAll(model.getRequiredActions());
         }
@@ -233,16 +222,39 @@ public class SunatModelToRepresentation {
     public static VoidedRepresentation toRepresentation(VoidedDocumentModel model) {
         VoidedRepresentation rep = new VoidedRepresentation();
         rep.setCodigoUnico(model.getId());
+        if (model.getRequiredActions() != null) {
+            rep.setRequiredActions(new HashSet<>());
+            rep.getRequiredActions().addAll(model.getRequiredActions());
+        }
         if (model.getDocumentId() != null) {
             String[] splits = model.getDocumentId().split("-");
-            rep.setSerie(splits[1]);
-            rep.setNumero(splits[2]);
+            rep.setSerieDocumento(splits[0]+"-"+splits[1]);
+            rep.setNumeroDocumento(splits[2]);
         }
-        if (model.getIssueDate() != null) {
-            rep.setFechaDeDocumento(model.getIssueDate().atStartOfDay());
+        if (model.getIssueDateTime() != null) {
+            rep.setFechaDeEmision(DateUtils.asDate(model.getIssueDateTime()));
         }
-        if (model.getReferenceDate() != null) {
-            rep.setFechaReferencia(model.getReferenceDate().atStartOfDay());
+        if (model.getVoidedDocumentLines() != null) {
+            for (VoidedDocumentLineModel line : model.getVoidedDocumentLines()) {
+                rep.addDetalle(toRepresentation(line));
+            }
+        }
+        return rep;
+    }
+
+    private static VoidedLineRepresentation toRepresentation(VoidedDocumentLineModel model) {
+        VoidedLineRepresentation rep = new VoidedLineRepresentation();
+        if (model.getLineId() != null) {
+            rep.setId(model.getLineId());
+        }
+        if (model.getDocumentNumberId() != null && model.getDocumentSerialId() != null) {
+            rep.setNumeroDocumentoRelacionado(model.getDocumentSerialId() + "-" + model.getDocumentNumberId());
+        }
+        if (model.getDocumentTypeCode() != null) {
+            rep.setTipoDocumentoRelacionado(model.getDocumentTypeCode());
+        }
+        if (model.getVoidReasonDescription() != null) {
+            rep.setDescripcionDocumentoRelacionado(model.getVoidReasonDescription());
         }
         return rep;
     }

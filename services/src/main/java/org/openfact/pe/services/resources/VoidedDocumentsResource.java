@@ -43,6 +43,7 @@ import org.openfact.models.utils.RepresentationToModel;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
+import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatModelToRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.pe.services.managers.VoidedDocumentManager;
@@ -101,29 +102,33 @@ public class VoidedDocumentsResource {
 		VoidedDocumentManager voidedDocumentManager = new VoidedDocumentManager(session);
 
 		// Double-check duplicated ID
-		if (rep.getSerie() != null && rep.getNumero() != null && voidedDocumentManager
-				.getVoidedDocumentByDocumentId(rep.getSerie() + "-" + rep.getNumero(), organization) != null) {
+		if (rep.getNumeroDocumento() != null && rep.getSerieDocumento() != null && voidedDocumentManager
+				.getVoidedDocumentByDocumentId(rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
 			return ErrorResponse.exists("VoidedDocument exists with same documentId");
 		}
 
 		try {
 			VoidedDocumentModel voidedDocument = voidedDocumentManager.addVoidedDocument(organization, rep);
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().commit();
-			}
 
-			// Enviar a Cliente
 			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				voidedDocumentManager.sendToCustomerParty(organization, voidedDocument);
+				try {
+					voidedDocumentManager.sendToCustomerParty(organization, voidedDocument);
+				} catch (SendException e) {
+					logger.error("Error sending to Customer");
+				}
 			}
 
 			// Enviar Sunat
 			if (rep.isEnviarAutomaticamenteASunat()) {
-				voidedDocumentManager.sendToTrirdParty(organization, voidedDocument);
+				try {
+					voidedDocumentManager.sendToTrirdParty(organization, voidedDocument);
+				} catch (SendException e) {
+					logger.error("Error sending to Sunat");
+				}
 			}
 
-			URI location = uriInfo.getAbsolutePathBuilder().path(voidedDocument.getId()).build();
-			return Response.created(location).build();
+			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(voidedDocument.getId()).build();
+			return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(voidedDocument)).build();
 		} catch (ModelDuplicateException e) {
 			if (session.getTransactionManager().isActive()) {
 				session.getTransactionManager().setRollbackOnly();
@@ -134,11 +139,6 @@ public class VoidedDocumentsResource {
 				session.getTransactionManager().setRollbackOnly();
 			}
 			return ErrorResponse.exists("Could not create voidedDocument");
-		} catch (SendException e) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not send invoice");
 		}
 	}
 
@@ -154,8 +154,9 @@ public class VoidedDocumentsResource {
 			try {
 				InputStream inputStream = inputPart.getBody(InputStream.class, null);
 				byte[] bytes = IOUtils.toByteArray(inputStream);
+				Document document = DocumentUtils.byteToDocument(bytes);
+				VoidedDocumentsType voidedDocumentType = SunatDocumentToType.toVoidedDocumentsType(document);
 
-				VoidedDocumentsType voidedDocumentType = null;
 				if (voidedDocumentType == null) {
 					throw new IOException("Invalid invoice Xml");
 				}
@@ -170,9 +171,6 @@ public class VoidedDocumentsResource {
 
 				VoidedDocumentModel voidedDocument = voidedDocumentManager.addVoidedDocument(organization,
 						voidedDocumentType);
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().commit();
-				}
 
 				// Enviar Cliente
 				voidedDocumentManager.sendToCustomerParty(organization, voidedDocument);
@@ -180,8 +178,8 @@ public class VoidedDocumentsResource {
 				// Enviar Sunat
 				voidedDocumentManager.sendToTrirdParty(organization, voidedDocument);
 
-				URI location = uriInfo.getAbsolutePathBuilder().path(voidedDocument.getId()).build();
-				return Response.created(location).build();
+				URI location = session.getContext().getUri().getAbsolutePathBuilder().path(voidedDocument.getId()).build();
+				return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(voidedDocument)).build();
 			} catch (IOException e) {
 				if (session.getTransactionManager().isActive()) {
 					session.getTransactionManager().setRollbackOnly();
@@ -196,12 +194,17 @@ public class VoidedDocumentsResource {
 				if (session.getTransactionManager().isActive()) {
 					session.getTransactionManager().setRollbackOnly();
 				}
-				return ErrorResponse.exists("Could not create invoice");
+				return ErrorResponse.exists("Could not create voided");
 			} catch (SendException e) {
 				if (session.getTransactionManager().isActive()) {
 					session.getTransactionManager().setRollbackOnly();
 				}
-				return ErrorResponse.exists("Could not send invoice");
+				return ErrorResponse.exists("Could not send voided");
+			} catch (Exception e) {
+				if (session.getTransactionManager().isActive()) {
+					session.getTransactionManager().setRollbackOnly();
+				}
+				return ErrorResponse.exists("Could not send voided");
 			}
 		}
 
@@ -245,6 +248,29 @@ public class VoidedDocumentsResource {
 
 		VoidedRepresentation rep = SunatModelToRepresentation.toRepresentation(voidedDocument);
 		return rep;
+	}
+
+	@GET
+	@Path("{voidedDocumentId}/representation/json")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPerceptionAsJson(@PathParam("voidedDocumentId") final String voidedDocumentId) {
+		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
+		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization, voidedDocumentId);
+		if (voidedDocument == null) {
+			return ErrorResponse.exists("VoidedDocument not found");
+		}
+
+		Document document ;
+		try {
+			document = DocumentUtils.byteToDocument(voidedDocument.getXmlDocument());
+		} catch (Exception e) {
+			return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
+		}
+		VoidedDocumentsType type= SunatDocumentToType.toVoidedDocumentsType(document);
+		Response.ResponseBuilder response = Response.ok(type);
+		return response.build();
+
 	}
 
 	@GET
@@ -326,7 +352,7 @@ public class VoidedDocumentsResource {
 	@Path("{voidedDocumentId}/send-events")
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<SendEventRepresentation> getSendEvents(@QueryParam("voidedDocumentId") final String voidedDocumentId) {
+	public List<SendEventRepresentation> getSendEvents(@PathParam("voidedDocumentId") final String voidedDocumentId) {
 		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
 		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization,
 				voidedDocumentId);
@@ -341,7 +367,7 @@ public class VoidedDocumentsResource {
 	@Path("{voidedDocumentId}/representation/cdr")
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getCdr(@QueryParam("voidedDocumentId") final String voidedDocumentId) throws Exception {
+	public Response getCdr(@PathParam("voidedDocumentId") final String voidedDocumentId) throws Exception {
 		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
 		if (voidedDocumentId == null) {
 			throw new NotFoundException("Sunat response not found");
@@ -378,5 +404,43 @@ public class VoidedDocumentsResource {
 		response.type(storageFile.getMimeType());
 		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
 		return response.build();
+	}
+	@POST
+	@Path("{voidedDocumentId}/send-to-customer")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public void sendToCustomer(@PathParam("voidedDocumentId") final String voidedDocumentId) {
+		VoidedDocumentManager voidedDocumentManager = new VoidedDocumentManager(session);
+		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
+		if (voidedDocumentId == null) {
+			throw new NotFoundException("Voided Document Id not found");
+		}
+		try {
+			VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization, voidedDocumentId);
+			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+			voidedDocumentManager.sendToCustomerParty(organizationThread, voidedDocument);
+		} catch (SendException e) {
+			throw new NotFoundException("Error sending email");
+		}
+	}
+
+	@POST
+	@Path("{voidedDocumentId}/send-to-third-party")
+	@NoCache
+	@Produces(MediaType.APPLICATION_JSON)
+	public void sendToThridParty(@PathParam("voidedDocumentId") final String voidedDocumentId) {
+		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
+		if (voidedDocumentId == null) {
+			throw new NotFoundException("Voided Document Id not found");
+		}
+		try {
+			VoidedDocumentManager voidedDocumentManager = new VoidedDocumentManager(session);
+			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+			VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization, voidedDocumentId);
+			voidedDocumentManager.sendToTrirdParty(organizationThread, voidedDocument);
+		} catch (SendException e) {
+			throw new NotFoundException("Error sending sunat");
+		}
+
 	}
 }

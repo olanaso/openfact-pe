@@ -78,7 +78,7 @@ public class SummaryLineRepresentation {
 
 	public void setChargeIndicator(boolean chargeIndicator) {
 		this.chargeIndicator = chargeIndicator;
-	}	
+	}
 
 	public BigDecimal getChargeAmount() {
 		return chargeAmount;

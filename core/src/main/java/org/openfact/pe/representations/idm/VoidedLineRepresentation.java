@@ -1,50 +1,40 @@
 package org.openfact.pe.representations.idm;
 
 public class VoidedLineRepresentation {
-	protected String lineID;
-	protected String codigoDocumento;
-	protected String serieDocumento;
-	protected String numeroDocumento;
-	protected String descripcion;
+	protected String id;
+	private String tipoDocumentoRelacionado;
+	private String numeroDocumentoRelacionado;
+	protected String descripcionDocumentoRelacionado;
 
-	public String getLineID() {
-		return lineID;
+	public String getId() {
+		return id;
 	}
 
-	public void setLineID(String lineID) {
-		this.lineID = lineID;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public String getCodigoDocumento() {
-		return codigoDocumento;
+	public String getTipoDocumentoRelacionado() {
+		return tipoDocumentoRelacionado;
 	}
 
-	public void setCodigoDocumento(String codigoDocumento) {
-		this.codigoDocumento = codigoDocumento;
+	public void setTipoDocumentoRelacionado(String tipoDocumentoRelacionado) {
+		this.tipoDocumentoRelacionado = tipoDocumentoRelacionado;
 	}
 
-	public String getSerieDocumento() {
-		return serieDocumento;
+	public String getNumeroDocumentoRelacionado() {
+		return numeroDocumentoRelacionado;
 	}
 
-	public void setSerieDocumento(String serieDocumento) {
-		this.serieDocumento = serieDocumento;
+	public void setNumeroDocumentoRelacionado(String numeroDocumentoRelacionado) {
+		this.numeroDocumentoRelacionado = numeroDocumentoRelacionado;
 	}
 
-	public String getNumeroDocumento() {
-		return numeroDocumento;
+	public String getDescripcionDocumentoRelacionado() {
+		return descripcionDocumentoRelacionado;
 	}
 
-	public void setNumeroDocumento(String numeroDocumento) {
-		this.numeroDocumento = numeroDocumento;
+	public void setDescripcionDocumentoRelacionado(String descripcionDocumentoRelacionado) {
+		this.descripcionDocumentoRelacionado = descripcionDocumentoRelacionado;
 	}
-
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
 }

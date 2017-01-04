@@ -1258,37 +1258,41 @@ public class SunatRepresentationToType {
         VoidedDocumentsType type = new VoidedDocumentsType();
         type.setUBLVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
-        type.setID(rep.getSerie() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumero());
-        if (rep.getFechaDeDocumento() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDeDocumento().toLocalDate()));
+        if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
+            type.setID(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }
-        if (rep.getFechaReferencia() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaReferencia().toLocalDate()));
+        if (rep.getFechaDeEmision() != null) {
+            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDeEmision())));
+            type.setReferenceDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDeEmision())));
+        }
+        if(rep.getObservaciones()!=null){
+            type.addNote(rep.getObservaciones());
         }
         type.addSignature(toSignatureType(organization));
-        type.setAccountingSupplierParty(toAccountingSupplierPartyType(organization));
-        for (VoidedLineRepresentation line : rep.getLine()) {
-            type.addVoidedDocumentsLine(toVoidedDocumentsLineType(line));
+        type.setAccountingSupplierParty(toSupplierParty(organization));
+        if (rep.getDetalle() != null) {
+            for (VoidedLineRepresentation line : rep.getDetalle()) {
+                type.addVoidedDocumentsLine(toVoidedDocumentsLineType(line));
+            }
         }
         return type;
     }
 
     private static VoidedDocumentsLineType toVoidedDocumentsLineType(VoidedLineRepresentation rep) {
         VoidedDocumentsLineType type = new VoidedDocumentsLineType();
-        if (rep.getLineID() != null) {
-            type.setLineID(rep.getLineID());
+        if (rep.getId() != null) {
+            type.setLineID(rep.getId());
         }
-        if (rep.getCodigoDocumento() != null) {
-            type.setDocumentTypeCode(rep.getCodigoDocumento());
+        if (rep.getTipoDocumentoRelacionado() != null) {
+            type.setDocumentTypeCode(rep.getTipoDocumentoRelacionado());
         }
-        if (rep.getSerieDocumento() != null) {
-            type.setDocumentSerialID(rep.getSerieDocumento());
+        if (rep.getNumeroDocumentoRelacionado() != null) {
+            String[] splits = rep.getNumeroDocumentoRelacionado().split("-");
+            type.setDocumentSerialID(splits[0]);
+            type.setDocumentNumberID(splits[1]);
         }
-        if (rep.getNumeroDocumento() != null) {
-            type.setDocumentNumberID(rep.getNumeroDocumento());
-        }
-        if (rep.getDescripcion() != null) {
-            type.setVoidReasonDescription(rep.getDescripcion());
+        if (rep.getDescripcionDocumentoRelacionado() != null) {
+            type.setVoidReasonDescription(rep.getTipoDocumentoRelacionado());
         }
         return type;
     }

@@ -14,12 +14,7 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.SupplierPartyModel;
-import org.openfact.pe.models.PerceptionLineModel;
-import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.RetentionLineModel;
-import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.SummaryDocumentModel;
-import org.openfact.pe.models.VoidedDocumentModel;
+import org.openfact.pe.models.*;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AdditionalAccountIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
@@ -30,6 +25,7 @@ import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.types.retention.SUNATRetentionDocumentReferenceType;
 import org.openfact.pe.models.types.retention.SUNATRetentionInformationType;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
+import org.openfact.pe.models.types.voided.VoidedDocumentsLineType;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 
 public class SunatTypeToModel {
@@ -313,20 +309,37 @@ public class SunatTypeToModel {
         if (type.getID() != null && type.getID().getValue() != null) {
             model.setDocumentId(type.getID().getValue());
         }
-        if (type.getDocumentCurrencyCode() != null && type.getDocumentCurrencyCode().getValue() != null) {
-            model.setDocumentCurrencyCode(type.getDocumentCurrencyCode().getValue());
-        }
         if (type.getUBLVersionID() != null && type.getUBLVersionID().getValue() != null) {
-            model.setUblVersionId(type.getUBLVersionID().getValue());
+            model.setUblVersionID(type.getUBLVersionID().getValue());
         }
         if (type.getCustomizationID() != null && type.getCustomizationID().getValue() != null) {
-            model.setCustomizationId(type.getCustomizationID().getValue());
-        }
-        if (type.getReferenceDate() != null && type.getReferenceDate().getValue() != null) {
-            model.setReferenceDate(toDate(type.getReferenceDate().getValue()));
+            model.setCustomizationID(type.getCustomizationID().getValue());
         }
         if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
-            model.setIssueDate(toDate(type.getIssueDate().getValue()));
+            model.setIssueDateTime(toDateTime(type.getIssueDate().getValue()));
+        }
+        if (type.getVoidedDocumentsLine() != null) {
+            for (VoidedDocumentsLineType line : type.getVoidedDocumentsLine()) {
+                updateModel(model.addVoidedDocumentLines(), line);
+            }
+        }
+
+    }
+    private static void updateModel(VoidedDocumentLineModel model, VoidedDocumentsLineType type) {
+        if(type.getLineID()!=null){
+            model.setLineId(type.getLineID().getValue());
+        }
+        if(type.getDocumentTypeCode()!=null){
+            model.setDocumentTypeCode(type.getDocumentTypeCode().getValue());
+        }
+        if(type.getDocumentNumberID()!=null){
+            model.setDocumentNumberId(type.getDocumentNumberID().getValue());
+        }
+        if(type.getDocumentSerialID()!=null){
+            model.setDocumentSerialId(type.getDocumentSerialID().getValue());
+        }
+        if(type.getVoidReasonDescription()!=null){
+            model.setVoidReasonDescription(type.getVoidReasonDescription().getValue());
         }
     }
 }

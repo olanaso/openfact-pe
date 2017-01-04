@@ -28,6 +28,11 @@ public class SunatJpaEntityProvider implements JpaEntityProvider {
         entities.add(SummaryDocumentsRequiredActionEntity.class);
         entities.add(SummaryDocumentsSendEventEntity.class);
 
+        entities.add(VoidedDocumentsEntity.class);
+        entities.add(VoidedDocumentsRequiredActionEntity.class);
+        entities.add(VoidedDocumentsSendEventEntity.class);
+        entities.add(VoidedDocumentsLineEntity.class);
+
         return entities;
     }
 

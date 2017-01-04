@@ -1,6 +1,6 @@
 package org.openfact.pe.models;
 
-public interface VoidedDocumentsLineModel {
+public interface VoidedDocumentLineModel {
 
     String getId();
 

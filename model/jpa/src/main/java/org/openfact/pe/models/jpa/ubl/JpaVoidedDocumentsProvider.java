@@ -81,7 +81,7 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 
 	@Override
 	public VoidedDocumentModel getVoidedDocumentById(OrganizationModel organization, String id) {
-		TypedQuery<VoidedDocumentsEntity> query = em.createNamedQuery("getOrganizationVoidedDocumentById",
+		TypedQuery<VoidedDocumentsEntity> query = em.createNamedQuery("getOrganizationVoidedDocumentsById",
 				VoidedDocumentsEntity.class);
 		query.setParameter("id", id);
 		query.setParameter("organizationId", organization.getId());
@@ -93,7 +93,7 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 
 	@Override
 	public VoidedDocumentModel getVoidedDocumentByID(OrganizationModel organization, String ID) {
-		TypedQuery<VoidedDocumentsEntity> query = em.createNamedQuery("getOrganizationVoidedDocumentByDocumentId",
+		TypedQuery<VoidedDocumentsEntity> query = em.createNamedQuery("getOrganizationVoidedDocumentsByDocumentId",
 				VoidedDocumentsEntity.class);
 		query.setParameter("documentId", ID);
 		query.setParameter("organizationId", organization.getId());
@@ -141,7 +141,7 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 
 	@Override
 	public int getVoidedDocumentsCount(OrganizationModel organization) {
-		Query query = em.createNamedQuery("getOrganizationVoidedDocumentCount");
+		Query query = em.createNamedQuery("getOrganizationVoidedDocumentsCount");
 		Long result = (Long) query.getSingleResult();
 		return result.intValue();
 	}
@@ -216,7 +216,7 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 	@Override
 	public SearchResultsModel<VoidedDocumentModel> searchForVoidedDocument(OrganizationModel organization,
 			SearchCriteriaModel criteria) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
 		SearchResultsModel<VoidedDocumentsEntity> entityResult = find(criteria, VoidedDocumentsEntity.class);
 		List<VoidedDocumentsEntity> entities = entityResult.getModels();
@@ -232,7 +232,7 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 	@Override
 	public SearchResultsModel<VoidedDocumentModel> searchForVoidedDocument(OrganizationModel organization,
 			SearchCriteriaModel criteria, String filterText) {
-		criteria.addFilter("organization.id", organization.getId(), SearchCriteriaFilterOperator.eq);
+		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
 		SearchResultsModel<VoidedDocumentsEntity> entityResult = findFullText(criteria, VoidedDocumentsEntity.class,
 				filterText, DOCUMENT_ID);
@@ -262,21 +262,19 @@ public class JpaVoidedDocumentsProvider extends AbstractHibernateStorage impleme
 		if (scrollSize == -1) {
 			scrollSize = 10;
 		}
+		String queryName = null;
+		if(asc) {
+			queryName = "getAllVoidedDocumentsByOrganization";
+		} else {
+			queryName = "getAllVoidedDocumentsByOrganizationDesc";
+		}
 
-		TypedQuery<String> query = em.createNamedQuery("getAllSendEventsByOrganization", String.class);
+		TypedQuery<VoidedDocumentsEntity> query = em.createNamedQuery(queryName, VoidedDocumentsEntity.class);
 		query.setParameter("organizationId", organization.getId());
 
-		ScrollAdapter<VoidedDocumentModel, String> result = new ScrollAdapter<>(String.class, query, f -> {
-			VoidedDocumentsEntity entity = em.find(VoidedDocumentsEntity.class, f);
-			return new VoidedDocumentAdapter(session, organization, em, entity);
+		ScrollAdapter<VoidedDocumentModel, VoidedDocumentsEntity> result = new ScrollAdapter<>(VoidedDocumentsEntity.class, query, f -> {
+			return new VoidedDocumentAdapter(session, organization, em, f);
 		});
-
-		// Iterator<VoidedDocumentModel> iterator = result.iterator();
-		// while (iterator.hasNext()) {
-		// VoidedDocumentModel perceptionModel = iterator.next();
-		// System.out.println("-------------------");
-		// System.out.println(perceptionModel.getRequiredActions());
-		// }
 
 		return result;
 	}

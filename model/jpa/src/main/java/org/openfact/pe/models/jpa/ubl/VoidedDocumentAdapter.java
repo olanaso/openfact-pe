@@ -1,6 +1,7 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,8 +19,11 @@ import org.openfact.models.jpa.JpaModel;
 import org.openfact.models.jpa.SendEventAdapter;
 import org.openfact.models.jpa.SupplierPartyAdapter;
 import org.openfact.models.jpa.entities.SupplierPartyEntity;
+import org.openfact.pe.models.VoidedDocumentLineModel;
 import org.openfact.pe.models.VoidedDocumentModel;
+import org.openfact.pe.models.jpa.entities.PerceptionLineEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsEntity;
+import org.openfact.pe.models.jpa.entities.VoidedDocumentsLineEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsRequiredActionEntity;
 import org.openfact.ubl.SendEventModel;
 
@@ -66,57 +70,6 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
     public String getOrganizationId() {
         return voidedDocuments.getOrganizationId();
     }
-
-    @Override
-    public String getDocumentCurrencyCode() {
-        return voidedDocuments.getDocumentCurrencyCode();
-    }
-
-    @Override
-    public void setDocumentCurrencyCode(String value) {
-        voidedDocuments.setDocumentCurrencyCode(value);
-    }
-
-    @Override
-    public String getUblVersionId() {
-        return voidedDocuments.getUblVersionId();
-    }
-
-    @Override
-    public void setUblVersionId(String ublVersionId) {
-        voidedDocuments.setUblVersionId(ublVersionId);
-    }
-
-    @Override
-    public String getCustomizationId() {
-        return voidedDocuments.getCustomizationId();
-    }
-
-    @Override
-    public void setCustomizationId(String customizationId) {
-        voidedDocuments.setCustomizationId(customizationId);
-    }
-
-    @Override
-    public LocalDate getReferenceDate() {
-        return voidedDocuments.getReferenceDate();
-    }
-
-    @Override
-    public void setReferenceDate(LocalDate referenceDate) {
-        voidedDocuments.setReferenceDate(referenceDate);
-    }
-
-    @Override
-    public LocalDate getIssueDate() {
-        return voidedDocuments.getIssueDate();
-    }
-
-    @Override
-    public void setIssueDate(LocalDate issueDate) {
-        voidedDocuments.setIssueDate(issueDate);
-    }
-
 
     @Override
     public byte[] getXmlDocument() {
@@ -188,4 +141,47 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
         voidedDocuments.setDocumentId(documentId);
     }
 
+    @Override
+    public String getUblVersionID() {
+        return voidedDocuments.getUblVersionId();
+    }
+
+    @Override
+    public void setUblVersionID(String ublVersionID) {
+        voidedDocuments.setUblVersionId(ublVersionID);
+    }
+
+    @Override
+    public String getCustomizationID() {
+        return voidedDocuments.getCustomizationId();
+    }
+
+    @Override
+    public void setCustomizationID(String customizationID) {
+        voidedDocuments.setCustomizationId(customizationID);
+    }
+
+    @Override
+    public LocalDateTime getIssueDateTime() {
+        return voidedDocuments.getIssueDateTime();
+    }
+
+    @Override
+    public void setIssueDateTime(LocalDateTime issueDateTime) {
+        voidedDocuments.setIssueDateTime(issueDateTime);
+    }
+
+    @Override
+    public List<VoidedDocumentLineModel> getVoidedDocumentLines() {
+        return voidedDocuments.getVoidedDocumentsLine().stream()
+                .map(f -> new VoidedDocumentLineAdapter(session, em, f)).collect(Collectors.toList());
+    }
+
+    @Override
+    public VoidedDocumentLineModel addVoidedDocumentLines() {
+        List<VoidedDocumentsLineEntity> entities = voidedDocuments.getVoidedDocumentsLine();
+        VoidedDocumentsLineEntity entity = new VoidedDocumentsLineEntity();
+        entities.add(entity);
+        return new VoidedDocumentLineAdapter(session, em, entity);
+    }
 }

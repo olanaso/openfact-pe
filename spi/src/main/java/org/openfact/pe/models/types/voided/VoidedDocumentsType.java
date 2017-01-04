@@ -20,7 +20,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VoidedDocumentsType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:VoidedDocuments-1", propOrder = {
         "ublExtensions", "ublVersionID", "customizationID", "id", "referenceDate", "issueDate", "note",
-        "documentCurrencyCode", "signature", "accountingSupplierParty", "voidedDocumentsLine" })
+         "signature", "accountingSupplierParty", "voidedDocumentsLine" })
 @CodingStyleguideUnaware
 public class VoidedDocumentsType    implements Serializable, Cloneable{
     @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
@@ -37,8 +37,6 @@ public class VoidedDocumentsType    implements Serializable, Cloneable{
     protected IssueDateType issueDate;
     @XmlElement(name = "Note", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected List<NoteType> note;
-    @XmlElement(name = "DocumentCurrencyCode", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
-    private DocumentCurrencyCodeType documentCurrencyCode;
     @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected List<SignatureType> signature;
     @XmlElement(name = "AccountingSupplierParty", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2", required = true)
@@ -65,14 +63,6 @@ public class VoidedDocumentsType    implements Serializable, Cloneable{
      */
     public void setUBLExtensions(UBLExtensionsType value) {
         this.ublExtensions = value;
-    }
-
-    public DocumentCurrencyCodeType getDocumentCurrencyCode() {
-        return documentCurrencyCode;
-    }
-
-    public void setDocumentCurrencyCode(DocumentCurrencyCodeType documentCurrencyCode) {
-        this.documentCurrencyCode = documentCurrencyCode;
     }
 
     /**
@@ -421,15 +411,4 @@ public class VoidedDocumentsType    implements Serializable, Cloneable{
         getVoidedDocumentsLine().add(type);
     }
 
-    @Nonnull
-    public DocumentCurrencyCodeType setDocumentCurrencyCode(@Nullable final String valueParam) {
-        DocumentCurrencyCodeType aObj = getDocumentCurrencyCode();
-        if (aObj == null) {
-            aObj = new DocumentCurrencyCodeType(valueParam);
-            setDocumentCurrencyCode(aObj);
-        } else {
-            aObj.setValue(valueParam);
-        }
-        return aObj;
-    }
 }

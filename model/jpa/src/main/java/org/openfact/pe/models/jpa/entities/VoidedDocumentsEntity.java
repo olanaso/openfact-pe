@@ -42,10 +42,10 @@ import org.openfact.models.jpa.entities.SupplierPartyEntity;
 		@NamedQuery(name = "getAllVoidedDocumentsByOrganizationDesc", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId order by i.createdTimestamp desc"),
 		@NamedQuery(name = "getOrganizationVoidedDocumentsById", query = "select i from VoidedDocumentsEntity i where i.id = :id and i.organizationId = :organizationId"),
 		@NamedQuery(name = "getOrganizationVoidedDocumentsByID", query = "select i from VoidedDocumentsEntity i where i.documentId = :documentId and i.organizationId = :organizationId"),
-		@NamedQuery(name = "getAllVoidedDocumentsByRequiredActionAndOrganization", query = "select c from VoidedDocumentsEntity c inner join c.requiredActions r where c.organizationId = :organizationId and r.action in :requiredAction order by c.issueDateTime"),
-		@NamedQuery(name = "searchForVoidedDocuments", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId and i.documentId like :search order by i.issueDate"),
+		@NamedQuery(name = "searchForVoidedDocuments", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId and i.documentId like :search order by i.issueDateTime"),
+		@NamedQuery(name = "getOrganizationVoidedDocumentsByDocumentId", query = "select i from VoidedDocumentsEntity i where i.documentId = :documentId and i.organizationId = :organizationId"),
 		@NamedQuery(name = "getOrganizationVoidedDocumentsCount", query = "select count(i) from VoidedDocumentsEntity i where i.organizationId = :organizationId"),
-		@NamedQuery(name = "getLastVoidedDocumentsByOrganization", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId and length(i.documentId)=:documentIdLength and i.documentId like :formatter order by i.issueDate desc") })
+		@NamedQuery(name = "getLastVoidedDocumentsByOrganization", query = "select i from VoidedDocumentsEntity i where i.organizationId = :organizationId and length(i.documentId)=:documentIdLength and i.documentId like :formatter order by i.issueDateTime desc") })
 public class VoidedDocumentsEntity {
 
 	@Id
@@ -64,16 +64,9 @@ public class VoidedDocumentsEntity {
 	@Column(name = "CUSTOMIZATION_ID")
 	private String customizationId;
 
-	@Column(name = "REFERENCE_DATE")
-	@Type(type = "org.hibernate.type.LocalDateType")
-	private LocalDate referenceDate;
-
 	@Column(name = "ISSUE_DATE")
-	@Type(type = "org.hibernate.type.LocalDateType")
-	private LocalDate issueDate;
-
-	@Column(name = "DOCUMENT_CURRENCY_CODE")
-	private String documentCurrencyCode;
+	@Type(type = "org.hibernate.type.LocalDateTimeType")
+	private LocalDateTime issueDateTime;
 
 	@ElementCollection
 	@Column(name = "VALUE")
@@ -86,6 +79,8 @@ public class VoidedDocumentsEntity {
 	@OneToMany(cascade = { CascadeType.REMOVE }, orphanRemoval = true, mappedBy = "voidedDocuments", fetch = FetchType.LAZY)
 	private Collection<VoidedDocumentsSendEventEntity> sendEvents = new ArrayList<>();
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "voidedDocuments")
+	private List<VoidedDocumentsLineEntity> voidedDocumentsLine = new ArrayList<>();
 	@Lob
 	@Column(name = "XML_DOCUMENT")
 	private byte[] xmlDocument;
@@ -93,10 +88,6 @@ public class VoidedDocumentsEntity {
 	@NotNull
 	@Column(name = "ORGANIZATION_ID")
 	private String organizationId;
-
-	/*@ManyToOne(targetEntity = SupplierPartyEntity.class, cascade = { CascadeType.ALL })
-	@JoinColumn(name = "ACCOUNTINGSUPPLIERPARTY_VOIDEDDOCUMENTS")
-	private SupplierPartyEntity accountingSupplierParty = new SupplierPartyEntity();*/
 
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	@Column(name = "CREATED_TIMESTAMP")
@@ -132,30 +123,6 @@ public class VoidedDocumentsEntity {
 
 	public void setCustomizationId(String customizationId) {
 		this.customizationId = customizationId;
-	}
-
-	public LocalDate getReferenceDate() {
-		return referenceDate;
-	}
-
-	public void setReferenceDate(LocalDate referenceDate) {
-		this.referenceDate = referenceDate;
-	}
-
-	public LocalDate getIssueDate() {
-		return issueDate;
-	}
-
-	public void setIssueDate(LocalDate issueDate) {
-		this.issueDate = issueDate;
-	}
-
-	public String getDocumentCurrencyCode() {
-		return documentCurrencyCode;
-	}
-
-	public void setDocumentCurrencyCode(String documentCurrencyCode) {
-		this.documentCurrencyCode = documentCurrencyCode;
 	}
 
 	public List<String> getNotes() {
@@ -204,5 +171,21 @@ public class VoidedDocumentsEntity {
 
 	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
+	}
+
+	public LocalDateTime getIssueDateTime() {
+		return issueDateTime;
+	}
+
+	public void setIssueDateTime(LocalDateTime issueDateTime) {
+		this.issueDateTime = issueDateTime;
+	}
+
+	public List<VoidedDocumentsLineEntity> getVoidedDocumentsLine() {
+		return voidedDocumentsLine;
+	}
+
+	public void setVoidedDocumentsLine(List<VoidedDocumentsLineEntity> voidedDocumentsLine) {
+		this.voidedDocumentsLine = voidedDocumentsLine;
 	}
 }

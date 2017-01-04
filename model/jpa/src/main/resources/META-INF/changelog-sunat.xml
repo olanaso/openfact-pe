@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-    <changeSet author="lxpary (generated)" id="1483376891644-1">
+    <changeSet author="lxpary (generated)" id="1483569311496-1">
         <createTable tableName="BAJA_NOTE">
             <column name="BAJA_ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -8,7 +8,7 @@
             <column name="VALUE" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-2">
+    <changeSet author="lxpary (generated)" id="1483569311496-2">
         <createTable tableName="PERCEPTION">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -33,7 +33,7 @@
             <column name="XML_DOCUMENT" type="BLOB"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-3">
+    <changeSet author="lxpary (generated)" id="1483569311496-3">
         <createTable tableName="PERCEPTION_LINE">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -53,7 +53,7 @@
             <column name="PERCEPTION_ID" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-4">
+    <changeSet author="lxpary (generated)" id="1483569311496-4">
         <createTable tableName="PERCEPTION_REQUIRED_ACTION">
             <column name="REQUIRED_ACTION" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -63,7 +63,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-5">
+    <changeSet author="lxpary (generated)" id="1483569311496-5">
         <createTable tableName="RETENTION">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -88,7 +88,7 @@
             <column name="XML_DOCUMENT" type="BLOB"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-6">
+    <changeSet author="lxpary (generated)" id="1483569311496-6">
         <createTable tableName="RETENTION_LINE">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -108,7 +108,7 @@
             <column name="RETENTION_ID" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-7">
+    <changeSet author="lxpary (generated)" id="1483569311496-7">
         <createTable tableName="RETENTION_REQUIRED_ACTION">
             <column name="REQUIRED_ACTION" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -118,7 +118,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-8">
+    <changeSet author="lxpary (generated)" id="1483569311496-8">
         <createTable tableName="SUMMARY_DOCUMENTS">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -134,7 +134,7 @@
             <column name="XML_DOCUMENT" type="BLOB"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-9">
+    <changeSet author="lxpary (generated)" id="1483569311496-9">
         <createTable tableName="SUMMARY_DOCUMENTS_REQUIRED_ACTION">
             <column name="REQUIRED_ACTION" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -144,7 +144,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-10">
+    <changeSet author="lxpary (generated)" id="1483569311496-10">
         <createTable tableName="SUNAT_RESPONSE_EVENT_FILES">
             <column name="SEND_EVENT_ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -157,7 +157,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-11">
+    <changeSet author="lxpary (generated)" id="1483569311496-11">
         <createTable tableName="SUNAT_SEND_EVENT">
             <column name="type" type="VARCHAR(31)">
                 <constraints nullable="false"/>
@@ -166,7 +166,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_TIMESTAMP" type="timestamp"/>
-            <column name="DESCRIPTION" type="VARCHAR(400)"/>
+            <column name="DESCRIPTION" type="VARCHAR(2000)"/>
             <column name="ORGANIZATION_ID" type="VARCHAR(255)"/>
             <column name="RESULT" type="INT"/>
             <column name="SEND_TYPE" type="VARCHAR(255)"/>
@@ -176,7 +176,7 @@
             <column name="VOIDED_ID" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-12">
+    <changeSet author="lxpary (generated)" id="1483569311496-12">
         <createTable tableName="SUNAT_SEND_EVENT_DESTINY">
             <column name="SEND_EVENT_ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -187,7 +187,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-13">
+    <changeSet author="lxpary (generated)" id="1483569311496-13">
         <createTable tableName="SUNAT_SEND_EVENT_FILES">
             <column name="SEND_EVENT_ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -200,7 +200,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-14">
+    <changeSet author="lxpary (generated)" id="1483569311496-14">
         <createTable tableName="SUNAT_SEND_EVENT_REPONSE">
             <column name="SEND_EVENT_ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -211,7 +211,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-15">
+    <changeSet author="lxpary (generated)" id="1483569311496-15">
         <createTable tableName="SUNAT_STORAGE_FILE">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -221,23 +221,34 @@
             <column name="MIME_TYPE" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-16">
+    <changeSet author="lxpary (generated)" id="1483569311496-16">
         <createTable tableName="VOIDED_DOCUMENTS">
             <column name="ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_TIMESTAMP" type="timestamp"/>
             <column name="CUSTOMIZATION_ID" type="VARCHAR(255)"/>
-            <column name="DOCUMENT_CURRENCY_CODE" type="VARCHAR(255)"/>
             <column name="DOCUMENT_ID" type="VARCHAR(255)"/>
-            <column name="ISSUE_DATE" type="date"/>
+            <column name="ISSUE_DATE" type="timestamp"/>
             <column name="ORGANIZATION_ID" type="VARCHAR(255)"/>
-            <column name="REFERENCE_DATE" type="date"/>
             <column name="UBL_VERSION_ID" type="VARCHAR(255)"/>
             <column name="XML_DOCUMENT" type="BLOB"/>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-17">
+    <changeSet author="lxpary (generated)" id="1483569311496-17">
+        <createTable tableName="VOIDED_DOCUMENTS_LINE">
+            <column name="ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENT_NUMBER_ID" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_SERIAL_ID" type="VARCHAR(255)"/>
+            <column name="DOCUMENT_TYPE_CODE" type="VARCHAR(255)"/>
+            <column name="LINE_ID" type="VARCHAR(255)"/>
+            <column name="VOID_REASON_DESCRIPTION" type="VARCHAR(255)"/>
+            <column name="VOIDED_DOCUMENT_ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="lxpary (generated)" id="1483569311496-18">
         <createTable tableName="VOIDED_DOCUMENTS_REQUIRED_ACTION">
             <column name="REQUIRED_ACTION" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -247,121 +258,127 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-18">
+    <changeSet author="lxpary (generated)" id="1483569311496-19">
         <addPrimaryKey columnNames="SEND_EVENT_ID, FILE_TYPE" tableName="SUNAT_RESPONSE_EVENT_FILES"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-19">
+    <changeSet author="lxpary (generated)" id="1483569311496-20">
         <addPrimaryKey columnNames="SEND_EVENT_ID, NAME" tableName="SUNAT_SEND_EVENT_DESTINY"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-20">
+    <changeSet author="lxpary (generated)" id="1483569311496-21">
         <addPrimaryKey columnNames="SEND_EVENT_ID, FILE_TYPE" tableName="SUNAT_SEND_EVENT_FILES"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-21">
+    <changeSet author="lxpary (generated)" id="1483569311496-22">
         <addPrimaryKey columnNames="SEND_EVENT_ID, NAME" tableName="SUNAT_SEND_EVENT_REPONSE"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-22">
+    <changeSet author="lxpary (generated)" id="1483569311496-23">
         <addPrimaryKey columnNames="ID" constraintName="PERCEPTIONPK" tableName="PERCEPTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-23">
+    <changeSet author="lxpary (generated)" id="1483569311496-24">
         <addPrimaryKey columnNames="ID" constraintName="PERCEPTION_LINEPK" tableName="PERCEPTION_LINE"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-24">
+    <changeSet author="lxpary (generated)" id="1483569311496-25">
         <addPrimaryKey columnNames="REQUIRED_ACTION, PERCEPTION_ID" constraintName="PERCEPTION_REQUIRED_ACTIONPK" tableName="PERCEPTION_REQUIRED_ACTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-25">
+    <changeSet author="lxpary (generated)" id="1483569311496-26">
         <addPrimaryKey columnNames="ID" constraintName="RETENTIONPK" tableName="RETENTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-26">
+    <changeSet author="lxpary (generated)" id="1483569311496-27">
         <addPrimaryKey columnNames="ID" constraintName="RETENTION_LINEPK" tableName="RETENTION_LINE"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-27">
+    <changeSet author="lxpary (generated)" id="1483569311496-28">
         <addPrimaryKey columnNames="REQUIRED_ACTION, RETENTION_ID" constraintName="RETENTION_REQUIRED_ACTIONPK" tableName="RETENTION_REQUIRED_ACTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-28">
+    <changeSet author="lxpary (generated)" id="1483569311496-29">
         <addPrimaryKey columnNames="ID" constraintName="SUMMARY_DOCUMENTSPK" tableName="SUMMARY_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-29">
+    <changeSet author="lxpary (generated)" id="1483569311496-30">
         <addPrimaryKey columnNames="REQUIRED_ACTION, SUMMARY_DOCUMENTS_ID" constraintName="SUMMARY_DOCUMENTS_REQUIRED_ACTIONPK" tableName="SUMMARY_DOCUMENTS_REQUIRED_ACTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-30">
+    <changeSet author="lxpary (generated)" id="1483569311496-31">
         <addPrimaryKey columnNames="ID" constraintName="SUNAT_SEND_EVENTPK" tableName="SUNAT_SEND_EVENT"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-31">
+    <changeSet author="lxpary (generated)" id="1483569311496-32">
         <addPrimaryKey columnNames="ID" constraintName="SUNAT_STORAGE_FILEPK" tableName="SUNAT_STORAGE_FILE"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-32">
+    <changeSet author="lxpary (generated)" id="1483569311496-33">
         <addPrimaryKey columnNames="ID" constraintName="VOIDED_DOCUMENTSPK" tableName="VOIDED_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-33">
+    <changeSet author="lxpary (generated)" id="1483569311496-34">
+        <addPrimaryKey columnNames="ID" constraintName="VOIDED_DOCUMENTS_LINEPK" tableName="VOIDED_DOCUMENTS_LINE"/>
+    </changeSet>
+    <changeSet author="lxpary (generated)" id="1483569311496-35">
         <addPrimaryKey columnNames="REQUIRED_ACTION, VOIDED_DOCUMENTS_ID" constraintName="VOIDED_DOCUMENTS_REQUIRED_ACTIONPK" tableName="VOIDED_DOCUMENTS_REQUIRED_ACTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-34">
+    <changeSet author="lxpary (generated)" id="1483569311496-36">
         <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="PERCEPTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-35">
+    <changeSet author="lxpary (generated)" id="1483569311496-37">
         <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="RETENTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-36">
+    <changeSet author="lxpary (generated)" id="1483569311496-38">
         <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="SUMMARY_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-37">
+    <changeSet author="lxpary (generated)" id="1483569311496-39">
         <addUniqueConstraint columnNames="fileResponseAttatchments_ID" tableName="SUNAT_RESPONSE_EVENT_FILES"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-38">
+    <changeSet author="lxpary (generated)" id="1483569311496-40">
         <addUniqueConstraint columnNames="fileAttatchments_ID" tableName="SUNAT_SEND_EVENT_FILES"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-39">
+    <changeSet author="lxpary (generated)" id="1483569311496-41">
         <addUniqueConstraint columnNames="ORGANIZATION_ID, DOCUMENT_ID" tableName="VOIDED_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-40">
+    <changeSet author="lxpary (generated)" id="1483569311496-42">
         <addForeignKeyConstraint baseColumnNames="SUMMARY_DOCUMENT_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_5nr44ire2g16bk9t2uua19vyg" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUMMARY_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-41">
+    <changeSet author="lxpary (generated)" id="1483569311496-43">
         <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_SEND_EVENT_REPONSE" constraintName="FK_d86nf5cusse8sarg16t0futh2" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-42">
+    <changeSet author="lxpary (generated)" id="1483569311496-44">
         <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_RESPONSE_EVENT_FILES" constraintName="FK_d8c86b2kq36xxq7k29g58ijcw" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-43">
+    <changeSet author="lxpary (generated)" id="1483569311496-45">
         <addForeignKeyConstraint baseColumnNames="PERCEPTION_ID" baseTableName="PERCEPTION_REQUIRED_ACTION" constraintName="FK_dfx92lnxj0l62h5noricfr0mg" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-44">
+    <changeSet author="lxpary (generated)" id="1483569311496-46">
         <addForeignKeyConstraint baseColumnNames="RETENTION_ID" baseTableName="RETENTION_LINE" constraintName="FK_en2486pm96a68vmcww5rs3lwl" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-45">
+    <changeSet author="lxpary (generated)" id="1483569311496-47">
         <addForeignKeyConstraint baseColumnNames="VOIDED_DOCUMENTS_ID" baseTableName="VOIDED_DOCUMENTS_REQUIRED_ACTION" constraintName="FK_ffhbj2fahl1nmcy4rnoo9pee4" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="VOIDED_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-46">
+    <changeSet author="lxpary (generated)" id="1483569311496-48">
         <addForeignKeyConstraint baseColumnNames="RETENTION_ID" baseTableName="RETENTION_REQUIRED_ACTION" constraintName="FK_ibmr3h0hccidcj17fagoe84be" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-47">
+    <changeSet author="lxpary (generated)" id="1483569311496-49">
         <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_SEND_EVENT_FILES" constraintName="FK_kyrnv1gcg0ewukctcqwf4eibd" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-48">
+    <changeSet author="lxpary (generated)" id="1483569311496-50">
         <addForeignKeyConstraint baseColumnNames="RETENTION_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_m2kgmktjhn3gc3wd55ef8moj2" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="RETENTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-49">
+    <changeSet author="lxpary (generated)" id="1483569311496-51">
         <addForeignKeyConstraint baseColumnNames="fileAttatchments_ID" baseTableName="SUNAT_SEND_EVENT_FILES" constraintName="FK_mkmmtoc5i6am8mr78awlf82lb" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_STORAGE_FILE"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-50">
+    <changeSet author="lxpary (generated)" id="1483569311496-52">
         <addForeignKeyConstraint baseColumnNames="fileResponseAttatchments_ID" baseTableName="SUNAT_RESPONSE_EVENT_FILES" constraintName="FK_o3oxv8047r884yukek8ma6hnc" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_STORAGE_FILE"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-51">
+    <changeSet author="lxpary (generated)" id="1483569311496-53">
         <addForeignKeyConstraint baseColumnNames="SEND_EVENT_ID" baseTableName="SUNAT_SEND_EVENT_DESTINY" constraintName="FK_o41f2xklxycn7ts2w5fqo8f41" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUNAT_SEND_EVENT"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-52">
+    <changeSet author="lxpary (generated)" id="1483569311496-54">
         <addForeignKeyConstraint baseColumnNames="BAJA_ID" baseTableName="BAJA_NOTE" constraintName="FK_ok3t4528a7eq789ufcvkptiuw" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="VOIDED_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-53">
+    <changeSet author="lxpary (generated)" id="1483569311496-55">
+        <addForeignKeyConstraint baseColumnNames="VOIDED_DOCUMENT_ID" baseTableName="VOIDED_DOCUMENTS_LINE" constraintName="FK_panh01llfjcycxpqmjdnadh3r" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="VOIDED_DOCUMENTS"/>
+    </changeSet>
+    <changeSet author="lxpary (generated)" id="1483569311496-56">
         <addForeignKeyConstraint baseColumnNames="PERCEPTION_ID" baseTableName="PERCEPTION_LINE" constraintName="FK_puk2893n3snc76072pyeflk0q" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-54">
+    <changeSet author="lxpary (generated)" id="1483569311496-57">
         <addForeignKeyConstraint baseColumnNames="PERCEPTION_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_ro2fokyyme1h7n681x0igaeqt" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="PERCEPTION"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-55">
+    <changeSet author="lxpary (generated)" id="1483569311496-58">
         <addForeignKeyConstraint baseColumnNames="VOIDED_ID" baseTableName="SUNAT_SEND_EVENT" constraintName="FK_sfab9sleqqyffxp0ghtnj90m0" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="VOIDED_DOCUMENTS"/>
     </changeSet>
-    <changeSet author="lxpary (generated)" id="1483376891644-56">
+    <changeSet author="lxpary (generated)" id="1483569311496-59">
         <addForeignKeyConstraint baseColumnNames="SUMMARY_DOCUMENTS_ID" baseTableName="SUMMARY_DOCUMENTS_REQUIRED_ACTION" constraintName="FK_tgfc9ol460gsvxsgdll7q5gbn" deferrable="false" initiallyDeferred="false" referencedColumnNames="ID" referencedTableName="SUMMARY_DOCUMENTS"/>
     </changeSet>
 </databaseChangeLog>

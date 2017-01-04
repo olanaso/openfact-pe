@@ -1,11 +1,7 @@
 package org.openfact.pe.services.ubl;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.soap.SOAPFault;
@@ -32,14 +28,8 @@ import org.openfact.pe.models.utils.SunatUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendEventProvider;
-import org.openfact.ubl.SendException;
-import org.openfact.ubl.UBLCreditNoteProvider;
-import org.openfact.ubl.UBLIDGenerator;
-import org.openfact.ubl.UBLReader;
-import org.openfact.ubl.UBLSender;
-import org.openfact.ubl.UBLWriter;
+import org.openfact.report.ReportException;
+import org.openfact.ubl.*;
 import org.w3c.dom.Document;
 
 import com.helger.ubl21.UBL21Reader;
@@ -119,12 +109,9 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 			public Document write(OrganizationModel organization, CreditNoteType creditNoteType,
 					Map<String, String> attributes) {
 				try {
-					MapBasedNamespaceContext mapBasedNamespace = SunatUtils
-							.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2");
+					MapBasedNamespaceContext mapBasedNamespace = SunatUtils.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2");
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					MicroWriter.writeToStream(UBL21Writer.creditNote().getAsMicroDocument(creditNoteType), out,
-							new XMLWriterSettings().setNamespaceContext(mapBasedNamespace)
-									.setPutNamespaceContextPrefixesInRoot(true));
+					MicroWriter.writeToStream(UBL21Writer.creditNote().getAsMicroDocument(creditNoteType), out, new XMLWriterSettings().setNamespaceContext(mapBasedNamespace).setPutNamespaceContextPrefixesInRoot(true));
 
 					Document document = DocumentUtils.byteToDocument(out.toByteArray());
 					return document;
@@ -148,73 +135,102 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 
 			@Override
 			public void close() {
-
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, CreditNoteModel creditNote)
-					throws SendException {
-				CustomerPartyModel customerParty = creditNote.getAccountingCustomerParty();
-				if (customerParty == null || customerParty.getParty() == null
-						|| customerParty.getParty().getContact() == null
-						|| customerParty.getParty().getContact().getElectronicMail() == null) {
-					return null;
+			public SendEventModel sendToCustomer(OrganizationModel organization, CreditNoteModel creditNote) throws SendException {
+				if (creditNote.getCustomerElectronicMail() == null) {
+					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
+					sendEvent.setType("EMAIL");
+					sendEvent.setDescription("Could not find a valid email for the customer.");
+					return sendEvent;
+				}
+
+				if (organization.getSmtpConfig().size() == 0) {
+					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
+					sendEvent.setType("EMAIL");
+					sendEvent.setDescription("Could not find a valid smtp configuration on organization.");
+					return sendEvent;
 				}
 
 				// User where the email will be send
 				UserSenderModel user = new UserSenderModel() {
 					@Override
 					public String getFullName() {
-						List<PartyLegalEntityModel> partyLegalEntities = customerParty.getParty().getPartyLegalEntity();
-						return partyLegalEntities.stream().map(f -> f.getRegistrationName())
-								.reduce((t, u) -> t + "," + u).get();
+						return creditNote.getCustomerRegistrationName();
 					}
 
 					@Override
 					public String getEmail() {
-						return customerParty.getParty().getContact().getElectronicMail();
+						return creditNote.getCustomerElectronicMail();
 					}
 				};
 
-				// Attatchments
-				FileModel file = new SimpleFileModel();
-				file.setFileName(creditNote.getDocumentId() + ".xml");
-				file.setFile(creditNote.getXmlDocument());
-				file.setMimeType("application/xml");
-
 				try {
-					session.getProvider(EmailTemplateProvider.class).setOrganization(organization).setUser(user)
-							.setAttachments(new ArrayList<>(Arrays.asList(file))).sendCreditNote(creditNote);
+					// Attatchments
+					FileModel xmlFile = new SimpleFileModel();
+					xmlFile.setFileName(creditNote.getDocumentId() + ".xml");
+					xmlFile.setFile(creditNote.getXmlDocument());
+					xmlFile.setMimeType("application/xml");
+
+					FileModel pdfFile = new SimpleFileModel();
+
+					pdfFile.setFileName(creditNote.getDocumentId() + ".pdf");
+					pdfFile.setFile(session.getProvider(UBLReportProvider.class).invoice().setOrganization(organization).getReportAsPdf(creditNote));
+					pdfFile.setMimeType("application/pdf");
+
+					session.getProvider(EmailTemplateProvider.class)
+							.setOrganization(organization).setUser(user)
+							.setAttachments(Arrays.asList(xmlFile, pdfFile))
+							.sendCreditNote(creditNote);
 
 					// Write event to the database
-					SendEventModel sendEvent = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.SUCCESS, creditNote);
-					sendEvent.setDescription("CreditNote Sended by Email");
+					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.SUCCESS, creditNote);
+					sendEvent.setType("EMAIL");
+
+					sendEvent.setDescription("Credit Note successfully sended");
+					sendEvent.addFileAttatchments(xmlFile);
+					sendEvent.addFileAttatchments(pdfFile);
+					sendEvent.setResult(true);
+
+					Map<String, String> destiny = new HashMap<>();
+					destiny.put("email", user.getEmail());
+					sendEvent.setDestiny(destiny);
+
+					// Remove required action
+					creditNote.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
 
 					return sendEvent;
+				} catch (ReportException e) {
+					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
+					sendEvent.setType("EMAIL");
+					sendEvent.setDescription(e.getMessage());
+					throw new SendException("Could not generate pdf report", e);
 				} catch (EmailException e) {
-					throw new SendException(e);
+					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
+					sendEvent.setType("EMAIL");
+					sendEvent.setDescription(e.getMessage());
+					throw new SendException("Could not send email", e);
 				}
 			}
 
 			@Override
-			public SendEventModel sendToThridParty(OrganizationModel organization, CreditNoteModel creditNote)
-					throws SendException {
+			public SendEventModel sendToThridParty(OrganizationModel organization, CreditNoteModel creditNote) throws SendException {
 				SendEventModel model = null;
 				byte[] zip = null;
 				String fileName = "";
 				try {
 					fileName = SunatTemplateUtils.generateXmlFileName(organization, creditNote);
 					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);
+
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
+
 					// Write event to the default database
-					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.SUCCESS, creditNote);
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.SUCCESS, creditNote);
 					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.addFileResponseAttatchments(
-							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
+					model.addFileResponseAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
 					model.setDescription("Credit Note submitted successfully to SUNAT");
 					model.setType("SUNAT");
@@ -226,17 +242,14 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 				} catch (SOAPFaultException e) {
 					SOAPFault soapFault = e.getFault();
 					// Write event to the default database
-					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, creditNote);
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
-					model.setResponse(
-							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
+					model.setResponse(SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
 				} catch (Exception e) {
-					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, creditNote);
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.setDestiny(SunatSenderUtils.getDestiny());
 					model.setType("SUNAT");

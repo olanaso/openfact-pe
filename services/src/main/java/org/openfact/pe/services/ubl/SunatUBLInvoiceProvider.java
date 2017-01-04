@@ -120,12 +120,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 			public Document write(OrganizationModel organization, InvoiceType invoiceType,
 					Map<String, String> attributes) {
 				try {
-					MapBasedNamespaceContext mapBasedNamespace = SunatUtils
-							.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
+					MapBasedNamespaceContext mapBasedNamespace = SunatUtils.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2");
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					MicroWriter.writeToStream(UBL21Writer.invoice().getAsMicroDocument(invoiceType), out,
-							new XMLWriterSettings().setNamespaceContext(mapBasedNamespace)
-									.setPutNamespaceContextPrefixesInRoot(true));
+					MicroWriter.writeToStream(UBL21Writer.invoice().getAsMicroDocument(invoiceType), out, new XMLWriterSettings().setNamespaceContext(mapBasedNamespace).setPutNamespaceContextPrefixesInRoot(true));
 
 					Document document = DocumentUtils.byteToDocument(out.toByteArray());
 					return document;
@@ -152,23 +149,22 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 			}
 
 			@Override
-			public SendEventModel sendToThridParty(OrganizationModel organization, InvoiceModel invoice)
-					throws SendException {
+			public SendEventModel sendToThridParty(OrganizationModel organization, InvoiceModel invoice) throws SendException {
 				byte[] zip = null;
 				SendEventModel model = null;
 				String fileName = "";
 				try {
 					fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
 					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
+
 					// sender
 					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
+
 					// Write event to the default database
-					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.SUCCESS, invoice);
+					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.SUCCESS, invoice);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.setDestiny(SunatSenderUtils.getDestiny());
-					model.addFileResponseAttatchments(
-							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
+					model.addFileResponseAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
 					model.setDescription("Invoice submitted successfully to SUNAT");
 					model.setType("SUNAT");

@@ -1,8 +1,7 @@
 package org.openfact.pe.services.resources;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -28,6 +27,7 @@ import org.openfact.models.StorageFileModel;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.representations.idm.InvoiceRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.managers.InvoiceManager;
 import org.openfact.ubl.SendEventModel;
@@ -59,13 +59,12 @@ public class InvoicesResource {
 		InvoiceManager invoiceManager = new InvoiceManager(session);
 
 		// Double-check duplicated ID
-		if (rep.getSerie() != null && rep.getNumero() != null
-				&& invoiceManager.getInvoiceByID(organization, rep.getSerie() + "-" + rep.getNumero()) != null) {
+		if (rep.getSerie() != null && rep.getNumero() != null && invoiceManager.getInvoiceByID(organization, rep.getSerie() + "-" + rep.getNumero()) != null) {
 			return ErrorResponse.exists("Invoice exists with same documentId");
 		}
 		try {
 			InvoiceType invoiceType = SunatRepresentationToType.toInvoiceType(organization, rep);
-			InvoiceModel invoice = invoiceManager.addInvoice(organization, invoiceType, Collections.emptyMap());
+			InvoiceModel invoice = invoiceManager.addInvoice(organization, invoiceType, generateAttributes(rep));
 
 			// Enviar a Cliente
 			if (rep.isEnviarAutomaticamenteAlCliente()) {
@@ -101,6 +100,37 @@ public class InvoicesResource {
 			}
 			return ErrorResponse.exists("Invoice could not be created");
 		}
+	}
+
+	private Map<String, List<String>> generateAttributes(DocumentRepresentation rep) {
+		Map<String, List<String>> attributes = new HashMap<>();
+		attributes.put("operacionGratuita", Arrays.asList(String.valueOf(rep.isOperacionGratuita())));
+
+		if(rep.getTotalGravada() != null) {
+			attributes.put("totalGravada", Arrays.asList(String.valueOf(rep.getTotalGravada())));
+		}
+		if(rep.getTotalInafecta() != null) {
+			attributes.put("totalInafecta", Arrays.asList(String.valueOf(rep.getTotalInafecta())));
+		}
+		if(rep.getTotalExonerada() != null) {
+			attributes.put("totalExonerada", Arrays.asList(String.valueOf(rep.getTotalExonerada())));
+		}
+		if(rep.getTotalIgv() != null) {
+			attributes.put("totalIgv", Arrays.asList(String.valueOf(rep.getTotalIgv())));
+		}
+		if(rep.getTotalGratuita() != null) {
+			attributes.put("totalGratuita", Arrays.asList(String.valueOf(rep.getTotalGratuita())));
+		}
+		if(rep.getIgv() != null) {
+			attributes.put("igv", Arrays.asList(String.valueOf(rep.getIgv())));
+		}
+		if(rep.getPorcentajeDescuento() != null) {
+			attributes.put("porcentajeDescuento", Arrays.asList(String.valueOf(rep.getPorcentajeDescuento())));
+		}
+		if(rep.getTotalOtrosCargos() != null) {
+			attributes.put("totalOtrosCargos", Arrays.asList(String.valueOf(rep.getTotalOtrosCargos())));
+		}
+		return  attributes;
 	}
 
 	@GET

@@ -1287,7 +1287,7 @@ public class SunatRepresentationToType {
             type.setDocumentTypeCode(rep.getTipoDocumentoRelacionado());
         }
         if (rep.getNumeroDocumentoRelacionado() != null) {
-            String[] splits = rep.getNumeroDocumentoRelacionado().split("-");
+            String[] splits = (rep.getNumeroDocumentoRelacionado().toUpperCase()).split("-");
             type.setDocumentSerialID(splits[0]);
             type.setDocumentNumberID(splits[1]);
         }

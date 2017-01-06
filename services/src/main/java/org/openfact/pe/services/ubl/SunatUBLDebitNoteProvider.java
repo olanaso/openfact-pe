@@ -1,8 +1,6 @@
 package org.openfact.pe.services.ubl;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,22 +11,15 @@ import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
-import org.openfact.email.EmailTemplateProvider;
-import org.openfact.models.CustomerPartyModel;
 import org.openfact.models.DebitNoteModel;
-import org.openfact.models.FileModel;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.PartyLegalEntityModel;
-import org.openfact.models.SimpleFileModel;
-import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
-import org.openfact.pe.models.utils.SunatUtils;
+import org.openfact.pe.models.utils.SunatMarshallerUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
@@ -119,7 +110,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 			public Document write(OrganizationModel organization, DebitNoteType debitNoteType,
 					Map<String, List<String>> attributes) {
 				try {
-					MapBasedNamespaceContext mapBasedNamespace = SunatUtils
+					MapBasedNamespaceContext mapBasedNamespace = SunatMarshallerUtils
 							.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2");
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					MicroWriter.writeToStream(UBL21Writer.debitNote().getAsMicroDocument(debitNoteType), out,

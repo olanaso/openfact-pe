@@ -58,8 +58,8 @@ public class SunatDocumentIdProvider {
 			number = Integer.parseInt(splits[1]);
 		}
 
-		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
+		int nextNumber = SunatMarshallerUtils.getNextNumber(number, 99_999_999);
+		int nextSeries = SunatMarshallerUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(invoiceCode.getMask().substring(2, 3));
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
@@ -96,8 +96,8 @@ public class SunatDocumentIdProvider {
 			number = Integer.parseInt(splits[1]);
 		}
 
-		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
+		int nextNumber = SunatMarshallerUtils.getNextNumber(number, 99_999_999);
+		int nextSeries = SunatMarshallerUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(codeType);
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
@@ -134,8 +134,8 @@ public class SunatDocumentIdProvider {
 			number = Integer.parseInt(splits[1]);
 		}
 
-		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
+		int nextNumber = SunatMarshallerUtils.getNextNumber(number, 99_999_999);
+		int nextSeries = SunatMarshallerUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(codeType);
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
@@ -172,8 +172,8 @@ public class SunatDocumentIdProvider {
 			number = Integer.parseInt(splits[1]);
 		}
 
-		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
+		int nextNumber = SunatMarshallerUtils.getNextNumber(number, 99_999_999);
+		int nextSeries = SunatMarshallerUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(perceptionCode.getMask().substring(2, 3));
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
@@ -210,8 +210,8 @@ public class SunatDocumentIdProvider {
 			number = Integer.parseInt(splits[1]);
 		}
 
-		int nextNumber = SunatUtils.getNextNumber(number, 99_999_999);
-		int nextSeries = SunatUtils.getNextSerie(series, number, 999, 99_999_999);
+		int nextNumber = SunatMarshallerUtils.getNextNumber(number, 99_999_999);
+		int nextSeries = SunatMarshallerUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(retentionCode.getMask().substring(2, 3));
 		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
@@ -246,12 +246,12 @@ public class SunatDocumentIdProvider {
 			secuence = Integer.parseInt(splits[1]);
 			number = Integer.parseInt(splits[2]);
 		}
-		int nextSeries = SunatUtils.getDateToNumber();
+		int nextSeries = SunatMarshallerUtils.getDateToNumber();
 		int nextNumber = 0;
 		if (secuence == nextSeries) {
-			nextNumber = SunatUtils.getNextNumber(number, 99999);
+			nextNumber = SunatMarshallerUtils.getNextNumber(number, 99999);
 		} else {
-			nextNumber = SunatUtils.getNextNumber(0, 99999);
+			nextNumber = SunatMarshallerUtils.getNextNumber(0, 99999);
 		}
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(summaryDocumentCode.getMask().substring(2, 4));
@@ -288,12 +288,12 @@ public class SunatDocumentIdProvider {
 			secuence = Integer.parseInt(splits[1]);
 			number = Integer.parseInt(splits[2]);
 		}
-		int nextSeries = SunatUtils.getDateToNumber();
+		int nextSeries = SunatMarshallerUtils.getDateToNumber();
 		int nextNumber = 0;
 		if (secuence == nextSeries) {
-			nextNumber = SunatUtils.getNextNumber(number, 99999);
+			nextNumber = SunatMarshallerUtils.getNextNumber(number, 99999);
 		} else {
-			nextNumber = SunatUtils.getNextNumber(0, 99999);
+			nextNumber = SunatMarshallerUtils.getNextNumber(0, 99999);
 		}
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(voidedDocumentCode.getMask().substring(2, 4));

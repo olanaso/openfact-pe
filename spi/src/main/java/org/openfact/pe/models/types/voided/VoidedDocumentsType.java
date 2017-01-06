@@ -18,10 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VoidedDocumentsType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:VoidedDocuments-1", propOrder = {
-        "ublExtensions", "ublVersionID", "customizationID", "id", "referenceDate", "issueDate", "note",
-         "signature", "accountingSupplierParty", "voidedDocumentsLine" })
-@CodingStyleguideUnaware
+@XmlType(name = "VoidedDocumentsType", propOrder = {
+        "ublExtensions",
+        "ublVersionID",
+        "customizationID",
+        "id",
+        "referenceDate",
+        "issueDate",
+        "note",
+        "signature",
+        "accountingSupplierParty",
+        "voidedDocumentsLine"
+})
 public class VoidedDocumentsType    implements Serializable, Cloneable{
     @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
     protected UBLExtensionsType ublExtensions;

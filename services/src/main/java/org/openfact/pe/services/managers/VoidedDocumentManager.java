@@ -19,6 +19,7 @@ package org.openfact.pe.services.managers;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
@@ -29,10 +30,7 @@ import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
-import org.openfact.pe.models.utils.SunatRepresentationToType;
-import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.models.utils.SunatTypeToModel;
+import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
@@ -41,76 +39,80 @@ import org.w3c.dom.Document;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 
+import java.io.File;
+import java.io.IOException;
+
 public class VoidedDocumentManager {
 
-	protected static final Logger logger = Logger.getLogger(VoidedDocumentManager.class);
+    protected static final Logger logger = Logger.getLogger(VoidedDocumentManager.class);
 
-	protected OpenfactSession session;
-	protected VoidedDocumentProvider model;
-	protected UBLVoidedDocumentProvider ubl;
+    protected OpenfactSession session;
+    protected VoidedDocumentProvider model;
+    protected UBLVoidedDocumentProvider ubl;
 
-	public VoidedDocumentManager(OpenfactSession session) {
-		this.session = session;
-		this.model = session.getProvider(VoidedDocumentProvider.class);
-		this.ubl = session.getProvider(UBLVoidedDocumentProvider.class);
-	}
+    public VoidedDocumentManager(OpenfactSession session) {
+        this.session = session;
+        this.model = session.getProvider(VoidedDocumentProvider.class);
+        this.ubl = session.getProvider(UBLVoidedDocumentProvider.class);
+    }
 
-	public VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId, OrganizationModel organization) {
-		return model.getVoidedDocumentById(organization, documentId);
-	}
+    public VoidedDocumentModel getVoidedDocumentByDocumentId(String documentId, OrganizationModel organization) {
+        return model.getVoidedDocumentById(organization, documentId);
+    }
 
-	public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedRepresentation rep) {
-		VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(organization, rep);
-		return addVoidedDocument(organization, type);
-	}
+    public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedRepresentation rep) {
+        VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(session,organization, rep);
+        return addVoidedDocument(organization, type);
+    }
 
-	public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedDocumentsType type) {
-		IDType documentId = type.getID();
-		if (documentId == null || documentId.getValue() == null) {
-			String generatedId = SunatDocumentIdProvider.generateVoidedDocumentId(session, organization);
-			documentId = new IDType(generatedId);
-			type.setID(documentId);
-		}
+    public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedDocumentsType type) {
+        IDType documentId = type.getID();
+        if (documentId == null || documentId.getValue() == null) {
+            String generatedId = SunatDocumentIdProvider.generateVoidedDocumentId(session, organization);
+            documentId = new IDType(generatedId);
+            type.setID(documentId);
+        }
 
-		VoidedDocumentModel voidedDocument = model.addVoidedDocument(organization, documentId.getValue());
-		SunatTypeToModel.importVoidedDocument(session, organization, voidedDocument, type);
-		RequiredAction.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
+        VoidedDocumentModel voidedDocument = model.addVoidedDocument(organization, documentId.getValue());
+        SunatTypeToModel.importVoidedDocument(session, organization, voidedDocument, type);
+        RequiredAction.getDefaults().stream().forEach(c -> voidedDocument.addRequiredAction(c));
 
-		try {
-			// Generate Document
-			Document baseDocument = SunatTypeToDocument.toDocument(type);
+        try {
+            // Generate Document
+            Document baseDocument = SunatTypeToDocument.toDocument(type);
+            SunatSignerUtils.removeSignature(baseDocument);
 
-			// Sign Document
-			SignerProvider signerProvider = session.getProvider(SignerProvider.class);
-			Document signedDocument = signerProvider.sign(baseDocument, organization);
+            // Sign Document
+            SignerProvider signerProvider = session.getProvider(SignerProvider.class);
+            Document signedDocument = signerProvider.sign(baseDocument, organization);
 
-			byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
-			voidedDocument.setXmlDocument(bytes);
-		} catch (JAXBException e) {
-			logger.error("Error on marshal model", e);
-			throw new ModelException(e);
-		} catch (TransformerException e) {
-			logger.error("Error parsing to byte XML", e);
-			throw new ModelException(e);
-		}
-		return voidedDocument;
-	}
+            byte[] bytes = DocumentUtils.getBytesFromDocument(signedDocument);
+            voidedDocument.setXmlDocument(bytes);
+        } catch (JAXBException e) {
+            logger.error("Error on marshal model", e);
+            throw new ModelException(e);
+        } catch (TransformerException e) {
+            logger.error("Error parsing to byte XML", e);
+            throw new ModelException(e);
+        }
+        return voidedDocument;
+    }
 
-	public boolean removeVoidedDocument(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
-		if (model.removeVoidedDocument(organization, voidedDocument)) {
-			return true;
-		}
-		return false;
-	}
+    public boolean removeVoidedDocument(OrganizationModel organization, VoidedDocumentModel voidedDocument) {
+        if (model.removeVoidedDocument(organization, voidedDocument)) {
+            return true;
+        }
+        return false;
+    }
 
-	public SendEventModel sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
-			throws SendException {
-		return ubl.sender().sendToCustomer(organization, voidedDocument);
-	}
+    public SendEventModel sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
+            throws SendException {
+        return ubl.sender().sendToCustomer(organization, voidedDocument);
+    }
 
-	public SendEventModel sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
-			throws SendException {
-		return ubl.sender().sendToThridParty(organization, voidedDocument);
-	}
+    public SendEventModel sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
+            throws SendException {
+        return ubl.sender().sendToThridParty(organization, voidedDocument);
+    }
 
 }

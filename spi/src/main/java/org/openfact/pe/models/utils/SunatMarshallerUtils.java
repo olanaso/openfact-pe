@@ -15,7 +15,7 @@ import org.openfact.models.ModelException;
 import com.helger.ubl21.UBL21NamespaceContext;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 
-public class SunatUtils {
+public class SunatMarshallerUtils {
 
     public static int getNextSerie(int currentSerie, int currenctNumber, int maxSerie, int maxNumber) {
         if (getNextNumber(currenctNumber, maxNumber) == 1) {

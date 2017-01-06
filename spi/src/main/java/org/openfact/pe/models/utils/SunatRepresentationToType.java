@@ -16,13 +16,16 @@ import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.dom.DOMResult;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
 import org.openfact.common.converts.DateUtils;
+import org.openfact.common.converts.DocumentUtils;
 import org.openfact.common.finance.MoneyConverters;
 import org.openfact.models.ModelException;
+import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.constants.*;
 import org.openfact.pe.models.types.*;
@@ -37,6 +40,7 @@ import org.openfact.pe.models.types.summary.SummaryDocumentsType;
 import org.openfact.pe.models.types.voided.VoidedDocumentsLineType;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.pe.representations.idm.*;
+import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -327,9 +331,9 @@ public class SunatRepresentationToType {
         documentReferenceType.setID(rep.getDocumentoQueSeModifica().trim().toUpperCase());
 
         String identificator = rep.getDocumentoQueSeModifica().substring(0, 1);
-        if(identificator.equalsIgnoreCase(CodigoTipoDocumento.BOLETA.toString().substring(0, 1))) {
+        if (identificator.equalsIgnoreCase(CodigoTipoDocumento.BOLETA.toString().substring(0, 1))) {
             documentReferenceType.setDocumentTypeCode(CodigoTipoDocumento.BOLETA.getCodigo());
-        } else if(identificator.equalsIgnoreCase(CodigoTipoDocumento.FACTURA.toString().substring(0, 1))) {
+        } else if (identificator.equalsIgnoreCase(CodigoTipoDocumento.FACTURA.toString().substring(0, 1))) {
             documentReferenceType.setDocumentTypeCode(CodigoTipoDocumento.FACTURA.getCodigo());
         }
 
@@ -1254,8 +1258,11 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    public static VoidedDocumentsType toVoidedDocumentType(OrganizationModel organization, VoidedRepresentation rep) {
+    public static VoidedDocumentsType toVoidedDocumentType(OpenfactSession session, OrganizationModel organization, VoidedRepresentation rep) {
         VoidedDocumentsType type = new VoidedDocumentsType();
+        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
+        UBLExtensionType ublExtensionType = new UBLExtensionType();
+        ExtensionContentType extensionContentType = new ExtensionContentType();
         type.setUBLVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
@@ -1265,11 +1272,15 @@ public class SunatRepresentationToType {
             type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDeEmision())));
             type.setReferenceDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDeEmision())));
         }
-        if(rep.getObservaciones()!=null){
+        if (rep.getObservaciones() != null) {
             type.addNote(rep.getObservaciones());
         }
         type.addSignature(toSignatureType(organization));
         type.setAccountingSupplierParty(toSupplierParty(organization));
+        extensionContentType.setAny(SunatSignerUtils.getSignToElement(session, organization));
+        ublExtensionType.setExtensionContent(extensionContentType);
+        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
+        type.setUBLExtensions(ublExtensionsType);
         if (rep.getDetalle() != null) {
             for (VoidedLineRepresentation line : rep.getDetalle()) {
                 type.addVoidedDocumentsLine(toVoidedDocumentsLineType(line));
@@ -1277,6 +1288,7 @@ public class SunatRepresentationToType {
         }
         return type;
     }
+
 
     private static VoidedDocumentsLineType toVoidedDocumentsLineType(VoidedLineRepresentation rep) {
         VoidedDocumentsLineType type = new VoidedDocumentsLineType();
@@ -1417,6 +1429,7 @@ public class SunatRepresentationToType {
         }
 
     }
+
 
     public static AdditionalPropertyType generateAdditionalInformationSunatTotal(BigDecimal amount) {
         MoneyConverters converter = MoneyConverters.SPANISH_BANKING_MONEY_VALUE;

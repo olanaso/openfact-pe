@@ -1,13 +1,11 @@
 package org.openfact.pe.models.utils;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -58,21 +56,34 @@ public class SunatRepresentationToType {
     public static final String QUANTITY_UNKNOW = "NIU";
 
     public static XMLGregorianCalendar toGregorianCalendar(LocalDate date) {
-        GregorianCalendar gcal = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()));
         try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String locale = sdf.format(DateUtils.asDate(date));
+            XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
+            return xmlCal;
         } catch (DatatypeConfigurationException e) {
             throw new ModelException(e);
         }
     }
 
     public static XMLGregorianCalendar toGregorianCalendarTime(LocalDateTime date) {
-        GregorianCalendar gcal = GregorianCalendar.from(date.atZone(ZoneId.systemDefault()));
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String locale = sdf.format(DateUtils.asDate(date));
+            XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
+            return xmlCal;
+        } catch (DatatypeConfigurationException e) {
+            throw new ModelException(e);
+        }
+
+      /*  GregorianCalendar gcal = GregorianCalendar.from(date.atZone(ZoneId.systemDefault()));
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
         } catch (DatatypeConfigurationException e) {
             throw new ModelException(e);
-        }
+        }*/
     }
 
     public static InvoiceType toInvoiceType(OrganizationModel organization, DocumentRepresentation rep) {
@@ -678,8 +689,11 @@ public class SunatRepresentationToType {
         return debitNoteLineTypes;
     }
 
-    public static PerceptionType toPerceptionType(OrganizationModel organization, DocumentoSunatRepresentation rep) {
+    public static PerceptionType toPerceptionType(OpenfactSession session,OrganizationModel organization, DocumentoSunatRepresentation rep) {
         PerceptionType type = new PerceptionType();
+        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
+        UBLExtensionType ublExtensionType = new UBLExtensionType();
+        ExtensionContentType extensionContentType = new ExtensionContentType();
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
         type.addSignature(toSignatureType(organization));
@@ -688,7 +702,9 @@ public class SunatRepresentationToType {
         }
         // Date
         if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
+        } else {
+            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
         }
         type.setAgentParty(toAgentPartyType(organization));
         type.setReceiverParty(toReceiverPartyType(rep));
@@ -704,6 +720,10 @@ public class SunatRepresentationToType {
         if (rep.getMonedaDocumento() != null) {
             type.setDocumentCurrencyCode(rep.getMonedaDocumento());
         }
+        extensionContentType.setAny(SunatSignerUtils.getSignToElement(session, organization));
+        ublExtensionType.setExtensionContent(extensionContentType);
+        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
+        type.setUblExtensions(ublExtensionsType);
         double totalInvoiceAmount = 0, totalPaid = 0;
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
             double amount = 0, paid = 0;
@@ -733,7 +753,6 @@ public class SunatRepresentationToType {
         }
         type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
         type.setSunatTotalCashed(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
-
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
             type.addPerceptionDocumentReference(
                     toPerceptionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
@@ -746,7 +765,7 @@ public class SunatRepresentationToType {
         SUNATPerceptionDocumentReferenceType type = new SUNATPerceptionDocumentReferenceType();
         type.setId(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
             type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado().setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumentoRelacionado());
@@ -761,24 +780,29 @@ public class SunatRepresentationToType {
         SUNATPerceptionInformationType type = new SUNATPerceptionInformationType();
         type.setSunatPerceptionAmount(toSUNATAmountType(rep, currencyCode, perception));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSunatPerceptionDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
+            type.setSunatPerceptionDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
         }
         type.setSunatNetTotalCashed(tosetSUNATNetTotalPaidType(rep, currencyCode, perception));
         type.setExchangeRate(toExchangeRateType(rep, currencyCode));
         return type;
     }
 
-    public static RetentionType toRetentionType(OrganizationModel organization, DocumentoSunatRepresentation rep) {
+    public static RetentionType toRetentionType(OpenfactSession session,OrganizationModel organization, DocumentoSunatRepresentation rep) {
         RetentionType type = new RetentionType();
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
         type.addSignature(toSignatureType(organization));
+        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
+        UBLExtensionType ublExtensionType = new UBLExtensionType();
+        ExtensionContentType extensionContentType = new ExtensionContentType();
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
             type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }
         // Date
         if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDeEmision())));
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
+        } else {
+            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
         }
         type.setAgentParty(toAgentPartyType(organization));
         type.setReceiverParty(toReceiverPartyType(rep));
@@ -794,6 +818,10 @@ public class SunatRepresentationToType {
         if (rep.getMonedaDocumento() != null) {
             type.setDocumentCurrencyCode(rep.getMonedaDocumento());
         }
+        extensionContentType.setAny(SunatSignerUtils.getSignToElement(session, organization));
+        ublExtensionType.setExtensionContent(extensionContentType);
+        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
+        type.setUblExtensions(ublExtensionsType);
         double totalInvoiceAmount = 0, totalPaid = 0;
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
             double amount = 0, paid = 0;
@@ -836,7 +864,7 @@ public class SunatRepresentationToType {
         SUNATRetentionDocumentReferenceType type = new SUNATRetentionDocumentReferenceType();
         type.setID(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
             type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado().setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumentoRelacionado());
@@ -852,7 +880,7 @@ public class SunatRepresentationToType {
         SUNATRetentionInformationType type = new SUNATRetentionInformationType();
         type.setSUNATRetentionAmount(toSUNATAmountType(rep, currencyCode, retencion));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSUNATRetentionDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
+            type.setSUNATRetentionDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
         }
         type.setSUNATNetTotalPaid(tosetSUNATNetTotalPaidType(rep, currencyCode, retencion));
         if (rep.getTipoCambio() != null) {
@@ -921,7 +949,7 @@ public class SunatRepresentationToType {
             }
             type.setTargetCurrencyCode(currencyCode);
             if (rep.getFechaCambio() != null) {
-                type.setDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaCambio())));
+                type.setDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaCambio())));
             }
         }
         return type;
@@ -934,7 +962,7 @@ public class SunatRepresentationToType {
         }
         type.setPaidAmount(toPaidAmountType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setPaidDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDocumentoRelacionado())));
+            type.setPaidDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
         }
         return type;
     }
@@ -1269,9 +1297,13 @@ public class SunatRepresentationToType {
             type.setID(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }
         if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDeEmision())));
-            type.setReferenceDate(toGregorianCalendarTime(DateUtils.asLocalDateTime(rep.getFechaDeEmision())));
+            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
+            type.setReferenceDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
+        } else {
+            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
+            type.setReferenceDate(toGregorianCalendar(LocalDate.now()));
         }
+
         if (rep.getObservaciones() != null) {
             type.addNote(rep.getObservaciones());
         }
@@ -1304,7 +1336,7 @@ public class SunatRepresentationToType {
             type.setDocumentNumberID(splits[1]);
         }
         if (rep.getDescripcionDocumentoRelacionado() != null) {
-            type.setVoidReasonDescription(rep.getTipoDocumentoRelacionado());
+            type.setVoidReasonDescription(rep.getDescripcionDocumentoRelacionado());
         }
         return type;
     }

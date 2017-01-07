@@ -18,14 +18,8 @@ public class SunatSignerUtils {
 
     public static Element getSignToElement(OpenfactSession session, OrganizationModel organization) {
         SignerProvider signerProvider = session.getProvider(SignerProvider.class);
-
-        try {
-            Document document = DocumentUtils.getEmptyDocument();
-            Document signedDocument = signerProvider.sign(document, organization);
-            return signedDocument.getDocumentElement();
-        } catch (ParserConfigurationException e) {
-            return null;
-        }
+        Document signedDocument = signerProvider.sign(organization);
+        return signedDocument.getDocumentElement();
     }
 
     public static Document getSignToDocument(OpenfactSession session, OrganizationModel organization, Document document) {
@@ -35,12 +29,10 @@ public class SunatSignerUtils {
     }
 
     public static void removeSignature(Document document) {
-        NodeList nodeList = document.getDocumentElement().getElementsByTagName("ext:UBLExtensions");
-
+        NodeList nodeList = document.getDocumentElement().getElementsByTagName("ext:UBLExtension");
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element chilElement = (Element) nodeList.item(i);
-            document.removeChild(chilElement);
-
+            chilElement.getParentNode().removeChild(chilElement);
         }
     }
 }

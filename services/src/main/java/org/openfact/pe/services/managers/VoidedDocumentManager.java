@@ -61,7 +61,7 @@ public class VoidedDocumentManager {
     }
 
     public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedRepresentation rep) {
-        VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(session,organization, rep);
+        VoidedDocumentsType type = SunatRepresentationToType.toVoidedDocumentType(session, organization, rep);
         return addVoidedDocument(organization, type);
     }
 

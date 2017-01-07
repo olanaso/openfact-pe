@@ -29,10 +29,7 @@ import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.types.perception.PerceptionType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
-import org.openfact.pe.models.utils.SunatRepresentationToType;
-import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.models.utils.SunatTypeToModel;
+import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
@@ -60,7 +57,7 @@ public class PerceptionManager {
 	}
 
 	public PerceptionModel addPerception(OrganizationModel organization, DocumentoSunatRepresentation rep) {
-		PerceptionType type = SunatRepresentationToType.toPerceptionType(organization, rep);
+		PerceptionType type = SunatRepresentationToType.toPerceptionType(session,organization, rep);
 		return addPerception(organization, type);
 	}
 
@@ -79,7 +76,7 @@ public class PerceptionManager {
 		try {
 			// Generate Document
 			Document baseDocument = SunatTypeToDocument.toDocument(type);
-
+			SunatSignerUtils.removeSignature(baseDocument);
 			// Sign Document
 			SignerProvider signerProvider = session.getProvider(SignerProvider.class);
 			Document signedDocument = signerProvider.sign(baseDocument, organization);

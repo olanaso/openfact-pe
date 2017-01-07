@@ -29,10 +29,7 @@ import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.types.retention.RetentionType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
-import org.openfact.pe.models.utils.SunatRepresentationToType;
-import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.models.utils.SunatTypeToModel;
+import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.ubl.SendEventModel;
 import org.openfact.ubl.SendException;
@@ -60,7 +57,7 @@ public class RetentionManager {
 	}
 
 	public RetentionModel addRetention(OrganizationModel organization, DocumentoSunatRepresentation rep) {
-		RetentionType type = SunatRepresentationToType.toRetentionType(organization, rep);
+		RetentionType type = SunatRepresentationToType.toRetentionType(session,organization, rep);
 		return addRetention(organization, type);
 	}
 
@@ -79,7 +76,7 @@ public class RetentionManager {
 		try {
 			// Generate Document
 			Document baseDocument = SunatTypeToDocument.toDocument(type);
-
+			SunatSignerUtils.removeSignature(baseDocument);
 			// Sign Document
 			SignerProvider signerProvider = session.getProvider(SignerProvider.class);
 			Document signedDocument = signerProvider.sign(baseDocument, organization);

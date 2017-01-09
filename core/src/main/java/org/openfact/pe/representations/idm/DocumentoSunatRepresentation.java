@@ -15,6 +15,7 @@ public class DocumentoSunatRepresentation {
     private String serieDocumento;
     private String numeroDocumento;
     private String monedaDocumento;
+    private String codigoDocumento;
     private BigDecimal tasaDocumento;
     private boolean enviarAutomaticamenteASunat;
     private boolean enviarAutomaticamenteAlCliente;
@@ -79,6 +80,14 @@ public class DocumentoSunatRepresentation {
 
     public String getSerieDocumento() {
         return serieDocumento;
+    }
+
+    public String getCodigoDocumento() {
+        return codigoDocumento;
+    }
+
+    public void setCodigoDocumento(String codigoDocumento) {
+        this.codigoDocumento = codigoDocumento;
     }
 
     public void setSerieDocumento(String serieDocumento) {

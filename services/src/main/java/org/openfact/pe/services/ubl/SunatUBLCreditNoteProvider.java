@@ -21,6 +21,7 @@ import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
+import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatMarshallerUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
@@ -222,11 +223,11 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					zip = SunatTemplateUtils.generateZip(creditNote.getXmlDocument(), fileName);
 
 					// sender
-					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
+					byte[] response = new SunatSenderUtils(organization, EmissionType.CPE).sendBill(zip, fileName, InternetMediaType.ZIP);
 
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.SUCCESS, creditNote);
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.addFileResponseAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
@@ -242,14 +243,14 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
 				} catch (Exception e) {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, creditNote);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

@@ -8,63 +8,92 @@ import javax.activation.DataSource;
 
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.InternetMediaType;
+import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.services.send.ServiceWrapper;
 import org.openfact.pe.services.sunat.BillService;
 
 import com.sun.xml.ws.util.ByteArrayDataSource;
 
 public class SunatSenderUtils {
-	private Map<String, String> config;
+    private Map<String, String> config;
 
-	public SunatSenderUtils(OrganizationModel organization) {
-		config = new HashMap<>();
-		config.put("username", organization.getAssignedIdentificationId() + "MODDATOS");
-		config.put("password", "MODDATOS");
-		config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService");
-	}
+    public SunatSenderUtils(OrganizationModel organization, EmissionType type) {
+        config = new HashMap<>();
+        config.put("username", organization.getAssignedIdentificationId() + "MODDATOS");
+        config.put("password", "MODDATOS");
+        switch (type) {
+            case CPE: {
+                config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService");
+            }
+            break;
+            case OCPE: {
+                config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itemision-otroscpe-gem-beta/billService");
+            }
+            break;
+            default: {
+                config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService");
+            }
+            break;
+        }
 
-	public static Map<String,String> getDestiny(){
-		Map<String, String> destiny = new HashMap<>();
-		destiny.put("Address","{https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService}");
-		return  destiny;
-	}
+    }
 
-	public byte[] sendBill(byte[] document, String fileName, InternetMediaType mediaType) {
-		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
-		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
-		DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
-		DataHandler contentFile = new DataHandler(dataSource);
-		// Send
-		byte[] result = client.sendBill(fileName + mediaType.getExtension(), contentFile);
-		return result;
-	}
+    public static Map<String, String> getDestiny(EmissionType type) {
+        Map<String, String> destiny = new HashMap<>();
+        switch (type) {
+            case CPE: {
+                destiny.put("Address", "{https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService}");
+            }
+            break;
+            case OCPE: {
+                destiny.put("Address", "{https://e-beta.sunat.gob.pe/ol-ti-itemision-otroscpe-gem-beta/billService}");
+            }
+            break;
+            default: {
+                destiny.put("Address", "{https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService}");
+            }
+            break;
+        }
 
-	public String sendSummary(byte[] document, String fileName, InternetMediaType mediaType) {
-		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
-		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
-		DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
-		DataHandler contentFile = new DataHandler(dataSource);
-		// Send
-		String result = client.sendSummary(fileName + mediaType.getExtension(), contentFile);
-		return result;
-	}
+        return destiny;
+    }
 
-	public String sendPack(byte[] document, String fileName, InternetMediaType mediaType) {
-		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
-		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
-		DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
-		DataHandler contentFile = new DataHandler(dataSource);
-		// Send
-		String result = client.sendPack(fileName + mediaType.getExtension(), contentFile);
-		return result;
-	}
+    public byte[] sendBill(byte[] document, String fileName, InternetMediaType mediaType) {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
+        DataHandler contentFile = new DataHandler(dataSource);
+        // Send
+        byte[] result = client.sendBill(fileName + mediaType.getExtension(), contentFile);
+        return result;
+    }
 
-	public byte[] getStatus(String ticket) {
-		ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
-		BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
-		// send
-		byte[] send = client.getStatus(ticket).getContent();
-		return send;
+    public String sendSummary(byte[] document, String fileName, InternetMediaType mediaType) {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
+        DataHandler contentFile = new DataHandler(dataSource);
+        // Send
+        String result = client.sendSummary(fileName + mediaType.getExtension(), contentFile);
+        return result;
+    }
 
-	}
+    public String sendPack(byte[] document, String fileName, InternetMediaType mediaType) {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
+        DataHandler contentFile = new DataHandler(dataSource);
+        // Send
+        String result = client.sendPack(fileName + mediaType.getExtension(), contentFile);
+        return result;
+    }
+
+    public byte[] getStatus(String ticket) {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        // send
+        byte[] send = client.getStatus(ticket).getContent();
+        return send;
+
+    }
 }

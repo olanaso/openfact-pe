@@ -18,6 +18,7 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
+import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatMarshallerUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
@@ -198,11 +199,11 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					fileName = SunatTemplateUtils.generateXmlFileName(organization, debitNote);
 					zip = SunatTemplateUtils.generateZip(debitNote.getXmlDocument(), fileName);
 					// sender
-					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
+					byte[] response = new SunatSenderUtils(organization, EmissionType.CPE).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, debitNote);
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
@@ -219,7 +220,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, debitNote);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -228,7 +229,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, debitNote);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

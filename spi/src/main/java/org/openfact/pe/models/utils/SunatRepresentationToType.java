@@ -689,7 +689,7 @@ public class SunatRepresentationToType {
         return debitNoteLineTypes;
     }
 
-    public static PerceptionType toPerceptionType(OpenfactSession session,OrganizationModel organization, DocumentoSunatRepresentation rep) {
+    public static PerceptionType toPerceptionType(OpenfactSession session, OrganizationModel organization, DocumentoSunatRepresentation rep) {
         PerceptionType type = new PerceptionType();
         UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
         UBLExtensionType ublExtensionType = new UBLExtensionType();
@@ -708,9 +708,9 @@ public class SunatRepresentationToType {
         }
         type.setAgentParty(toAgentPartyType(organization));
         type.setReceiverParty(toReceiverPartyType(rep));
-        //	if (rep.getCodigoDocumento() != null) {
-        type.setSunatPerceptionSystemCode("01");
-        //}
+        if (rep.getCodigoDocumento() != null) {
+            type.setSunatPerceptionSystemCode(rep.getCodigoDocumento());
+        }
         if (rep.getTasaDocumento() != null) {
             type.setSunatPerceptionPercent(rep.getTasaDocumento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         }
@@ -787,7 +787,7 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    public static RetentionType toRetentionType(OpenfactSession session,OrganizationModel organization, DocumentoSunatRepresentation rep) {
+    public static RetentionType toRetentionType(OpenfactSession session, OrganizationModel organization, DocumentoSunatRepresentation rep) {
         RetentionType type = new RetentionType();
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
@@ -806,9 +806,9 @@ public class SunatRepresentationToType {
         }
         type.setAgentParty(toAgentPartyType(organization));
         type.setReceiverParty(toReceiverPartyType(rep));
-        //	if (rep.getCodigoDocumento() != null) {
-        type.setSunatRetentionSystemCode("01");
-        //}
+        if (rep.getCodigoDocumento() != null) {
+            type.setSunatRetentionSystemCode(rep.getCodigoDocumento());
+        }
         if (rep.getTasaDocumento() != null) {
             type.setSunatRetentionPercent(rep.getTasaDocumento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         }

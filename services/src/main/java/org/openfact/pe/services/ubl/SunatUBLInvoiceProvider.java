@@ -26,6 +26,7 @@ import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
+import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatMarshallerUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
@@ -150,12 +151,12 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
 
 					// sender
-					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
+					byte[] response = new SunatSenderUtils(organization, EmissionType.CPE).sendBill(zip, fileName, InternetMediaType.ZIP);
 
 					// Write event to the default database
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.SUCCESS, invoice);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.addFileResponseAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
 					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
 					model.setDescription("Invoice submitted successfully to SUNAT");
@@ -173,7 +174,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, invoice);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -182,7 +183,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, invoice);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

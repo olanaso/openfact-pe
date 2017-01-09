@@ -20,6 +20,7 @@ import org.openfact.models.UserSenderModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
+import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
@@ -191,11 +192,11 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					fileName = SunatTemplateUtils.generateXmlFileName(organization, retention);
 					zip = SunatTemplateUtils.generateZip(retention.getXmlDocument(), fileName);
 					// sender
-					byte[] response = new SunatSenderUtils(organization).sendBill(zip, fileName, InternetMediaType.ZIP);
+					byte[] response = new SunatSenderUtils(organization, EmissionType.OCPE).sendBill(zip, fileName, InternetMediaType.ZIP);
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, retention);
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.OCPE));
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					model.addFileResponseAttatchments(
 							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
@@ -212,7 +213,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, retention);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.OCPE));
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -221,7 +222,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, retention);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.OCPE));
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

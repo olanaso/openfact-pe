@@ -17,6 +17,7 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
+import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLSummaryDocumentProvider;
@@ -138,12 +139,12 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					fileName = SunatTemplateUtils.generateXmlFileName(organization, summaryDocument);
 					zip = SunatTemplateUtils.generateZip(summaryDocument.getXmlDocument(), fileName);
 					// sender
-					String response = new SunatSenderUtils(organization).sendSummary(zip, fileName,
+					String response = new SunatSenderUtils(organization, EmissionType.CPE).sendSummary(zip, fileName,
 							InternetMediaType.ZIP);
 					// Write event to the default database
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.SUCCESS, summaryDocument);
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
 					Map<String, String> result = new HashMap<>();
 					result.put("ACCEPTED BY SUNAT", "YES");
@@ -162,7 +163,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, summaryDocument);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(soapFault.getFaultString());
 					model.setResponse(
@@ -171,7 +172,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
 							SendResultType.ERROR, summaryDocument);
 					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny());
+					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
 					model.setType("SUNAT");
 					model.setDescription(e.getMessage());
 				}

@@ -40,6 +40,7 @@ import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.models.utils.RepresentationToModel;
+import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
@@ -361,7 +362,7 @@ public class SummaryDocumentsResource {
 			throw new NotFoundException("Ticket not found");
 		}
 		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
-			byte[] result = new SunatSenderUtils(organization).getStatus(ticket);
+			byte[] result = new SunatSenderUtils(organization, EmissionType.CPE).getStatus(ticket);
 			if (result == null) {
 				throw new NotFoundException("Sunat response, cdr not found");
 			}

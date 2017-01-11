@@ -12,7 +12,7 @@ import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
-import org.openfact.pe.constants.CodigoTipoDocumento;
+import org.openfact.pe.constants.TipoComprobante;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.RetentionModel;
@@ -25,11 +25,11 @@ import org.openfact.pe.models.VoidedDocumentProvider;
 public class SunatDocumentIdProvider {
 
 	public static String generateInvoiceDocumentId(OpenfactSession session, OrganizationModel organization, String invoiceType) {
-		CodigoTipoDocumento invoiceCode;
-		if (CodigoTipoDocumento.FACTURA.getCodigo().equals(invoiceType)) {
-			invoiceCode = CodigoTipoDocumento.FACTURA;
-		} else if (CodigoTipoDocumento.BOLETA.getCodigo().equals(invoiceType)) {
-			invoiceCode = CodigoTipoDocumento.BOLETA;
+		TipoComprobante invoiceCode;
+		if (TipoComprobante.FACTURA.getCodigo().equals(invoiceType)) {
+			invoiceCode = TipoComprobante.FACTURA;
+		} else if (TipoComprobante.BOLETA.getCodigo().equals(invoiceType)) {
+			invoiceCode = TipoComprobante.BOLETA;
 		} else {
 			throw new ModelException("Invalid invoiceTypeCode");
 		}
@@ -70,7 +70,7 @@ public class SunatDocumentIdProvider {
 	}
 
 	public static String generateCreditNoteDocumentId(OpenfactSession session, OrganizationModel organization, String codeType) {
-		CodigoTipoDocumento creditNoteCode = CodigoTipoDocumento.NOTA_CREDITO;
+		TipoComprobante creditNoteCode = TipoComprobante.NOTA_CREDITO;
 
 		CreditNoteModel lastCreditNote = null;
 		ScrollModel<CreditNoteModel> creditNotes = session.creditNotes().getCreditNotesScroll(organization, false, 10);
@@ -108,7 +108,7 @@ public class SunatDocumentIdProvider {
 	}
 
 	public static String generateDebitNoteDocumentId(OpenfactSession session, OrganizationModel organization, String codeType) {
-		CodigoTipoDocumento debitNoteCode = CodigoTipoDocumento.NOTA_DEBITO;
+		TipoComprobante debitNoteCode = TipoComprobante.NOTA_DEBITO;
 
 		DebitNoteModel lastDebitNote = null;
 		ScrollModel<DebitNoteModel> debitNotes = session.debitNotes().getDebitNotesScroll(organization, false, 4);
@@ -146,7 +146,7 @@ public class SunatDocumentIdProvider {
 	}
 
 	public static String generatePerceptionDocumentId(OpenfactSession session, OrganizationModel organization) {
-		CodigoTipoDocumento perceptionCode = CodigoTipoDocumento.PERCEPCION;
+		TipoComprobante perceptionCode = TipoComprobante.PERCEPCION;
 		PerceptionModel lastPerception = null;
 		ScrollModel<PerceptionModel> perceptions = session.getProvider(PerceptionProvider.class)
 				.getPerceptionsScroll(organization, false, 4);
@@ -184,7 +184,7 @@ public class SunatDocumentIdProvider {
 	}
 
 	public static String generateRetentionDocumentId(OpenfactSession session, OrganizationModel organization) {
-		CodigoTipoDocumento retentionCode = CodigoTipoDocumento.RETENCION;
+		TipoComprobante retentionCode = TipoComprobante.RETENCION;
 		RetentionModel lastRetention = null;
 		ScrollModel<RetentionModel> retentions = session.getProvider(RetentionProvider.class)
 				.getRetentionsScroll(organization, false, 4);
@@ -222,7 +222,7 @@ public class SunatDocumentIdProvider {
 	}
 
 	public static String generateSummaryDocumentDocumentId(OpenfactSession session, OrganizationModel organization) {
-		CodigoTipoDocumento summaryDocumentCode = CodigoTipoDocumento.RESUMEN_DIARIO;
+		TipoComprobante summaryDocumentCode = TipoComprobante.RESUMEN_DIARIO;
 		SummaryDocumentModel lastSummaryDocument = null;
 		ScrollModel<SummaryDocumentModel> summaryDocuments = session.getProvider(SummaryDocumentProvider.class)
 				.getSummaryDocumentsScroll(organization, false, 4);
@@ -264,7 +264,7 @@ public class SunatDocumentIdProvider {
 	}
 
 	public static String generateVoidedDocumentId(OpenfactSession session, OrganizationModel organization) {
-		CodigoTipoDocumento voidedDocumentCode = CodigoTipoDocumento.BAJA;
+		TipoComprobante voidedDocumentCode = TipoComprobante.BAJA;
 		VoidedDocumentModel lastVoidedDocument = null;
 		ScrollModel<VoidedDocumentModel> voidedDocuments = session.getProvider(VoidedDocumentProvider.class)
 				.getVoidedDocumentsScroll(organization, false, 4);

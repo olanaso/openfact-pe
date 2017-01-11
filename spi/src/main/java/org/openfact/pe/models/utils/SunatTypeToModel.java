@@ -53,9 +53,6 @@ public class SunatTypeToModel {
         if (type.getCustomizationID() != null && type.getCustomizationID().getValue() != null) {
             model.setCustomizationID(type.getCustomizationID().getValue());
         }
-        if (type.getDocumentCurrencyCode() != null && type.getDocumentCurrencyCode().getValue() != null) {
-            model.setDocumentCurrencyCode(type.getDocumentCurrencyCode().getValue());
-        }
         if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
             model.setIssueDateTime(toDateTime(type.getIssueDate().getValue()));
         }
@@ -180,9 +177,7 @@ public class SunatTypeToModel {
         if (type.getCustomizationID() != null && type.getCustomizationID().getValue() != null) {
             model.setCustomizationID(type.getCustomizationID().getValue());
         }
-        if (type.getDocumentCurrencyCode() != null && type.getDocumentCurrencyCode().getValue() != null) {
-            model.setDocumentCurrencyCode(type.getDocumentCurrencyCode().getValue());
-        }
+
         if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
             model.setIssueDateTime(toDateTime(type.getIssueDate().getValue()));
         }

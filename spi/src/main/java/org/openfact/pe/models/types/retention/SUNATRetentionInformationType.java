@@ -18,11 +18,11 @@ import java.math.BigDecimal;
         "sunatNetTotalPaid", "exchangeRate" })
 public class SUNATRetentionInformationType {
 
-    @XmlElement(name = "SUNATRetentionAmount", required = true)
+    @XmlElement(name = "SUNATRetentionAmount", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected AmountType sunatRetentionAmount;
-    @XmlElement(name = "SUNATRetentionDate", required = true)
+    @XmlElement(name = "SUNATRetentionDate", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected DateType sunatRetentionDate;
-    @XmlElement(name = "SUNATNetTotalPaid", required = true)
+    @XmlElement(name = "SUNATNetTotalPaid", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected AmountType sunatNetTotalPaid;
     @XmlElement(name = "ExchangeRate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected ExchangeRateType exchangeRate;

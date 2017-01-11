@@ -26,7 +26,7 @@ public class SUNATPerceptionDocumentReferenceType {
     protected TotalInvoiceAmountType totalInvoiceAmount;
     @XmlElement(name = "Payment", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected PaymentType payment;
-    @XmlElement(name = "SUNATPerceptionInformation")
+    @XmlElement(name = "SUNATPerceptionInformation", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" )
     protected SUNATPerceptionInformationType sunatPerceptionInformation;
 
     public IDType getId() {

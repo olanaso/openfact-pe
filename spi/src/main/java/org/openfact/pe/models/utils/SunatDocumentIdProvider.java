@@ -92,7 +92,7 @@ public class SunatDocumentIdProvider {
 		int number = 0;
 		if (lastCreditNote != null) {
 			String[] splits = lastCreditNote.getDocumentId().split("-");
-			series = Integer.parseInt(splits[0].substring(1));
+			series = Integer.parseInt(splits[0].substring(2));
 			number = Integer.parseInt(splits[1]);
 		}
 
@@ -100,7 +100,8 @@ public class SunatDocumentIdProvider {
 		int nextSeries = SunatMarshallerUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(codeType);
-		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
+		documentId.append("C");
+		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 2, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
 
@@ -130,7 +131,7 @@ public class SunatDocumentIdProvider {
 		int number = 0;
 		if (lastDebitNote != null) {
 			String[] splits = lastDebitNote.getDocumentId().split("-");
-			series = Integer.parseInt(splits[0].substring(1));
+			series = Integer.parseInt(splits[0].substring(2));
 			number = Integer.parseInt(splits[1]);
 		}
 
@@ -138,7 +139,8 @@ public class SunatDocumentIdProvider {
 		int nextSeries = SunatMarshallerUtils.getNextSerie(series, number, 999, 99_999_999);
 		StringBuilder documentId = new StringBuilder();
 		documentId.append(codeType);
-		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 3, "0"));
+		documentId.append("D");
+		documentId.append(StringUtils.padLeft(String.valueOf(nextSeries), 2, "0"));
 		documentId.append("-");
 		documentId.append(StringUtils.padLeft(String.valueOf(nextNumber), 8, "0"));
 

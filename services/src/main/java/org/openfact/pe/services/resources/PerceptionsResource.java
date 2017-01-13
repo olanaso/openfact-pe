@@ -3,9 +3,7 @@ package org.openfact.pe.services.resources;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.*;
@@ -22,11 +20,11 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.models.ModelDuplicateException;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.StorageFileModel;
+import org.openfact.file.FileModel;
+import org.openfact.file.InternetMediaType;
+import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
@@ -44,8 +42,6 @@ import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.scheduled.ScheduledTaskRunner;
 import org.openfact.timer.ScheduledTask;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -353,26 +349,28 @@ public class PerceptionsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@PathParam("perceptionId") final String perceptionId) {
-		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-		if (perceptionId == null) {
-			throw new NotFoundException("Sunat response not found");
+		PerceptionModel perception = session.getProvider(PerceptionProvider.class).getPerceptionByID(organization, perceptionId);
+		if (perception == null) {
+			throw new NotFoundException("Perception not found");
 		}
-		StorageFileModel storageFile = null;
-		PerceptionModel perception = perceptionProvider.getPerceptionByID(organization, perceptionId);
+
 		List<SendEventModel> sendEvents = perception.getSendEvents();
-		for (SendEventModel model : sendEvents) {
-			if (!model.getFileResponseAttatchments().isEmpty()) {
-				List<StorageFileModel> fileModels = model.getFileResponseAttatchments();
-				storageFile = fileModels.get(0);
-			}
+
+		Optional<SendEventModel> op = sendEvents.stream()
+				.filter(p -> p.getDestityType().equals(DestinyType.THIRD_PARTY))
+				.filter(p -> p.getResult().equals(SendResultType.SUCCESS)).findFirst();
+
+		if (op.isPresent()) {
+			SendEventModel sendEvent = op.get();
+			FileModel file = sendEvent.getFileResponseAttatchments().get(0);
+
+			ResponseBuilder response = Response.ok(file.getFile());
+			response.type(InternetMediaType.getMymeTypeFromExtension(file.getExtension()));
+			response.header("content-disposition", "attachment; filename=\"" + file.getFileName() + "\"");
+			return response.build();
+		} else {
+			throw new NotFoundException("Cdr not found or was not generated.");
 		}
-		if (storageFile == null) {
-			throw new NotFoundException("Sunat response, cdr not found");
-		}
-		ResponseBuilder response = Response.ok(storageFile.getFile());
-		response.type(storageFile.getMimeType());
-		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() +".zip"+ "\"");
-		return response.build();
 	}
 
 	@POST

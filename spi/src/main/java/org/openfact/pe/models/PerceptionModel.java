@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.openfact.models.OpenfactSession;
+import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
+import org.openfact.models.SendEventModel;
+import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.representations.idm.DocumentoSunatLineRepresentation;
 import org.openfact.provider.ProviderEvent;
-import org.openfact.ubl.SendEventModel;
 
 public interface PerceptionModel {
 
@@ -95,7 +97,12 @@ public interface PerceptionModel {
     /**
      * Send events
      */
+    SendEventModel addSendEvent(DestinyType destinyType);
+    SendEventModel getSendEventById(String id);
+    boolean removeSendEvent(OrganizationModel organization, String id);
+    boolean removeSendEvent(OrganizationModel organization, SendEventModel sendEvent);
     List<SendEventModel> getSendEvents();
+    List<SendEventModel> getSendEvents(Integer firstResult, Integer maxResults);
 
     /**
      * Required Actions

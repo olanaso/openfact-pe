@@ -6,8 +6,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.openfact.file.InternetMediaType;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.InternetMediaType;
 import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.services.send.ServiceWrapper;
 import org.openfact.pe.services.sunat.BillService;

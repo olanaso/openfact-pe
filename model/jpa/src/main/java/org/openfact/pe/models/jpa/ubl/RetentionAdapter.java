@@ -15,6 +15,7 @@ import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.pe.models.RetentionLineModel;
@@ -22,7 +23,6 @@ import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.jpa.entities.RetentionLineEntity;
 import org.openfact.pe.models.jpa.entities.RetentionEntity;
 import org.openfact.pe.models.jpa.entities.RetentionRequiredActionEntity;
-import org.openfact.ubl.SendEventModel;
 
 public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntity> {
     protected static final Logger logger = Logger.getLogger(RetentionAdapter.class);
@@ -287,8 +287,9 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 
     @Override
     public List<SendEventModel> getSendEvents() {
-        return retention.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
-                .collect(Collectors.toList());
+        /*return retention.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+                .collect(Collectors.toList());*/
+        return null;
     }
 
 }

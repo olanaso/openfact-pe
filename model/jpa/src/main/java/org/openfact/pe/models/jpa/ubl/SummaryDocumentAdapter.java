@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
@@ -22,7 +23,6 @@ import org.openfact.models.jpa.entities.SupplierPartyEntity;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.jpa.entities.SummaryDocumentsEntity;
 import org.openfact.pe.models.jpa.entities.SummaryDocumentsRequiredActionEntity;
-import org.openfact.ubl.SendEventModel;
 
 public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<SummaryDocumentsEntity> {
 
@@ -177,8 +177,9 @@ public class SummaryDocumentAdapter implements SummaryDocumentModel, JpaModel<Su
 
 	@Override
 	public List<SendEventModel> getSendEvents() {
-		return summaryDocuments.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+		/*return summaryDocuments.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+				.collect(Collectors.toList());*/
+		return null;
 	}
 
 	@Override

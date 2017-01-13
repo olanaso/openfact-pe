@@ -13,17 +13,16 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import jodd.io.ZipBuilder;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.email.EmailException;
 import org.openfact.email.EmailTemplateProvider;
-import org.openfact.models.FileModel;
-import org.openfact.models.InvoiceModel;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.SimpleFileModel;
-import org.openfact.models.UserSenderModel;
-import org.openfact.models.enums.InternetMediaType;
+import org.openfact.file.FileModel;
+import org.openfact.file.FileMymeTypeModel;
+import org.openfact.file.FileProvider;
+import org.openfact.file.InternetMediaType;
+import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.EmissionType;
@@ -32,10 +31,8 @@ import org.openfact.pe.models.utils.SunatMarshallerUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
+import org.openfact.report.ExportFormat;
 import org.openfact.report.ReportException;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendEventProvider;
-import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLInvoiceProvider;
 import org.openfact.ubl.UBLReader;
@@ -142,66 +139,23 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 			}
 
 			@Override
-			public SendEventModel sendToThridParty(OrganizationModel organization, InvoiceModel invoice) throws SendException {
-				byte[] zip = null;
-				SendEventModel model = null;
-				String fileName = "";
-				try {
-					fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
-					zip = SunatTemplateUtils.generateZip(invoice.getXmlDocument(), fileName);
-
-					// sender
-					byte[] response = new SunatSenderUtils(organization, EmissionType.CPE).sendBill(zip, fileName, InternetMediaType.ZIP);
-
-					// Write event to the default database
-					model = session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.SUCCESS, invoice);
-					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-					model.addFileResponseAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
-					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
-					model.setDescription("Invoice submitted successfully to SUNAT");
-					model.setType("SUNAT");
-					if (model.getResult()) {
-						invoice.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
-					}
-				} catch (TransformerException e) {
-					throw new SendException(e);
-				} catch (IOException e) {
-					throw new SendException(e);
-				} catch (SOAPFaultException e) {
-					SOAPFault soapFault = e.getFault();
-					// Write event to the default database
-					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, invoice);
-					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-					model.setType("SUNAT");
-					model.setDescription(soapFault.getFaultString());
-					model.setResponse(
-							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
-				} catch (Exception e) {
-					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, invoice);
-					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-					model.setType("SUNAT");
-					model.setDescription(e.getMessage());
-				}
-				return model;
+			public SendEventModel sendToCustomer(OrganizationModel organization, InvoiceModel invoice) throws SendException {
+				SendEventModel sendEvent = invoice.addSendEvent(DestinyType.CUSTOMER);
+				return sendToCustomer(organization, invoice, sendEvent);
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, InvoiceModel invoice) throws SendException {
+			public SendEventModel sendToCustomer(OrganizationModel organization, InvoiceModel invoice, SendEventModel sendEvent) throws SendException {
+				sendEvent.setType("EMAIL");
+
 				if (invoice.getCustomerElectronicMail() == null) {
-					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, invoice);
-					sendEvent.setType("EMAIL");
+					sendEvent.setResult(SendResultType.ERROR);
 					sendEvent.setDescription("Could not find a valid email for the customer.");
 					return sendEvent;
 				}
 
 				if (organization.getSmtpConfig().size() == 0) {
-					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, invoice);
-					sendEvent.setType("EMAIL");
+					sendEvent.setResult(SendResultType.ERROR);
 					sendEvent.setDescription("Could not find a valid smtp configuration on organization.");
 					return sendEvent;
 				}
@@ -220,31 +174,26 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 				};
 
 				try {
+					FileProvider fileProvider = session.getProvider(FileProvider.class);
+
 					// Attatchments
-					FileModel xmlFile = new SimpleFileModel();
-					xmlFile.setFileName(invoice.getDocumentId() + ".xml");
-					xmlFile.setFile(invoice.getXmlDocument());
-					xmlFile.setMimeType("application/xml");
+					FileModel xmlFile = fileProvider.createFile(organization, invoice.getDocumentId() + ".xml", invoice.getXmlFile().getFile());
+					FileMymeTypeModel xmlFileMymeType = new FileMymeTypeModel(xmlFile, "application/xml");
 
-					FileModel pdfFile = new SimpleFileModel();
-
-					pdfFile.setFileName(invoice.getDocumentId() + ".pdf");
-					pdfFile.setFile(session.getProvider(UBLReportProvider.class).invoice().setOrganization(organization).getReportAsPdf(invoice));
-					pdfFile.setMimeType("application/pdf");
+					byte[] pdfFileBytes = session.getProvider(UBLReportProvider.class).invoice().setOrganization(organization).getReport(invoice, ExportFormat.PDF);
+					FileModel pdfFile = fileProvider.createFile(organization, invoice.getDocumentId() + ".pdf", pdfFileBytes);
+					FileMymeTypeModel pdfFileMymeType = new FileMymeTypeModel(pdfFile, "application/pdf");
 
 					session.getProvider(EmailTemplateProvider.class)
 							.setOrganization(organization).setUser(user)
-							.setAttachments(Arrays.asList(xmlFile, pdfFile))
+							.setAttachments(Arrays.asList(xmlFileMymeType, pdfFileMymeType))
 							.sendInvoice(invoice);
 
 					// Write event to the database
-					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.SUCCESS, invoice);
-					sendEvent.setType("EMAIL");
-
 					sendEvent.setDescription("Ivoice successfully sended");
 					sendEvent.addFileAttatchments(xmlFile);
 					sendEvent.addFileAttatchments(pdfFile);
-					sendEvent.setResult(true);
+					sendEvent.setResult(SendResultType.SUCCESS);
 
 					Map<String, String> destiny = new HashMap<>();
 					destiny.put("email", user.getEmail());
@@ -255,16 +204,68 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 
 					return sendEvent;
 				} catch (ReportException e) {
-					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, invoice);
-					sendEvent.setType("EMAIL");
+					sendEvent.setResult(SendResultType.ERROR);
 					sendEvent.setDescription(e.getMessage());
 					throw new SendException("Could not generate pdf report", e);
 				} catch (EmailException e) {
-					SendEventModel sendEvent =  session.getProvider(SendEventProvider.class).addSendEvent(organization, SendResultType.ERROR, invoice);
-					sendEvent.setType("EMAIL");
+					sendEvent.setResult(SendResultType.ERROR);
 					sendEvent.setDescription(e.getMessage());
 					throw new SendException("Could not send email", e);
 				}
+			}
+
+			@Override
+			public SendEventModel sendToThridParty(OrganizationModel organization, InvoiceModel invoice) throws SendException {
+				SendEventModel sendEvent =  invoice.addSendEvent(DestinyType.THIRD_PARTY);
+				return sendToThridParty(organization, invoice, sendEvent);
+			}
+
+			@Override
+			public SendEventModel sendToThridParty(OrganizationModel organization, InvoiceModel invoice, SendEventModel sendEvent) throws SendException {
+				sendEvent.setType("SUNAT");
+
+				String fileName = SunatTemplateUtils.generateXmlFileName(organization, invoice);
+
+				byte[] xml = invoice.getXmlFile().getFile();
+				byte[] zip;
+				try {
+					zip = ZipBuilder.createZipInMemory().add(xml).path(fileName + ".xml").save().toBytes();
+				} catch (IOException e) {
+					throw new SendException("Error creating zip for send", e);
+				}
+
+				try {
+					// sender
+					byte[] response = new SunatSenderUtils(organization, EmissionType.CPE).sendBill(zip, fileName, InternetMediaType.ZIP);
+
+					sendEvent.setResult(SendResultType.SUCCESS);
+
+					// Write event
+					//sendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					sendEvent.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
+					//sendEvent.addFileResponseAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
+					sendEvent.setResponse(SunatResponseUtils.byteResponseToMap(response));
+					sendEvent.setDescription("Invoice submitted successfully to SUNAT");
+					if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
+						invoice.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+					}
+				} catch (TransformerException e) {
+					throw new SendException("Error transforming", e);
+				} catch (SOAPFaultException e) {
+					SOAPFault soapFault = e.getFault();
+					// Write event to the default database
+					sendEvent.setResult(SendResultType.ERROR);
+					//sendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					sendEvent.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
+					sendEvent.setDescription(soapFault.getFaultString());
+					sendEvent.setResponse(SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
+				} catch (Exception e) {
+					sendEvent.setResult(SendResultType.ERROR);
+					//sendEvent.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+					sendEvent.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
+					sendEvent.setDescription(e.getMessage());
+				}
+				return sendEvent;
 			}
 		};
 	}

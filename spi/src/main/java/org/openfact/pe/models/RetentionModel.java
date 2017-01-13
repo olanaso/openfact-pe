@@ -9,9 +9,9 @@ import java.util.Set;
 import org.openfact.models.CreditNoteModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.PartyModel;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
-import org.openfact.ubl.SendEventModel;
 
 public interface RetentionModel {
 

@@ -3,13 +3,7 @@ package org.openfact.pe.services.resources;
 import java.net.URI;
 import java.util.*;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,20 +12,16 @@ import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.openfact.models.InvoiceModel;
-import org.openfact.models.ModelDuplicateException;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.StorageFileModel;
+import org.openfact.file.FileModel;
+import org.openfact.file.InternetMediaType;
+import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
-import org.openfact.representations.idm.InvoiceRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.managers.InvoiceManager;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
@@ -134,29 +124,31 @@ public class InvoicesResource {
 	}
 
 	@GET
-	@Path("{invoiceId}/representation/cdr")
+	@Path("{invoiceId}/cdr")
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getCdr(@QueryParam("invoiceId") final String invoiceId) {
-		InvoiceManager invoiceManager = new InvoiceManager(session);
-		if (invoiceId == null) {
-			throw new NotFoundException("Sunat response not found");
+	public Response getCdr(@PathParam("invoiceId") final String invoiceId) {
+		InvoiceModel invoice = session.invoices().getInvoiceById(organization, invoiceId);
+		if (invoice == null) {
+			throw new NotFoundException("Invoice not found");
 		}
-		StorageFileModel storageFile = null;
-		InvoiceModel invoice = invoiceManager.getInvoiceByID(organization, invoiceId);
+
 		List<SendEventModel> sendEvents = invoice.getSendEvents();
-		for (SendEventModel model : sendEvents) {
-			if (!model.getFileResponseAttatchments().isEmpty()) {
-				List<StorageFileModel> fileModels = model.getFileResponseAttatchments();
-				storageFile = fileModels.get(0);
-			}
+
+		Optional<SendEventModel> op = sendEvents.stream()
+				.filter(p -> p.getDestityType().equals(DestinyType.THIRD_PARTY))
+				.filter(p -> p.getResult().equals(SendResultType.SUCCESS)).findFirst();
+
+		if (op.isPresent()) {
+			SendEventModel sendEvent = op.get();
+			FileModel file = sendEvent.getFileResponseAttatchments().get(0);
+
+			ResponseBuilder response = Response.ok(file.getFile());
+			response.type(InternetMediaType.getMymeTypeFromExtension(file.getExtension()));
+			response.header("content-disposition", "attachment; filename=\"" + file.getFileName() + "\"");
+			return response.build();
+		} else {
+			throw new NotFoundException("Cdr not found or was not generated.");
 		}
-		if (storageFile == null) {
-			throw new NotFoundException("Sunat response, cdr not found");
-		}
-		ResponseBuilder response = Response.ok(storageFile.getFile());
-		response.type(storageFile.getMimeType());
-		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
-		return response.build();
 	}
 }

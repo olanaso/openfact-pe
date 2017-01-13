@@ -4,8 +4,8 @@ public enum CodigoTipoDocumento {
 
     FACTURA("01", "^[F]{1}\\d{1,3}[-]\\d{1,8}$", 13),
     BOLETA("03", "^[B]{1}\\d{1,3}[-]\\d{1,8}$", 13),
-    NOTA_CREDITO("07", "^[F]{1}\\d{1,3}[-]\\d{1,8}$", 13),
-    NOTA_DEBITO("08", "^[F]{1}\\d{1,3}[-]\\d{1,8}$", 13),
+    NOTA_CREDITO("07", "^[F|B]{1}[C]{1}\\d{1,3}[-]\\d{1,8}$", 13),
+    NOTA_DEBITO("08", "^[F|B]{1}[D]{1}\\d{1,3}[-]\\d{1,8}$", 13),
     GUIA_REMISION("09", "F%-%", 13),
     TICKET("12", "F%-%", 13),
     DOC_SBS("13", "F%-%", 13),

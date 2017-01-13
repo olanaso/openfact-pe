@@ -30,12 +30,7 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.models.ModelDuplicateException;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.StorageFileModel;
-import org.openfact.models.enums.InternetMediaType;
+import org.openfact.models.*;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
@@ -54,8 +49,6 @@ import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 
 public class VoidedDocumentsResource {
@@ -368,7 +361,7 @@ public class VoidedDocumentsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@PathParam("voidedDocumentId") final String voidedDocumentId) throws Exception {
-		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
+		/*VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
 		if (voidedDocumentId == null) {
 			throw new NotFoundException("Sunat response not found");
 		}
@@ -403,7 +396,8 @@ public class VoidedDocumentsResource {
 		ResponseBuilder response = Response.ok(storageFile.getFile());
 		response.type(storageFile.getMimeType());
 		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
-		return response.build();
+		return response.build();*/
+		return null;
 	}
 	@POST
 	@Path("{voidedDocumentId}/send-to-customer")

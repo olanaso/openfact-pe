@@ -21,9 +21,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
+import org.openfact.models.*;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
@@ -31,8 +29,6 @@ import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 

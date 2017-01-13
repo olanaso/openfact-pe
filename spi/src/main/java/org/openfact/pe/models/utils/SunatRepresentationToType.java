@@ -543,7 +543,14 @@ public class SunatRepresentationToType {
         BillingReferenceType billingReferenceType = new BillingReferenceType();
 
         DocumentReferenceType documentReferenceType = new DocumentReferenceType();
-        documentReferenceType.setID(rep.getTipo());
+        documentReferenceType.setID(rep.getDocumentoQueSeModifica().trim().toUpperCase());
+
+        String identificator = rep.getDocumentoQueSeModifica().substring(0, 1);
+        if (identificator.equalsIgnoreCase(CodigoTipoDocumento.BOLETA.toString().substring(0, 1))) {
+            documentReferenceType.setDocumentTypeCode(CodigoTipoDocumento.BOLETA.getCodigo());
+        } else if (identificator.equalsIgnoreCase(CodigoTipoDocumento.FACTURA.toString().substring(0, 1))) {
+            documentReferenceType.setDocumentTypeCode(CodigoTipoDocumento.FACTURA.getCodigo());
+        }
 
         billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
 

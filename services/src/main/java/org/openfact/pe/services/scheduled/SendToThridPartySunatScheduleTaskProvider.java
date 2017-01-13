@@ -3,16 +3,9 @@ package org.openfact.pe.services.scheduled;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openfact.models.CreditNoteModel;
-import org.openfact.models.DebitNoteModel;
-import org.openfact.models.InvoiceModel;
-import org.openfact.models.JobException;
-import org.openfact.models.JobReportModel;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.OrganizationScheduleTaskProvider;
-import org.openfact.models.ScrollModel;
+import org.openfact.models.*;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.RetentionModel;
@@ -28,8 +21,6 @@ import org.openfact.pe.services.managers.VoidedDocumentManager;
 import org.openfact.services.managers.CreditNoteManager;
 import org.openfact.services.managers.DebitNoteManager;
 import org.openfact.services.managers.InvoiceManager;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 
 public class SendToThridPartySunatScheduleTaskProvider implements OrganizationScheduleTaskProvider {
 
@@ -96,7 +87,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 						InvoiceManager manager = new InvoiceManager(session);
 						try {
 							SendEventModel sendEvent = manager.sendToTrirdParty(organization, c);
-							if (sendEvent.getResult()) {
+							if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
 								c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 							}
 						} catch (SendException e) {
@@ -125,7 +116,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 						CreditNoteManager manager = new CreditNoteManager(session);
 						try {
 							SendEventModel sendEvent = manager.sendToTrirdParty(organization, c);
-							if (sendEvent.getResult()) {
+							if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
 								c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 							}
 						} catch (SendException e) {
@@ -154,7 +145,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 						DebitNoteManager manager = new DebitNoteManager(session);
 						try {
 							SendEventModel sendEvent = manager.sendToTrirdParty(organization, c);
-							if (sendEvent.getResult()) {
+							if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
 								c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 							}
 						} catch (SendException e) {
@@ -183,7 +174,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 						PerceptionManager manager = new PerceptionManager(session);
 						try {
 							SendEventModel sendEvent = manager.sendToTrirdParty(organization, c);
-							if (sendEvent.getResult()) {
+							if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
 								c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 							}
 						} catch (SendException e) {
@@ -212,7 +203,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 						RetentionManager manager = new RetentionManager(session);
 						try {
 							SendEventModel sendEvent = manager.sendToTrirdParty(organization, c);
-							if (sendEvent.getResult()) {
+							if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
 								c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 							}
 						} catch (SendException e) {
@@ -241,7 +232,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 						SummaryDocumentManager manager = new SummaryDocumentManager(session);
 						try {
 							SendEventModel sendEvent = manager.sendToTrirdParty(organization, c);
-							if (sendEvent.getResult()) {
+							if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
 								c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 							}
 						} catch (SendException e) {
@@ -270,7 +261,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 						VoidedDocumentManager manager = new VoidedDocumentManager(session);
 						try {
 							SendEventModel sendEvent = manager.sendToTrirdParty(organization, c);
-							if (sendEvent.getResult()) {
+							if (sendEvent.getResult().equals(SendResultType.SUCCESS)) {
 								c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
 							}
 						} catch (SendException e) {

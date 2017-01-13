@@ -2,8 +2,6 @@ package org.openfact.pe.models.jpa.entities;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.openfact.models.jpa.entities.OrganizationEntity;
-import org.openfact.models.jpa.entities.StorageFileEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

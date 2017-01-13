@@ -1,7 +1,6 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,6 +13,8 @@ import javax.persistence.EntityManager;
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.SendEventModel;
+import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.pe.models.PerceptionLineModel;
@@ -21,7 +22,6 @@ import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.jpa.entities.PerceptionLineEntity;
 import org.openfact.pe.models.jpa.entities.PerceptionEntity;
 import org.openfact.pe.models.jpa.entities.PerceptionRequiredActionEntity;
-import org.openfact.ubl.SendEventModel;
 
 public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEntity> {
     protected static final Logger logger = Logger.getLogger(PerceptionAdapter.class);
@@ -237,6 +237,26 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     }
 
     @Override
+    public SendEventModel addSendEvent(DestinyType destinyType) {
+        return null;
+    }
+
+    @Override
+    public SendEventModel getSendEventById(String id) {
+        return null;
+    }
+
+    @Override
+    public boolean removeSendEvent(OrganizationModel organization, String id) {
+        return false;
+    }
+
+    @Override
+    public boolean removeSendEvent(OrganizationModel organization, SendEventModel sendEvent) {
+        return false;
+    }
+
+    @Override
     public Set<String> getRequiredActions() {
         Set<String> result = new HashSet<>();
         for (PerceptionRequiredActionEntity attr : perception.getRequiredActions()) {
@@ -286,7 +306,13 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
 
     @Override
     public List<SendEventModel> getSendEvents() {
-    	return perception.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
-                .collect(Collectors.toList());
+    	/*return perception.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+                .collect(Collectors.toList());*/
+    	return null;
+    }
+
+    @Override
+    public List<SendEventModel> getSendEvents(Integer firstResult, Integer maxResults) {
+        return null;
     }
 }

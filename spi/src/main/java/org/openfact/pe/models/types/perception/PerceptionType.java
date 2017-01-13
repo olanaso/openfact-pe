@@ -20,9 +20,9 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PerceptionType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1", propOrder = {
-        "ublExtensions", "signature", "ublVersionID", "customizationID", "id", "issueDate", "agentParty",
-        "receiverParty", "sunatPerceptionSystemCode", "sunatPerceptionPercent", "note",
-        "documentCurrencyCode", "totalInvoiceAmount", "sunatTotalCashed", "sunatPerceptionDocumentReference"
+        "ublExtensions", "ublVersionID", "customizationID", "signature", "id", "issueDate", "agentParty",
+        "receiverParty", "sunatPerceptionSystemCode", "sunatPerceptionPercent","note",
+        "totalInvoiceAmount", "sunatTotalCashed", "sunatPerceptionDocumentReference"
 
 })
 @CodingStyleguideUnaware
@@ -31,15 +31,14 @@ public class PerceptionType   implements Serializable, Cloneable {
     @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
     protected UBLExtensionsType ublExtensions;
 
-    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
-    protected List<SignatureType> signature;
-
     @XmlElement(name = "UBLVersionID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected UBLVersionIDType ublVersionID;
 
     @XmlElement(name = "CustomizationID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected CustomizationIDType customizationID;
 
+    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
+    protected List<SignatureType> signature;
     @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IDType id;
 
@@ -60,8 +59,7 @@ public class PerceptionType   implements Serializable, Cloneable {
 
     @XmlElement(name = "Note", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected List<NoteType> note;
-    @XmlElement(name = "DocumentCurrencyCode", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
-    private DocumentCurrencyCodeType documentCurrencyCode;
+
     @XmlElement(name = "TotalInvoiceAmount", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected TotalInvoiceAmountType totalInvoiceAmount;
 
@@ -88,14 +86,6 @@ public class PerceptionType   implements Serializable, Cloneable {
 
     public UBLVersionIDType getUblVersionID() {
         return ublVersionID;
-    }
-
-    public DocumentCurrencyCodeType getDocumentCurrencyCode() {
-        return documentCurrencyCode;
-    }
-
-    public void setDocumentCurrencyCode(DocumentCurrencyCodeType documentCurrencyCode) {
-        this.documentCurrencyCode = documentCurrencyCode;
     }
 
     public void setUblVersionID(UBLVersionIDType ublVersionID) {
@@ -294,17 +284,6 @@ public class PerceptionType   implements Serializable, Cloneable {
         return aObj;
     }
 
-    @Nonnull
-    public DocumentCurrencyCodeType setDocumentCurrencyCode(@Nullable final String valueParam) {
-        DocumentCurrencyCodeType aObj = getDocumentCurrencyCode();
-        if (aObj == null) {
-            aObj = new DocumentCurrencyCodeType(valueParam);
-            setDocumentCurrencyCode(aObj);
-        } else {
-            aObj.setValue(valueParam);
-        }
-        return aObj;
-    }
 
     public void addNote(@Nonnull final String elem) {
         NoteType type = new NoteType();

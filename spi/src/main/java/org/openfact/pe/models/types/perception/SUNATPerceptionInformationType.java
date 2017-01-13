@@ -17,11 +17,11 @@ import java.math.BigDecimal;
 @XmlType(name = "SUNATPerceptionInformationType", propOrder = { "sunatPerceptionAmount",
         "sunatPerceptionDate", "sunatNetTotalCashed", "exchangeRate" })
 public class SUNATPerceptionInformationType {
-    @XmlElement(name = "SUNATPerceptionAmount", required = true)
+    @XmlElement(name = "SUNATPerceptionAmount", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected AmountType sunatPerceptionAmount;
-    @XmlElement(name = "SUNATPerceptionDate", required = true)
+    @XmlElement(name = "SUNATPerceptionDate", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected DateType sunatPerceptionDate;
-    @XmlElement(name = "SUNATNetTotalCashed", required = true)
+    @XmlElement(name = "SUNATNetTotalCashed", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected AmountType sunatNetTotalCashed;
     @XmlElement(name = "ExchangeRate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected ExchangeRateType exchangeRate;

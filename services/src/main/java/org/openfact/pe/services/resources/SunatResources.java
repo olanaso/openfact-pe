@@ -47,4 +47,8 @@ public class SunatResources {
         return new VoidedDocumentsResource(session, session.getContext().getOrganization());
     }
 
+    @Path("ubl-extensions/generic-types")
+    public GenericTypesResource getGenericTypesResource() {
+        return new GenericTypesResource(session, session.getContext().getOrganization());
+    }
 }

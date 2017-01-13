@@ -26,7 +26,7 @@ public class SUNATRetentionDocumentReferenceType {
     protected TotalInvoiceAmountType totalInvoiceAmount;
     @XmlElement(name = "Payment", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected PaymentType payment;
-    @XmlElement(name = "SUNATRetentionInformation")
+    @XmlElement(name = "SUNATRetentionInformation", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" )
     protected SUNATRetentionInformationType sunatRetentionInformation;
 
     /**

@@ -20,8 +20,8 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RetentionType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1", propOrder = {
-        "ublExtensions", "signature", "ublVersionID", "customizationID", "id", "issueDate", "agentParty",
-        "receiverParty", "sunatRetentionSystemCode", "sunatRetentionPercent", "note", "documentCurrencyCode",
+        "ublExtensions", "ublVersionID", "customizationID", "signature", "id", "issueDate", "agentParty",
+        "receiverParty", "sunatRetentionSystemCode", "sunatRetentionPercent", "note",
         "totalInvoiceAmount", "sunatTotalPaid", "sunatRetentionDocumentReference"
 
 })
@@ -30,20 +30,21 @@ public class RetentionType  implements Serializable, Cloneable{
     @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
     protected UBLExtensionsType ublExtensions;
 
-    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
-    protected List<SignatureType> signature;
-
     @XmlElement(name = "UBLVersionID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected UBLVersionIDType ublVersionID;
 
     @XmlElement(name = "CustomizationID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected CustomizationIDType customizationID;
 
+    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
+    protected List<SignatureType> signature;
+
     @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IDType id;
 
     @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IssueDateType issueDate;
+
     @XmlElement(name = "AgentParty", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected PartyType agentParty;
 
@@ -58,8 +59,7 @@ public class RetentionType  implements Serializable, Cloneable{
 
     @XmlElement(name = "Note", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected List<NoteType> note;
-    @XmlElement(name = "DocumentCurrencyCode", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
-    private DocumentCurrencyCodeType documentCurrencyCode;
+
     @XmlElement(name = "TotalInvoiceAmount", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected TotalInvoiceAmountType totalInvoiceAmount;
 
@@ -86,14 +86,6 @@ public class RetentionType  implements Serializable, Cloneable{
 
     public UBLVersionIDType getUblVersionID() {
         return ublVersionID;
-    }
-
-    public DocumentCurrencyCodeType getDocumentCurrencyCode() {
-        return documentCurrencyCode;
-    }
-
-    public void setDocumentCurrencyCode(DocumentCurrencyCodeType documentCurrencyCode) {
-        this.documentCurrencyCode = documentCurrencyCode;
     }
 
     public void setUblVersionID(UBLVersionIDType ublVersionID) {
@@ -296,17 +288,5 @@ public class RetentionType  implements Serializable, Cloneable{
         NoteType type = new NoteType();
         type.setValue(elem);
         getNote().add(type);
-    }
-
-    @Nonnull
-    public DocumentCurrencyCodeType setDocumentCurrencyCode(@Nullable final String valueParam) {
-        DocumentCurrencyCodeType aObj = getDocumentCurrencyCode();
-        if (aObj == null) {
-            aObj = new DocumentCurrencyCodeType(valueParam);
-            setDocumentCurrencyCode(aObj);
-        } else {
-            aObj.setValue(valueParam);
-        }
-        return aObj;
     }
 }

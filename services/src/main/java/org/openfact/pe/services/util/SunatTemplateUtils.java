@@ -29,10 +29,10 @@ public class SunatTemplateUtils {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
 		}
 		String codigo;
-		if (invoice.getInvoiceTypeCode().equals(CodigoTipoDocumento.FACTURA.getCodigo())) {
-			codigo = CodigoTipoDocumento.FACTURA.getCodigo();
-		} else if (invoice.getInvoiceTypeCode().equals(CodigoTipoDocumento.BOLETA.getCodigo())) {
-			codigo = CodigoTipoDocumento.BOLETA.getCodigo();
+		if (invoice.getInvoiceTypeCode().equals(TipoComprobante.FACTURA.getCodigo())) {
+			codigo = TipoComprobante.FACTURA.getCodigo();
+		} else if (invoice.getInvoiceTypeCode().equals(TipoComprobante.BOLETA.getCodigo())) {
+			codigo = TipoComprobante.BOLETA.getCodigo();
 		} else {
 			throw new SendException("Invalid invoice code", new Throwable());
 		}
@@ -49,7 +49,7 @@ public class SunatTemplateUtils {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
 		}
-		String codigo = CodigoTipoDocumento.NOTA_CREDITO.getCodigo();
+		String codigo = TipoComprobante.NOTA_CREDITO.getCodigo();
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(codigo).append("-");
@@ -62,7 +62,7 @@ public class SunatTemplateUtils {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
 		}
-		String codigo = CodigoTipoDocumento.NOTA_DEBITO.getCodigo();
+		String codigo = TipoComprobante.NOTA_DEBITO.getCodigo();
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(codigo).append("-");
@@ -98,7 +98,7 @@ public class SunatTemplateUtils {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
 		}
-		String codigo = CodigoTipoDocumento.RETENCION.getCodigo();
+		String codigo = TipoComprobante.RETENCION.getCodigo();
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(codigo).append("-");
@@ -111,7 +111,7 @@ public class SunatTemplateUtils {
 		if (organization.getAssignedIdentificationId() == null) {
 			throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
 		}
-		String codigo = CodigoTipoDocumento.PERCEPCION.getCodigo();
+		String codigo = TipoComprobante.PERCEPCION.getCodigo();
 		StringBuilder sb = new StringBuilder();
 		sb.append(organization.getAssignedIdentificationId()).append("-");
 		sb.append(codigo).append("-");

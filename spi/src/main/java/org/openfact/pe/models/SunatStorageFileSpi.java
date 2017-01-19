@@ -20,7 +20,8 @@ public class SunatStorageFileSpi implements Spi {
 
     @Override
     public Class<? extends Provider> getProviderClass() {
-        return SunatStorageFileProvider.class;
+//        return SunatStorageFileProvider.class;
+        return null;
     }
 
     @Override

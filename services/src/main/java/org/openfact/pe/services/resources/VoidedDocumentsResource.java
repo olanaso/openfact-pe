@@ -32,10 +32,10 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
+import org.openfact.models.SendEventModel;
+import org.openfact.models.SendException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.StorageFileModel;
-import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
@@ -55,8 +55,6 @@ import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 
 public class VoidedDocumentsResource {
@@ -354,14 +352,15 @@ public class VoidedDocumentsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<SendEventRepresentation> getSendEvents(@PathParam("voidedDocumentId") final String voidedDocumentId) {
-		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
-		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization,
-				voidedDocumentId);
-		if (voidedDocument == null) {
-			throw new NotFoundException("VoidedDocument not found");
-		}
-		List<SendEventModel> sendEvents = voidedDocument.getSendEvents();
-		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+//		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
+//		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentById(organization,
+//				voidedDocumentId);
+//		if (voidedDocument == null) {
+//			throw new NotFoundException("VoidedDocument not found");
+//		}
+//		List<SendEventModel> sendEvents = voidedDocument.getSendEvents();
+//		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+		return null;
 	}
 
 	@GET
@@ -369,42 +368,43 @@ public class VoidedDocumentsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@PathParam("voidedDocumentId") final String voidedDocumentId) throws Exception {
-		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
-		if (voidedDocumentId == null) {
-			throw new NotFoundException("Sunat response not found");
-		}
-		String ticket = null;
-		SendEventModel sendEvent = null;
-		StorageFileModel storageFile = null;
-		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentByID(organization,
-				voidedDocumentId);
-		List<SendEventModel> sendEvents = voidedDocument.getSendEvents();
-		for (SendEventModel model : sendEvents) {
-			if (model.getResponse().containsKey("TICKET")) {
-				sendEvent = model;
-			}
-		}
-		if (sendEvent == null) {
-			throw new NotFoundException("Ticket not found");
-		}
-		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
-			byte[] result = new SunatSenderUtils(organization, EmissionType.CPE).getStatus(ticket);
-			if (result == null) {
-				throw new NotFoundException("Sunat response, cdr not found");
-			}
-			String fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
-			sendEvent.addFileResponseAttatchments(
-					SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, result));
-			sendEvent.setResponse(SunatResponseUtils.byteResponseToMap(result));
-		}
-		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
-			throw new NotFoundException("Sunat response, cdr not found");
-		}
-		storageFile = sendEvent.getFileResponseAttatchments().get(0);
-		ResponseBuilder response = Response.ok(storageFile.getFile());
-		response.type(storageFile.getMimeType());
-		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
-		return response.build();
+//		VoidedDocumentProvider voidedDocumentProvider = session.getProvider(VoidedDocumentProvider.class);
+//		if (voidedDocumentId == null) {
+//			throw new NotFoundException("Sunat response not found");
+//		}
+//		String ticket = null;
+//		SendEventModel sendEvent = null;
+//		StorageFileModel storageFile = null;
+//		VoidedDocumentModel voidedDocument = voidedDocumentProvider.getVoidedDocumentByID(organization,
+//				voidedDocumentId);
+//		List<SendEventModel> sendEvents = voidedDocument.getSendEvents();
+//		for (SendEventModel model : sendEvents) {
+//			if (model.getResponse().containsKey("TICKET")) {
+//				sendEvent = model;
+//			}
+//		}
+//		if (sendEvent == null) {
+//			throw new NotFoundException("Ticket not found");
+//		}
+//		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
+//			byte[] result = new SunatSenderUtils(organization, EmissionType.CPE).getStatus(ticket);
+//			if (result == null) {
+//				throw new NotFoundException("Sunat response, cdr not found");
+//			}
+//			String fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
+//			sendEvent.addFileResponseAttatchments(
+//					SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, result));
+//			sendEvent.setResponse(SunatResponseUtils.byteResponseToMap(result));
+//		}
+//		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
+//			throw new NotFoundException("Sunat response, cdr not found");
+//		}
+//		storageFile = sendEvent.getFileResponseAttatchments().get(0);
+//		ResponseBuilder response = Response.ok(storageFile.getFile());
+//		response.type(storageFile.getMimeType());
+//		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
+//		return response.build();
+		return null;
 	}
 	@POST
 	@Path("{voidedDocumentId}/send-to-customer")

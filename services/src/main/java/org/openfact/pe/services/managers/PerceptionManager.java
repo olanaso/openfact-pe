@@ -22,8 +22,10 @@ import javax.xml.transform.TransformerException;
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.SendException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
@@ -31,8 +33,6 @@ import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -107,7 +107,7 @@ public class PerceptionManager {
 
 	public SendEventModel sendToTrirdParty(OrganizationModel organization, PerceptionModel perception)
 			throws SendException {
-		return ubl.sender().sendToThridParty(organization, perception);
+		return ubl.sender().sendToThirdParty(organization, perception);
 	}
 
 }

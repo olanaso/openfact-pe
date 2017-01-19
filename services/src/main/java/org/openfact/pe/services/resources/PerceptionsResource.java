@@ -26,7 +26,6 @@ import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.StorageFileModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
@@ -44,8 +43,6 @@ import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.scheduled.ScheduledTaskRunner;
 import org.openfact.timer.ScheduledTask;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -93,47 +90,48 @@ public class PerceptionsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createPerception(DocumentoSunatRepresentation rep) {
-		PerceptionManager perceptionManager = new PerceptionManager(session);
-
-		// Double-check duplicated ID
-		if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null && perceptionManager
-				.getPerceptionByDocumentId(rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
-			return ErrorResponse.exists("Perception exists with same documentId");
-		}
-
-		try {
-			PerceptionModel perception = perceptionManager.addPerception(organization, rep);
-			// Enviar a Cliente
-			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				try {
-					perceptionManager.sendToCustomerParty(organization, perception);
-				} catch (SendException e) {
-					logger.error("Error sending to Customer");
-				}
-			}
-
-			// Enviar Sunat
-			if (rep.isEnviarAutomaticamenteASunat()) {
-				try {
-					perceptionManager.sendToTrirdParty(organization, perception);
-				} catch (SendException e) {
-					logger.error("Error sending to Sunat");
-				}
-			}
-
-			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(perception.getId()).build();
-			return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(perception)).build();
-		} catch (ModelDuplicateException e) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Perception exists with same id or documentId");
-		} catch (ModelException me) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not create perception");
-		}
+//		PerceptionManager perceptionManager = new PerceptionManager(session);
+//
+//		// Double-check duplicated ID
+//		if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null && perceptionManager
+//				.getPerceptionByDocumentId(rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
+//			return ErrorResponse.exists("Perception exists with same documentId");
+//		}
+//
+//		try {
+//			PerceptionModel perception = perceptionManager.addPerception(organization, rep);
+//			// Enviar a Cliente
+//			if (rep.isEnviarAutomaticamenteAlCliente()) {
+//				try {
+//					perceptionManager.sendToCustomerParty(organization, perception);
+//				} catch (SendException e) {
+//					logger.error("Error sending to Customer");
+//				}
+//			}
+//
+//			// Enviar Sunat
+//			if (rep.isEnviarAutomaticamenteASunat()) {
+//				try {
+//					perceptionManager.sendToTrirdParty(organization, perception);
+//				} catch (SendException e) {
+//					logger.error("Error sending to Sunat");
+//				}
+//			}
+//
+//			URI location = session.getContext().getUri().getAbsolutePathBuilder().path(perception.getId()).build();
+//			return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(perception)).build();
+//		} catch (ModelDuplicateException e) {
+//			if (session.getTransactionManager().isActive()) {
+//				session.getTransactionManager().setRollbackOnly();
+//			}
+//			return ErrorResponse.exists("Perception exists with same id or documentId");
+//		} catch (ModelException me) {
+//			if (session.getTransactionManager().isActive()) {
+//				session.getTransactionManager().setRollbackOnly();
+//			}
+//			return ErrorResponse.exists("Could not create perception");
+//		}
+		return null;
 	}
 
 	@POST
@@ -141,63 +139,64 @@ public class PerceptionsResource {
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createPerception(final MultipartFormDataInput input) {
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		List<InputPart> inputParts = uploadForm.get("file");
-
-		for (InputPart inputPart : inputParts) {
-			try {
-				InputStream inputStream = inputPart.getBody(InputStream.class, null);
-				byte[] bytes = IOUtils.toByteArray(inputStream);
-				Document document = DocumentUtils.byteToDocument(bytes);
-				PerceptionType perceptionType = SunatDocumentToType.toPerceptionType(document);;
-				if (perceptionType == null) {
-					throw new IOException("Invalid invoice Xml");
-				}
-
-				PerceptionManager perceptionManager = new PerceptionManager(session);
-
-				// Double-check duplicated ID
-				if (perceptionType.getId() != null && perceptionManager
-						.getPerceptionByDocumentId(perceptionType.getId().getValue(), organization) != null) {
-					throw new ModelDuplicateException("Perception exists with same documentId");
-				}
-
-				PerceptionModel perception = perceptionManager.addPerception(organization, perceptionType);
-				// Enviar Cliente
-				perceptionManager.sendToCustomerParty(organization, perception);
-				// Enviar Sunat
-				perceptionManager.sendToTrirdParty(organization, perception);
-
-				URI location = session.getContext().getUri().getAbsolutePathBuilder().path(perception.getId()).build();
-				return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(perception)).build();
-			} catch (IOException e) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.error("Error Reading data", Response.Status.BAD_REQUEST);
-			} catch (ModelDuplicateException e) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.exists("Perception exists with same documentId");
-			} catch (ModelException me) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.exists("Could not create perception");
-			} catch (SendException e) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.exists("Could not send perception");
-			} catch (Exception e) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.exists("Could not send perception");			}
-		}
-
-		return Response.ok().build();
+//		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+//		List<InputPart> inputParts = uploadForm.get("file");
+//
+//		for (InputPart inputPart : inputParts) {
+//			try {
+//				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+//				byte[] bytes = IOUtils.toByteArray(inputStream);
+//				Document document = DocumentUtils.byteToDocument(bytes);
+//				PerceptionType perceptionType = SunatDocumentToType.toPerceptionType(document);;
+//				if (perceptionType == null) {
+//					throw new IOException("Invalid invoice Xml");
+//				}
+//
+//				PerceptionManager perceptionManager = new PerceptionManager(session);
+//
+//				// Double-check duplicated ID
+//				if (perceptionType.getId() != null && perceptionManager
+//						.getPerceptionByDocumentId(perceptionType.getId().getValue(), organization) != null) {
+//					throw new ModelDuplicateException("Perception exists with same documentId");
+//				}
+//
+//				PerceptionModel perception = perceptionManager.addPerception(organization, perceptionType);
+//				// Enviar Cliente
+//				perceptionManager.sendToCustomerParty(organization, perception);
+//				// Enviar Sunat
+//				perceptionManager.sendToTrirdParty(organization, perception);
+//
+//				URI location = session.getContext().getUri().getAbsolutePathBuilder().path(perception.getId()).build();
+//				return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(perception)).build();
+//			} catch (IOException e) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.error("Error Reading data", Response.Status.BAD_REQUEST);
+//			} catch (ModelDuplicateException e) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.exists("Perception exists with same documentId");
+//			} catch (ModelException me) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.exists("Could not create perception");
+//			} catch (SendException e) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.exists("Could not send perception");
+//			} catch (Exception e) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.exists("Could not send perception");			}
+//		}
+//
+//		return Response.ok().build();
+		return null;
 	}
 
 	@POST
@@ -339,13 +338,14 @@ public class PerceptionsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<SendEventRepresentation> getSendEvents(@PathParam("perceptionId") final String perceptionId) {
-		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
-		if (perception == null) {
-			throw new NotFoundException("Perception not found");
-		}
-		List<SendEventModel> sendEvents = perception.getSendEvents();
-		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+//		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
+//		PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+//		if (perception == null) {
+//			throw new NotFoundException("Perception not found");
+//		}
+//		List<SendEventModel> sendEvents = perception.getSendEvents();
+//		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+		return null;
 	}
 
 	@GET
@@ -353,26 +353,27 @@ public class PerceptionsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@PathParam("perceptionId") final String perceptionId) {
-		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-		if (perceptionId == null) {
-			throw new NotFoundException("Sunat response not found");
-		}
-		StorageFileModel storageFile = null;
-		PerceptionModel perception = perceptionProvider.getPerceptionByID(organization, perceptionId);
-		List<SendEventModel> sendEvents = perception.getSendEvents();
-		for (SendEventModel model : sendEvents) {
-			if (!model.getFileResponseAttatchments().isEmpty()) {
-				List<StorageFileModel> fileModels = model.getFileResponseAttatchments();
-				storageFile = fileModels.get(0);
-			}
-		}
-		if (storageFile == null) {
-			throw new NotFoundException("Sunat response, cdr not found");
-		}
-		ResponseBuilder response = Response.ok(storageFile.getFile());
-		response.type(storageFile.getMimeType());
-		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() +".zip"+ "\"");
-		return response.build();
+//		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
+//		if (perceptionId == null) {
+//			throw new NotFoundException("Sunat response not found");
+//		}
+//		StorageFileModel storageFile = null;
+//		PerceptionModel perception = perceptionProvider.getPerceptionByID(organization, perceptionId);
+//		List<SendEventModel> sendEvents = perception.getSendEvents();
+//		for (SendEventModel model : sendEvents) {
+//			if (!model.getFileResponseAttatchments().isEmpty()) {
+//				List<StorageFileModel> fileModels = model.getFileResponseAttatchments();
+//				storageFile = fileModels.get(0);
+//			}
+//		}
+//		if (storageFile == null) {
+//			throw new NotFoundException("Sunat response, cdr not found");
+//		}
+//		ResponseBuilder response = Response.ok(storageFile.getFile());
+//		response.type(storageFile.getMimeType());
+//		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() +".zip"+ "\"");
+//		return response.build();
+		return null;
 	}
 
 	@POST
@@ -380,18 +381,19 @@ public class PerceptionsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public void sendToCustomer(@PathParam("perceptionId") final String perceptionId) {
-		PerceptionManager perceptionManager = new PerceptionManager(session);
-		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-		if (perceptionId == null) {
-			throw new NotFoundException("Perception Id not found");
-		}
-		try {
-			PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
-			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
-			perceptionManager.sendToCustomerParty(organizationThread, perception);
-		} catch (SendException e) {
-			throw new NotFoundException("Error sending email");
-		}
+//		PerceptionManager perceptionManager = new PerceptionManager(session);
+//		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
+//		if (perceptionId == null) {
+//			throw new NotFoundException("Perception Id not found");
+//		}
+//		try {
+//			PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+//			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+//			perceptionManager.sendToCustomerParty(organizationThread, perception);
+//		} catch (SendException e) {
+//			throw new NotFoundException("Error sending email");
+//		}
+
 
 	/*	ExecutorService executorService = null;
 		try {
@@ -423,18 +425,20 @@ public class PerceptionsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public void sendToThridParty(@PathParam("perceptionId") final String perceptionId) {
-		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
-		if (perceptionId == null) {
-			throw new NotFoundException("Perception Id not found");
-		}
-		try {
-			PerceptionManager perceptionManager = new PerceptionManager(session);
-			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
-			PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
-			perceptionManager.sendToTrirdParty(organizationThread, perception);
-		} catch (SendException e) {
-			throw new NotFoundException("Error sending sunat");
-		}
+//		PerceptionProvider perceptionProvider = session.getProvider(PerceptionProvider.class);
+//		if (perceptionId == null) {
+//			throw new NotFoundException("Perception Id not found");
+//		}
+//		try {
+//			PerceptionManager perceptionManager = new PerceptionManager(session);
+//			OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
+//			PerceptionModel perception = perceptionProvider.getPerceptionById(organization, perceptionId);
+//			perceptionManager.sendToTrirdParty(organizationThread, perception);
+//		} catch (SendException e) {
+//			throw new NotFoundException("Error sending sunat");
+//		}
+
+
 		/*ExecutorService executorService = null;
 		try {
 			executorService = Executors.newCachedThreadPool();

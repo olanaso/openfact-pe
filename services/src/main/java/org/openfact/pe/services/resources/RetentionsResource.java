@@ -25,8 +25,9 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
+import org.openfact.models.SendException;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.StorageFileModel;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
@@ -44,8 +45,6 @@ import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.scheduled.ScheduledTaskRunner;
 import org.openfact.timer.ScheduledTask;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 
 import java.util.List;
@@ -342,13 +341,14 @@ public class RetentionsResource {
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<SendEventRepresentation> getSendEvents(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-        if (retention == null) {
-            throw new NotFoundException("Retention not found");
-        }
-        List<SendEventModel> sendEvents = retention.getSendEvents();
-        return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+//        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
+//        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
+//        if (retention == null) {
+//            throw new NotFoundException("Retention not found");
+//        }
+//        List<SendEventModel> sendEvents = retention.getSendEvents();
+//        return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+        return null;
     }
 
     @GET
@@ -356,26 +356,27 @@ public class RetentionsResource {
     @NoCache
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getCdr(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        if (retentionId == null) {
-            throw new NotFoundException("Sunat response not found");
-        }
-        StorageFileModel storageFile = null;
-        RetentionModel retention = retentionProvider.getRetentionByID(organization, retentionId);
-        List<SendEventModel> sendEvents = retention.getSendEvents();
-        for (SendEventModel model : sendEvents) {
-            if (!model.getFileResponseAttatchments().isEmpty()) {
-                List<StorageFileModel> fileModels = model.getFileResponseAttatchments();
-                storageFile = fileModels.get(0);
-            }
-        }
-        if (storageFile == null) {
-            throw new NotFoundException("Sunat response, cdr not found");
-        }
-        ResponseBuilder response = Response.ok(storageFile.getFile());
-        response.type(storageFile.getMimeType());
-        response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + ".zip" + "\"");
-        return response.build();
+//        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
+//        if (retentionId == null) {
+//            throw new NotFoundException("Sunat response not found");
+//        }
+//        StorageFileModel storageFile = null;
+//        RetentionModel retention = retentionProvider.getRetentionByID(organization, retentionId);
+//        List<SendEventModel> sendEvents = retention.getSendEvents();
+//        for (SendEventModel model : sendEvents) {
+//            if (!model.getFileResponseAttatchments().isEmpty()) {
+//                List<StorageFileModel> fileModels = model.getFileResponseAttatchments();
+//                storageFile = fileModels.get(0);
+//            }
+//        }
+//        if (storageFile == null) {
+//            throw new NotFoundException("Sunat response, cdr not found");
+//        }
+//        ResponseBuilder response = Response.ok(storageFile.getFile());
+//        response.type(storageFile.getMimeType());
+//        response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + ".zip" + "\"");
+//        return response.build();
+        return null;
     }
 
     @POST

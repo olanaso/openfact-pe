@@ -18,7 +18,8 @@ public class SunatSendEventSpi implements Spi{
 
 	@Override
 	public Class<? extends Provider> getProviderClass() {
-		return SunatSendEventProvider.class;
+//		return SunatSendEventProvider.class;
+		return null;
 	}
 
 	@Override

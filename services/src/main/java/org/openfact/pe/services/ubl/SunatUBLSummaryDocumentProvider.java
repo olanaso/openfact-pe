@@ -11,10 +11,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.enums.InternetMediaType;
+import org.openfact.models.*;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.constants.EmissionType;
@@ -28,8 +25,6 @@ import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
@@ -120,64 +115,84 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 		return new UBLSender<SummaryDocumentModel>() {
 
 			@Override
-			public void close() {
-			}
-
-			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, SummaryDocumentModel summaryDocument)
-					throws SendException {
+			public SendEventModel sendToCustomer(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel) throws SendException {
 				return null;
 			}
 
 			@Override
-			public SendEventModel sendToThridParty(OrganizationModel organization, SummaryDocumentModel summaryDocument)
-					throws SendException {
-				SendEventModel model = null;
-				byte[] zip = null;
-				String fileName = "";
-				try {
-					fileName = SunatTemplateUtils.generateXmlFileName(organization, summaryDocument);
-					zip = SunatTemplateUtils.generateZip(summaryDocument.getXmlDocument(), fileName);
-					// sender
-					String response = new SunatSenderUtils(organization, EmissionType.CPE).sendSummary(zip, fileName,
-							InternetMediaType.ZIP);
-					// Write event to the default database
-					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-							SendResultType.SUCCESS, summaryDocument);
-					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					Map<String, String> result = new HashMap<>();
-					result.put("ACCEPTED BY SUNAT", "YES");
-					result.put("TICKET", response);
-					model.setResponse(result);
-					model.setDescription("Summary document submitted successfully to SUNAT");
-					model.setType("SUNAT");
-					if (model.getResult()) {
-						summaryDocument.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
-					}
-				} catch (TransformerException e) {
-					throw new SendException(e);
-				} catch (SOAPFaultException e) {
-					SOAPFault soapFault = e.getFault();
-					// Write event to the default database
-					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, summaryDocument);
-					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-					model.setType("SUNAT");
-					model.setDescription(soapFault.getFaultString());
-					model.setResponse(
-							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
-				} catch (Exception e) {
-					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-							SendResultType.ERROR, summaryDocument);
-					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-					model.setType("SUNAT");
-					model.setDescription(e.getMessage());
-				}
-				return model;
+			public SendEventModel sendToCustomer(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel, SendEventModel sendEvent) throws SendException {
+				return null;
 			}
+
+			@Override
+			public SendEventModel sendToThirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel) throws SendException {
+				return null;
+			}
+
+			@Override
+			public SendEventModel sendToThirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel, SendEventModel sendEvent) throws SendException {
+				return null;
+			}
+
+			@Override
+			public void close() {
+			}
+
+//			@Override
+//			public SendEventModel sendToCustomer(OrganizationModel organization, SummaryDocumentModel summaryDocument)
+//					throws SendException {
+//				return null;
+//			}
+//
+//			@Override
+//			public SendEventModel sendToThridParty(OrganizationModel organization, SummaryDocumentModel summaryDocument)
+//					throws SendException {
+//				SendEventModel model = null;
+//				byte[] zip = null;
+//				String fileName = "";
+//				try {
+//					fileName = SunatTemplateUtils.generateXmlFileName(organization, summaryDocument);
+//					zip = SunatTemplateUtils.generateZip(summaryDocument.getXmlDocument(), fileName);
+//					// sender
+//					String response = new SunatSenderUtils(organization, EmissionType.CPE).sendSummary(zip, fileName,
+//							InternetMediaType.ZIP);
+//					// Write event to the default database
+//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+//							SendResultType.SUCCESS, summaryDocument);
+//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
+//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+//					Map<String, String> result = new HashMap<>();
+//					result.put("ACCEPTED BY SUNAT", "YES");
+//					result.put("TICKET", response);
+//					model.setResponse(result);
+//					model.setDescription("Summary document submitted successfully to SUNAT");
+//					model.setType("SUNAT");
+//					if (model.getResult()) {
+//						summaryDocument.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+//					}
+//				} catch (TransformerException e) {
+//					throw new SendException(e);
+//				} catch (SOAPFaultException e) {
+//					SOAPFault soapFault = e.getFault();
+//					// Write event to the default database
+//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+//							SendResultType.ERROR, summaryDocument);
+//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
+//					model.setType("SUNAT");
+//					model.setDescription(soapFault.getFaultString());
+//					model.setResponse(
+//							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
+//				} catch (Exception e) {
+//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
+//							SendResultType.ERROR, summaryDocument);
+//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
+//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
+//					model.setType("SUNAT");
+//					model.setDescription(e.getMessage());
+//				}
+//				return model;
+//			}
 		};
 	}
 

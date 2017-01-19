@@ -5,20 +5,18 @@ import java.io.IOException;
 import javax.xml.transform.TransformerException;
 
 import org.openfact.common.util.ObjectUtil;
+import org.openfact.file.InternetMediaType;
 import org.openfact.models.CreditNoteModel;
+import org.openfact.models.SendException;
 import org.openfact.models.DebitNoteModel;
-import org.openfact.models.FileModel;
 import org.openfact.models.InvoiceModel;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.SimpleFileModel;
-import org.openfact.models.enums.InternetMediaType;
 import org.openfact.pe.constants.TipoComprobante;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.services.constants.SunatEventType;
-import org.openfact.ubl.SendException;
 
 import jodd.io.ZipBuilder;
 
@@ -125,13 +123,13 @@ public class SunatTemplateUtils {
 		return sb.toString();
 	}
 
-	public static FileModel toFileModel(InternetMediaType mediaType, String fileName, byte[] file) {
-		FileModel model = new SimpleFileModel();
-		model.setFile(file);
-		model.setFileName(fileName + mediaType.getExtension());
-		model.setMimeType(mediaType.getMimeType());
-		return model;
-	}
+//	public static FileModel toFileModel(InternetMediaType mediaType, String fileName, byte[] file) {
+//		FileModel model = new SimpleFileModel();
+//		model.setFile(file);
+//		model.setFileName(fileName + mediaType.getExtension());
+//		model.setMimeType(mediaType.getMimeType());
+//		return model;
+//	}
 
 	public static String getOrganizationName(OrganizationModel organization) {
 		if (organization.getDisplayName() != null) {

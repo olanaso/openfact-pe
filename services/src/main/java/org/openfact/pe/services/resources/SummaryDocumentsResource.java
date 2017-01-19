@@ -33,9 +33,9 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelDuplicateException;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
+import org.openfact.models.SendException;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.OrganizationModel;
-import org.openfact.models.StorageFileModel;
-import org.openfact.models.enums.InternetMediaType;
 import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
@@ -54,8 +54,6 @@ import org.openfact.representations.idm.SendEventRepresentation;
 import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
 import org.openfact.representations.idm.search.SearchResultsRepresentation;
 import org.openfact.services.ErrorResponse;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
 import org.w3c.dom.Document;
 
 public class SummaryDocumentsResource {
@@ -99,48 +97,50 @@ public class SummaryDocumentsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createSummaryDocument(SummaryRepresentation rep) {
-		SummaryDocumentManager summaryDocumentManager = new SummaryDocumentManager(session);
-
-		// Double-check duplicated ID
-		if (rep.getSerie() != null && rep.getNumero() != null && summaryDocumentManager
-				.getSummaryDocumentByDocumentId(rep.getSerie() + "-" + rep.getNumero(), organization) != null) {
-			return ErrorResponse.exists("SummaryDocument exists with same documentId");
-		}
-
-		try {
-			SummaryDocumentModel summaryDocument = summaryDocumentManager.addSummaryDocument(organization, rep);
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().commit();
-			}
-
-			// Enviar a Cliente
-			if (rep.isEnviarAutomaticamenteAlCliente()) {
-				summaryDocumentManager.sendToCustomerParty(organization, summaryDocument);
-			}
-
-			// Enviar Sunat
-			if (rep.isEnviarAutomaticamenteASunat()) {
-				summaryDocumentManager.sendToTrirdParty(organization, summaryDocument);
-			}
-
-			URI location = uriInfo.getAbsolutePathBuilder().path(summaryDocument.getId()).build();
-			return Response.created(location).build();
-		} catch (ModelDuplicateException e) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("SummaryDocument exists with same id or documentId");
-		} catch (ModelException me) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not create summaryDocument");
-		} catch (SendException e) {
-			if (session.getTransactionManager().isActive()) {
-				session.getTransactionManager().setRollbackOnly();
-			}
-			return ErrorResponse.exists("Could not send invoice");
-		}
+//		SummaryDocumentManager summaryDocumentManager = new SummaryDocumentManager(session);
+//
+//		// Double-check duplicated ID
+//		if (rep.getSerie() != null && rep.getNumero() != null && summaryDocumentManager
+//				.getSummaryDocumentByDocumentId(rep.getSerie() + "-" + rep.getNumero(), organization) != null) {
+//			return ErrorResponse.exists("SummaryDocument exists with same documentId");
+//		}
+//
+//		try {
+//			SummaryDocumentModel summaryDocument = summaryDocumentManager.addSummaryDocument(organization, rep);
+//			if (session.getTransactionManager().isActive()) {
+//				session.getTransactionManager().commit();
+//			}
+//
+//			// Enviar a Cliente
+//			if (rep.isEnviarAutomaticamenteAlCliente()) {
+//				summaryDocumentManager.sendToCustomerParty(organization, summaryDocument);
+//			}
+//
+//			// Enviar Sunat
+//			if (rep.isEnviarAutomaticamenteASunat()) {
+//				summaryDocumentManager.sendToTrirdParty(organization, summaryDocument);
+//			}
+//
+//			URI location = uriInfo.getAbsolutePathBuilder().path(summaryDocument.getId()).build();
+//			return Response.created(location).build();
+//		} catch (ModelDuplicateException e) {
+//			if (session.getTransactionManager().isActive()) {
+//				session.getTransactionManager().setRollbackOnly();
+//			}
+//			return ErrorResponse.exists("SummaryDocument exists with same id or documentId");
+//		} catch (ModelException me) {
+//			if (session.getTransactionManager().isActive()) {
+//				session.getTransactionManager().setRollbackOnly();
+//			}
+//			return ErrorResponse.exists("Could not create summaryDocument");
+//		}
+//		catch (SendException e) {
+//			if (session.getTransactionManager().isActive()) {
+//				session.getTransactionManager().setRollbackOnly();
+//			}
+//			return ErrorResponse.exists("Could not send invoice");
+//		}
+		return null;
 	}
 
 	@POST
@@ -148,65 +148,66 @@ public class SummaryDocumentsResource {
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createInvoice(final MultipartFormDataInput input) {
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		List<InputPart> inputParts = uploadForm.get("file");
-
-		for (InputPart inputPart : inputParts) {
-			try {
-				InputStream inputStream = inputPart.getBody(InputStream.class, null);
-				byte[] bytes = IOUtils.toByteArray(inputStream);
-
-				SummaryDocumentsType summaryDocumentType = null;
-				if (summaryDocumentType == null) {
-					throw new IOException("Invalid invoice Xml");
-				}
-
-				SummaryDocumentManager summaryDocumentManager = new SummaryDocumentManager(session);
-
-				// Double-check duplicated ID
-				if (summaryDocumentType.getId() != null && summaryDocumentManager
-						.getSummaryDocumentByDocumentId(summaryDocumentType.getId().getValue(), organization) != null) {
-					throw new ModelDuplicateException("SummaryDocument exists with same documentId");
-				}
-
-				SummaryDocumentModel summaryDocument = summaryDocumentManager.addSummaryDocument(organization,
-						summaryDocumentType);
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().commit();
-				}
-
-				// Enviar Cliente
-				summaryDocumentManager.sendToCustomerParty(organization, summaryDocument);
-
-				// Enviar Sunat
-				summaryDocumentManager.sendToTrirdParty(organization, summaryDocument);
-
-				URI location = uriInfo.getAbsolutePathBuilder().path(summaryDocument.getId()).build();
-				return Response.created(location).build();
-			} catch (IOException e) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.error("Error Reading data", Response.Status.BAD_REQUEST);
-			} catch (ModelDuplicateException e) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.exists("SummaryDocument exists with same documentId");
-			} catch (ModelException me) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.exists("Could not create invoice");
-			} catch (SendException e) {
-				if (session.getTransactionManager().isActive()) {
-					session.getTransactionManager().setRollbackOnly();
-				}
-				return ErrorResponse.exists("Could not send invoice");
-			}
-		}
-
-		return Response.ok().build();
+//		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+//		List<InputPart> inputParts = uploadForm.get("file");
+//
+//		for (InputPart inputPart : inputParts) {
+//			try {
+//				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+//				byte[] bytes = IOUtils.toByteArray(inputStream);
+//
+//				SummaryDocumentsType summaryDocumentType = null;
+//				if (summaryDocumentType == null) {
+//					throw new IOException("Invalid invoice Xml");
+//				}
+//
+//				SummaryDocumentManager summaryDocumentManager = new SummaryDocumentManager(session);
+//
+//				// Double-check duplicated ID
+//				if (summaryDocumentType.getId() != null && summaryDocumentManager
+//						.getSummaryDocumentByDocumentId(summaryDocumentType.getId().getValue(), organization) != null) {
+//					throw new ModelDuplicateException("SummaryDocument exists with same documentId");
+//				}
+//
+//				SummaryDocumentModel summaryDocument = summaryDocumentManager.addSummaryDocument(organization,
+//						summaryDocumentType);
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().commit();
+//				}
+//
+//				// Enviar Cliente
+//				summaryDocumentManager.sendToCustomerParty(organization, summaryDocument);
+//
+//				// Enviar Sunat
+//				summaryDocumentManager.sendToTrirdParty(organization, summaryDocument);
+//
+//				URI location = uriInfo.getAbsolutePathBuilder().path(summaryDocument.getId()).build();
+//				return Response.created(location).build();
+//			} catch (IOException e) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.error("Error Reading data", Response.Status.BAD_REQUEST);
+//			} catch (ModelDuplicateException e) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.exists("SummaryDocument exists with same documentId");
+//			} catch (ModelException me) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.exists("Could not create invoice");
+//			} catch (SendException e) {
+//				if (session.getTransactionManager().isActive()) {
+//					session.getTransactionManager().setRollbackOnly();
+//				}
+//				return ErrorResponse.exists("Could not send invoice");
+//			}
+//		}
+//
+//		return Response.ok().build();
+		return null;
 	}
 
 	@POST
@@ -328,14 +329,15 @@ public class SummaryDocumentsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<SendEventRepresentation> getSendEvents(@QueryParam("summaryDocumentId") final String summaryDocumentId) {
-		SummaryDocumentProvider summaryDocumentProvider = session.getProvider(SummaryDocumentProvider.class);
-		SummaryDocumentModel summaryDocument = summaryDocumentProvider.getSummaryDocumentById(organization,
-				summaryDocumentId);
-		if (summaryDocument == null) {
-			throw new NotFoundException("SummaryDocument not found");
-		}
-		List<SendEventModel> sendEvents = summaryDocument.getSendEvents();
-		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+//		SummaryDocumentProvider summaryDocumentProvider = session.getProvider(SummaryDocumentProvider.class);
+//		SummaryDocumentModel summaryDocument = summaryDocumentProvider.getSummaryDocumentById(organization,
+//				summaryDocumentId);
+//		if (summaryDocument == null) {
+//			throw new NotFoundException("SummaryDocument not found");
+//		}
+//		List<SendEventModel> sendEvents = summaryDocument.getSendEvents();
+//		return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
+		return null;
 	}
 
 	@GET
@@ -343,41 +345,42 @@ public class SummaryDocumentsResource {
 	@NoCache
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getCdr(@QueryParam("summaryDocumentId") final String summaryDocumentId) throws Exception {
-		SummaryDocumentProvider summaryDocumentProvider = session.getProvider(SummaryDocumentProvider.class);
-		if (summaryDocumentId == null) {
-			throw new NotFoundException("Sunat response not found");
-		}
-		String ticket = null;
-		SendEventModel sendEvent = null;
-		StorageFileModel storageFile = null;
-		SummaryDocumentModel summaryDocument = summaryDocumentProvider.getSummaryDocumentByID(organization,
-				summaryDocumentId);
-		List<SendEventModel> sendEvents = summaryDocument.getSendEvents();
-		for (SendEventModel model : sendEvents) {
-			if (model.getResponse().containsKey("TICKET")) {
-				sendEvent = model;
-			}
-		}
-		if (sendEvent == null) {
-			throw new NotFoundException("Ticket not found");
-		}
-		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
-			byte[] result = new SunatSenderUtils(organization, EmissionType.CPE).getStatus(ticket);
-			if (result == null) {
-				throw new NotFoundException("Sunat response, cdr not found");
-			}
-			String fileName = SunatTemplateUtils.generateXmlFileName(organization, summaryDocument);
-			sendEvent.addFileResponseAttatchments(
-					SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, result));
-			sendEvent.setResponse(SunatResponseUtils.byteResponseToMap(result));
-		}
-		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
-			throw new NotFoundException("Sunat response, cdr not found");
-		}
-		storageFile = sendEvent.getFileResponseAttatchments().get(0);
-		ResponseBuilder response = Response.ok(storageFile.getFile());
-		response.type(storageFile.getMimeType());
-		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
-		return response.build();
+//		SummaryDocumentProvider summaryDocumentProvider = session.getProvider(SummaryDocumentProvider.class);
+//		if (summaryDocumentId == null) {
+//			throw new NotFoundException("Sunat response not found");
+//		}
+//		String ticket = null;
+//		SendEventModel sendEvent = null;
+//		StorageFileModel storageFile = null;
+//		SummaryDocumentModel summaryDocument = summaryDocumentProvider.getSummaryDocumentByID(organization,
+//				summaryDocumentId);
+//		List<SendEventModel> sendEvents = summaryDocument.getSendEvents();
+//		for (SendEventModel model : sendEvents) {
+//			if (model.getResponse().containsKey("TICKET")) {
+//				sendEvent = model;
+//			}
+//		}
+//		if (sendEvent == null) {
+//			throw new NotFoundException("Ticket not found");
+//		}
+//		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
+//			byte[] result = new SunatSenderUtils(organization, EmissionType.CPE).getStatus(ticket);
+//			if (result == null) {
+//				throw new NotFoundException("Sunat response, cdr not found");
+//			}
+//			String fileName = SunatTemplateUtils.generateXmlFileName(organization, summaryDocument);
+//			sendEvent.addFileResponseAttatchments(
+//					SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, result));
+//			sendEvent.setResponse(SunatResponseUtils.byteResponseToMap(result));
+//		}
+//		if (sendEvent.getFileResponseAttatchments().isEmpty()) {
+//			throw new NotFoundException("Sunat response, cdr not found");
+//		}
+//		storageFile = sendEvent.getFileResponseAttatchments().get(0);
+//		ResponseBuilder response = Response.ok(storageFile.getFile());
+//		response.type(storageFile.getMimeType());
+//		response.header("content-disposition", "attachment; filename=\"" + storageFile.getFileName() + "\"");
+//		return response.build();
+		return null;
 	}
 }

@@ -1,30 +1,18 @@
 package org.openfact.pe.services.ubl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.transform.TransformerException;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.*;
-import org.openfact.models.enums.RequiredAction;
-import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.constants.EmissionType;
-import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.services.util.SunatResponseUtils;
-import org.openfact.pe.services.util.SunatSenderUtils;
-import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
@@ -54,7 +42,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 
 			@Override
 			public String generateID(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
-				String documentId = SunatDocumentIdProvider.generateVoidedDocumentId(session, organization);
+				String documentId = SunatUBLIDGenerator.generateVoidedDocumentId(session, organization);
 				return documentId;
 			}
 		};
@@ -95,19 +83,13 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 			}
 
 			@Override
-			public Document write(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType,
-					Map<String, List<String>> attributes) {
+			public Document write(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
 				try {
 					Document document = SunatTypeToDocument.toDocument(voidedDocumentsType);
 					return document;
 				} catch (JAXBException e) {
 					throw new ModelException(e);
 				}
-			}
-
-			@Override
-			public Document write(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
-				return write(organization, voidedDocumentsType, Collections.emptyMap());
 			}
 		};
 	}
@@ -117,23 +99,23 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 		return new UBLSender<VoidedDocumentModel>() {
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel) throws SendException {
+			public SendEventModel sendToCustomer(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel) throws ModelInsuficientData, SendException {
 				return null;
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel, SendEventModel sendEvent) throws SendException {
+			public void sendToCustomer(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+
+			}
+
+			@Override
+			public SendEventModel sendToThirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel) throws ModelInsuficientData, SendException {
 				return null;
 			}
 
 			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel) throws SendException {
-				return null;
-			}
+			public void sendToThirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
 
-			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel, SendEventModel sendEvent) throws SendException {
-				return null;
 			}
 
 			@Override

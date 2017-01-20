@@ -1,6 +1,6 @@
 package org.openfact.pe.models.utils;
 
-import org.openfact.pe.constants.*;
+import org.openfact.pe.models.enums.*;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
 
 /**

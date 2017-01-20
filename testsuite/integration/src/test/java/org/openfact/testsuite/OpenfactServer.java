@@ -292,7 +292,7 @@ public class OpenfactServer {
             FilterInfo scFilter = Servlets.filter("SecurityFilter", OpenfactSecurityContextFilter.class);
             scFilter.setAsyncSupported(true);
             di.addFilter(scFilter);
-            di.addFilterUrlMapping("SecurityFilter", "/admin/*", DispatcherType.REQUEST);
+            di.addFilterUrlMapping("SecurityFilter", "/*", DispatcherType.REQUEST);
 
             server.deploy(di);
 

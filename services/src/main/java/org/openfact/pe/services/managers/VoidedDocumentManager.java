@@ -19,7 +19,6 @@ package org.openfact.pe.services.managers;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
@@ -34,13 +33,11 @@ import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
+import org.openfact.pe.services.ubl.SunatUBLIDGenerator;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
-
-import java.io.File;
-import java.io.IOException;
 
 public class VoidedDocumentManager {
 
@@ -68,7 +65,7 @@ public class VoidedDocumentManager {
     public VoidedDocumentModel addVoidedDocument(OrganizationModel organization, VoidedDocumentsType type) {
         IDType documentId = type.getID();
         if (documentId == null || documentId.getValue() == null) {
-            String generatedId = SunatDocumentIdProvider.generateVoidedDocumentId(session, organization);
+            String generatedId = SunatUBLIDGenerator.generateVoidedDocumentId(session, organization);
             documentId = new IDType(generatedId);
             type.setID(documentId);
         }
@@ -107,12 +104,14 @@ public class VoidedDocumentManager {
 
     public SendEventModel sendToCustomerParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
             throws SendException {
-        return ubl.sender().sendToCustomer(organization, voidedDocument);
+        //return ubl.sender().sendToCustomer(organization, voidedDocument);
+        return null;
     }
 
     public SendEventModel sendToTrirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
             throws SendException {
-        return ubl.sender().sendToThirdParty(organization, voidedDocument);
+        //return ubl.sender().sendToThirdParty(organization, voidedDocument);
+        return null;
     }
 
 }

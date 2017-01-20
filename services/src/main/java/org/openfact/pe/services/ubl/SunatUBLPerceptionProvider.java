@@ -3,29 +3,14 @@ package org.openfact.pe.services.ubl;
 import java.util.*;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.transform.TransformerException;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
-import org.openfact.email.EmailTemplateProvider;
-import org.openfact.email.freemarker.beans.ProfileBean;
 import org.openfact.models.*;
-import org.openfact.models.enums.RequiredAction;
-import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.types.perception.PerceptionType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.services.constants.SunatEventType;
-import org.openfact.pe.services.util.SunatResponseUtils;
-import org.openfact.pe.services.util.SunatSenderUtils;
-import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
@@ -54,7 +39,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 
 			@Override
 			public String generateID(OrganizationModel organization, PerceptionType perceptionType) {
-				String documentId = SunatDocumentIdProvider.generatePerceptionDocumentId(session, organization);
+				String documentId = SunatUBLIDGenerator.generatePerceptionDocumentId(session, organization);
 				return documentId;
 			}
 		};
@@ -95,19 +80,13 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 			}
 
 			@Override
-			public Document write(OrganizationModel organization, PerceptionType perceptionType,
-					Map<String, List<String>> attributes) {
+			public Document write(OrganizationModel organization, PerceptionType perceptionType) {
 				try {
 					Document document = SunatTypeToDocument.toDocument(perceptionType);
 					return document;
 				} catch (JAXBException e) {
 					throw new ModelException(e);
 				}
-			}
-
-			@Override
-			public Document write(OrganizationModel organization, PerceptionType perceptionType) {
-				return write(organization, perceptionType, Collections.emptyMap());
 			}
 		};
 	}
@@ -117,23 +96,23 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 		return new UBLSender<PerceptionModel>() {
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel) throws SendException {
+			public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel) throws ModelInsuficientData, SendException {
 				return null;
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws SendException {
+			public void sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+
+			}
+
+			@Override
+			public SendEventModel sendToThirdParty(OrganizationModel organization, PerceptionModel perceptionModel) throws ModelInsuficientData, SendException {
 				return null;
 			}
 
 			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, PerceptionModel perceptionModel) throws SendException {
-				return null;
-			}
+			public void sendToThirdParty(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
 
-			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws SendException {
-				return null;
 			}
 
 			@Override

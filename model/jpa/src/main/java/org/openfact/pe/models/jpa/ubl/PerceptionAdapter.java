@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
 import org.openfact.pe.models.PerceptionLineModel;
@@ -21,7 +22,6 @@ import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.jpa.entities.PerceptionLineEntity;
 import org.openfact.pe.models.jpa.entities.PerceptionEntity;
 import org.openfact.pe.models.jpa.entities.PerceptionRequiredActionEntity;
-import org.openfact.ubl.SendEventModel;
 
 public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEntity> {
     protected static final Logger logger = Logger.getLogger(PerceptionAdapter.class);

@@ -7,7 +7,7 @@ import java.util.Set;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
-import org.openfact.ubl.SendEventModel;
+import org.openfact.models.SendEventModel;
 
 public interface VoidedDocumentModel {
 

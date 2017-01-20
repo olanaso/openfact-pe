@@ -33,6 +33,7 @@ import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
+import org.openfact.pe.services.ubl.SunatUBLIDGenerator;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -64,7 +65,7 @@ public class PerceptionManager {
 	public PerceptionModel addPerception(OrganizationModel organization, PerceptionType type) {
 		IDType documentId = type.getId();
 		if (documentId == null || documentId.getValue() == null) {
-			String generatedId = SunatDocumentIdProvider.generatePerceptionDocumentId(session, organization);
+			String generatedId = SunatUBLIDGenerator.generatePerceptionDocumentId(session, organization);
 			documentId = new IDType(generatedId);
 			type.setId(documentId);
 		}
@@ -102,12 +103,14 @@ public class PerceptionManager {
 
 	public SendEventModel sendToCustomerParty(OrganizationModel organization, PerceptionModel perception)
 			throws SendException {
-		return ubl.sender().sendToCustomer(organization, perception);
+		//return ubl.sender().sendToCustomer(organization, perception);
+		return null;
 	}
 
 	public SendEventModel sendToTrirdParty(OrganizationModel organization, PerceptionModel perception)
 			throws SendException {
-		return ubl.sender().sendToThirdParty(organization, perception);
+		//return ubl.sender().sendToThirdParty(organization, perception);
+		return null;
 	}
 
 }

@@ -1,30 +1,18 @@
 package org.openfact.pe.services.ubl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.transform.TransformerException;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.*;
-import org.openfact.models.enums.RequiredAction;
-import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.SummaryDocumentModel;
-import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.services.util.SunatResponseUtils;
-import org.openfact.pe.services.util.SunatSenderUtils;
-import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
@@ -52,7 +40,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 
 			@Override
 			public String generateID(OrganizationModel organization, SummaryDocumentsType summaryDocumentsType) {
-				String documentId = SunatDocumentIdProvider.generateSummaryDocumentDocumentId(session, organization);
+				String documentId = SunatUBLIDGenerator.generateSummaryDocumentDocumentId(session, organization);
 				return documentId;
 			}
 		};
@@ -93,19 +81,13 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 			}
 
 			@Override
-			public Document write(OrganizationModel organization, SummaryDocumentsType summaryDocumentsType,
-					Map<String, List<String>> attributes) {
+			public Document write(OrganizationModel organization, SummaryDocumentsType summaryDocumentsType) {
 				try {
 					Document document = SunatTypeToDocument.toDocument(summaryDocumentsType);
 					return document;
 				} catch (JAXBException e) {
 					throw new ModelException(e);
 				}
-			}
-
-			@Override
-			public Document write(OrganizationModel organization, SummaryDocumentsType summaryDocumentsType) {
-				return write(organization, summaryDocumentsType, Collections.emptyMap());
 			}
 		};
 	}
@@ -120,8 +102,8 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel, SendEventModel sendEvent) throws SendException {
-				return null;
+			public void sendToCustomer(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel, SendEventModel sendEvent) throws SendException {
+
 			}
 
 			@Override
@@ -130,8 +112,8 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
 			}
 
 			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel, SendEventModel sendEvent) throws SendException {
-				return null;
+			public void sendToThirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocumentModel, SendEventModel sendEvent) throws SendException {
+
 			}
 
 			@Override

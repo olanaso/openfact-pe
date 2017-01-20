@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
@@ -25,7 +26,6 @@ import org.openfact.pe.models.jpa.entities.PerceptionLineEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsLineEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsRequiredActionEntity;
-import org.openfact.ubl.SendEventModel;
 
 public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<VoidedDocumentsEntity> {
 

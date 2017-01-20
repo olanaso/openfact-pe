@@ -1,6 +1,6 @@
 package org.openfact.pe.models;
 
-import org.openfact.ubl.SendEventModel;
+import org.openfact.models.SendEventModel;
 
 public interface VoidedDocumentsSendEventModel extends SendEventModel {
 	VoidedDocumentModel getVoidedDocument();

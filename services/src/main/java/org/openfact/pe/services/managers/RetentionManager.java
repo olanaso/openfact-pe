@@ -33,6 +33,7 @@ import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.utils.*;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
+import org.openfact.pe.services.ubl.SunatUBLIDGenerator;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -64,7 +65,7 @@ public class RetentionManager {
 	public RetentionModel addRetention(OrganizationModel organization, RetentionType type) {
 		IDType documentId = type.getId();
 		if (documentId == null || documentId.getValue() == null) {
-			String generatedId = SunatDocumentIdProvider.generateRetentionDocumentId(session, organization);
+			String generatedId = SunatUBLIDGenerator.generateRetentionDocumentId(session, organization);
 			documentId = new IDType(generatedId);
 			type.setId(documentId);
 		}
@@ -102,12 +103,14 @@ public class RetentionManager {
 
 	public SendEventModel sendToCustomerParty(OrganizationModel organization, RetentionModel retention)
 			throws SendException {
-		return ubl.sender().sendToCustomer(organization, retention);
+		//return ubl.sender().sendToCustomer(organization, retention);
+		return null;
 	}
 
 	public SendEventModel sendToTrirdParty(OrganizationModel organization, RetentionModel retention)
 			throws SendException {
-		return ubl.sender().sendToThirdParty(organization, retention);
+		//return ubl.sender().sendToThirdParty(organization, retention);
+		return null;
 	}
 
 }

@@ -29,13 +29,13 @@ import org.openfact.pe.models.SummaryDocumentModel;
 import org.openfact.pe.models.SummaryDocumentProvider;
 import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
+import org.openfact.pe.services.ubl.SunatUBLIDGenerator;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.SummaryRepresentation;
-import org.openfact.ubl.SendEventModel;
-import org.openfact.ubl.SendException;
+import org.openfact.models.SendEventModel;
+import org.openfact.models.SendException;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
 
@@ -67,7 +67,7 @@ public class SummaryDocumentManager {
 	public SummaryDocumentModel addSummaryDocument(OrganizationModel organization, SummaryDocumentsType type) {
 		IDType documentId = type.getId();
 		if (documentId == null || documentId.getValue() == null) {
-			String generatedId = SunatDocumentIdProvider.generateSummaryDocumentDocumentId(session, organization);
+			String generatedId = SunatUBLIDGenerator.generateSummaryDocumentDocumentId(session, organization);
 			documentId = new IDType(generatedId);
 			type.setId(documentId);
 		}
@@ -105,13 +105,14 @@ public class SummaryDocumentManager {
 
 	public SendEventModel sendToCustomerParty(OrganizationModel organization, SummaryDocumentModel summaryDocument)
 			throws SendException {
-		return ubl.sender().sendToCustomer(organization, summaryDocument);
+		//return ubl.sender().sendToCustomer(organization, summaryDocument);
+		return null;
 	}
 
 	public SendEventModel sendToTrirdParty(OrganizationModel organization, SummaryDocumentModel summaryDocument)
 			throws SendException {
-		return ubl.sender().sendToThridParty(organization, summaryDocument);
-
+		//return ubl.sender().sendToThirdParty(organization, summaryDocument);
+		return null;
 	}
 
 }

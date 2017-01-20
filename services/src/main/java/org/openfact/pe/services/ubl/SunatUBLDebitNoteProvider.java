@@ -7,19 +7,22 @@ import java.util.Map;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.soap.SOAPFault;
-import javax.xml.transform.TransformerException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
+import org.openfact.file.FileModel;
+import org.openfact.file.InternetMediaType;
 import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.constants.EmissionType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
+import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.utils.SunatMarshallerUtils;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
+import org.openfact.services.managers.DebitNoteManager;
+import org.openfact.services.managers.DebitNoteManager;
 import org.openfact.ubl.UBLDebitNoteProvider;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
@@ -37,218 +40,170 @@ import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 
 public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 
-	protected OpenfactSession session;
+    protected OpenfactSession session;
 
-	public SunatUBLDebitNoteProvider(OpenfactSession session) {
-		this.session = session;
-	}
+    public SunatUBLDebitNoteProvider(OpenfactSession session) {
+        this.session = session;
+    }
 
-	@Override
-	public void close() {
-	}
+    @Override
+    public void close() {
+    }
 
-	@Override
-	public UBLIDGenerator<DebitNoteType> idGenerator() {
-		return new UBLIDGenerator<DebitNoteType>() {
+    @Override
+    public UBLIDGenerator<DebitNoteType> idGenerator() {
+        return new UBLIDGenerator<DebitNoteType>() {
 
-			@Override
-			public void close() {
-			}
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public String generateID(OrganizationModel organization, DebitNoteType debitNoteType) {
-				String codeType = null, code = "";
-				if (debitNoteType.getDiscrepancyResponseCount() > 0) {
-					codeType = debitNoteType.getDiscrepancyResponse().get(0).getReferenceIDValue();
-				} else if (debitNoteType.getBillingReferenceCount() > 0) {
-					codeType = debitNoteType.getBillingReference().get(0).getInvoiceDocumentReference().getIDValue();
-				}
-				if (codeType != null) {
-					code = codeType.substring(0, 1);
-				}
-				return SunatDocumentIdProvider.generateDebitNoteDocumentId(session, organization, code);
-			}
-		};
-	}
+            @Override
+            public String generateID(OrganizationModel organization, DebitNoteType debitNoteType) {
+                return SunatUBLIDGenerator.generateDebitNoteDocumentId(session, organization, debitNoteType);
+            }
+        };
+    }
 
-	@Override
-	public UBLReader<DebitNoteType> reader() {
-		return new UBLReader<DebitNoteType>() {
+    @Override
+    public UBLReader<DebitNoteType> reader() {
+        return new UBLReader<DebitNoteType>() {
 
-			@Override
-			public void close() {
-			}
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public DebitNoteType read(byte[] bytes) {
-				return UBL21Reader.debitNote().read(bytes);
-			}
+            @Override
+            public DebitNoteType read(byte[] bytes) {
+                return UBL21Reader.debitNote().read(bytes);
+            }
 
-			@Override
-			public DebitNoteType read(Document document) {
-				return UBL21Reader.debitNote().read(document);
-			}
+            @Override
+            public DebitNoteType read(Document document) {
+                return UBL21Reader.debitNote().read(document);
+            }
 
-		};
-	}
+        };
+    }
 
-	@Override
-	public UBLWriter<DebitNoteType> writer() {
-		return new UBLWriter<DebitNoteType>() {
+    @Override
+    public UBLWriter<DebitNoteType> writer() {
+        return new UBLWriter<DebitNoteType>() {
 
-			@Override
-			public void close() {
-			}
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public Document write(OrganizationModel organization, DebitNoteType debitNoteType,
-					Map<String, List<String>> attributes) {
-				try {
-					MapBasedNamespaceContext mapBasedNamespace = SunatMarshallerUtils
-							.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2");
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					MicroWriter.writeToStream(UBL21Writer.debitNote().getAsMicroDocument(debitNoteType), out,
-							new XMLWriterSettings().setNamespaceContext(mapBasedNamespace)
-									.setPutNamespaceContextPrefixesInRoot(true));
+            @Override
+            public Document write(OrganizationModel organization, DebitNoteType t) {
+                try {
+                    MapBasedNamespaceContext mapBasedNamespace = SunatMarshallerUtils.getBasedNamespaceContext("urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2");
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    MicroWriter.writeToStream(UBL21Writer.debitNote().getAsMicroDocument(t), out, new XMLWriterSettings().setNamespaceContext(mapBasedNamespace).setPutNamespaceContextPrefixesInRoot(true));
 
-					Document document = DocumentUtils.byteToDocument(out.toByteArray());
-					return document;
-				} catch (DatatypeConfigurationException e) {
-					throw new ModelException(e);
-				} catch (Exception e) {
-					throw new ModelException(e);
-				}
-			}
+                    return DocumentUtils.byteToDocument(out.toByteArray());
+                } catch (DatatypeConfigurationException e) {
+                    throw new ModelException(e);
+                } catch (Exception e) {
+                    throw new ModelException(e);
+                }
+            }
+        };
+    }
 
-			@Override
-			public Document write(OrganizationModel organization, DebitNoteType t) {
-				return write(organization, t, Collections.emptyMap());
-			}
-		};
-	}
+    @Override
+    public UBLSender<DebitNoteModel> sender() {
+        return new UBLSender<DebitNoteModel>() {
 
-	@Override
-	public UBLSender<DebitNoteModel> sender() {
-		return new UBLSender<DebitNoteModel>() {
+            @Override
+            public SendEventModel sendToCustomer(OrganizationModel organization, DebitNoteModel debitNote) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = debitNote.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, debitNote, sendEvent);
+                return sendEvent;
+            }
 
-			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, DebitNoteModel debitNoteModel) throws SendException {
-				return null;
-			}
+            @Override
+            public void sendToCustomer(OrganizationModel organization, DebitNoteModel debitNote, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                DebitNoteManager debitNoteManager = new DebitNoteManager(session);
+                debitNoteManager.sendToThirdPartyByEmail(organization, debitNote, sendEvent, debitNote.getCustomerElectronicMail());
+            }
 
-			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, DebitNoteModel debitNoteModel, SendEventModel sendEvent) throws SendException {
-				return null;
-			}
+            @Override
+            public SendEventModel sendToThirdParty(OrganizationModel organization, DebitNoteModel debitNote) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = debitNote.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, debitNote, sendEvent);
+                return sendEvent;
+            }
 
-			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, DebitNoteModel debitNoteModel) throws SendException {
-				return null;
-			}
+            @Override
+            public void sendToThirdParty(OrganizationModel organization, DebitNoteModel debitNote, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+                String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
+                String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
 
-			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, DebitNoteModel debitNoteModel, SendEventModel sendEvent) throws SendException {
-				return null;
-			}
+                if (sunatAddress == null) {
+                    throw new ModelInsuficientData("No se pudo encontrar una url de envio valida");
+                }
+                if (sunatUsername == null || sunatPassword == null) {
+                    throw new ModelInsuficientData("No se pudo encontrar un usuario y/o password valido en la organizacion");
+                }
 
-			@Override
-			public void close() {
-			}
+                String xmlFilename = "";
+                String zipFileName = "";
+                byte[] zipFile = null;
 
-//			@Override
-//			public SendEventModel sendToCustomer(OrganizationModel organization, DebitNoteModel debitNote)
-//					throws SendException {
-//				/*CustomerPartyModel customerParty = debitNote.getAccountingCustomerParty();
-//				if (customerParty == null || customerParty.getParty() == null
-//						|| customerParty.getParty().getContact() == null
-//						|| customerParty.getParty().getContact().getElectronicMail() == null) {
-//					return null;
-//				}
-//
-//				// User where the email will be send
-//				UserSenderModel user = new UserSenderModel() {
-//					@Override
-//					public String getFullName() {
-//						List<PartyLegalEntityModel> partyLegalEntities = customerParty.getParty().getPartyLegalEntity();
-//						return partyLegalEntities.stream().map(f -> f.getRegistrationName())
-//								.reduce((t, u) -> t + "," + u).get();
-//					}
-//
-//					@Override
-//					public String getEmail() {
-//						return customerParty.getParty().getContact().getElectronicMail();
-//					}
-//				};
-//
-//				// Attatchments
-//				FileModel file = new SimpleFileModel();
-//				file.setFileName(debitNote.getDocumentId() + ".xml");
-//				file.setFile(debitNote.getXmlDocument());
-//				file.setMimeType("application/xml");
-//
-//				try {
-//					session.getProvider(EmailTemplateProvider.class).setOrganization(organization).setUser(user)
-//							.setAttachments(new ArrayList<>(Arrays.asList(file))).sendDebitNote(debitNote);
-//
-//					// Write event to the database
-//					SendEventModel sendEvent = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-//							SendResultType.SUCCESS, debitNote);
-//					sendEvent.setDescription("DebitNote Sended by Email");
-//
-//					return sendEvent;
-//				} catch (EmailException e) {
-//					throw new SendException(e);
-//				}*/
-//				return  null;
-//			}
-//
-//			@Override
-//			public SendEventModel sendToThridParty(OrganizationModel organization, DebitNoteModel debitNote)
-//					throws SendException {
-//				SendEventModel model = null;
-//				byte[] zip = null;
-//				String fileName = "";
-//				try {
-//					fileName = SunatTemplateUtils.generateXmlFileName(organization, debitNote);
-//					zip = SunatTemplateUtils.generateZip(debitNote.getXmlDocument(), fileName);
-//					// sender
-//					byte[] response = new SunatSenderUtils(organization, EmissionType.CPE).sendBill(zip, fileName, InternetMediaType.ZIP);
-//					// Write event to the default database
-//					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-//							SendResultType.SUCCESS, debitNote);
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.addFileResponseAttatchments(
-//							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
-//					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
-//					model.setDescription("Debit Note submitted successfully to SUNAT");
-//					model.setType("SUNAT");
-//					if (model.getResult()) {
-//						debitNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
-//					}
-//				} catch (TransformerException e) {
-//					throw new SendException(e);
-//				} catch (SOAPFaultException e) {
-//					SOAPFault soapFault = e.getFault();
-//					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-//							SendResultType.ERROR, debitNote);
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-//					model.setType("SUNAT");
-//					model.setDescription(soapFault.getFaultString());
-//					model.setResponse(
-//							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
-//				} catch (Exception e) {
-//					model = session.getProvider(SendEventProvider.class).addSendEvent(organization,
-//							SendResultType.ERROR, debitNote);
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-//					model.setType("SUNAT");
-//					model.setDescription(e.getMessage());
-//				}
-//				return model;
-//			}
-		};
-	}
+                SunatSenderUtils sunatSender = null;
+                try {
+                    xmlFilename = SunatTemplateUtils.generateFileName(organization, debitNote) + ".xml";
+                    zipFileName = SunatTemplateUtils.generateFileName(organization, debitNote) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(debitNote.getXmlAsFile().getFile(), xmlFilename);
+
+                    sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
+                    byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
+
+                    sendEvent.setType("SUNAT");
+                    sendEvent.setDescription("Debit Note submitted successfully to SUNAT");
+                    sendEvent.setResult(SendResultType.SUCCESS);
+
+                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
+                    sendEvent.attachFile(zipFileModel);
+
+                    FileModel responseFileModel = session.files().createFile(organization, "R" + zipFileName, response);
+                    sendEvent.attachResponseFile(responseFileModel);
+
+                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+
+                    for (Map.Entry<String, String> entry : SunatResponseUtils.byteResponseToMap(response).entrySet()) {
+                        sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
+                    }
+
+                    debitNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                } catch (SOAPFaultException e) {
+                    SOAPFault soapFault = e.getFault();
+
+                    sendEvent.setDescription(soapFault.getFaultString());
+
+                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
+                    sendEvent.attachFile(zipFileModel);
+
+                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+                    for (Map.Entry<String, String> entry : SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()).entrySet()) {
+                        sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
+                    }
+
+                    throw new SunatSendException(soapFault.getFaultString(), e);
+                } catch (Exception e) {
+                    throw new SendException("Could not generate send to third party", e);
+                } catch (Throwable e) {
+                    throw new SendException("Internal Server Error", e);
+                }
+            }
+
+            @Override
+            public void close() {
+            }
+            
+        };
+    }
 
 }

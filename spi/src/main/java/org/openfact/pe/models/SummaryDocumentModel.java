@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.openfact.models.OpenfactSession;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.provider.ProviderEvent;
-import org.openfact.ubl.SendEventModel;
 
 public interface SummaryDocumentModel {
 

@@ -22,7 +22,7 @@ import org.openfact.common.finance.MoneyConverters;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.pe.constants.*;
+import org.openfact.pe.models.enums.*;
 import org.openfact.pe.models.types.*;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.types.perception.SUNATPerceptionDocumentReferenceType;
@@ -89,7 +89,7 @@ public class SunatRepresentationToType {
         type.setUBLVersionID(SunatRepresentationToType.UBL_VERSION_ID);
         type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
 
-        // ID
+        // documentId
         if (rep.getNumero() != null && rep.getSerie() != null) {
             type.setID(rep.getNumero() + "-" + rep.getSerie());
         }
@@ -326,10 +326,11 @@ public class SunatRepresentationToType {
         // Discrepancy response
         ResponseType responseType = new ResponseType();
         responseType.setReferenceID(rep.getDocumentoQueSeModifica());
-        responseType.setResponseCode(rep.getTipo());
-        responseType.setDescription(Arrays.asList(new DescriptionType(rep.getObservaciones())));
-
-        type.setDiscrepancyResponse(Arrays.asList());
+        responseType.setResponseCode(rep.getTipoDeNotaDeCredito());
+        if (rep.getObservaciones() != null) {
+            responseType.setDescription(Arrays.asList(new DescriptionType(rep.getObservaciones())));
+        }
+        type.setDiscrepancyResponse(Arrays.asList(responseType));
 
         // Billing reference
         BillingReferenceType billingReferenceType = new BillingReferenceType();
@@ -338,10 +339,10 @@ public class SunatRepresentationToType {
         documentReferenceType.setID(rep.getDocumentoQueSeModifica().trim().toUpperCase());
 
         String identificator = rep.getDocumentoQueSeModifica().substring(0, 1);
-        if (identificator.equalsIgnoreCase(TipoComprobante.BOLETA.toString().substring(0, 1))) {
-            documentReferenceType.setDocumentTypeCode(TipoComprobante.BOLETA.getCodigo());
-        } else if (identificator.equalsIgnoreCase(TipoComprobante.FACTURA.toString().substring(0, 1))) {
-            documentReferenceType.setDocumentTypeCode(TipoComprobante.FACTURA.getCodigo());
+        if (identificator.equalsIgnoreCase(TipoInvoice.BOLETA.toString().substring(0, 1))) {
+            documentReferenceType.setDocumentTypeCode(TipoInvoice.BOLETA.getCodigo());
+        } else if (identificator.equalsIgnoreCase(TipoInvoice.FACTURA.toString().substring(0, 1))) {
+            documentReferenceType.setDocumentTypeCode(TipoInvoice.FACTURA.getCodigo());
         }
 
         billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
@@ -530,16 +531,24 @@ public class SunatRepresentationToType {
         // Discrepancy response
         ResponseType responseType = new ResponseType();
         responseType.setReferenceID(rep.getDocumentoQueSeModifica());
-        responseType.setResponseCode(rep.getTipo());
-        responseType.setDescription(Arrays.asList(new DescriptionType(rep.getObservaciones())));
-
-        type.setDiscrepancyResponse(Arrays.asList());
+        responseType.setResponseCode(rep.getTipoDeNotaDeDebito());
+        if (rep.getObservaciones() != null) {
+            responseType.setDescription(Arrays.asList(new DescriptionType(rep.getObservaciones())));
+        }
+        type.setDiscrepancyResponse(Arrays.asList(responseType));
 
         // Billing reference
         BillingReferenceType billingReferenceType = new BillingReferenceType();
 
         DocumentReferenceType documentReferenceType = new DocumentReferenceType();
-        documentReferenceType.setID(rep.getTipo());
+        documentReferenceType.setID(rep.getDocumentoQueSeModifica().trim().toUpperCase());
+
+        String identificator = rep.getDocumentoQueSeModifica().substring(0, 1);
+        if (identificator.equalsIgnoreCase(TipoInvoice.BOLETA.toString().substring(0, 1))) {
+            documentReferenceType.setDocumentTypeCode(TipoInvoice.BOLETA.getCodigo());
+        } else if (identificator.equalsIgnoreCase(TipoInvoice.FACTURA.toString().substring(0, 1))) {
+            documentReferenceType.setDocumentTypeCode(TipoInvoice.FACTURA.getCodigo());
+        }
 
         billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
 
@@ -1456,7 +1465,6 @@ public class SunatRepresentationToType {
 
     }
 
-
     public static AdditionalPropertyType generateAdditionalInformationSunatTotal(BigDecimal amount) {
         MoneyConverters converter = MoneyConverters.SPANISH_BANKING_MONEY_VALUE;
         String valueAsWords = converter.asWords(amount);
@@ -1487,14 +1495,16 @@ public class SunatRepresentationToType {
         TaxTotalType taxTotalType = new TaxTotalType();
 
         // Tax amount
-        TaxAmountType taxAmountType = new TaxAmountType(rep.getTotalIgv());
-        taxAmountType.setCurrencyID(rep.getMoneda());
-
-        taxTotalType.setTaxAmount(taxAmountType);
+        TaxAmountType taxAmountType1 = new TaxAmountType(rep.getTotalIgv());
+        taxAmountType1.setCurrencyID(rep.getMoneda());
+        taxTotalType.setTaxAmount(taxAmountType1);
 
         // Tax Subtotal
         TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
-        taxSubtotalType.setTaxAmount(taxAmountType);
+
+        TaxAmountType taxAmountType2 = new TaxAmountType(rep.getTotalIgv());
+        taxAmountType2.setCurrencyID(rep.getMoneda());
+        taxSubtotalType.setTaxAmount(taxAmountType2);
 
         TaxCategoryType taxCategoryType = new TaxCategoryType();
         TaxSchemeType taxSchemeType = new TaxSchemeType();
@@ -1504,6 +1514,8 @@ public class SunatRepresentationToType {
         taxSchemeType.setTaxTypeCode(TipoTributo.IGV.getCodigo());
         taxCategoryType.setTaxScheme(taxSchemeType);
         taxSubtotalType.setTaxCategory(taxCategoryType);
+
+        taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
 
         return taxTotalType;
     }

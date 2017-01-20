@@ -3,29 +3,14 @@ package org.openfact.pe.services.ubl;
 import java.util.*;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.transform.TransformerException;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
-import org.openfact.email.EmailTemplateProvider;
-import org.openfact.email.freemarker.beans.ProfileBean;
 import org.openfact.models.*;
-import org.openfact.models.enums.RequiredAction;
-import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.constants.EmissionType;
 import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.SunatSendEventProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.types.retention.RetentionType;
-import org.openfact.pe.models.utils.SunatDocumentIdProvider;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.services.constants.SunatEventType;
-import org.openfact.pe.services.util.SunatResponseUtils;
-import org.openfact.pe.services.util.SunatSenderUtils;
-import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.ubl.*;
 import org.w3c.dom.Document;
 
@@ -53,7 +38,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
 			@Override
 			public String generateID(OrganizationModel organization, RetentionType retentionType) {
-				String documentId = SunatDocumentIdProvider.generateRetentionDocumentId(session, organization);
+				String documentId = SunatUBLIDGenerator.generateRetentionDocumentId(session, organization);
 				return documentId;
 			}
 		};
@@ -95,19 +80,13 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 			}
 
 			@Override
-			public Document write(OrganizationModel organization, RetentionType retentionType,
-					Map<String, List<String>> attributes) {
+			public Document write(OrganizationModel organization, RetentionType retentionType) {
 				try {
 					Document document = SunatTypeToDocument.toDocument(retentionType);
 					return document;
 				} catch (JAXBException e) {
 					throw new ModelException(e);
 				}
-			}
-
-			@Override
-			public Document write(OrganizationModel organization, RetentionType retentionType) {
-				return write(organization, retentionType, Collections.emptyMap());
 			}
 		};
 	}
@@ -117,23 +96,23 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 		return new UBLSender<RetentionModel>() {
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, RetentionModel retentionModel) throws SendException {
+			public SendEventModel sendToCustomer(OrganizationModel organization, RetentionModel retentionModel) throws ModelInsuficientData, SendException {
 				return null;
 			}
 
 			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, RetentionModel retentionModel, SendEventModel sendEvent) throws SendException {
+			public void sendToCustomer(OrganizationModel organization, RetentionModel retentionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+
+			}
+
+			@Override
+			public SendEventModel sendToThirdParty(OrganizationModel organization, RetentionModel retentionModel) throws ModelInsuficientData, SendException {
 				return null;
 			}
 
 			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, RetentionModel retentionModel) throws SendException {
-				return null;
-			}
+			public void sendToThirdParty(OrganizationModel organization, RetentionModel retentionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
 
-			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, RetentionModel retentionModel, SendEventModel sendEvent) throws SendException {
-				return null;
 			}
 
 			@Override

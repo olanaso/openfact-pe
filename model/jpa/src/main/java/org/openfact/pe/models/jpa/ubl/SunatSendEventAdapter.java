@@ -1,16 +1,17 @@
 package org.openfact.pe.models.jpa.ubl;
 
+import org.openfact.file.FileModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.enums.DestinyType;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.models.jpa.JpaModel;
-import org.openfact.models.jpa.StorageFileAdapter;
 import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
 import org.openfact.models.*;
 import org.openfact.pe.models.jpa.entities.SunatSendEventEntity;
 import org.openfact.pe.models.jpa.entities.SunatStorageFileEntity;
-import org.openfact.ubl.SendEventModel;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.Map;
  * Created by lxpary on 28/12/16.
  */
 public class SunatSendEventAdapter implements SendEventModel, JpaModel<SunatSendEventEntity> {
+
     protected static final Logger logger = Logger.getLogger(SunatSendEventAdapter.class);
     protected OrganizationModel organization;
     protected SunatSendEventEntity sendEvent;
@@ -42,131 +44,271 @@ public class SunatSendEventAdapter implements SendEventModel, JpaModel<SunatSend
     }
 
     @Override
-    public SunatSendEventEntity getEntity() {
-        return sendEvent;
-    }
-
-    @Override
     public String getId() {
-        return sendEvent.getId();
-    }
-
-    @Override
-    public boolean getResult() {
-        return sendEvent.isResult();
-    }
-
-    @Override
-    public void setResult(boolean result) {
-        sendEvent.setResult(result);
-    }
-
-    @Override
-    public String getDescription() {
-        return sendEvent.getDescription();
-    }
-
-    @Override
-    public void setDescription(String description) {
-        sendEvent.setDescription(description);
-    }
-
-    @Override
-    public OrganizationModel getOrganization() {
-        return organization;
-    }
-
-    @Override
-    public List<StorageFileModel> getFileAttatchments() {
-        List<StorageFileModel> files = new ArrayList<>();
-        for (Map.Entry<String, SunatStorageFileEntity> entry : sendEvent.getFileAttatchments().entrySet()) {
-            files.add(new SunatStorageFileAdapter(session, em, entry.getValue()));
-        }
-        return files;
-    }
-
-    @Override
-    public StorageFileModel addFileAttatchments(FileModel file) {
-        SunatStorageFileEntity entity = new SunatStorageFileEntity();
-        entity.setFileName(file.getFileName());
-        entity.setMimeType(file.getMimeType());
-        entity.setFile(file.getFile());
-        em.persist(entity);
-        em.flush();
-
-        sendEvent.getFileAttatchments().put(entity.getId(), entity);
-        return new SunatStorageFileAdapter(session, em, entity);
-    }
-
-    @Override
-    public String getType() {
-        return sendEvent.getType();
-    }
-
-    @Override
-    public void setType(String type) {
-        sendEvent.setType(type);
-    }
-
-    @Override
-    public Map<String, String> getDestity() {
-        return sendEvent.getDestiny();
-    }
-
-    @Override
-    public void setDestiny(Map<String, String> destiny) {
-        sendEvent.setDestiny(destiny);
+        return null;
     }
 
     @Override
     public LocalDateTime getCreatedTimestamp() {
-        return sendEvent.getCreatedTimestamp();
+        return null;
     }
 
     @Override
-    public List<StorageFileModel> getFileResponseAttatchments() {
-        List<StorageFileModel> files = new ArrayList<>();
-        for (Map.Entry<String, SunatStorageFileEntity> entry : sendEvent.getFileResponseAttatchments().entrySet()) {
-            files.add(new SunatStorageFileAdapter(session, em, entry.getValue()));
-        }
-        return files;
+    public DestinyType getDestityType() {
+        return null;
     }
 
     @Override
-    public StorageFileModel addFileResponseAttatchments(FileModel file) {
-        SunatStorageFileEntity entity = new SunatStorageFileEntity();
-        entity.setFileName(file.getFileName());
-        entity.setMimeType(file.getMimeType());
-        entity.setFile(file.getFile());
-        em.persist(entity);
-        em.flush();
-
-        sendEvent.getFileResponseAttatchments().put(entity.getId(), entity);
-        return new SunatStorageFileAdapter(session, em, entity);
+    public SendResultType getResult() {
+        return null;
     }
 
     @Override
-    public Map<String, String> getResponse() {
-        return sendEvent.getResponse();
+    public void setResult(SendResultType result) {
+
     }
 
     @Override
-    public void setResponse(Map<String, String> response) {
-        sendEvent.setResponse(response);
+    public String getDescription() {
+        return null;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof SendEventModel)) return false;
+    public void setDescription(String description) {
 
-        SendEventModel that = (SendEventModel) o;
-        return that.getId().equals(getId());
     }
 
     @Override
-    public int hashCode() {
-        return getId().hashCode();
+    public String getType() {
+        return null;
     }
+
+    @Override
+    public void setType(String type) {
+
+    }
+
+    @Override
+    public void setSingleDestinyAttribute(String name, String value) {
+
+    }
+
+    @Override
+    public void setDestinyAttribute(String name, List<String> values) {
+
+    }
+
+    @Override
+    public void removeDestinyAttribute(String name) {
+
+    }
+
+    @Override
+    public String getFirstDestinyAttribute(String name) {
+        return null;
+    }
+
+    @Override
+    public List<String> getDestinyAttribute(String name) {
+        return null;
+    }
+
+    @Override
+    public Map<String, List<String>> getDestinyAttributes() {
+        return null;
+    }
+
+    @Override
+    public void setSingleResponseAttribute(String name, String value) {
+
+    }
+
+    @Override
+    public void setResponseAttribute(String name, List<String> values) {
+
+    }
+
+    @Override
+    public void removeResponseAttribute(String name) {
+
+    }
+
+    @Override
+    public String getFirstResponseAttribute(String name) {
+        return null;
+    }
+
+    @Override
+    public List<String> getResponseAttribute(String name) {
+        return null;
+    }
+
+    @Override
+    public Map<String, List<String>> getResponseAttributes() {
+        return null;
+    }
+
+    @Override
+    public List<FileModel> getFileAttatchments() {
+        return null;
+    }
+
+    @Override
+    public void attachFile(FileModel file) {
+
+    }
+
+    @Override
+    public void unattachFile(FileModel file) {
+
+    }
+
+    @Override
+    public List<FileModel> getResponseFileAttatchments() {
+        return null;
+    }
+
+    @Override
+    public void attachResponseFile(FileModel file) {
+
+    }
+
+    @Override
+    public void unattachResponseFile(FileModel file) {
+
+    }
+
+    @Override
+    public SunatSendEventEntity getEntity() {
+        return null;
+    }
+
+//    @Override
+//    public SunatSendEventEntity getEntity() {
+//        return sendEvent;
+//    }
+//
+//    @Override
+//    public String getId() {
+//        return sendEvent.getId();
+//    }
+//
+//    @Override
+//    public boolean getResult() {
+//        return sendEvent.isResult();
+//    }
+//
+//    @Override
+//    public void setResult(boolean result) {
+//        sendEvent.setResult(result);
+//    }
+//
+//    @Override
+//    public String getDescription() {
+//        return sendEvent.getDescription();
+//    }
+//
+//    @Override
+//    public void setDescription(String description) {
+//        sendEvent.setDescription(description);
+//    }
+//
+//    @Override
+//    public OrganizationModel getOrganization() {
+//        return organization;
+//    }
+//
+//    @Override
+//    public List<StorageFileModel> getFileAttatchments() {
+//        List<StorageFileModel> files = new ArrayList<>();
+//        for (Map.Entry<String, SunatStorageFileEntity> entry : sendEvent.getFileAttatchments().entrySet()) {
+//            files.add(new SunatStorageFileAdapter(session, em, entry.getValue()));
+//        }
+//        return files;
+//    }
+//
+//    @Override
+//    public StorageFileModel addFileAttatchments(FileModel file) {
+//        SunatStorageFileEntity entity = new SunatStorageFileEntity();
+//        entity.setFileName(file.getFileName());
+//        entity.setMimeType(file.getMimeType());
+//        entity.setFile(file.getFile());
+//        em.persist(entity);
+//        em.flush();
+//
+//        sendEvent.getFileAttatchments().put(entity.getId(), entity);
+//        return new SunatStorageFileAdapter(session, em, entity);
+//    }
+//
+//    @Override
+//    public String getType() {
+//        return sendEvent.getType();
+//    }
+//
+//    @Override
+//    public void setType(String type) {
+//        sendEvent.setType(type);
+//    }
+//
+//    @Override
+//    public Map<String, String> getDestity() {
+//        return sendEvent.getDestiny();
+//    }
+//
+//    @Override
+//    public void setDestiny(Map<String, String> destiny) {
+//        sendEvent.setDestiny(destiny);
+//    }
+//
+//    @Override
+//    public LocalDateTime getCreatedTimestamp() {
+//        return sendEvent.getCreatedTimestamp();
+//    }
+//
+//    @Override
+//    public List<StorageFileModel> getFileResponseAttatchments() {
+//        List<StorageFileModel> files = new ArrayList<>();
+//        for (Map.Entry<String, SunatStorageFileEntity> entry : sendEvent.getFileResponseAttatchments().entrySet()) {
+//            files.add(new SunatStorageFileAdapter(session, em, entry.getValue()));
+//        }
+//        return files;
+//    }
+//
+//    @Override
+//    public StorageFileModel addFileResponseAttatchments(FileModel file) {
+//        SunatStorageFileEntity entity = new SunatStorageFileEntity();
+//        entity.setFileName(file.getFileName());
+//        entity.setMimeType(file.getMimeType());
+//        entity.setFile(file.getFile());
+//        em.persist(entity);
+//        em.flush();
+//
+//        sendEvent.getFileResponseAttatchments().put(entity.getId(), entity);
+//        return new SunatStorageFileAdapter(session, em, entity);
+//    }
+//
+//    @Override
+//    public Map<String, String> getResponse() {
+//        return sendEvent.getResponse();
+//    }
+//
+//    @Override
+//    public void setResponse(Map<String, String> response) {
+//        sendEvent.setResponse(response);
+//    }
+//
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || !(o instanceof SendEventModel)) return false;
+//
+//        SendEventModel that = (SendEventModel) o;
+//        return that.getId().equals(getId());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return getId().hashCode();
+//    }
 
 }

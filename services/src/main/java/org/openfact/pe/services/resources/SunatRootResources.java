@@ -62,9 +62,10 @@ public class SunatRootResources {
 
     @Path("ubl-extensions/retentions")
     public RetentionsResource getRentionsResource(@Context final HttpHeaders headers) {
-        AdminEventBuilder adminEvent = getAdminBuilder(headers);
+        /*AdminEventBuilder adminEvent = getAdminBuilder(headers);
         adminEvent.organization(session.getContext().getOrganization()).resource("RETENTION");
-        return new RetentionsResource(session, session.getContext().getOrganization(), adminEvent);
+        return new RetentionsResource(session, session.getContext().getOrganization(), adminEvent);*/
+        return null;
     }
 
     @Path("ubl-extensions/perceptions")

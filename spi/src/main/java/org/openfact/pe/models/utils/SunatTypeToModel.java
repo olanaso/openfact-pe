@@ -44,9 +44,6 @@ public class SunatTypeToModel {
         if (type.getReceiverParty() != null) {
             updateModel(model, type.getReceiverParty());
         }
-        if (type.getId() != null && type.getId().getValue() != null) {
-            model.setDocumentId(type.getId().getValue());
-        }
         if (type.getUblVersionID() != null && type.getUblVersionID().getValue() != null) {
             model.setUblVersionID(type.getUblVersionID().getValue());
         }

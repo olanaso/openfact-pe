@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONObject;
+import org.openfact.file.FileModel;
 import org.openfact.models.OpenfactSession;
+import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyModel;
 import org.openfact.models.SendEventModel;
 import org.openfact.models.enums.DestinyType;
@@ -20,77 +22,60 @@ import org.w3c.dom.Document;
 public interface PerceptionModel {
 
     String getId();
-
     String getOrganizationId();
-
     String getDocumentId();
 
     String getUblVersionID();
-
     void setUblVersionID(String ublVersionID);
 
     String getCustomizationID();
-
     void setCustomizationID(String customizationID);
 
     String getSunatPerceptionSystemCode();
-
     void setSunatPerceptionSystemCode(String sunatPerceptionSystemCode);
 
     String getEntityDocumentType();
-
     void setEntityDocumentType(String entityDocumentType);
 
     String getEntityDocumentNuber();
-
     void setEntityDocumentNuber(String numberEntityDocument);
 
     String getEntityName();
-
     void setEntityName(String entityName);
 
     String getEntityAddress();
-
     void setEntityAddress(String entityAddress);
 
     String getEntityEmail();
-
     void setEntityEmail(String entityEmail);
 
     String getDocumentCurrencyCode();
-
     void setDocumentCurrencyCode(String documentCurrencyCode);
 
     BigDecimal getSunatPerceptionPercent();
-
     void setSunatPerceptionPercent(BigDecimal sunatPerceptionPercent);
 
     String getNote();
-
     void setNote(String note);
 
     BigDecimal getTotalPerceptionAmount();
-
     void setTotalPerceptionAmount(BigDecimal totalPerceptionAmount);
 
     BigDecimal getTotalCashed();
-
     void setTotalCashed(BigDecimal totalCashed);
 
     LocalDateTime getIssueDateTime();
-
     void setIssueDateTime(LocalDateTime issueDateTime);
 
     List<PerceptionLineModel> getPerceptionLines();
-
     PerceptionLineModel addPerceptionLine();
 
 
     /**
      * Xml
      **/
-    byte[] getXmlDocument();
-    void setXmlDocument(byte[] object);
+    FileModel getXmlAsFile();
+    void attachXmlFile(FileModel file);
 
     Document getXmlAsDocument();
     JSONObject getXmlAsJSONObject();
@@ -140,6 +125,8 @@ public interface PerceptionModel {
     }
 
     interface PerceptionRemovedEvent extends ProviderEvent {
+        OrganizationModel getOrganization();
+
         PerceptionModel getPerception();
 
         OpenfactSession getOpenfactSession();

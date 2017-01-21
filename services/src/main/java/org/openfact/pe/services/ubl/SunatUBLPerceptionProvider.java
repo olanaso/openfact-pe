@@ -82,7 +82,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 			@Override
 			public Document write(OrganizationModel organization, PerceptionType perceptionType) {
 				try {
-					Document document = SunatTypeToDocument.toDocument(perceptionType);
+					Document document = SunatTypeToDocument.toDocument(organization, perceptionType);
 					return document;
 				} catch (JAXBException e) {
 					throw new ModelException(e);

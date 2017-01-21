@@ -21,18 +21,13 @@ import javax.xml.transform.TransformerException;
 
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.models.ModelException;
-import org.openfact.models.SendException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.SendEventModel;
+import org.openfact.models.*;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.PerceptionProvider;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.utils.*;
-import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.services.ubl.SunatUBLIDGenerator;
 import org.openfact.ubl.SignerProvider;
 import org.w3c.dom.Document;
@@ -45,21 +40,16 @@ public class PerceptionManager {
 
 	protected OpenfactSession session;
 	protected PerceptionProvider model;
-	protected UBLPerceptionProvider ubl;
+	protected UBLPerceptionProvider ublProvider;
 
 	public PerceptionManager(OpenfactSession session) {
 		this.session = session;
 		this.model = session.getProvider(PerceptionProvider.class);
-		this.ubl = session.getProvider(UBLPerceptionProvider.class);
+		this.ublProvider = session.getProvider(UBLPerceptionProvider.class);
 	}
 
-	public PerceptionModel getPerceptionByDocumentId(String documentId, OrganizationModel organization) {
+	public PerceptionModel getPerceptionByDocumentId(OrganizationModel organization, String documentId) {
 		return model.getPerceptionById(organization, documentId);
-	}
-
-	public PerceptionModel addPerception(OrganizationModel organization, DocumentoSunatRepresentation rep) {
-		PerceptionType type = SunatRepresentationToType.toPerceptionType(session,organization, rep);
-		return addPerception(organization, type);
 	}
 
 	public PerceptionModel addPerception(OrganizationModel organization, PerceptionType type) {
@@ -103,14 +93,23 @@ public class PerceptionManager {
 
 	public SendEventModel sendToCustomerParty(OrganizationModel organization, PerceptionModel perception)
 			throws SendException {
-		//return ubl.sender().sendToCustomer(organization, perception);
+		//return ublProvider.sender().sendToCustomer(organization, perception);
 		return null;
 	}
 
 	public SendEventModel sendToTrirdParty(OrganizationModel organization, PerceptionModel perception)
 			throws SendException {
-		//return ubl.sender().sendToThirdParty(organization, perception);
+		//return ublProvider.sender().sendToThirdParty(organization, perception);
 		return null;
 	}
 
+	public void sendToCustomerParty(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel customerSendEvent) throws ModelInsuficientData, SendException {
+
+	}
+
+	public void sendToTrirdParty(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel thirdPartySendEvent) throws ModelInsuficientData, SendException {
+	}
+
+	public void sendToThirdPartyByEmail(OrganizationModel organizationThread, PerceptionModel perceptionThread, String email) throws ModelInsuficientData, SendException {
+	}
 }

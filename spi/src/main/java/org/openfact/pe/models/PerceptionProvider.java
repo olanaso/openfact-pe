@@ -1,6 +1,7 @@
 package org.openfact.pe.models;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
@@ -47,4 +48,6 @@ public interface PerceptionProvider extends Provider {
 
 	ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc, int scrollSize);
 	ScrollModel<List<PerceptionModel>> getPerceptionsScroll(OrganizationModel organization, int scrollSize, String... requiredAction);
+
+	List<PerceptionModel> searchForPerception(Map<String, String> attributes, OrganizationModel organization, Integer firstResult, Integer maxResults);
 }

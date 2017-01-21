@@ -49,25 +49,29 @@ public class SunatRootResources {
     @Path("credit-notes")
     public CreditNotesResource getCreditNotesResource(@Context final HttpHeaders headers) {
         AdminEventBuilder adminEvent = getAdminBuilder(headers);
-        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.INVOICE);
+        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.CREDIT_NOTE);
         return new CreditNotesResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
     @Path("debit-notes")
     public DebitNotesResource getDebitNotesResource(@Context final HttpHeaders headers) {
         AdminEventBuilder adminEvent = getAdminBuilder(headers);
-        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.INVOICE);
+        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DEBIT_NOTE);
         return new DebitNotesResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
     @Path("ubl-extensions/retentions")
-    public RetentionsResource getRentionsResource() {
-        return new RetentionsResource(session, session.getContext().getOrganization());
+    public RetentionsResource getRentionsResource(@Context final HttpHeaders headers) {
+        AdminEventBuilder adminEvent = getAdminBuilder(headers);
+        adminEvent.organization(session.getContext().getOrganization()).resource("RETENTION");
+        return new RetentionsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
     @Path("ubl-extensions/perceptions")
-    public PerceptionsResource getPerceptionsResource() {
-        return new PerceptionsResource(session, session.getContext().getOrganization());
+    public PerceptionsResource getPerceptionsResource(@Context final HttpHeaders headers) {
+        AdminEventBuilder adminEvent = getAdminBuilder(headers);
+        adminEvent.organization(session.getContext().getOrganization()).resource("PERCEPTION");
+        return new PerceptionsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
     @Path("ubl-extensions/sumary-documents")

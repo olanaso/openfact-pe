@@ -55,7 +55,7 @@ public class InvoicesResource {
         InvoiceManager invoiceManager = new InvoiceManager(session);
 
         if (rep.getSerie() != null || rep.getNumero() != null) {
-            if (rep.getSerie() != null && rep.getSerie() != null) {
+            if (rep.getSerie() != null && rep.getNumero() != null) {
                 if (invoiceManager.getInvoiceByDocumentId(organization, rep.getSerie() + "-" + rep.getNumero()) != null) {
                     return ErrorResponse.exists("Invoice exists with same documentId");
                 }

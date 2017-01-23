@@ -35,6 +35,7 @@ public interface PerceptionModel {
 
     /**
      * Document information*/
+
     String getSunatPerceptionSystemCode();
     void setSunatPerceptionSystemCode(String sunatPerceptionSystemCode);
 

@@ -8,6 +8,11 @@ import org.openfact.models.jpa.entities.SendEventEntity;
 
 @Entity
 @DiscriminatorValue(value = "RETENTION")
+@NamedQueries(value = {
+		@NamedQuery(name = "getAllSunatSendEventByRetentionId", query = "select s from RetentionSendEventEntity s where s.retention.id=:retentionId"),
+		@NamedQuery(name = "getRetentionSunatSendEventCountByRetention", query="select count(s) from RetentionSendEventEntity s where s.retention.id = :retentionId"),
+		@NamedQuery(name = "deleteRetentionSunatSendEventByOrganization", query = "delete from RetentionSendEventEntity event where event.retention IN (select i from RetentionEntity i where i.organizationId=:organizationId)")
+})
 public class RetentionSendEventEntity extends SunatSendEventEntity{
 
 	@NotNull

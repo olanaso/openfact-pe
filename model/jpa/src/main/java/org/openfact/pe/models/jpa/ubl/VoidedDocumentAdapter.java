@@ -1,6 +1,5 @@
 package org.openfact.pe.models.jpa.ubl;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,15 +13,10 @@ import org.jboss.logging.Logger;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.SendEventModel;
-import org.openfact.models.SupplierPartyModel;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.jpa.JpaModel;
-import org.openfact.models.jpa.SendEventAdapter;
-import org.openfact.models.jpa.SupplierPartyAdapter;
-import org.openfact.models.jpa.entities.SupplierPartyEntity;
 import org.openfact.pe.models.VoidedDocumentLineModel;
 import org.openfact.pe.models.VoidedDocumentModel;
-import org.openfact.pe.models.jpa.entities.PerceptionLineEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsLineEntity;
 import org.openfact.pe.models.jpa.entities.VoidedDocumentsRequiredActionEntity;

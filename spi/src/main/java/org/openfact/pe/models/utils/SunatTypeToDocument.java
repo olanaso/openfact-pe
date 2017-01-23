@@ -1,7 +1,6 @@
 package org.openfact.pe.models.utils;
 
 
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -44,7 +43,7 @@ public class SunatTypeToDocument {
         }
     }
 
-    public static Document toDocument(RetentionType type) throws JAXBException {
+    public static Document toDocument(OrganizationModel organization, RetentionType type) throws JAXBException {
         try {
             RetentionFactory factory = new RetentionFactory();
             JAXBContext context = JAXBContext.newInstance(RetentionFactory.class);

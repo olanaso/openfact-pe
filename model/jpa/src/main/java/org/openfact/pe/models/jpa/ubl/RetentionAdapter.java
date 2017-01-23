@@ -1,28 +1,31 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.xml.transform.TransformerException;
 
 import org.jboss.logging.Logger;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.PartyModel;
-import org.openfact.models.SendEventModel;
+import org.json.JSONObject;
+import org.json.XML;
+import org.openfact.JSONObjectUtils;
+import org.openfact.common.converts.DocumentUtils;
+import org.openfact.file.FileModel;
+import org.openfact.file.FileProvider;
+import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.models.jpa.JpaModel;
-import org.openfact.pe.models.RetentionLineModel;
 import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.jpa.entities.RetentionLineEntity;
-import org.openfact.pe.models.jpa.entities.RetentionEntity;
-import org.openfact.pe.models.jpa.entities.RetentionRequiredActionEntity;
+import org.openfact.pe.models.jpa.entities.*;
+import org.openfact.pe.models.types.retention.RetentionType;
+import org.openfact.pe.models.utils.SunatDocumentToType;
+import org.w3c.dom.Document;
 
 public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntity> {
     protected static final Logger logger = Logger.getLogger(RetentionAdapter.class);
@@ -32,12 +35,23 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
     protected EntityManager em;
     protected OpenfactSession session;
 
-    public RetentionAdapter(OpenfactSession session, OrganizationModel organization, EntityManager em,
-                            RetentionEntity retention) {
+    protected FileModel xmlFile;
+    protected RetentionType retentionType;
+    protected Document document;
+    protected JSONObject jsonObject;
+
+    public RetentionAdapter(OpenfactSession session, OrganizationModel organization, EntityManager em, RetentionEntity retention) {
         this.organization = organization;
         this.session = session;
         this.em = em;
         this.retention = retention;
+    }
+
+    public static RetentionEntity toEntity(RetentionModel model, EntityManager em) {
+        if (model instanceof RetentionAdapter) {
+            return ((RetentionAdapter) model).getEntity();
+        }
+        return em.getReference(RetentionEntity.class, model.getId());
     }
 
     @Override
@@ -48,31 +62,6 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
     @Override
     public String getId() {
         return retention.getId();
-    }
-
-    @Override
-    public String getOrganizationId() {
-        return retention.getOrganizationId();
-    }
-
-    @Override
-    public String getUblVersionID() {
-        return retention.getUblVersionId();
-    }
-
-    @Override
-    public void setUblVersionID(String ublVersionID) {
-        retention.setUblVersionId(ublVersionID);
-    }
-
-    @Override
-    public String getCustomizationID() {
-        return retention.getCustomizationId();
-    }
-
-    @Override
-    public void setCustomizationID(String customizationID) {
-        retention.setCustomizationId(customizationID);
     }
 
     @Override
@@ -141,8 +130,13 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
     }
 
     @Override
-    public void setDocumentId(String documentId) {
-        retention.setDocumentId(documentId);
+    public LocalDateTime getCreatedTimestamp() {
+        return retention.getCreatedTimestamp();
+    }
+
+    @Override
+    public OrganizationModel getOrganization() {
+        return organization;
     }
 
     @Override
@@ -164,7 +158,6 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
     public void setSunatRetentionPercent(BigDecimal sunatRetentionPercent) {
         retention.setSunatRetentionPercent(sunatRetentionPercent);
     }
-
 
     @Override
     public String getNote() {
@@ -207,36 +200,117 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
     }
 
     @Override
-    public List<RetentionLineModel> getRetentionLines() {
-        return retention.getRetentionLines().stream()
-                .map(f -> new RetentionLineAdapter(session, em, f)).collect(Collectors.toList());
-    }
-
-    @Override
-    public RetentionLineModel addRetentionLine() {
-        List<RetentionLineEntity> entities = retention.getRetentionLines();
-        RetentionLineEntity entity = new RetentionLineEntity();
-        entities.add(entity);
-        return new RetentionLineAdapter(session, em, entity);
-    }
-
-    public static RetentionEntity toEntity(RetentionModel model, EntityManager em) {
-        if (model instanceof RetentionAdapter) {
-            return ((RetentionAdapter) model).getEntity();
+    public RetentionType getRetentionType() {
+        if (retentionType == null) {
+            FileModel file = getXmlAsFile();
+            if (file != null) {
+                try {
+                    retentionType = SunatDocumentToType.toRetentionType(DocumentUtils.byteToDocument(file.getFile()));
+                } catch (Exception e) {
+                    throw new ModelException("Error parsing xml file to Type", e);
+                }
+            }
         }
-        return em.getReference(RetentionEntity.class, model.getId());
+        return retentionType;
     }
 
     @Override
-    public byte[] getXmlDocument() {
-        return retention.getXmlDocument();
+    public FileModel getXmlAsFile() {
+        if (xmlFile == null && retention.getXmlFileId() != null) {
+            FileProvider provider = session.getProvider(FileProvider.class);
+            xmlFile = provider.getFileById(organization, retention.getXmlFileId());
+        }
+        return xmlFile;
     }
 
     @Override
-    public void setXmlDocument(byte[] object) {
-        retention.setXmlDocument(object);
+    public void attachXmlFile(FileModel file) {
+        xmlFile = file;
+        retention.setXmlFileId(xmlFile.getId());
     }
 
+    @Override
+    public Document getXmlAsDocument() {
+        if (document == null) {
+            FileModel file = getXmlAsFile();
+            if (file != null) {
+                try {
+                    document = DocumentUtils.byteToDocument(file.getFile());
+                } catch (Exception e) {
+                    throw new ModelException("Error parsing xml file to Document", e);
+                }
+            }
+        }
+        return document;
+    }
+
+    @Override
+    public JSONObject getXmlAsJSONObject() {
+        if (jsonObject == null) {
+            try {
+                Document document = getXmlAsDocument();
+                if (document != null) {
+                    String documentString = DocumentUtils.getDocumentToString(document);
+                    jsonObject = JSONObjectUtils.renameKey(XML.toJSONObject(documentString), ".*:", "");
+                    jsonObject = JSONObjectUtils.getJSONObject(jsonObject, "Retention");
+                }
+            } catch (TransformerException e) {
+                throw new ModelException("Error parsing xml file to JSON", e);
+            }
+        }
+        return jsonObject;
+    }
+
+    /**
+     * Send events
+     */
+    @Override
+    public SendEventModel addSendEvent(DestinyType destinyType) {
+        RetentionSendEventEntity entity = new RetentionSendEventEntity();
+        entity.setCreatedTimestamp(LocalDateTime.now());
+        entity.setResult(SendResultType.ON_PROCESS);
+        entity.setDestinyType(destinyType);
+        entity.setRetention(retention);
+        em.persist(entity);
+        //em.flush();
+
+        return new SunatSendEventAdapter(session, em, organization, entity);
+    }
+
+    @Override
+    public SendEventModel getSendEventById(String id) {
+        SunatSendEventEntity entity = em.find(SunatSendEventEntity.class, id);
+        if (entity != null) {
+            return new SunatSendEventAdapter(session, em, organization, entity);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean removeSendEvent(String id) {
+        SunatSendEventEntity entity = em.find(SunatSendEventEntity.class, id);
+        if (entity == null)
+            return false;
+
+        em.remove(entity);
+        em.flush();
+        return true;
+    }
+
+    @Override
+    public boolean removeSendEvent(SendEventModel sendEvent) {
+        SunatSendEventEntity entity = em.find(SunatSendEventEntity.class, sendEvent.getId());
+        if (entity == null)
+            return false;
+
+        em.remove(entity);
+        em.flush();
+        return true;
+    }
+
+    /**
+     * Required actions
+     */
     @Override
     public Set<String> getRequiredActions() {
         Set<String> result = new HashSet<>();
@@ -244,6 +318,12 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
             result.add(attr.getAction());
         }
         return result;
+    }
+
+    @Override
+    public void addRequiredAction(RequiredAction action) {
+        String actionName = action.name();
+        addRequiredAction(actionName);
     }
 
     @Override
@@ -262,6 +342,12 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
     }
 
     @Override
+    public void removeRequiredAction(RequiredAction action) {
+        String actionName = action.name();
+        removeRequiredAction(actionName);
+    }
+
+    @Override
     public void removeRequiredAction(String actionName) {
         Iterator<RetentionRequiredActionEntity> it = retention.getRequiredActions().iterator();
         while (it.hasNext()) {
@@ -273,23 +359,99 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
         }
     }
 
-    @Override
-    public void addRequiredAction(RequiredAction action) {
-        String actionName = action.name();
-        addRequiredAction(actionName);
-    }
-
-    @Override
-    public void removeRequiredAction(RequiredAction action) {
-        String actionName = action.name();
-        removeRequiredAction(actionName);
-    }
 
     @Override
     public List<SendEventModel> getSendEvents() {
-        /*return retention.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
-                .collect(Collectors.toList());*/
-        return null;
+        return getSendEvents(-1, -1);
+    }
+
+    @Override
+    public List<SendEventModel> getSendEvents(Integer firstResult, Integer maxResults) {
+        String queryName = "getAllSunatSendEventByRetentionId";
+
+        TypedQuery<SunatSendEventEntity> query = em.createNamedQuery(queryName, SunatSendEventEntity.class);
+        query.setParameter("retentionId", retention.getId());
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<SunatSendEventEntity> results = query.getResultList();
+        List<SendEventModel> sendEvents = results.stream().map(f -> new SunatSendEventAdapter(session, em, organization, f)).collect(Collectors.toList());
+        return sendEvents;
+    }
+
+    @Override
+    public List<SendEventModel> searchForSendEvent(Map<String, String> params) {
+        return searchForSendEvent(params, -1, -1);
+    }
+
+    @Override
+    public List<SendEventModel> searchForSendEvent(Map<String, String> attributes, int firstResult, int maxResults) {
+        StringBuilder builder = new StringBuilder("select u from RetentionSendEventEntity u where u.retention.id = :retentionId");
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String attribute = null;
+            String parameterName = null;
+            String operator = null;
+            if (entry.getKey().equals(RetentionModel.SEND_EVENT_DESTINY_TYPE)) {
+                attribute = "u.destinyType";
+                parameterName = JpaRetentionProvider.SEND_EVENT_DESTINY_TYPE;
+                operator = " = :";
+            } else if (entry.getKey().equals(RetentionModel.SEND_EVENT_TYPE)) {
+                attribute = "lower(u.type)";
+                parameterName = JpaRetentionProvider.SEND_EVENT_TYPE;
+                operator = " like :";
+            } else if (entry.getKey().equals(RetentionModel.SEND_EVENT_RESULT)) {
+                attribute = "u.result";
+                parameterName = JpaRetentionProvider.SEND_EVENT_RESULT;
+                operator = " = :";
+            }
+            if (attribute == null) continue;
+            builder.append(" and ");
+            builder.append(attribute).append(operator).append(parameterName);
+        }
+        builder.append(" order by u.createdTimestamp");
+        String q = builder.toString();
+        TypedQuery<RetentionSendEventEntity> query = em.createQuery(q, RetentionSendEventEntity.class);
+        query.setParameter("retentionId", retention.getId());
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String parameterName = null;
+            Object parameterValue = null;
+            if (entry.getKey().equals(RetentionModel.SEND_EVENT_DESTINY_TYPE)) {
+                parameterName = JpaRetentionProvider.SEND_EVENT_DESTINY_TYPE;
+                parameterValue = DestinyType.valueOf(entry.getValue().toUpperCase());
+            } else if (entry.getKey().equals(RetentionModel.SEND_EVENT_TYPE)) {
+                parameterName = JpaRetentionProvider.SEND_EVENT_TYPE;
+                parameterValue = "%" + entry.getValue().toLowerCase() + "%";
+            } else if (entry.getKey().equals(RetentionModel.SEND_EVENT_RESULT)) {
+                parameterName = JpaRetentionProvider.SEND_EVENT_RESULT;
+                parameterValue = SendResultType.valueOf(entry.getValue().toUpperCase());
+            }
+            if (parameterName == null) continue;
+            query.setParameter(parameterName, parameterValue);
+        }
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<RetentionSendEventEntity> results = query.getResultList();
+        return results.stream().map(f -> new SunatSendEventAdapter(session, em, organization, f)).collect(Collectors.toList());
+    }
+
+    @Override
+    public int sendEventCount() {
+        Object count = em.createNamedQuery("getRetentionSunatSendEventCountByRetention")
+                .setParameter("retentionId", retention.getId())
+                .getSingleResult();
+        return ((Number) count).intValue();
+    }
+
+    @Override
+    public int sendEventCount(Map<String, String> params) {
+        return 0;
     }
 
 }

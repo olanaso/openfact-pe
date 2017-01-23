@@ -94,33 +94,6 @@ public class SunatTypeToModel {
         }
     }
 
-    private static void updateModel(PerceptionLineModel model, SUNATPerceptionDocumentReferenceType type) {
-        if (type.getId() != null && type.getId().getValue() != null) {
-            model.setRelatedDocumentNumber(type.getId().getValue());
-        }
-        if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
-            model.setRelatedIssueDateTime(toDateTime(type.getIssueDate().getValue()));
-        }
-        if (type.getTotalInvoiceAmount() != null && type.getTotalInvoiceAmount().getValue() != null) {
-            model.setTotalDocumentRelated(type.getTotalInvoiceAmount().getValue());
-        }
-        if (type.getSunatPerceptionInformation() != null) {
-            updateModel(model, type.getSunatPerceptionInformation());
-        }
-    }
-
-    private static void updateModel(PerceptionLineModel model, SUNATPerceptionInformationType type) {
-        if (type.getSunatPerceptionAmount() != null && type.getSunatPerceptionAmount().getValue() != null) {
-            model.setSunatNetPerceptionAmount(type.getSunatPerceptionAmount().getValue());
-        }
-        if (type.getSunatNetTotalCashed() != null && type.getSunatNetTotalCashed().getValue() != null) {
-            model.setSunatNetCashed(type.getSunatNetTotalCashed().getValue());
-        }
-        if (type.getSunatPerceptionDate() != null && type.getSunatPerceptionDate().getValue() != null) {
-            model.setPerceptionIssueDateTime(toDateTime(type.getSunatPerceptionDate().getValue()));
-        }
-    }
-
     private static void updateModel(PartyModel model, PartyType type) {
         if (type.getContact() != null) {
             updateModel(model.getContactAsNotNull(), type.getContact());
@@ -147,19 +120,9 @@ public class SunatTypeToModel {
         }
     }
 
-    public static void importRetention(OpenfactSession session, OrganizationModel organization, RetentionModel model,
-                                       RetentionType type) {
+    public static void importRetention(OpenfactSession session, OrganizationModel organization, RetentionModel model, RetentionType type) {
         if (type.getReceiverParty() != null) {
             updateModel(model, type.getReceiverParty());
-        }
-        if (type.getId() != null && type.getId().getValue() != null) {
-            model.setDocumentId(type.getId().getValue());
-        }
-        if (type.getUblVersionID() != null && type.getUblVersionID().getValue() != null) {
-            model.setUblVersionID(type.getUblVersionID().getValue());
-        }
-        if (type.getCustomizationID() != null && type.getCustomizationID().getValue() != null) {
-            model.setCustomizationID(type.getCustomizationID().getValue());
         }
 
         if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
@@ -183,11 +146,6 @@ public class SunatTypeToModel {
         if (type.getNote() != null && !type.getNote().isEmpty()) {
             for (NoteType item : type.getNote()) {
                 model.setNote(item.getValue());
-            }
-        }
-        if (type.getSunatRetentionDocumentReference() != null && !type.getSunatRetentionDocumentReference().isEmpty()) {
-            for (SUNATRetentionDocumentReferenceType item : type.getSunatRetentionDocumentReference()) {
-                updateModel(model.addRetentionLine(), item);
             }
         }
     }
@@ -217,33 +175,6 @@ public class SunatTypeToModel {
     private static void updateModel(RetentionModel model, AddressType type) {
         if (type.getStreetName() != null) {
             model.setEntityAddress(type.getStreetNameValue());
-        }
-    }
-
-    private static void updateModel(RetentionLineModel model, SUNATRetentionDocumentReferenceType type) {
-        if (type.getID() != null && type.getID().getValue() != null) {
-            model.setRelatedDocumentNumber(type.getID().getValue());
-        }
-        if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
-            model.setRelatedIssueDateTime(toDateTime(type.getIssueDate().getValue()));
-        }
-        if (type.getTotalInvoiceAmount() != null && type.getTotalInvoiceAmount().getValue() != null) {
-            model.setTotalDocumentRelated(type.getTotalInvoiceAmount().getValue());
-        }
-        if (type.getSUNATRetentionInformation() != null) {
-            updateModel(model, type.getSUNATRetentionInformation());
-        }
-    }
-
-    private static void updateModel(RetentionLineModel model, SUNATRetentionInformationType type) {
-        if (type.getSUNATRetentionAmount() != null && type.getSUNATRetentionAmount().getValue() != null) {
-            model.setSunatNetRetentionAmount(type.getSUNATRetentionAmount().getValue());
-        }
-        if (type.getSUNATNetTotalPaid() != null && type.getSUNATNetTotalPaid().getValue() != null) {
-            model.setSunatNetCashed(type.getSUNATNetTotalPaid().getValue());
-        }
-        if (type.getSUNATRetentionDate() != null && type.getSUNATRetentionDate().getValue() != null) {
-            model.setRetentionIssueDateTime(toDateTime(type.getSUNATRetentionDate().getValue()));
         }
     }
 

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -19,40 +20,49 @@ import org.openfact.models.search.SearchCriteriaModel;
 import org.openfact.models.search.SearchResultsModel;
 import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.RetentionProvider;
+import org.openfact.pe.models.RetentionModel;
+import org.openfact.pe.models.RetentionProvider;
+import org.openfact.pe.models.jpa.entities.RetentionEntity;
 import org.openfact.pe.models.jpa.entities.RetentionEntity;
 
 public class JpaRetentionProvider extends AbstractHibernateStorage implements RetentionProvider {
 
 	private OpenfactSession session;
 	protected EntityManager em;
-	private static final String DOCUMENT_ID = "ID";
+
+	protected RetentionProvider cache;
+
+	protected static final String DOCUMENT_ID = "documentId";
+	protected static final String ENTITY_NAME = "entityName";
+
+	protected static final String SEND_EVENT_DESTINY_TYPE = "destinyType";
+	protected static final String SEND_EVENT_TYPE = "type";
+	protected static final String SEND_EVENT_RESULT = "result";
 
 	public JpaRetentionProvider(OpenfactSession session, EntityManager em) {
 		this.session = session;
 		this.em = em;
 	}
 
-	@Override
-	public void close() {
-
+	private RetentionProvider retentions() {
+		if (cache == null) {
+			cache = session.getProvider(RetentionProvider.class);
+		}
+		return cache;
 	}
 
-	private RetentionProvider getRetentions() {
-		RetentionProvider cache = session.getProvider(RetentionProvider.class);
-		if (cache != null) {
-			return cache;
-		} else {
-			return session.getProvider(RetentionProvider.class);
-		}
+	@Override
+	public void close() {
+	}
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
 	}
 
 	@Override
 	public RetentionModel addRetention(OrganizationModel organization, String documentId) {
-		if (documentId == null) {
-			throw new ModelException("Invalid documentId, Null value");
-		}
-
-		if (getRetentions().getRetentionByID(organization, documentId) != null) {
+		if (retentions().getRetentionByDocumentId(organization, documentId) != null) {
 			throw new ModelDuplicateException("Retention documentId existed");
 		}
 
@@ -85,15 +95,19 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	}
 
 	@Override
-	public RetentionModel getRetentionByID(OrganizationModel organization, String ID) {
-		TypedQuery<RetentionEntity> query = em.createNamedQuery("getOrganizationRetentionByDocumentId",
-				RetentionEntity.class);
+	public RetentionModel getRetentionByDocumentId(OrganizationModel organization, String ID) {
+		TypedQuery<RetentionEntity> query = em.createNamedQuery("getOrganizationRetentionByDocumentId", RetentionEntity.class);
 		query.setParameter("documentId", ID);
 		query.setParameter("organizationId", organization.getId());
 		List<RetentionEntity> entities = query.getResultList();
 		if (entities.size() == 0)
 			return null;
 		return new RetentionAdapter(session, organization, em, entities.get(0));
+	}
+
+	@Override
+	public void preRemove(OrganizationModel organization) {
+
 	}
 
 	@Override
@@ -104,26 +118,16 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	@Override
 	public boolean removeRetention(OrganizationModel organization, RetentionModel retention) {
 		RetentionEntity retentionEntity = em.find(RetentionEntity.class, retention.getId());
-		if (retentionEntity == null)
-			return false;
+		if (retentionEntity == null) return false;
 		removeRetention(retentionEntity);
-		session.getOpenfactSessionFactory().publish(new RetentionModel.RetentionRemovedEvent() {
-
-			@Override
-			public RetentionModel getRetention() {
-				return retention;
-			}
-
-			@Override
-			public OpenfactSession getOpenfactSession() {
-				return session;
-			}
-		});
 		return true;
 	}
 
 	private void removeRetention(RetentionEntity retention) {
 		String id = retention.getId();
+		em.flush();
+		em.clear();
+
 		retention = em.find(RetentionEntity.class, id);
 		if (retention != null) {
 			em.remove(retention);
@@ -145,8 +149,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	}
 
 	@Override
-	public List<RetentionModel> getRetentions(OrganizationModel organization, List<RequiredAction> requeridAction,
-			boolean intoRequeridAction) {
+	public List<RetentionModel> getRetentions(OrganizationModel organization, List<RequiredAction> requeridAction, boolean intoRequeridAction) {
 		String queryName = "";
 		if (intoRequeridAction) {
 			queryName = "select i from RetentionEntity i where i.organizationId = :organizationId and :requeridAction in elements(i.requeridAction) order by i.retentionTypeCode ";
@@ -158,8 +161,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 		query.setParameter("organizationId", organization.getId());
 		query.setParameter("requeridAction", requeridAction);
 		List<RetentionEntity> results = query.getResultList();
-		List<RetentionModel> retentions = results.stream().map(f -> new RetentionAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+		List<RetentionModel> retentions = results.stream().map(f -> new RetentionAdapter(session, organization, em, f)).collect(Collectors.toList());
 		return retentions;
 	}
 
@@ -176,8 +178,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 			query.setMaxResults(maxResults);
 		}
 		List<RetentionEntity> results = query.getResultList();
-		List<RetentionModel> retentions = results.stream().map(f -> new RetentionAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+		List<RetentionModel> retentions = results.stream().map(f -> new RetentionAdapter(session, organization, em, f)).collect(Collectors.toList());
 		return retentions;
 	}
 
@@ -187,8 +188,7 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	}
 
 	@Override
-	public List<RetentionModel> searchForRetention(OrganizationModel organization, String filterText,
-			Integer firstResult, Integer maxResults) {
+	public List<RetentionModel> searchForRetention(OrganizationModel organization, String filterText, Integer firstResult, Integer maxResults) {
 		TypedQuery<RetentionEntity> query = em.createNamedQuery("searchForRetention", RetentionEntity.class);
 		query.setParameter("organizationId", organization.getId());
 		query.setParameter("search", "%" + filterText.toLowerCase() + "%");
@@ -199,14 +199,12 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 			query.setMaxResults(maxResults);
 		}
 		List<RetentionEntity> results = query.getResultList();
-		List<RetentionModel> retentions = results.stream().map(f -> new RetentionAdapter(session, organization, em, f))
-				.collect(Collectors.toList());
+		List<RetentionModel> retentions = results.stream().map(f -> new RetentionAdapter(session, organization, em, f)).collect(Collectors.toList());
 		return retentions;
 	}
 
 	@Override
-	public SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization,
-			SearchCriteriaModel criteria) {
+	public SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization, SearchCriteriaModel criteria) {
 		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
 		SearchResultsModel<RetentionEntity> entityResult = find(criteria, RetentionEntity.class);
@@ -221,12 +219,10 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	}
 
 	@Override
-	public SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization,
-			SearchCriteriaModel criteria, String filterText) {
+	public SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization, SearchCriteriaModel criteria, String filterText) {
 		criteria.addFilter("organizationId", organization.getId(), SearchCriteriaFilterOperator.eq);
 
-		SearchResultsModel<RetentionEntity> entityResult = findFullText(criteria, RetentionEntity.class, filterText,
-				DOCUMENT_ID);
+		SearchResultsModel<RetentionEntity> entityResult = findFullText(criteria, RetentionEntity.class, filterText, DOCUMENT_ID, ENTITY_NAME);
 		List<RetentionEntity> entities = entityResult.getModels();
 
 		SearchResultsModel<RetentionModel> searchResult = new SearchResultsModel<>();
@@ -248,13 +244,12 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 	}
 
 	@Override
-	public ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc,
-			int scrollSize) {
+	public ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc, int scrollSize) {
 		if (scrollSize == -1) {
 			scrollSize = 10;
 		}
 		String queryName = null;
-		if(asc) {
+		if (asc) {
 			queryName = "getAllRetentionsByOrganization";
 		} else {
 			queryName = "getAllRetentionsByOrganizationDesc";
@@ -270,47 +265,67 @@ public class JpaRetentionProvider extends AbstractHibernateStorage implements Re
 		return result;
 	}
 
-	public ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc, int scrollSize,
-			int fetchSize) {
-		// if (scrollSize == -1) {
-		// scrollSize = 5;
-		// }
-		// if (fetchSize == -1) {
-		// scrollSize = 1;
-		// }
-		//
-		// Criteria criteria =
-		// getSession().createCriteria(RetentionEntity.class)
-		// .add(Restrictions.eq("organizationId", organization.getId()))
-		// .addOrder(asc ? Order.asc("createdTimestamp") :
-		// Order.desc("createdTimestamp"));
-		//
-		// JpaScrollAdapter<RetentionModel, RetentionEntity> result = new
-		// JpaScrollAdapter<>(criteria, scrollSize,
-		// f -> new RetentionAdapter(session, organization, em, f));
-		return null;
+	@Override
+	public ScrollModel<List<RetentionModel>> getRetentionsScroll(OrganizationModel organization, int scrollSize, String... requiredAction) {
+		if (scrollSize == -1) {
+			scrollSize = 10;
+		}
+
+		TypedQuery<RetentionEntity> query = em.createNamedQuery("getAllRetentionsByRequiredActionAndOrganization", RetentionEntity.class);
+		query.setParameter("organizationId", organization.getId());
+		query.setParameter("requiredAction", new ArrayList<>(Arrays.asList(requiredAction)));
+
+		ScrollModel<List<RetentionModel>> result = new ScrollPagingAdapter<>(RetentionEntity.class, query, f -> {
+			return f.stream().map(m -> new RetentionAdapter(session, organization, em, m)).collect(Collectors.toList());
+		});
+		return result;
 	}
 
 	@Override
-	protected EntityManager getEntityManager() {
-		return em;
+	public List<RetentionModel> searchForRetention(Map<String, String> params, OrganizationModel organization) {
+		return searchForRetention(params, organization, -1, -1);
 	}
 
 	@Override
-	public ScrollModel<List<RetentionModel>> getRetentionsScroll(OrganizationModel organization, int scrollSize,
-			String... requiredAction) {
-		 if (scrollSize == -1) {
-	            scrollSize = 10;
-	        }
-
-	        TypedQuery<RetentionEntity> query = em.createNamedQuery("getAllRetentionsByRequiredActionAndOrganization", RetentionEntity.class);
-	        query.setParameter("organizationId", organization.getId());
-	        query.setParameter("requiredAction", new ArrayList<>(Arrays.asList(requiredAction)));
-
-	        ScrollModel<List<RetentionModel>> result = new ScrollPagingAdapter<>(RetentionEntity.class, query, f -> {
-	            return f.stream().map(m -> new RetentionAdapter(session, organization, em, m)).collect(Collectors.toList());
-	        });
-	        return result;
+	public List<RetentionModel> searchForRetention(Map<String, String> attributes, OrganizationModel organization, Integer firstResult, Integer maxResults) {
+		StringBuilder builder = new StringBuilder("select u from RetentionEntity u where u.organizationId = :organizationId");
+		for (Map.Entry<String, String> entry : attributes.entrySet()) {
+			String attribute = null;
+			String parameterName = null;
+			if (entry.getKey().equals(RetentionModel.DOCUMENT_ID)) {
+				attribute = "lower(u.documentId)";
+				parameterName = JpaRetentionProvider.DOCUMENT_ID;
+			} else if (entry.getKey().equals(RetentionModel.ENTITY_NAME)) {
+				attribute = "lower(u.entityName)";
+				parameterName = JpaRetentionProvider.ENTITY_NAME;
+			}
+			if (attribute == null) continue;
+			builder.append(" and ");
+			builder.append(attribute).append(" like :").append(parameterName);
+		}
+		builder.append(" order by u.createdTimestamp");
+		String q = builder.toString();
+		TypedQuery<RetentionEntity> query = em.createQuery(q, RetentionEntity.class);
+		query.setParameter("organizationId", organization.getId());
+		for (Map.Entry<String, String> entry : attributes.entrySet()) {
+			String parameterName = null;
+			if (entry.getKey().equals(RetentionModel.DOCUMENT_ID)) {
+				parameterName = JpaRetentionProvider.DOCUMENT_ID;
+			} else if (entry.getKey().equals(RetentionModel.ENTITY_NAME)) {
+				parameterName = JpaRetentionProvider.ENTITY_NAME;
+			}
+			if (parameterName == null) continue;
+			query.setParameter(parameterName, "%" + entry.getValue().toLowerCase() + "%");
+		}
+		if (firstResult != -1) {
+			query.setFirstResult(firstResult);
+		}
+		if (maxResults != -1) {
+			query.setMaxResults(maxResults);
+		}
+		List<RetentionEntity> results = query.getResultList();
+		List<RetentionModel> retentions = results.stream().map(f -> new RetentionAdapter(session, organization, em, f)).collect(Collectors.toList());
+		return retentions;
 	}
 
 }

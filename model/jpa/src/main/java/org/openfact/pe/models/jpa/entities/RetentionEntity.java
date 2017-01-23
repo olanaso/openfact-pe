@@ -41,10 +41,9 @@ public class RetentionEntity {
 	@NotNull
 	@Column(name = "DOCUMENT_ID")
 	private String documentId;
-	@Column(name = "UBL_VERSIONID")
-	private String ublVersionId;
-	@Column(name = "CUSTOMIZATION_ID")
-	private String customizationId;
+
+	@Column(name = "XML_FILE_ID")
+	private String xmlFileId;
 
 	@NotNull
 	@Column(name = "ORGANIZATION_ID")
@@ -87,14 +86,6 @@ public class RetentionEntity {
 	@Type(type = "org.hibernate.type.LocalDateTimeType")
 	private LocalDateTime issueDateTime;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "retention")
-	private List<RetentionLineEntity> retentionLines = new ArrayList<>();
-
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "XML_DOCUMENT")
-	private byte[] xmlDocument;
-
 	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy="retention")
 	private Collection<RetentionRequiredActionEntity> requiredActions = new ArrayList<>();
 
@@ -121,20 +112,12 @@ public class RetentionEntity {
 		this.documentId = documentId;
 	}
 
-	public String getUblVersionId() {
-		return ublVersionId;
+	public String getXmlFileId() {
+		return xmlFileId;
 	}
 
-	public void setUblVersionId(String ublVersionId) {
-		this.ublVersionId = ublVersionId;
-	}
-
-	public String getCustomizationId() {
-		return customizationId;
-	}
-
-	public void setCustomizationId(String customizationId) {
-		this.customizationId = customizationId;
+	public void setXmlFileId(String xmlFileId) {
+		this.xmlFileId = xmlFileId;
 	}
 
 	public String getOrganizationId() {
@@ -241,22 +224,6 @@ public class RetentionEntity {
 		this.issueDateTime = issueDateTime;
 	}
 
-	public List<RetentionLineEntity> getRetentionLines() {
-		return retentionLines;
-	}
-
-	public void setRetentionLines(List<RetentionLineEntity> retentionLines) {
-		this.retentionLines = retentionLines;
-	}
-
-	public byte[] getXmlDocument() {
-		return xmlDocument;
-	}
-
-	public void setXmlDocument(byte[] xmlDocument) {
-		this.xmlDocument = xmlDocument;
-	}
-
 	public Collection<RetentionRequiredActionEntity> getRequiredActions() {
 		return requiredActions;
 	}
@@ -279,36 +246,5 @@ public class RetentionEntity {
 
 	public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getDocumentId() == null) ? 0 : getDocumentId().hashCode());
-		result = prime * result + ((getOrganizationId() == null) ? 0 : getOrganizationId().hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		RetentionEntity other = (RetentionEntity) obj;
-		if (getDocumentId() == null) {
-			if (other.getDocumentId() != null)
-				return false;
-		} else if (!getDocumentId().equals(other.getDocumentId()))
-			return false;
-		if (getOrganizationId() == null) {
-			if (other.getOrganizationId() != null)
-				return false;
-		} else if (!getOrganizationId().equals(other.getOrganizationId()))
-			return false;
-		return true;
 	}
 }

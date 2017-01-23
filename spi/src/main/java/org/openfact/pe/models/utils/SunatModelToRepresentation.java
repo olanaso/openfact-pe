@@ -59,48 +59,6 @@ public class SunatModelToRepresentation {
         return rep;
     }
 
-    private static DocumentoSunatLineRepresentation toRepresentation(PerceptionLineModel model) {
-        DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
-        if (model.getRelatedDocumentType() != null) {
-            rep.setTipoDocumentoRelacionado(model.getRelatedDocumentType());
-        }
-        if (model.getRelatedDocumentNumber() != null) {
-            rep.setNumeroDocumentoRelacionado(model.getRelatedDocumentNumber());
-        }
-        if (model.getRelatedIssueDateTime() != null) {
-            rep.setFechaDocumentoRelacionado(DateUtils.asDate(model.getRelatedIssueDateTime()));
-        }
-        if (model.getRelatedDocumentCurrency() != null) {
-            rep.setMonedaDocumentoRelacionado(model.getRelatedDocumentCurrency());
-        }
-        if (model.getTotalDocumentRelated() != null) {
-            rep.setTotalDocumentoRelacionado(model.getTotalDocumentRelated());
-        }
-        if (model.getTypeChange() != null) {
-            rep.setTipoCambio(model.getTypeChange());
-        }
-        if (model.getChangeIssueDateTime() != null) {
-            rep.setFechaCambio(DateUtils.asDate(model.getChangeIssueDateTime()));
-        }
-        if (model.getTotalPerceptionPayment() != null) {
-            rep.setPagoDocumentoSunat(model.getTotalPerceptionPayment());
-        }
-        if (model.getPerceptionPaymentNumber() != null) {
-            rep.setNumeroPago(model.getPerceptionPaymentNumber());
-        }
-        if (model.getPerceptionIssueDateTime() != null) {
-            rep.setFechaDocumentoSunat(DateUtils.asDate(model.getPerceptionIssueDateTime()));
-        }
-        if (model.getSunatNetPerceptionAmount() != null) {
-            rep.setImporteDocumentoSunat(model.getSunatNetPerceptionAmount());
-        }
-        if (model.getSunatNetCashed() != null) {
-            rep.setImportePago(model.getSunatNetCashed());
-        }
-        return rep;
-    }
-
-
     public static DocumentoSunatRepresentation toRepresentation(RetentionModel model) {
         DocumentoSunatRepresentation rep = new DocumentoSunatRepresentation();
         if (model.getRequiredActions() != null) {
@@ -148,52 +106,6 @@ public class SunatModelToRepresentation {
         if (model.getId() != null) {
             rep.setCodigoUnico(model.getId());
         }
-        if (model.getRetentionLines() != null) {
-            for (RetentionLineModel item : model.getRetentionLines()) {
-                rep.addDetalle(toRepresentation(item));
-            }
-        }
-        return rep;
-    }
-
-    private static DocumentoSunatLineRepresentation toRepresentation(RetentionLineModel model) {
-        DocumentoSunatLineRepresentation rep = new DocumentoSunatLineRepresentation();
-        if (model.getRelatedDocumentType() != null) {
-            rep.setTipoDocumentoRelacionado(model.getRelatedDocumentType());
-        }
-        if (model.getRelatedDocumentNumber() != null) {
-            rep.setNumeroDocumentoRelacionado(model.getRelatedDocumentNumber());
-        }
-        if (model.getRelatedIssueDateTime() != null) {
-            rep.setFechaDocumentoRelacionado(DateUtils.asDate(model.getRelatedIssueDateTime()));
-        }
-        if (model.getRelatedDocumentCurrency() != null) {
-            rep.setMonedaDocumentoRelacionado(model.getRelatedDocumentCurrency());
-        }
-        if (model.getTotalDocumentRelated() != null) {
-            rep.setTotalDocumentoRelacionado(model.getTotalDocumentRelated());
-        }
-        if (model.getTypeChange() != null) {
-            rep.setTipoCambio(model.getTypeChange());
-        }
-        if (model.getChangeIssueDateTime() != null) {
-            rep.setFechaCambio(DateUtils.asDate(model.getChangeIssueDateTime()));
-        }
-        if (model.getTotalRetentionPayment() != null) {
-            rep.setPagoDocumentoSunat(model.getTotalRetentionPayment());
-        }
-        if (model.getRetentionPaymentNumber() != null) {
-            rep.setNumeroPago(model.getRetentionPaymentNumber());
-        }
-        if (model.getRetentionIssueDateTime() != null) {
-            rep.setFechaDocumentoSunat(DateUtils.asDate(model.getRetentionIssueDateTime()));
-        }
-        if (model.getSunatNetRetentionAmount() != null) {
-            rep.setImporteDocumentoSunat(model.getSunatNetRetentionAmount());
-        }
-        if (model.getSunatNetCashed() != null) {
-            rep.setImportePago(model.getSunatNetCashed());
-        }
         return rep;
     }
 
@@ -223,7 +135,7 @@ public class SunatModelToRepresentation {
         }
         if (model.getDocumentId() != null) {
             String[] splits = model.getDocumentId().split("-");
-            rep.setSerieDocumento(splits[0]+"-"+splits[1]);
+            rep.setSerieDocumento(splits[0] + "-" + splits[1]);
             rep.setNumeroDocumento(splits[2]);
         }
         if (model.getIssueDateTime() != null) {

@@ -1,2 +1,4 @@
 org.openfact.pe.models.PerceptionSpi
 org.openfact.pe.models.UBLPerceptionSpi
+org.openfact.pe.models.RetentionSpi
+org.openfact.pe.models.UBLRetentionSpi

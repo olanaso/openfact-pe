@@ -1,6 +1,7 @@
 package org.openfact.pe.models;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openfact.models.DebitNoteModel;
 import org.openfact.models.OrganizationModel;
@@ -12,41 +13,44 @@ import org.openfact.provider.Provider;
 
 public interface RetentionProvider extends Provider {
 
-	 RetentionModel addRetention(OrganizationModel organization, String ID);
+    RetentionModel addRetention(OrganizationModel organization, String documentId);
 
-	    RetentionModel getRetentionById(OrganizationModel organization, String id);
+    RetentionModel getRetentionById(OrganizationModel organization, String id);
 
-	    RetentionModel getRetentionByID(OrganizationModel organization, String ID);
+    RetentionModel getRetentionByDocumentId(OrganizationModel organization, String documentId);
 
-	    boolean removeRetention(OrganizationModel organization, String id);
+    void preRemove(OrganizationModel organization);
 
-	    boolean removeRetention(OrganizationModel organization, RetentionModel retention);
+    boolean removeRetention(OrganizationModel organization, String id);
 
-	    int getRetentionsCount(OrganizationModel organization);
+    boolean removeRetention(OrganizationModel organization, RetentionModel retention);
 
-	    List<RetentionModel> getRetentions(OrganizationModel organization);
+    int getRetentionsCount(OrganizationModel organization);
 
-	    List<RetentionModel> getRetentions(OrganizationModel organization,
-	            List<RequiredAction> requeridAction, boolean intoRequeridAction);
+    List<RetentionModel> getRetentions(OrganizationModel organization);
 
-	    List<RetentionModel> getRetentions(OrganizationModel organization, Integer firstResult, Integer maxResults);
+    List<RetentionModel> getRetentions(OrganizationModel organization, List<RequiredAction> requeridAction, boolean intoRequeridAction);
 
-	    List<RetentionModel> searchForRetention(OrganizationModel organization, String filterText);
+    List<RetentionModel> getRetentions(OrganizationModel organization, Integer firstResult, Integer maxResults);
 
-	    List<RetentionModel> searchForRetention(OrganizationModel organization, String filterText,
-	            Integer firstResult, Integer maxResults);
+    List<RetentionModel> searchForRetention(OrganizationModel organization, String filterText);
 
-	    SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization,
-	            SearchCriteriaModel criteria);
+    List<RetentionModel> searchForRetention(OrganizationModel organization, String filterText, Integer firstResult, Integer maxResults);
 
-	    SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization,
-	            SearchCriteriaModel criteria, String filterText);
+    SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization, SearchCriteriaModel criteria);
 
-	    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization);
+    SearchResultsModel<RetentionModel> searchForRetention(OrganizationModel organization, SearchCriteriaModel criteria, String filterText);
 
-	    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc);
+    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization);
 
-	    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc, int scrollSize);
-	    ScrollModel<List<RetentionModel>> getRetentionsScroll(OrganizationModel organization, int scrollSize, String... requiredAction);
+    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc);
+
+    ScrollModel<RetentionModel> getRetentionsScroll(OrganizationModel organization, boolean asc, int scrollSize);
+
+    ScrollModel<List<RetentionModel>> getRetentionsScroll(OrganizationModel organization, int scrollSize, String... requiredAction);
+
+    List<RetentionModel> searchForRetention(Map<String, String> params, OrganizationModel organization);
+
+    List<RetentionModel> searchForRetention(Map<String, String> params, OrganizationModel organization, Integer firstResult, Integer maxResults);
 
 }

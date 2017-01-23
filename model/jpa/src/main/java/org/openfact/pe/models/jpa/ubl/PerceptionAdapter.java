@@ -1,27 +1,32 @@
 package org.openfact.pe.models.jpa.ubl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.xml.transform.TransformerException;
 
 import org.jboss.logging.Logger;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.SendEventModel;
+import org.json.JSONObject;
+import org.json.XML;
+import org.openfact.JSONObjectUtils;
+import org.openfact.common.converts.DocumentUtils;
+import org.openfact.file.FileModel;
+import org.openfact.file.FileProvider;
+import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.models.jpa.JpaModel;
-import org.openfact.pe.models.PerceptionLineModel;
 import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.jpa.entities.PerceptionLineEntity;
-import org.openfact.pe.models.jpa.entities.PerceptionEntity;
-import org.openfact.pe.models.jpa.entities.PerceptionRequiredActionEntity;
+import org.openfact.pe.models.jpa.entities.*;
+import org.openfact.pe.models.jpa.entities.PerceptionSendEventEntity;
+import org.openfact.pe.models.types.perception.PerceptionType;
+import org.openfact.pe.models.utils.SunatDocumentToType;
+import org.w3c.dom.Document;
 
 public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEntity> {
     protected static final Logger logger = Logger.getLogger(PerceptionAdapter.class);
@@ -31,12 +36,23 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     protected EntityManager em;
     protected OpenfactSession session;
 
-    public PerceptionAdapter(OpenfactSession session, OrganizationModel organization, EntityManager em,
-                             PerceptionEntity perception) {
+    protected FileModel xmlFile;
+    protected PerceptionType perceptionType;
+    protected Document document;
+    protected JSONObject jsonObject;
+
+    public PerceptionAdapter(OpenfactSession session, OrganizationModel organization, EntityManager em, PerceptionEntity perception) {
         this.organization = organization;
         this.session = session;
         this.em = em;
         this.perception = perception;
+    }
+
+    public static PerceptionEntity toEntity(PerceptionModel model, EntityManager em) {
+        if (model instanceof PerceptionAdapter) {
+            return ((PerceptionAdapter) model).getEntity();
+        }
+        return em.getReference(PerceptionEntity.class, model.getId());
     }
 
     @Override
@@ -47,31 +63,6 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     @Override
     public String getId() {
         return perception.getId();
-    }
-
-    @Override
-    public String getOrganizationId() {
-        return perception.getOrganizationId();
-    }
-
-    @Override
-    public String getUblVersionID() {
-        return perception.getUblVersionId();
-    }
-
-    @Override
-    public void setUblVersionID(String ublVersionID) {
-        perception.setUblVersionId(ublVersionID);
-    }
-
-    @Override
-    public String getCustomizationID() {
-        return perception.getCustomizationId();
-    }
-
-    @Override
-    public void setCustomizationID(String customizationID) {
-        perception.setCustomizationId(customizationID);
     }
 
     @Override
@@ -140,8 +131,13 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     }
 
     @Override
-    public void setDocumentId(String documentId) {
-        perception.setDocumentId(documentId);
+    public LocalDateTime getCreatedTimestamp() {
+        return perception.getCreatedTimestamp();
+    }
+
+    @Override
+    public OrganizationModel getOrganization() {
+        return organization;
     }
 
     @Override
@@ -163,7 +159,6 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     public void setSunatPerceptionPercent(BigDecimal sunatPerceptionPercent) {
         perception.setSunatPerceptionPercent(sunatPerceptionPercent);
     }
-
 
     @Override
     public String getNote() {
@@ -206,36 +201,117 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     }
 
     @Override
-    public List<PerceptionLineModel> getPerceptionLines() {
-        return perception.getPerceptionLines().stream()
-                .map(f -> new PerceptionLineAdapter(session, em, f)).collect(Collectors.toList());
-    }
-
-    @Override
-    public PerceptionLineModel addPerceptionLine() {
-        List<PerceptionLineEntity> entities = perception.getPerceptionLines();
-        PerceptionLineEntity entity = new PerceptionLineEntity();
-        entities.add(entity);
-        return new PerceptionLineAdapter(session, em, entity);
-    }
-
-    public static PerceptionEntity toEntity(PerceptionModel model, EntityManager em) {
-        if (model instanceof PerceptionAdapter) {
-            return ((PerceptionAdapter) model).getEntity();
+    public PerceptionType getPerceptionType() {
+        if (perceptionType == null) {
+            FileModel file = getXmlAsFile();
+            if (file != null) {
+                try {
+                    perceptionType = SunatDocumentToType.toPerceptionType(DocumentUtils.byteToDocument(file.getFile()));
+                } catch (Exception e) {
+                    throw new ModelException("Error parsing xml file to Type", e);
+                }
+            }
         }
-        return em.getReference(PerceptionEntity.class, model.getId());
+        return perceptionType;
     }
 
     @Override
-    public byte[] getXmlDocument() {
-        return perception.getXmlDocument();
+    public FileModel getXmlAsFile() {
+        if (xmlFile == null && perception.getXmlFileId() != null) {
+            FileProvider provider = session.getProvider(FileProvider.class);
+            xmlFile = provider.getFileById(organization, perception.getXmlFileId());
+        }
+        return xmlFile;
     }
 
     @Override
-    public void setXmlDocument(byte[] object) {
-        perception.setXmlDocument(object);
+    public void attachXmlFile(FileModel file) {
+        xmlFile = file;
+        perception.setXmlFileId(xmlFile.getId());
     }
 
+    @Override
+    public Document getXmlAsDocument() {
+        if (document == null) {
+            FileModel file = getXmlAsFile();
+            if (file != null) {
+                try {
+                    document = DocumentUtils.byteToDocument(file.getFile());
+                } catch (Exception e) {
+                    throw new ModelException("Error parsing xml file to Document", e);
+                }
+            }
+        }
+        return document;
+    }
+
+    @Override
+    public JSONObject getXmlAsJSONObject() {
+        if (jsonObject == null) {
+            try {
+                Document document = getXmlAsDocument();
+                if (document != null) {
+                    String documentString = DocumentUtils.getDocumentToString(document);
+                    jsonObject = JSONObjectUtils.renameKey(XML.toJSONObject(documentString), ".*:", "");
+                    jsonObject = JSONObjectUtils.getJSONObject(jsonObject, "Perception");
+                }
+            } catch (TransformerException e) {
+                throw new ModelException("Error parsing xml file to JSON", e);
+            }
+        }
+        return jsonObject;
+    }
+
+    /**
+     * Send events
+     */
+    @Override
+    public SendEventModel addSendEvent(DestinyType destinyType) {
+        PerceptionSendEventEntity entity = new PerceptionSendEventEntity();
+        entity.setCreatedTimestamp(LocalDateTime.now());
+        entity.setResult(SendResultType.ON_PROCESS);
+        entity.setDestinyType(destinyType);
+        entity.setPerception(perception);
+        em.persist(entity);
+        //em.flush();
+
+        return new SunatSendEventAdapter(session, em, organization, entity);
+    }
+
+    @Override
+    public SendEventModel getSendEventById(String id) {
+        SunatSendEventEntity entity = em.find(SunatSendEventEntity.class, id);
+        if (entity != null) {
+            return new SunatSendEventAdapter(session, em, organization, entity);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean removeSendEvent(String id) {
+        SunatSendEventEntity entity = em.find(SunatSendEventEntity.class, id);
+        if (entity == null)
+            return false;
+
+        em.remove(entity);
+        em.flush();
+        return true;
+    }
+
+    @Override
+    public boolean removeSendEvent(SendEventModel sendEvent) {
+        SunatSendEventEntity entity = em.find(SunatSendEventEntity.class, sendEvent.getId());
+        if (entity == null)
+            return false;
+
+        em.remove(entity);
+        em.flush();
+        return true;
+    }
+
+    /**
+     * Required actions
+     */
     @Override
     public Set<String> getRequiredActions() {
         Set<String> result = new HashSet<>();
@@ -243,6 +319,12 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
             result.add(attr.getAction());
         }
         return result;
+    }
+
+    @Override
+    public void addRequiredAction(RequiredAction action) {
+        String actionName = action.name();
+        addRequiredAction(actionName);
     }
 
     @Override
@@ -261,6 +343,12 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
     }
 
     @Override
+    public void removeRequiredAction(RequiredAction action) {
+        String actionName = action.name();
+        removeRequiredAction(actionName);
+    }
+
+    @Override
     public void removeRequiredAction(String actionName) {
         Iterator<PerceptionRequiredActionEntity> it = perception.getRequiredActions().iterator();
         while (it.hasNext()) {
@@ -272,21 +360,98 @@ public class PerceptionAdapter implements PerceptionModel, JpaModel<PerceptionEn
         }
     }
 
-    @Override
-    public void addRequiredAction(RequiredAction action) {
-        String actionName = action.name();
-        addRequiredAction(actionName);
-    }
-
-    @Override
-    public void removeRequiredAction(RequiredAction action) {
-        String actionName = action.name();
-        removeRequiredAction(actionName);
-    }
 
     @Override
     public List<SendEventModel> getSendEvents() {
-    	return perception.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
-                .collect(Collectors.toList());
+        return getSendEvents(-1, -1);
+    }
+
+    @Override
+    public List<SendEventModel> getSendEvents(Integer firstResult, Integer maxResults) {
+        String queryName = "getAllSunatSendEventByPerceptionId";
+
+        TypedQuery<SunatSendEventEntity> query = em.createNamedQuery(queryName, SunatSendEventEntity.class);
+        query.setParameter("perceptionId", perception.getId());
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<SunatSendEventEntity> results = query.getResultList();
+        List<SendEventModel> sendEvents = results.stream().map(f -> new SunatSendEventAdapter(session, em, organization, f)).collect(Collectors.toList());
+        return sendEvents;
+    }
+
+    @Override
+    public List<SendEventModel> searchForSendEvent(Map<String, String> params) {
+        return searchForSendEvent(params, -1, -1);
+    }
+
+    @Override
+    public List<SendEventModel> searchForSendEvent(Map<String, String> attributes, int firstResult, int maxResults) {
+        StringBuilder builder = new StringBuilder("select u from PerceptionSendEventEntity u where u.perception.id = :perceptionId");
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String attribute = null;
+            String parameterName = null;
+            String operator = null;
+            if (entry.getKey().equals(PerceptionModel.SEND_EVENT_DESTINY_TYPE)) {
+                attribute = "u.destinyType";
+                parameterName = JpaPerceptionProvider.SEND_EVENT_DESTINY_TYPE;
+                operator = " = :";
+            } else if (entry.getKey().equals(PerceptionModel.SEND_EVENT_TYPE)) {
+                attribute = "lower(u.type)";
+                parameterName = JpaPerceptionProvider.SEND_EVENT_TYPE;
+                operator = " like :";
+            } else if (entry.getKey().equals(PerceptionModel.SEND_EVENT_RESULT)) {
+                attribute = "u.result";
+                parameterName = JpaPerceptionProvider.SEND_EVENT_RESULT;
+                operator = " = :";
+            }
+            if (attribute == null) continue;
+            builder.append(" and ");
+            builder.append(attribute).append(operator).append(parameterName);
+        }
+        builder.append(" order by u.createdTimestamp");
+        String q = builder.toString();
+        TypedQuery<PerceptionSendEventEntity> query = em.createQuery(q, PerceptionSendEventEntity.class);
+        query.setParameter("perceptionId", perception.getId());
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            String parameterName = null;
+            Object parameterValue = null;
+            if (entry.getKey().equals(PerceptionModel.SEND_EVENT_DESTINY_TYPE)) {
+                parameterName = JpaPerceptionProvider.SEND_EVENT_DESTINY_TYPE;
+                parameterValue = DestinyType.valueOf(entry.getValue().toUpperCase());
+            } else if (entry.getKey().equals(PerceptionModel.SEND_EVENT_TYPE)) {
+                parameterName = JpaPerceptionProvider.SEND_EVENT_TYPE;
+                parameterValue = "%" + entry.getValue().toLowerCase() + "%";
+            } else if (entry.getKey().equals(PerceptionModel.SEND_EVENT_RESULT)) {
+                parameterName = JpaPerceptionProvider.SEND_EVENT_RESULT;
+                parameterValue = SendResultType.valueOf(entry.getValue().toUpperCase());
+            }
+            if (parameterName == null) continue;
+            query.setParameter(parameterName, parameterValue);
+        }
+        if (firstResult != -1) {
+            query.setFirstResult(firstResult);
+        }
+        if (maxResults != -1) {
+            query.setMaxResults(maxResults);
+        }
+        List<PerceptionSendEventEntity> results = query.getResultList();
+        return results.stream().map(f -> new SunatSendEventAdapter(session, em, organization, f)).collect(Collectors.toList());
+    }
+
+    @Override
+    public int sendEventCount() {
+        Object count = em.createNamedQuery("getPerceptionSunatSendEventCountByPerception")
+                .setParameter("perceptionId", perception.getId())
+                .getSingleResult();
+        return ((Number) count).intValue();
+    }
+
+    @Override
+    public int sendEventCount(Map<String, String> params) {
+        return 0;
     }
 }

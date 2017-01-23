@@ -55,10 +55,8 @@ public class GenericTypesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoComprobante() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
-        for (TipoComprobante type : TipoComprobante.values()) {
-            if (type.getVisible()) {
-                rep.add(SunatEnumToRepresentation.toRepresentation(type));
-            }
+        for (TipoInvoice type : TipoInvoice.values()) {
+            rep.add(SunatEnumToRepresentation.toRepresentation(type));
         }
         return rep;
     }

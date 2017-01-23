@@ -46,14 +46,12 @@ public class SunatTemplateUtils {
         sb.append(organization.getAssignedIdentificationId()).append("-");
         sb.append(invoiceTypeCode).append("-");
         sb.append(invoice.getDocumentId());
-
         return sb.toString();
     }
 
-    public static String generateFileName(OrganizationModel organization, CreditNoteModel creditNote)
-            throws SendException {
+    public static String generateFileName(OrganizationModel organization, CreditNoteModel creditNote) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
-            throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
+            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
         String codigo = TipoComprobante.NOTA_CREDITO.getCodigo();
         StringBuilder sb = new StringBuilder();
@@ -63,10 +61,9 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateFileName(OrganizationModel organization, DebitNoteModel debitNote)
-            throws SendException {
+    public static String generateFileName(OrganizationModel organization, DebitNoteModel debitNote) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
-            throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
+            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
         String codigo = TipoComprobante.NOTA_DEBITO.getCodigo();
         StringBuilder sb = new StringBuilder();
@@ -76,10 +73,9 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateXmlFileName(OrganizationModel organization, VoidedDocumentModel voidedDocument)
-            throws SendException {
+    public static String generateFileName(OrganizationModel organization, VoidedDocumentModel voidedDocument) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
-            throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
+            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
         StringBuilder sb = new StringBuilder();
         sb.append(organization.getAssignedIdentificationId()).append("-");
@@ -87,10 +83,9 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateXmlFileName(OrganizationModel organization, SummaryDocumentModel summaryDocument)
-            throws SendException {
+    public static String generateFileName(OrganizationModel organization, SummaryDocumentModel summaryDocument) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
-            throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
+            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
 
         StringBuilder sb = new StringBuilder();
@@ -99,10 +94,9 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateXmlFileName(OrganizationModel organization, RetentionModel retention)
-            throws SendException {
+    public static String generateFileName(OrganizationModel organization, RetentionModel retention) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
-            throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
+            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
         String codigo = TipoComprobante.RETENCION.getCodigo();
         StringBuilder sb = new StringBuilder();
@@ -112,10 +106,9 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateXmlFileName(OrganizationModel organization, PerceptionModel perception)
-            throws SendException {
+    public static String generateFileName(OrganizationModel organization, PerceptionModel perception) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
-            throw new SendException("Organization doesn't have assignedIdentificationId", new Throwable());
+            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
         String codigo = TipoComprobante.PERCEPCION.getCodigo();
         StringBuilder sb = new StringBuilder();
@@ -125,16 +118,10 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-//	public static FileModel toFileModel(InternetMediaType mediaType, String fileName, byte[] file) {
-//		FileModel model = new SimpleFileModel();
-//		model.setFile(file);
-//		model.setFileName(fileName + mediaType.getExtension());
-//		model.setMimeType(mediaType.getMimeType());
-//		return model;
-//	}
-
     public static String getOrganizationName(OrganizationModel organization) {
-        if (organization.getDisplayName() != null) {
+        if (organization.getDisplayNameHtml() != null) {
+            return organization.getDisplayNameHtml();
+        } else if (organization.getDisplayName() != null) {
             return organization.getDisplayName();
         } else {
             return ObjectUtil.capitalize(organization.getName());

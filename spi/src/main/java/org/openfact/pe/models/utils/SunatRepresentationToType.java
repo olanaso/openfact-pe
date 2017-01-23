@@ -705,6 +705,7 @@ public class SunatRepresentationToType {
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
             type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }
+
         // Date
         if (rep.getFechaDeEmision() != null) {
             type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
@@ -733,8 +734,7 @@ public class SunatRepresentationToType {
             if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null) {
                 if (!reference.getMonedaDocumentoRelacionado().equalsIgnoreCase(rep.getMonedaDocumento())) {
                     if (reference.getTipoCambio() != null && reference.getTipoCambio().doubleValue() != 0) {
-                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio())
-                                .multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
+                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
                         paid = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(new BigDecimal(amount))).doubleValue();
                     } else {
                         change = true;
@@ -756,14 +756,12 @@ public class SunatRepresentationToType {
         type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
         type.setSunatTotalCashed(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
-            type.addPerceptionDocumentReference(
-                    toPerceptionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
+            type.addPerceptionDocumentReference(toPerceptionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
         }
         return type;
     }
 
-    private static SUNATPerceptionDocumentReferenceType toPerceptionDocumentReferenceType(
-            DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal perception) {
+    private static SUNATPerceptionDocumentReferenceType toPerceptionDocumentReferenceType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal perception) {
         SUNATPerceptionDocumentReferenceType type = new SUNATPerceptionDocumentReferenceType();
         type.setId(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
@@ -777,8 +775,7 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    private static SUNATPerceptionInformationType toSUNATPerceptionInformationType(DocumentoSunatLineRepresentation rep,
-                                                                                   String currencyCode, BigDecimal perception) {
+    private static SUNATPerceptionInformationType toSUNATPerceptionInformationType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal perception) {
         SUNATPerceptionInformationType type = new SUNATPerceptionInformationType();
         type.setSunatPerceptionAmount(toSUNATAmountType(rep, currencyCode, perception));
         if (rep.getFechaDocumentoRelacionado() != null) {
@@ -800,6 +797,7 @@ public class SunatRepresentationToType {
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
             type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }
+
         // Date
         if (rep.getFechaDeEmision() != null) {
             type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
@@ -828,8 +826,7 @@ public class SunatRepresentationToType {
             if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null) {
                 if (!reference.getMonedaDocumentoRelacionado().equalsIgnoreCase(rep.getMonedaDocumento())) {
                     if (reference.getTipoCambio() != null && reference.getTipoCambio().doubleValue() != 0) {
-                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio())
-                                .multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
+                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
                         paid = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(new BigDecimal(amount))).doubleValue();
                     } else {
                         change = true;
@@ -852,14 +849,12 @@ public class SunatRepresentationToType {
         type.setSunatTotalPaid(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
 
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
-            type.addRetentionDocumentReference(
-                    toRetentionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
+            type.addRetentionDocumentReference(toRetentionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
         }
         return type;
     }
 
-    private static SUNATRetentionDocumentReferenceType toRetentionDocumentReferenceType(
-            DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
+    private static SUNATRetentionDocumentReferenceType toRetentionDocumentReferenceType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         SUNATRetentionDocumentReferenceType type = new SUNATRetentionDocumentReferenceType();
         type.setID(toIDType(rep));
         if (rep.getFechaDocumentoRelacionado() != null) {
@@ -874,8 +869,7 @@ public class SunatRepresentationToType {
     }
 
 
-    private static SUNATRetentionInformationType toSUNATRetentionInformation(DocumentoSunatLineRepresentation rep,
-                                                                             String currencyCode, BigDecimal retencion) {
+    private static SUNATRetentionInformationType toSUNATRetentionInformation(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         SUNATRetentionInformationType type = new SUNATRetentionInformationType();
         type.setSUNATRetentionAmount(toSUNATAmountType(rep, currencyCode, retencion));
         if (rep.getFechaDocumentoRelacionado() != null) {
@@ -888,8 +882,7 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    private static AmountType tosetSUNATNetTotalPaidType(DocumentoSunatLineRepresentation rep, String currencyCode,
-                                                         BigDecimal retencion) {
+    private static AmountType tosetSUNATNetTotalPaidType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
         double retentionAmount = 0, totalPaid = 0;
@@ -914,8 +907,7 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    private static AmountType toSUNATAmountType(DocumentoSunatLineRepresentation rep, String currencyCode,
-                                                BigDecimal retencion) {
+    private static AmountType toSUNATAmountType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
         double retentionAmount = 0, totalPaid = 0;

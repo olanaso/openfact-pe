@@ -22,8 +22,10 @@ import javax.xml.transform.TransformerException;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
+import org.openfact.common.util.ObjectUtil;
 import org.openfact.email.EmailException;
 import org.openfact.email.EmailTemplateProvider;
+import org.openfact.events.EventType;
 import org.openfact.file.FileModel;
 import org.openfact.file.FileMymeTypeModel;
 import org.openfact.file.FileProvider;
@@ -39,6 +41,7 @@ import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.utils.*;
 import org.openfact.pe.services.ubl.SunatUBLIDGenerator;
+import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.report.ExportFormat;
 import org.openfact.report.ReportException;
 import org.openfact.ubl.SignerProvider;
@@ -48,6 +51,8 @@ import org.w3c.dom.Document;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PerceptionManager {
 
@@ -192,14 +197,27 @@ public class PerceptionManager {
             FileModel pdfFile = fileProvider.createFile(organization, perception.getDocumentId() + ".pdf", pdfFileBytes);
             FileMymeTypeModel pdfFileMymeType = new FileMymeTypeModel(pdfFile, "application/pdf");
 
+            Map<String, Object> attributes = new HashMap<String, Object>();
+            attributes.put("user", user.getFullName());
+            attributes.put("organizationName", SunatTemplateUtils.getOrganizationName(organization));
+
+            StringBuilder subject = new StringBuilder();
+            if (organization.getDisplayName() != null) {
+                subject.append(organization.getDisplayName());
+            } else {
+                subject.append(organization.getName());
+            }
+            subject.append("/").append("perception").append(" ").append(perception.getDocumentId());
+
             session.getProvider(EmailTemplateProvider.class)
-                    .setOrganization(organization).setUser(user)
+                    .setOrganization(organization)
+                    .setUser(user)
                     .setAttachments(Arrays.asList(xmlFileMymeType, pdfFileMymeType))
-                    .sendPerception(perception);
+                    .send(subject.toString(), "perception.ftl", attributes);
 
             // Write event to the database
             sendEvent.setType("EMAIL");
-            sendEvent.setDescription("Ivoice successfully sended");
+            sendEvent.setDescription("Perception successfully sended");
             sendEvent.attachFile(xmlFile);
             sendEvent.attachFile(pdfFile);
             sendEvent.setResult(SendResultType.SUCCESS);

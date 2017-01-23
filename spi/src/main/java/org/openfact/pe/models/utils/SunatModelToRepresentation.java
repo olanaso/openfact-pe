@@ -56,11 +56,6 @@ public class SunatModelToRepresentation {
             rep.setCodigoUnico(model.getId());
         }
 
-        if (model.getPerceptionLines() != null) {
-            for (PerceptionLineModel item : model.getPerceptionLines()) {
-                rep.addDetalle(toRepresentation(item));
-            }
-        }
         return rep;
     }
 

@@ -13,7 +13,6 @@ public class SunatJpaEntityProvider implements JpaEntityProvider {
         List<Class<?>> entities = new ArrayList<>();
 
         entities.add(SunatSendEventEntity.class);
-        entities.add(SunatStorageFileEntity.class);
 
         entities.add(PerceptionEntity.class);
         entities.add(PerceptionRequiredActionEntity.class);

@@ -24,6 +24,14 @@ public class SunatEnumToRepresentation {
         return rep;
     }
 
+    public static GenericTypeRepresentation toRepresentation(TipoInvoice type) {
+        GenericTypeRepresentation rep = new GenericTypeRepresentation();
+        rep.setCodigo(type.getCodigo());
+        rep.setDenominacion(type.getDenominacion());
+        rep.setLength(type.getLength());
+        return rep;
+    }
+
     public static GenericTypeRepresentation toRepresentation(TipoConceptosTributarios type) {
         GenericTypeRepresentation rep = new GenericTypeRepresentation();
         rep.setCodigo(type.getCodigo());

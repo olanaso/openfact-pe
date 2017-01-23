@@ -12,42 +12,43 @@ import org.openfact.provider.Provider;
 
 public interface PerceptionProvider extends Provider {
 
-	PerceptionModel addPerception(OrganizationModel organization, String ID);
+    PerceptionModel addPerception(OrganizationModel organization, String documentId);
 
-	PerceptionModel getPerceptionById(OrganizationModel organization, String id);
+    PerceptionModel getPerceptionById(OrganizationModel organization, String id);
 
-	PerceptionModel getPerceptionByID(OrganizationModel organization, String ID);
+    PerceptionModel getPerceptionByDocumentId(OrganizationModel organization, String documentId);
 
-	boolean removePerception(OrganizationModel organization, String id);
+    void preRemove(OrganizationModel organization);
 
-	boolean removePerception(OrganizationModel organization, PerceptionModel perception);
+    boolean removePerception(OrganizationModel organization, String id);
 
-	int getPerceptionsCount(OrganizationModel organization);
+    boolean removePerception(OrganizationModel organization, PerceptionModel perception);
 
-	List<PerceptionModel> getPerceptions(OrganizationModel organization);
+    int getPerceptionsCount(OrganizationModel organization);
 
-	List<PerceptionModel> getPerceptions(OrganizationModel organization, List<RequiredAction> requeridAction,
-			boolean intoRequeridAction);
+    List<PerceptionModel> getPerceptions(OrganizationModel organization);
 
-	List<PerceptionModel> getPerceptions(OrganizationModel organization, Integer firstResult, Integer maxResults);
+    List<PerceptionModel> getPerceptions(OrganizationModel organization, List<RequiredAction> requeridAction, boolean intoRequeridAction);
 
-	List<PerceptionModel> searchForPerception(OrganizationModel organization, String filterText);
+    List<PerceptionModel> getPerceptions(OrganizationModel organization, Integer firstResult, Integer maxResults);
 
-	List<PerceptionModel> searchForPerception(OrganizationModel organization, String filterText, Integer firstResult,
-			Integer maxResults);
+    List<PerceptionModel> searchForPerception(OrganizationModel organization, String filterText);
 
-	SearchResultsModel<PerceptionModel> searchForPerception(OrganizationModel organization,
-			SearchCriteriaModel criteria);
+    List<PerceptionModel> searchForPerception(OrganizationModel organization, String filterText, Integer firstResult, Integer maxResults);
 
-	SearchResultsModel<PerceptionModel> searchForPerception(OrganizationModel organization,
-			SearchCriteriaModel criteria, String filterText);
+    SearchResultsModel<PerceptionModel> searchForPerception(OrganizationModel organization, SearchCriteriaModel criteria);
 
-	ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization);
+    SearchResultsModel<PerceptionModel> searchForPerception(OrganizationModel organization, SearchCriteriaModel criteria, String filterText);
 
-	ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc);
+    ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization);
 
-	ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc, int scrollSize);
-	ScrollModel<List<PerceptionModel>> getPerceptionsScroll(OrganizationModel organization, int scrollSize, String... requiredAction);
+    ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc);
 
-	List<PerceptionModel> searchForPerception(Map<String, String> attributes, OrganizationModel organization, Integer firstResult, Integer maxResults);
+    ScrollModel<PerceptionModel> getPerceptionsScroll(OrganizationModel organization, boolean asc, int scrollSize);
+
+    ScrollModel<List<PerceptionModel>> getPerceptionsScroll(OrganizationModel organization, int scrollSize, String... requiredAction);
+
+    List<PerceptionModel> searchForPerception(Map<String, String> params, OrganizationModel organization);
+
+    List<PerceptionModel> searchForPerception(Map<String, String> params, OrganizationModel organization, Integer firstResult, Integer maxResults);
 }

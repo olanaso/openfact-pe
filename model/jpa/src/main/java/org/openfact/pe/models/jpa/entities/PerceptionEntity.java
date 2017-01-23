@@ -37,10 +37,9 @@ public class PerceptionEntity {
     @NotNull
     @Column(name = "DOCUMENT_ID")
     private String documentId;
-    @Column(name = "UBL_VERSIONID")
-    private String ublVersionId;
-    @Column(name = "CUSTOMIZATION_ID")
-    private String customizationId;
+
+    @Column(name = "XML_FILE_ID")
+    private String xmlFileId;
 
     @NotNull
     @Column(name = "ORGANIZATION_ID")
@@ -55,7 +54,7 @@ public class PerceptionEntity {
     @Column(name = "ENTITY_DOCUMENT_NUMBER")
     private String entityDocumentNuber;
 
-     @Column(name = "ENTITY_NAME")
+    @Column(name = "ENTITY_NAME")
     private String entityName;
 
     @Column(name = "ENTITY_ADDRESS")
@@ -83,13 +82,9 @@ public class PerceptionEntity {
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime issueDateTime;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "perception")
-    private List<PerceptionLineEntity> perceptionLines = new ArrayList<>();
-
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "XML_DOCUMENT")
-    private byte[] xmlDocument;
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    @Column(name = "CREATED_TIMESTAMP")
+    private LocalDateTime createdTimestamp;
 
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "perception")
     private Collection<PerceptionRequiredActionEntity> requiredActions = new ArrayList<>();
@@ -97,10 +92,30 @@ public class PerceptionEntity {
     @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true, mappedBy = "perception", fetch = FetchType.LAZY)
     private Collection<PerceptionSendEventEntity> sendEvents = new ArrayList<>();
 
-    @Type(type = "org.hibernate.type.LocalDateTimeType")
-    @Column(name = "CREATED_TIMESTAMP")
-    private LocalDateTime createdTimestamp;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PerceptionEntity other = (PerceptionEntity) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 
     public String getId() {
         return id;
@@ -110,20 +125,20 @@ public class PerceptionEntity {
         this.id = id;
     }
 
-    public String getUblVersionId() {
-        return ublVersionId;
+    public String getDocumentId() {
+        return documentId;
     }
 
-    public void setUblVersionId(String ublVersionId) {
-        this.ublVersionId = ublVersionId;
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
-    public String getCustomizationId() {
-        return customizationId;
+    public String getXmlFileId() {
+        return xmlFileId;
     }
 
-    public void setCustomizationId(String customizationId) {
-        this.customizationId = customizationId;
+    public void setXmlFileId(String xmlFileId) {
+        this.xmlFileId = xmlFileId;
     }
 
     public String getOrganizationId() {
@@ -182,14 +197,6 @@ public class PerceptionEntity {
         this.entityEmail = entityEmail;
     }
 
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
     public String getDocumentCurrencyCode() {
         return documentCurrencyCode;
     }
@@ -238,20 +245,12 @@ public class PerceptionEntity {
         this.issueDateTime = issueDateTime;
     }
 
-    public List<PerceptionLineEntity> getPerceptionLines() {
-        return perceptionLines;
+    public LocalDateTime getCreatedTimestamp() {
+        return createdTimestamp;
     }
 
-    public void setPerceptionLines(List<PerceptionLineEntity> perceptionLines) {
-        this.perceptionLines = perceptionLines;
-    }
-
-    public byte[] getXmlDocument() {
-        return xmlDocument;
-    }
-
-    public void setXmlDocument(byte[] xmlDocument) {
-        this.xmlDocument = xmlDocument;
+    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     public Collection<PerceptionRequiredActionEntity> getRequiredActions() {
@@ -269,39 +268,4 @@ public class PerceptionEntity {
     public void setSendEvents(Collection<PerceptionSendEventEntity> sendEvents) {
         this.sendEvents = sendEvents;
     }
-
-    public LocalDateTime getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(LocalDateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PerceptionEntity other = (PerceptionEntity) obj;
-        if (getId() == null) {
-            if (other.getId() != null)
-                return false;
-        } else if (!getId().equals(other.getId()))
-            return false;
-        return true;
-    }
-
-
 }

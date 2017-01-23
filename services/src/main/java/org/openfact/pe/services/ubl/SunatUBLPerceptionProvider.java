@@ -3,14 +3,27 @@ package org.openfact.pe.services.ubl;
 import java.util.*;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
+import org.openfact.file.FileModel;
+import org.openfact.file.InternetMediaType;
 import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
+import org.openfact.models.enums.RequiredAction;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.models.PerceptionModel;
+import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.UBLPerceptionProvider;
+import org.openfact.pe.models.enums.TipoInvoice;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
+import org.openfact.pe.services.managers.PerceptionManager;
+import org.openfact.pe.services.util.SunatResponseUtils;
+import org.openfact.pe.services.util.SunatSenderUtils;
+import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
@@ -18,212 +31,172 @@ import org.openfact.ubl.UBLWriter;
 import org.w3c.dom.Document;
 
 public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
-	private OpenfactSession session;
+    private OpenfactSession session;
 
-	public SunatUBLPerceptionProvider(OpenfactSession session) {
-		this.session = session;
-	}
+    public SunatUBLPerceptionProvider(OpenfactSession session) {
+        this.session = session;
+    }
 
-	@Override
-	public void close() {
+    @Override
+    public void close() {
 
-	}
+    }
 
-	@Override
-	public UBLIDGenerator<PerceptionType> idGenerator() {
-		return new UBLIDGenerator<PerceptionType>() {
+    @Override
+    public UBLIDGenerator<PerceptionType> idGenerator() {
+        return new UBLIDGenerator<PerceptionType>() {
 
-			@Override
-			public void close() {
-			}
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public String generateID(OrganizationModel organization, PerceptionType perceptionType) {
-				String documentId = SunatUBLIDGenerator.generatePerceptionDocumentId(session, organization);
-				return documentId;
-			}
-		};
-	}
+            @Override
+            public String generateID(OrganizationModel organization, PerceptionType perceptionType) {
+                String documentId = SunatUBLIDGenerator.generatePerceptionDocumentId(session, organization);
+                return documentId;
+            }
+        };
+    }
 
-	@Override
-	public UBLReader<PerceptionType> reader() {
-		return new UBLReader<PerceptionType>() {
+    @Override
+    public UBLReader<PerceptionType> reader() {
+        return new UBLReader<PerceptionType>() {
 
-			@Override
-			public void close() {
-			}
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public PerceptionType read(Document document) {
-				PerceptionType type = SunatDocumentToType.toPerceptionType(document);
-				return type;					
-			}
+            @Override
+            public PerceptionType read(Document document) {
+                PerceptionType type = SunatDocumentToType.toPerceptionType(document);
+                return type;
+            }
 
-			@Override
-			public PerceptionType read(byte[] bytes) {
-				try {
-					Document document = DocumentUtils.byteToDocument(bytes);
-					return read(document);
-				} catch (Exception e) {
-					throw new ModelException(e);
-				}
-			}
-		};
-	}
+            @Override
+            public PerceptionType read(byte[] bytes) {
+                try {
+                    Document document = DocumentUtils.byteToDocument(bytes);
+                    return read(document);
+                } catch (Exception e) {
+                    throw new ModelException(e);
+                }
+            }
+        };
+    }
 
-	@Override
-	public UBLWriter<PerceptionType> writer() {
-		return new UBLWriter<PerceptionType>() {
+    @Override
+    public UBLWriter<PerceptionType> writer() {
+        return new UBLWriter<PerceptionType>() {
 
-			@Override
-			public void close() {
-			}
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public Document write(OrganizationModel organization, PerceptionType perceptionType) {
-				try {
-					Document document = SunatTypeToDocument.toDocument(organization, perceptionType);
-					return document;
-				} catch (JAXBException e) {
-					throw new ModelException(e);
-				}
-			}
-		};
-	}
+            @Override
+            public Document write(OrganizationModel organization, PerceptionType perceptionType) {
+                try {
+                    Document document = SunatTypeToDocument.toDocument(organization, perceptionType);
+                    return document;
+                } catch (JAXBException e) {
+                    throw new ModelException(e);
+                }
+            }
+        };
+    }
 
-	@Override
-	public UBLSender<PerceptionModel> sender() {
-		return new UBLSender<PerceptionModel>() {
+    @Override
+    public UBLSender<PerceptionModel> sender() {
+        return new UBLSender<PerceptionModel>() {
 
-			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel) throws ModelInsuficientData, SendException {
-				return null;
-			}
+            @Override
+            public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perception) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = perception.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, perception, sendEvent);
+                return sendEvent;
+            }
 
-			@Override
-			public void sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+            @Override
+            public void sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                PerceptionManager manager = new PerceptionManager(session);
+                manager.sendToThirdPartyByEmail(organization, perceptionModel, sendEvent, perceptionModel.getEntityEmail());
+            }
 
-			}
+            @Override
+            public SendEventModel sendToThirdParty(OrganizationModel organization, PerceptionModel perception) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = perception.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, perception, sendEvent);
+                return sendEvent;
+            }
 
-			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, PerceptionModel perceptionModel) throws ModelInsuficientData, SendException {
-				return null;
-			}
+            @Override
+            public void sendToThirdParty(OrganizationModel organization, PerceptionModel perception, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+                String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
+                String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
 
-			@Override
-			public void sendToThirdParty(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                if (sunatAddress == null) {
+                    throw new ModelInsuficientData("No se pudo encontrar una url de envio valida");
+                }
+                if (sunatUsername == null || sunatPassword == null) {
+                    throw new ModelInsuficientData("No se pudo encontrar un usuario y/o password valido en la organizacion");
+                }
 
-			}
+                String xmlFilename = "";
+                String zipFileName = "";
+                byte[] zipFile = null;
 
-			@Override
-			public void close() {
-			}
+                SunatSenderUtils sunatSender = null;
+                try {
+                    xmlFilename = SunatTemplateUtils.generateFileName(organization, perception) + ".xml";
+                    zipFileName = SunatTemplateUtils.generateFileName(organization, perception) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(perception.getXmlAsFile().getFile(), xmlFilename);
 
-//			@Override
-//			public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perception)
-//					throws SendException {
-//
-//				// User where the email will be send
-//				UserSenderModel user = new UserSenderModel() {
-//					@Override
-//					public String getFullName() {
-//						return perception.getEntityName();
-//					}
-//
-//					@Override
-//					public String getEmail() {
-//						return perception.getEntityEmail();
-//					}
-//				};
-//
-//				// Attatchments
-//				FileModel file = new SimpleFileModel();
-//				file.setFileName(perception.getDocumentId()+ InternetMediaType.XML.getExtension());
-//				file.setFile(perception.getXmlDocument());
-//				file.setMimeType("application/xml");
-//				SendEventModel sendEvent=null;
-//				try {
-//					Map<String, Object> attributes = new HashMap<String, Object>();
-//					attributes.put("user", new ProfileBean(user));
-//					attributes.put("organizationName", SunatTemplateUtils.getOrganizationName(organization));
-//
-//					session.getProvider(EmailTemplateProvider.class).setOrganization(organization).setUser(user)
-//							.setAttachments(new ArrayList<>(Arrays.asList(file)))
-//							.send(SunatTemplateUtils.toCamelCase(SunatEventType.PERCEPTION) + "Subject",
-//									"event-" + SunatEventType.PERCEPTION.toString().toLowerCase() + ".ftl", attributes);
-//
-//					// Write event to the database
-//					 sendEvent = session.getProvider(SunatSendEventProvider.class)
-//							.addSendEvent(organization, SendResultType.SUCCESS, perception);
-//					sendEvent.setDescription("Perception Sended by Email");
-//					Map<String, String> destiny = new HashMap<>();
-//					destiny.put("email", user.getEmail());
-//					sendEvent.setDestiny(destiny);
-//					if (sendEvent.getResult()) {
-//						perception.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
-//					}
-//					return sendEvent;
-//				} catch (EmailException e) {
-//					sendEvent = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-//							SendResultType.ERROR, perception);
-//					sendEvent.addFileAttatchments(file);
-//					Map<String, String> destiny = new HashMap<>();
-//					destiny.put("email", user.getEmail());
-//					sendEvent.setDestiny(destiny);
-//					sendEvent.setType("EMAIL-CUSTOMER");
-//					sendEvent.setDescription(e.getMessage());
-//				}
-//				return  sendEvent;
-//			}
-//
-//			@Override
-//			public SendEventModel sendToThridParty(OrganizationModel organization, PerceptionModel perception)
-//					throws SendException {
-//				SendEventModel model = null;
-//				byte[] zip = null;
-//				String fileName = "";
-//				try {
-//					fileName = SunatTemplateUtils.generateXmlFileName(organization, perception);
-//					zip = SunatTemplateUtils.generateZip(perception.getXmlDocument(), fileName);
-//					// sender
-//					byte[] response = new SunatSenderUtils(organization, EmissionType.OCPE).sendBill(zip, fileName, InternetMediaType.ZIP);
-//					// Write event to the default database
-//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-//							SendResultType.SUCCESS, perception);
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.OCPE));
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.addFileResponseAttatchments(
-//							SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, "R" + fileName, response));
-//					model.setResponse(SunatResponseUtils.byteResponseToMap(response));
-//					model.setDescription("Perception submitted successfully to SUNAT");
-//					model.setType("SUNAT");
-//					if (model.getResult()) {
-//						perception.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
-//					}
-//				} catch (TransformerException e) {
-//					throw new SendException(e);
-//				} catch (SOAPFaultException e) {
-//					SOAPFault soapFault = e.getFault();
-//					// Write event to the default database
-//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-//							SendResultType.ERROR, perception);
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.OCPE));
-//					model.setType("SUNAT");
-//					model.setDescription(soapFault.getFaultString());
-//					model.setResponse(
-//							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
-//				} catch (Exception e) {
-//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-//							SendResultType.ERROR, perception);
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.OCPE));
-//					model.setType("SUNAT");
-//					model.setDescription(e.getMessage());
-//				}
-//				return model;
-//			}
-		};
-	}
+                    sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
+                    byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
+
+                    sendEvent.setType("SUNAT");
+                    sendEvent.setDescription("Invoice submitted successfully to SUNAT");
+                    sendEvent.setResult(SendResultType.SUCCESS);
+
+                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
+                    sendEvent.attachFile(zipFileModel);
+
+                    FileModel responseFileModel = session.files().createFile(organization, "R" + zipFileName, response);
+                    sendEvent.attachResponseFile(responseFileModel);
+
+                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+
+                    for (Map.Entry<String, String> entry : SunatResponseUtils.byteResponseToMap(response).entrySet()) {
+                        sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
+                    }
+
+                    perception.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                } catch (SOAPFaultException e) {
+                    SOAPFault soapFault = e.getFault();
+
+                    sendEvent.setDescription(soapFault.getFaultString());
+
+                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
+                    sendEvent.attachFile(zipFileModel);
+
+                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+                    for (Map.Entry<String, String> entry : SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()).entrySet()) {
+                        sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
+                    }
+
+                    throw new SunatSendException(soapFault.getFaultString(), e);
+                } catch (Exception e) {
+                    throw new SendException("Could not generate send to third party", e);
+                } catch (Throwable e) {
+                    throw new SendException("Internal Server Error", e);
+                }
+            }
+
+            @Override
+            public void close() {
+            }
+
+        };
+    }
 
 }

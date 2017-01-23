@@ -22,9 +22,9 @@ public class SunatDocumentToType {
         try {
             JAXBContext factory = JAXBContext.newInstance(VoidedDocumentFactory.class);
             Unmarshaller unmarshal = factory.createUnmarshaller();
+
             @SuppressWarnings("unchecked")
-            JAXBElement<VoidedDocumentsType> jaxbVoidedDocumentsType = (JAXBElement<VoidedDocumentsType>) unmarshal
-                    .unmarshal(document);
+            JAXBElement<VoidedDocumentsType> jaxbVoidedDocumentsType = (JAXBElement<VoidedDocumentsType>) unmarshal.unmarshal(document);
             VoidedDocumentsType voidedDocumentsType = jaxbVoidedDocumentsType.getValue();
             return voidedDocumentsType;
         } catch (JAXBException e) {
@@ -36,6 +36,7 @@ public class SunatDocumentToType {
         try {
             JAXBContext factory = JAXBContext.newInstance(RetentionFactory.class);
             Unmarshaller unmarshal = factory.createUnmarshaller();
+
             @SuppressWarnings("unchecked")
             JAXBElement<RetentionType> jaxbRetentionType = (JAXBElement<RetentionType>) unmarshal.unmarshal(document);
             RetentionType retentionType = jaxbRetentionType.getValue();
@@ -49,9 +50,9 @@ public class SunatDocumentToType {
         try {
             JAXBContext factory = JAXBContext.newInstance(SummaryDocumentFactory.class);
             Unmarshaller unmarshal = factory.createUnmarshaller();
+
             @SuppressWarnings("unchecked")
-            JAXBElement<SummaryDocumentsType> jaxbSummaryDocumentsType = (JAXBElement<SummaryDocumentsType>) unmarshal
-                    .unmarshal(document);
+            JAXBElement<SummaryDocumentsType> jaxbSummaryDocumentsType = (JAXBElement<SummaryDocumentsType>) unmarshal.unmarshal(document);
             SummaryDocumentsType summaryDocumentsType = jaxbSummaryDocumentsType.getValue();
             return summaryDocumentsType;
         } catch (JAXBException e) {
@@ -64,9 +65,9 @@ public class SunatDocumentToType {
             JAXBContext factory = JAXBContext.newInstance(PerceptionFactory.class);
             Unmarshaller unmarshal = factory.createUnmarshaller();
 
+
             @SuppressWarnings("unchecked")
-            JAXBElement<PerceptionType> jaxbPerceptionType = (JAXBElement<PerceptionType>) unmarshal
-                    .unmarshal(document);
+            JAXBElement<PerceptionType> jaxbPerceptionType = (JAXBElement<PerceptionType>) unmarshal.unmarshal(document);
             PerceptionType perceptionType = jaxbPerceptionType.getValue();
             return perceptionType;
         } catch (JAXBException e) {

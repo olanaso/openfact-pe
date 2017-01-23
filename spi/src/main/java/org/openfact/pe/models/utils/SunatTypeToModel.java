@@ -39,16 +39,9 @@ public class SunatTypeToModel {
         return date.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
     }
 
-    public static void importPerception(OpenfactSession session, OrganizationModel organization, PerceptionModel model,
-                                        PerceptionType type) {
+    public static void importPerception(OpenfactSession session, OrganizationModel organization, PerceptionModel model, PerceptionType type) {
         if (type.getReceiverParty() != null) {
             updateModel(model, type.getReceiverParty());
-        }
-        if (type.getUblVersionID() != null && type.getUblVersionID().getValue() != null) {
-            model.setUblVersionID(type.getUblVersionID().getValue());
-        }
-        if (type.getCustomizationID() != null && type.getCustomizationID().getValue() != null) {
-            model.setCustomizationID(type.getCustomizationID().getValue());
         }
         if (type.getIssueDate() != null && type.getIssueDate().getValue() != null) {
             model.setIssueDateTime(toDateTime(type.getIssueDate().getValue()));
@@ -69,12 +62,6 @@ public class SunatTypeToModel {
         if (type.getNote() != null && !type.getNote().isEmpty()) {
             for (NoteType item : type.getNote()) {
                 model.setNote(item.getValue());
-            }
-        }
-        if (type.getSunatPerceptionDocumentReference() != null
-                && !type.getSunatPerceptionDocumentReference().isEmpty()) {
-            for (SUNATPerceptionDocumentReferenceType item : type.getSunatPerceptionDocumentReference()) {
-                updateModel(model.addPerceptionLine(), item);
             }
         }
     }
@@ -317,20 +304,21 @@ public class SunatTypeToModel {
         }
 
     }
+
     private static void updateModel(VoidedDocumentLineModel model, VoidedDocumentsLineType type) {
-        if(type.getLineID()!=null){
+        if (type.getLineID() != null) {
             model.setLineId(type.getLineID().getValue());
         }
-        if(type.getDocumentTypeCode()!=null){
+        if (type.getDocumentTypeCode() != null) {
             model.setDocumentTypeCode(type.getDocumentTypeCode().getValue());
         }
-        if(type.getDocumentNumberID()!=null){
+        if (type.getDocumentNumberID() != null) {
             model.setDocumentNumberId(type.getDocumentNumberID().getValue());
         }
-        if(type.getDocumentSerialID()!=null){
+        if (type.getDocumentSerialID() != null) {
             model.setDocumentSerialId(type.getDocumentSerialID().getValue());
         }
-        if(type.getVoidReasonDescription()!=null){
+        if (type.getVoidReasonDescription() != null) {
             model.setVoidReasonDescription(type.getVoidReasonDescription().getValue());
         }
     }

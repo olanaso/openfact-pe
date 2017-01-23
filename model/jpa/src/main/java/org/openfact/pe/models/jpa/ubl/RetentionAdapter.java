@@ -287,8 +287,9 @@ public class RetentionAdapter implements RetentionModel, JpaModel<RetentionEntit
 
     @Override
     public List<SendEventModel> getSendEvents() {
-        return retention.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
-                .collect(Collectors.toList());
+        /*return retention.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+                .collect(Collectors.toList());*/
+        return null;
     }
 
 }

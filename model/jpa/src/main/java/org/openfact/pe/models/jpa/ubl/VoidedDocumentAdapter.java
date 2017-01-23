@@ -132,8 +132,9 @@ public class VoidedDocumentAdapter implements VoidedDocumentModel, JpaModel<Void
 
     @Override
     public List<SendEventModel> getSendEvents() {
-        return voidedDocuments.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
-                .collect(Collectors.toList());
+        /*return voidedDocuments.getSendEvents().stream().map(f -> new SunatSendEventAdapter(session, organization, em, f))
+                .collect(Collectors.toList());*/
+        return null;
     }
 
     @Override

@@ -15,22 +15,26 @@ import org.openfact.models.PartyModel;
 import org.openfact.models.SendEventModel;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.representations.idm.DocumentoSunatLineRepresentation;
 import org.openfact.provider.ProviderEvent;
 import org.w3c.dom.Document;
 
 public interface PerceptionModel {
 
+    String DOCUMENT_ID = "documentId";
+    String ENTITY_NAME = "entityName";
+
     String getId();
-    String getOrganizationId();
     String getDocumentId();
+    LocalDateTime getCreatedTimestamp();
 
-    String getUblVersionID();
-    void setUblVersionID(String ublVersionID);
+    /**
+     * Organization*/
+    OrganizationModel getOrganization();
 
-    String getCustomizationID();
-    void setCustomizationID(String customizationID);
-
+    /**
+     * Document information*/
     String getSunatPerceptionSystemCode();
     void setSunatPerceptionSystemCode(String sunatPerceptionSystemCode);
 
@@ -67,9 +71,7 @@ public interface PerceptionModel {
     LocalDateTime getIssueDateTime();
     void setIssueDateTime(LocalDateTime issueDateTime);
 
-    List<PerceptionLineModel> getPerceptionLines();
-    PerceptionLineModel addPerceptionLine();
-
+    PerceptionType getPerceptionType();
 
     /**
      * Xml
@@ -81,6 +83,15 @@ public interface PerceptionModel {
     JSONObject getXmlAsJSONObject();
 
     /**
+     * Required Actions
+     */
+    Set<String> getRequiredActions();
+    void addRequiredAction(String action);
+    void removeRequiredAction(String action);
+    void addRequiredAction(RequiredAction action);
+    void removeRequiredAction(RequiredAction action);
+
+    /**
      * Send events
      */
     String SEND_EVENT_DESTINY_TYPE = "destinyType";
@@ -88,28 +99,15 @@ public interface PerceptionModel {
     String SEND_EVENT_RESULT = "result";
 
     SendEventModel addSendEvent(DestinyType destinyType);
-    SendEventModel getSendEventById(String id);
+    SendEventModel  getSendEventById(String id);
     boolean removeSendEvent(String id);
     boolean removeSendEvent(SendEventModel sendEvent);
-    List<SendEventModel> getSendEvents();
-    List<SendEventModel> getSendEvents(Integer firstResult, Integer maxResults);
-    List<SendEventModel> searchForSendEvent(Map<String, String> params);
-    List<SendEventModel> searchForSendEvent(Map<String, String> params, int firstResult, int maxResults);
+    List<SendEventModel > getSendEvents();
+    List<SendEventModel > getSendEvents(Integer firstResult, Integer maxResults);
+    List<SendEventModel > searchForSendEvent(Map<String, String> params);
+    List<SendEventModel > searchForSendEvent(Map<String, String> params, int firstResult, int maxResults);
     int sendEventCount();
     int sendEventCount(Map<String, String> params);
-
-    /**
-     * Required Actions
-     */
-    Set<String> getRequiredActions();
-
-    void addRequiredAction(String action);
-
-    void removeRequiredAction(String action);
-
-    void addRequiredAction(RequiredAction action);
-
-    void removeRequiredAction(RequiredAction action);
 
     /**
      * Events interfaces

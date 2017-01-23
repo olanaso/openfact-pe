@@ -2,22 +2,21 @@ package org.openfact.pe.models.jpa.entities;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.openfact.models.enums.DestinyType;
+import org.openfact.models.enums.SendResultType;
 import org.openfact.models.jpa.entities.OrganizationEntity;
+import org.openfact.models.jpa.entities.SendEventDestinyAttributeEntity;
+import org.openfact.models.jpa.entities.SendEventResponseAttributeEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name = "SUNAT_SEND_EVENT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
-@NamedQueries({
-        @NamedQuery(name = "getOrganizationSunatSendEventById", query = "select i from SunatSendEventEntity i where i.organizationId = :organizationId and i.id=:id order by i.createdTimestamp"),
-        @NamedQuery(name = "getAllSunatSendEventsByOrganization", query = "select i from SunatSendEventEntity i where i.organizationId = :organizationId order by i.createdTimestamp")
-})
+@DiscriminatorColumn(name = "TYPE")
 public class SunatSendEventEntity {
 
     @Id
@@ -27,11 +26,15 @@ public class SunatSendEventEntity {
     @Access(AccessType.PROPERTY)
     private String id;
 
-    @Column(name = "RESULT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean result;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "DESTINY_TYPE")
+    private DestinyType destinyType;
 
-    @Column(name = "DESCRIPTION", length = 2000)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RESULT")
+    private SendResultType result;
+
+    @Column(name = "DESCRIPTION", length = 400)
     private String description;
 
     @Column(name = "SEND_TYPE")
@@ -42,32 +45,33 @@ public class SunatSendEventEntity {
     private LocalDateTime createdTimestamp;
 
     @ElementCollection
-    @MapKeyColumn(name = "NAME")
     @Column(name = "VALUE")
-    @CollectionTable(name = "SUNAT_SEND_EVENT_DESTINY", joinColumns = {@JoinColumn(name = "SEND_EVENT_ID")})
-    private Map<String, String> destiny = new HashMap<String, String>();
+    @CollectionTable(name = "SUNAT_SEND_EVENT_FILE_ATTATCHMENT", joinColumns = {@JoinColumn(name = "SEND_EVENT_ID")})
+    private Set<String> fileAttatchmentIds = new HashSet<>();
 
     @ElementCollection
-    @MapKeyColumn(name = "NAME")
     @Column(name = "VALUE")
-    @CollectionTable(name = "SUNAT_SEND_EVENT_REPONSE", joinColumns = {@JoinColumn(name = "SEND_EVENT_ID")})
-    private Map<String, String> response = new HashMap<String, String>();
+    @CollectionTable(name = "SUNAT_SEND_EVENT_FILE_RESPONSE_ATTATCHMENT", joinColumns = {@JoinColumn(name = "SEND_EVENT_ID")})
+    private Set<String> fileResponseAttatchmentIds = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @ElementCollection
-    @CollectionTable(name = "SUNAT_SEND_EVENT_FILES", joinColumns = @JoinColumn(name = "SEND_EVENT_ID"))
-    @MapKeyColumn(name = "FILE_TYPE")
-    private Map<String, SunatStorageFileEntity> fileAttatchments = new HashMap<>();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof SunatSendEventEntity)) return false;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @ElementCollection
-    @CollectionTable(name = "SUNAT_RESPONSE_EVENT_FILES", joinColumns = @JoinColumn(name = "SEND_EVENT_ID"))
-    @MapKeyColumn(name = "FILE_TYPE")
-    private Map<String, SunatStorageFileEntity> fileResponseAttatchments = new HashMap<>();
+        SunatSendEventEntity that = (SunatSendEventEntity) o;
 
-    @NotNull
-    @Column(name = "ORGANIZATION_ID")
-    private String organizationId;
+        if (!getId().equals(that.getId())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
 
     public String getId() {
         return id;
@@ -77,11 +81,19 @@ public class SunatSendEventEntity {
         this.id = id;
     }
 
-    public boolean isResult() {
+    public DestinyType getDestinyType() {
+        return destinyType;
+    }
+
+    public void setDestinyType(DestinyType destinyType) {
+        this.destinyType = destinyType;
+    }
+
+    public SendResultType getResult() {
         return result;
     }
 
-    public void setResult(boolean result) {
+    public void setResult(SendResultType result) {
         this.result = result;
     }
 
@@ -109,43 +121,20 @@ public class SunatSendEventEntity {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public Map<String, String> getDestiny() {
-        return destiny;
+    public Set<String> getFileAttatchmentIds() {
+        return fileAttatchmentIds;
     }
 
-    public void setDestiny(Map<String, String> destiny) {
-        this.destiny = destiny;
+    public void setFileAttatchmentIds(Set<String> fileAttatchmentIds) {
+        this.fileAttatchmentIds = fileAttatchmentIds;
     }
 
-    public Map<String, String> getResponse() {
-        return response;
+    public Set<String> getFileResponseAttatchmentIds() {
+        return fileResponseAttatchmentIds;
     }
 
-    public void setResponse(Map<String, String> response) {
-        this.response = response;
+    public void setFileResponseAttatchmentIds(Set<String> fileResponseAttatchmentIds) {
+        this.fileResponseAttatchmentIds = fileResponseAttatchmentIds;
     }
 
-    public Map<String, SunatStorageFileEntity> getFileAttatchments() {
-        return fileAttatchments;
-    }
-
-    public void setFileAttatchments(Map<String, SunatStorageFileEntity> fileAttatchments) {
-        this.fileAttatchments = fileAttatchments;
-    }
-
-    public Map<String, SunatStorageFileEntity> getFileResponseAttatchments() {
-        return fileResponseAttatchments;
-    }
-
-    public void setFileResponseAttatchments(Map<String, SunatStorageFileEntity> fileResponseAttatchments) {
-        this.fileResponseAttatchments = fileResponseAttatchments;
-    }
-
-    public String getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
-    }
 }

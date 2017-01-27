@@ -65,7 +65,7 @@ public class SunatTypeToDocument {
     }
 
 
-    public static Document toDocument(SummaryDocumentsType type) throws JAXBException {
+    public static Document toDocument(OrganizationModel organization, SummaryDocumentsType type) throws JAXBException {
 
         try {
             SummaryDocumentFactory factory = new SummaryDocumentFactory();
@@ -85,7 +85,7 @@ public class SunatTypeToDocument {
         }
     }
 
-    public static Document toDocument(VoidedDocumentsType type) throws JAXBException {
+    public static Document toDocument(OrganizationModel organization, VoidedDocumentsType type) throws JAXBException {
 
         try {
             VoidedDocumentFactory factory = new VoidedDocumentFactory();

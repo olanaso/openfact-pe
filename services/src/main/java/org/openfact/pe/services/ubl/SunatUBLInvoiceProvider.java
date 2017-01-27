@@ -1,47 +1,34 @@
 package org.openfact.pe.services.ubl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.*;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.transform.TransformerException;
-import javax.xml.ws.soap.SOAPFaultException;
-
-import org.apache.commons.validator.routines.EmailValidator;
-import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
-import org.openfact.email.EmailTemplateProvider;
-import org.openfact.file.FileModel;
-import org.openfact.file.FileMymeTypeModel;
-import org.openfact.file.FileProvider;
-import org.openfact.file.InternetMediaType;
-import org.openfact.models.*;
-import org.openfact.models.enums.DestinyType;
-import org.openfact.models.enums.RequiredAction;
-import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.models.SunatSendException;
-import org.openfact.pe.models.utils.SunatMarshallerUtils;
-import org.openfact.pe.services.util.SunatResponseUtils;
-import org.openfact.pe.services.util.SunatSenderUtils;
-import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.report.ExportFormat;
-import org.openfact.report.ReportException;
-import org.openfact.services.managers.CreditNoteManager;
-import org.openfact.services.managers.InvoiceManager;
-import org.openfact.ubl.*;
-import org.w3c.dom.Document;
-
-import org.openfact.pe.models.enums.*;
-
 import com.helger.ubl21.UBL21Reader;
 import com.helger.ubl21.UBL21Writer;
 import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 import com.helger.xml.serialize.write.XMLWriterSettings;
-
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
+import org.openfact.common.converts.DocumentUtils;
+import org.openfact.file.FileModel;
+import org.openfact.file.InternetMediaType;
+import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
+import org.openfact.models.enums.RequiredAction;
+import org.openfact.models.enums.SendResultType;
+import org.openfact.models.utils.TypeToModel;
+import org.openfact.pe.models.SunatSendException;
+import org.openfact.pe.models.enums.TipoInvoice;
+import org.openfact.pe.models.utils.SunatMarshallerUtils;
+import org.openfact.pe.services.managers.SunatDocumentManager;
+import org.openfact.pe.services.util.SunatResponseUtils;
+import org.openfact.pe.services.util.SunatSenderUtils;
+import org.openfact.pe.services.util.SunatTemplateUtils;
+import org.openfact.ubl.*;
+import org.w3c.dom.Document;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 
@@ -58,7 +45,6 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
     @Override
     public UBLIDGenerator<InvoiceType> idGenerator() {
         return new UBLIDGenerator<InvoiceType>() {
-
             @Override
             public void close() {
             }
@@ -67,14 +53,12 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
             public String generateID(OrganizationModel organization, InvoiceType invoiceType) {
                 return SunatUBLIDGenerator.generateInvoiceDocumentId(session, organization, invoiceType);
             }
-
         };
     }
 
     @Override
     public UBLReader<InvoiceType> reader() {
         return new UBLReader<InvoiceType>() {
-
             @Override
             public void close() {
             }
@@ -88,7 +72,6 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
             public InvoiceType read(Document document) {
                 return UBL21Reader.invoice().read(document);
             }
-
         };
     }
 
@@ -119,31 +102,30 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
     }
 
     @Override
-    public UBLSender<InvoiceModel> sender() {
-        return new UBLSender<InvoiceModel>() {
-
+    public UBLSender<DocumentModel> sender() {
+        return new UBLSender<DocumentModel>() {
             @Override
-            public SendEventModel sendToCustomer(OrganizationModel organization, InvoiceModel invoice) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = invoice.addSendEvent(DestinyType.CUSTOMER);
-                sendToCustomer(organization, invoice, sendEvent);
+            public SendEventModel sendToCustomer(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToCustomer(OrganizationModel organization, InvoiceModel invoice, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
-                InvoiceManager invoiceManager = new InvoiceManager(session);
-                invoiceManager.sendToThirdPartyByEmail(organization, invoice, sendEvent, invoice.getCustomerElectronicMail());
+            public void sendToCustomer(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
+                sunatDocumentManager.sendToThirdPartyByEmail(organization, document, sendEvent, document.getCustomerElectronicMail());
             }
 
             @Override
-            public SendEventModel sendToThirdParty(OrganizationModel organization, InvoiceModel invoice) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = invoice.addSendEvent(DestinyType.THIRD_PARTY);
-                sendToThirdParty(organization, invoice, sendEvent);
+            public SendEventModel sendToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToThirdParty(OrganizationModel organization, InvoiceModel invoice, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+            public void sendToThirdParty(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
                 String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
                 String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
                 String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
@@ -154,7 +136,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
                 if (sunatUsername == null || sunatPassword == null) {
                     throw new ModelInsuficientData("No se pudo encontrar un usuario y/o password valido en la organizacion");
                 }
-                if (invoice.getInvoiceTypeCode().equals(TipoInvoice.BOLETA.getCodigo())) {
+                if (document.getFirstAttribute(TypeToModel.INVOICE_TYPE_CODE).equals(TipoInvoice.BOLETA.getCodigo())) {
                     throw new SunatSendException("Las boletas no pueden ser enviadas individualmente. Use el Resumen diario");
                 }
 
@@ -164,9 +146,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
 
                 SunatSenderUtils sunatSender = null;
                 try {
-                    xmlFilename = SunatTemplateUtils.generateFileName(organization, invoice) + ".xml";
-                    zipFileName = SunatTemplateUtils.generateFileName(organization, invoice) + ".zip";
-                    zipFile = SunatTemplateUtils.generateZip(invoice.getXmlAsFile().getFile(), xmlFilename);
+                    xmlFilename = SunatTemplateUtils.generateInvoiceFileName(organization, document) + ".xml";
+                    zipFileName = SunatTemplateUtils.generateInvoiceFileName(organization, document) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
                     byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
@@ -187,7 +169,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
                         sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
                     }
 
-                    invoice.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 
@@ -212,7 +194,6 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
             @Override
             public void close() {
             }
-
         };
     }
 

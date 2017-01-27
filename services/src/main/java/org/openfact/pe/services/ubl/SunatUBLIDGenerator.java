@@ -8,23 +8,10 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.openfact.common.converts.StringUtils;
-import org.openfact.models.CreditNoteModel;
-import org.openfact.models.DebitNoteModel;
-import org.openfact.models.InvoiceModel;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.ScrollModel;
+import org.openfact.models.*;
+import org.openfact.models.enums.DocumentType;
 import org.openfact.pe.models.enums.TipoComprobante;
-import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.PerceptionProvider;
-import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.enums.*;
-import org.openfact.pe.models.RetentionProvider;
-import org.openfact.pe.models.SummaryDocumentModel;
-import org.openfact.pe.models.SummaryDocumentProvider;
-import org.openfact.pe.models.VoidedDocumentModel;
-import org.openfact.pe.models.VoidedDocumentProvider;
 import org.openfact.pe.models.utils.SunatMarshallerUtils;
 
 public class SunatUBLIDGenerator {
@@ -38,16 +25,16 @@ public class SunatUBLIDGenerator {
         } else if (TipoInvoice.BOLETA.getCodigo().equals(invoiceTypeCode)) {
             tipoInvoice = TipoInvoice.BOLETA;
         } else {
-            throw new ModelException("InvoiceTypeCode Invalido");
+            throw new ModelException("Invoice Type Code Invalido");
         }
 
-        InvoiceModel lastInvoice = null;
-        ScrollModel<InvoiceModel> invoices = session.invoices().getInvoicesScroll(organization, false, 10);
-        Iterator<InvoiceModel> iterator = invoices.iterator();
+        DocumentModel lastInvoice = null;
+        ScrollModel<DocumentModel> invoices = session.documents().getDocumentScroll(organization, DocumentType.INVOICE.toString(), 10, false);
+        Iterator<DocumentModel> iterator = invoices.iterator();
 
         Pattern pattern = Pattern.compile(tipoInvoice.getDocumentIdPattern());
         while (iterator.hasNext()) {
-            InvoiceModel invoice = iterator.next();
+            DocumentModel invoice = iterator.next();
             String documentId = invoice.getDocumentId();
 
             Matcher matcher = pattern.matcher(documentId);
@@ -87,13 +74,13 @@ public class SunatUBLIDGenerator {
 
         TipoComprobante tipoComprobante = TipoComprobante.NOTA_CREDITO;
 
-        CreditNoteModel lastCreditNote = null;
-        ScrollModel<CreditNoteModel> creditNotes = session.creditNotes().getCreditNotesScroll(organization, false, 10);
-        Iterator<CreditNoteModel> iterator = creditNotes.iterator();
+        DocumentModel lastCreditNote = null;
+        ScrollModel<DocumentModel> creditNotes = session.documents().getDocumentScroll(organization, DocumentType.CREDIT_NOTE.toString(), 10, false);
+        Iterator<DocumentModel> iterator = creditNotes.iterator();
 
         Pattern pattern = Pattern.compile(tipoComprobante.getMask());
         while (iterator.hasNext()) {
-            CreditNoteModel creditNote = iterator.next();
+            DocumentModel creditNote = iterator.next();
             String documentId = creditNote.getDocumentId();
 
             Matcher matcher = pattern.matcher(documentId);
@@ -133,13 +120,13 @@ public class SunatUBLIDGenerator {
 
         TipoComprobante tipoComprobante = TipoComprobante.NOTA_DEBITO;
 
-        DebitNoteModel lastDebitNote = null;
-        ScrollModel<DebitNoteModel> debitNotes = session.debitNotes().getDebitNotesScroll(organization, false, 10);
-        Iterator<DebitNoteModel> iterator = debitNotes.iterator();
+        DocumentModel lastDebitNote = null;
+        ScrollModel<DocumentModel> debitNotes = session.documents().getDocumentScroll(organization, DocumentType.DEBIT_NOTE.toString(), 10, false);
+        Iterator<DocumentModel> iterator = debitNotes.iterator();
 
         Pattern pattern = Pattern.compile(tipoComprobante.getMask());
         while (iterator.hasNext()) {
-            DebitNoteModel debitNote = iterator.next();
+            DocumentModel debitNote = iterator.next();
             String documentId = debitNote.getDocumentId();
 
             Matcher matcher = pattern.matcher(documentId);
@@ -171,14 +158,13 @@ public class SunatUBLIDGenerator {
 
     public static String generatePerceptionDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante perceptionCode = TipoComprobante.PERCEPCION;
-        PerceptionModel lastPerception = null;
-        ScrollModel<PerceptionModel> perceptions = session.getProvider(PerceptionProvider.class)
-                .getPerceptionsScroll(organization, false, 4);
-        Iterator<PerceptionModel> iterator = perceptions.iterator();
+        DocumentModel lastPerception = null;
+        ScrollModel<DocumentModel> perceptions = session.documents().getDocumentScroll(organization, SunatDocumentType.PERCEPTION.toString(), 10, false);
+        Iterator<DocumentModel> iterator = perceptions.iterator();
 
         Pattern pattern = Pattern.compile(perceptionCode.getMask());
         while (iterator.hasNext()) {
-            PerceptionModel perception = iterator.next();
+            DocumentModel perception = iterator.next();
             String documentId = perception.getDocumentId();
 
             Matcher matcher = pattern.matcher(documentId);
@@ -209,14 +195,13 @@ public class SunatUBLIDGenerator {
 
     public static String generateRetentionDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante retentionCode = TipoComprobante.RETENCION;
-        RetentionModel lastRetention = null;
-        ScrollModel<RetentionModel> retentions = session.getProvider(RetentionProvider.class)
-                .getRetentionsScroll(organization, false, 4);
-        Iterator<RetentionModel> iterator = retentions.iterator();
+        DocumentModel lastRetention = null;
+        ScrollModel<DocumentModel> retentions = session.documents().getDocumentScroll(organization, SunatDocumentType.RETENTION.toString(), 10, false);
+        Iterator<DocumentModel> iterator = retentions.iterator();
 
         Pattern pattern = Pattern.compile(retentionCode.getMask());
         while (iterator.hasNext()) {
-            RetentionModel retention = iterator.next();
+            DocumentModel retention = iterator.next();
             String documentId = retention.getDocumentId();
 
             Matcher matcher = pattern.matcher(documentId);
@@ -247,14 +232,13 @@ public class SunatUBLIDGenerator {
 
     public static String generateSummaryDocumentDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante summaryDocumentCode = TipoComprobante.RESUMEN_DIARIO;
-        SummaryDocumentModel lastSummaryDocument = null;
-        ScrollModel<SummaryDocumentModel> summaryDocuments = session.getProvider(SummaryDocumentProvider.class)
-                .getSummaryDocumentsScroll(organization, false, 4);
-        Iterator<SummaryDocumentModel> iterator = summaryDocuments.iterator();
+        DocumentModel lastSummaryDocument = null;
+        ScrollModel<DocumentModel> summaryDocuments = session.documents().getDocumentScroll(organization, SunatDocumentType.SUMMARY.toString(), 10, false);
+        Iterator<DocumentModel> iterator = summaryDocuments.iterator();
 
         Pattern pattern = Pattern.compile(summaryDocumentCode.getMask());
         while (iterator.hasNext()) {
-            SummaryDocumentModel summaryDocument = iterator.next();
+            DocumentModel summaryDocument = iterator.next();
             String documentId = summaryDocument.getDocumentId();
 
             Matcher matcher = pattern.matcher(documentId);
@@ -289,14 +273,13 @@ public class SunatUBLIDGenerator {
 
     public static String generateVoidedDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante voidedDocumentCode = TipoComprobante.BAJA;
-        VoidedDocumentModel lastVoidedDocument = null;
-        ScrollModel<VoidedDocumentModel> voidedDocuments = session.getProvider(VoidedDocumentProvider.class)
-                .getVoidedDocumentsScroll(organization, false, 4);
-        Iterator<VoidedDocumentModel> iterator = voidedDocuments.iterator();
+        DocumentModel lastVoidedDocument = null;
+        ScrollModel<DocumentModel> voidedDocuments = session.documents().getDocumentScroll(organization, SunatDocumentType.VOIDED.toString(), 10, false);
+        Iterator<DocumentModel> iterator = voidedDocuments.iterator();
 
         Pattern pattern = Pattern.compile(voidedDocumentCode.getMask());
         while (iterator.hasNext()) {
-            VoidedDocumentModel voidedDocument = iterator.next();
+            DocumentModel voidedDocument = iterator.next();
             String documentId = voidedDocument.getDocumentId();
 
             Matcher matcher = pattern.matcher(documentId);
@@ -328,4 +311,5 @@ public class SunatUBLIDGenerator {
 
         return documentId.toString();
     }
+
 }

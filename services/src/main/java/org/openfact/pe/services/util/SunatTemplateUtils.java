@@ -5,18 +5,12 @@ import java.io.IOException;
 import javax.xml.transform.TransformerException;
 
 import org.openfact.common.util.ObjectUtil;
-import org.openfact.models.CreditNoteModel;
-import org.openfact.models.SendException;
+import org.openfact.models.DocumentModel;
 import org.openfact.models.ModelInsuficientData;
-import org.openfact.models.DebitNoteModel;
-import org.openfact.models.InvoiceModel;
+import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.models.enums.*;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.models.enums.TipoComprobante;
-import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.SummaryDocumentModel;
-import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.services.constants.SunatEventType;
 
 import jodd.io.ZipBuilder;
@@ -28,28 +22,28 @@ public class SunatTemplateUtils {
         return ZipBuilder.createZipInMemory().add(document).path(fileName).save().toBytes();
     }
 
-    public static String generateFileName(OrganizationModel organization, InvoiceModel invoice) throws ModelInsuficientData {
+    public static String generateInvoiceFileName(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
             throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
 
         String invoiceTypeCode = null;
-        if (invoice.getInvoiceTypeCode().equals(TipoInvoice.FACTURA.getCodigo())) {
+        if (document.getFirstAttribute(TypeToModel.INVOICE_TYPE_CODE).equals(TipoInvoice.FACTURA.getCodigo())) {
             invoiceTypeCode = TipoInvoice.FACTURA.getCodigo();
-        } else if (invoice.getInvoiceTypeCode().equals(TipoInvoice.BOLETA.getCodigo())) {
+        } else if (document.getFirstAttribute(TypeToModel.INVOICE_TYPE_CODE).equals(TipoInvoice.BOLETA.getCodigo())) {
             invoiceTypeCode = TipoInvoice.BOLETA.getCodigo();
         } else {
-            throw new ModelInsuficientData("InvoiceTypeCode invalido");
+            throw new ModelInsuficientData("Invoice Type Code invalido");
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append(organization.getAssignedIdentificationId()).append("-");
         sb.append(invoiceTypeCode).append("-");
-        sb.append(invoice.getDocumentId());
+        sb.append(document.getDocumentId());
         return sb.toString();
     }
 
-    public static String generateFileName(OrganizationModel organization, CreditNoteModel creditNote) throws ModelInsuficientData {
+    public static String generateCreditNoteFileName(OrganizationModel organization, DocumentModel creditNote) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
             throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
@@ -61,7 +55,7 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateFileName(OrganizationModel organization, DebitNoteModel debitNote) throws ModelInsuficientData {
+    public static String generateDebitNoteFileName(OrganizationModel organization, DocumentModel debitNote) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
             throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
@@ -73,28 +67,19 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateFileName(OrganizationModel organization, VoidedDocumentModel voidedDocument) throws ModelInsuficientData {
+    public static String generatePerceptionFileName(OrganizationModel organization, DocumentModel perception) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
             throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
+        String codigo = TipoComprobante.PERCEPCION.getCodigo();
         StringBuilder sb = new StringBuilder();
         sb.append(organization.getAssignedIdentificationId()).append("-");
-        sb.append(voidedDocument.getDocumentId());
+        sb.append(codigo).append("-");
+        sb.append(perception.getDocumentId());
         return sb.toString();
     }
 
-    public static String generateFileName(OrganizationModel organization, SummaryDocumentModel summaryDocument) throws ModelInsuficientData {
-        if (organization.getAssignedIdentificationId() == null) {
-            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(organization.getAssignedIdentificationId()).append("-");
-        sb.append(summaryDocument.getDocumentId());
-        return sb.toString();
-    }
-
-    public static String generateFileName(OrganizationModel organization, RetentionModel retention) throws ModelInsuficientData {
+    public static String generateRetentionFileName(OrganizationModel organization, DocumentModel retention) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
             throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
@@ -106,15 +91,24 @@ public class SunatTemplateUtils {
         return sb.toString();
     }
 
-    public static String generateFileName(OrganizationModel organization, PerceptionModel perception) throws ModelInsuficientData {
+    public static String generateVoidedDocumentFileName(OrganizationModel organization, DocumentModel voidedDocument) throws ModelInsuficientData {
         if (organization.getAssignedIdentificationId() == null) {
             throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
-        String codigo = TipoComprobante.PERCEPCION.getCodigo();
         StringBuilder sb = new StringBuilder();
         sb.append(organization.getAssignedIdentificationId()).append("-");
-        sb.append(codigo).append("-");
-        sb.append(perception.getDocumentId());
+        sb.append(voidedDocument.getDocumentId());
+        return sb.toString();
+    }
+
+    public static String generateSummaryFileName(OrganizationModel organization, DocumentModel summaryDocument) throws ModelInsuficientData {
+        if (organization.getAssignedIdentificationId() == null) {
+            throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(organization.getAssignedIdentificationId()).append("-");
+        sb.append(summaryDocument.getDocumentId());
         return sb.toString();
     }
 

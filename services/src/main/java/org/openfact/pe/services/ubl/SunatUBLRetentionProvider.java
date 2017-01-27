@@ -13,13 +13,12 @@ import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.models.RetentionModel;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.services.managers.RetentionManager;
+import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
@@ -42,7 +41,6 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
     @Override
     public UBLIDGenerator<RetentionType> idGenerator() {
         return new UBLIDGenerator<RetentionType>() {
-
             @Override
             public void close() {
 
@@ -59,10 +57,8 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
     @Override
     public UBLReader<RetentionType> reader() {
         return new UBLReader<RetentionType>() {
-
             @Override
             public void close() {
-
             }
 
             @Override
@@ -86,7 +82,6 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
     @Override
     public UBLWriter<RetentionType> writer() {
         return new UBLWriter<RetentionType>() {
-
             @Override
             public void close() {
             }
@@ -104,31 +99,30 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
     }
 
     @Override
-    public UBLSender<RetentionModel> sender() {
-        return new UBLSender<RetentionModel>() {
-
+    public UBLSender<DocumentModel> sender() {
+        return new UBLSender<DocumentModel>() {
             @Override
-            public SendEventModel sendToCustomer(OrganizationModel organization, RetentionModel retention) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = retention.addSendEvent(DestinyType.CUSTOMER);
-                sendToCustomer(organization, retention, sendEvent);
+            public SendEventModel sendToCustomer(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToCustomer(OrganizationModel organization, RetentionModel retention, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
-                RetentionManager manager = new RetentionManager(session);
-                manager.sendToThirdPartyByEmail(organization, retention, sendEvent, retention.getEntityEmail());
+            public void sendToCustomer(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                SunatDocumentManager manager = new SunatDocumentManager(session);
+                manager.sendToThirdPartyByEmail(organization, document, sendEvent, document.getCustomerElectronicMail());
             }
 
             @Override
-            public SendEventModel sendToThirdParty(OrganizationModel organization, RetentionModel retention) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = retention.addSendEvent(DestinyType.THIRD_PARTY);
-                sendToThirdParty(organization, retention, sendEvent);
+            public SendEventModel sendToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToThirdParty(OrganizationModel organization, RetentionModel retention, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+            public void sendToThirdParty(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
                 String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
                 String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
                 String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
@@ -146,9 +140,9 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
 
                 SunatSenderUtils sunatSender = null;
                 try {
-                    xmlFilename = SunatTemplateUtils.generateFileName(organization, retention) + ".xml";
-                    zipFileName = SunatTemplateUtils.generateFileName(organization, retention) + ".zip";
-                    zipFile = SunatTemplateUtils.generateZip(retention.getXmlAsFile().getFile(), xmlFilename);
+                    xmlFilename = SunatTemplateUtils.generateRetentionFileName(organization, document) + ".xml";
+                    zipFileName = SunatTemplateUtils.generateRetentionFileName(organization, document) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
                     byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
@@ -169,7 +163,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
                         sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
                     }
 
-                    retention.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 

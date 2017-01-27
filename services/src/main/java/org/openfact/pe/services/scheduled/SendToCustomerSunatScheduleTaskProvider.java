@@ -1,8 +1,5 @@
 package org.openfact.pe.services.scheduled;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.openfact.models.CreditNoteModel;
 import org.openfact.models.DebitNoteModel;
 import org.openfact.models.InvoiceModel;
@@ -11,20 +8,6 @@ import org.openfact.models.JobReportModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.OrganizationScheduleTaskProvider;
-import org.openfact.models.ScrollModel;
-import org.openfact.models.enums.RequiredAction;
-import org.openfact.pe.models.PerceptionModel;
-import org.openfact.pe.models.PerceptionProvider;
-import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.RetentionProvider;
-import org.openfact.pe.models.SummaryDocumentModel;
-import org.openfact.pe.models.SummaryDocumentProvider;
-import org.openfact.pe.models.VoidedDocumentModel;
-import org.openfact.pe.models.VoidedDocumentProvider;
-import org.openfact.pe.services.managers.PerceptionManager;
-import org.openfact.pe.services.managers.RetentionManager;
-import org.openfact.pe.services.managers.SummaryDocumentManager;
-import org.openfact.pe.services.managers.VoidedDocumentManager;
 import org.openfact.services.managers.CreditNoteManager;
 import org.openfact.services.managers.DebitNoteManager;
 import org.openfact.services.managers.InvoiceManager;

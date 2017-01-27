@@ -9,6 +9,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
 import org.openfact.models.ContactModel;
+import org.openfact.models.DocumentModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.PartyLegalEntityModel;
@@ -39,7 +40,7 @@ public class SunatTypeToModel {
         return date.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
     }
 
-    public static void importPerception(OpenfactSession session, OrganizationModel organization, PerceptionModel model, PerceptionType type) {
+    public static void importPerception(OpenfactSession session, OrganizationModel organization, DocumentModel model, PerceptionType type) {
         if (type.getReceiverParty() != null) {
             updateModel(model, type.getReceiverParty());
         }
@@ -120,7 +121,7 @@ public class SunatTypeToModel {
         }
     }
 
-    public static void importRetention(OpenfactSession session, OrganizationModel organization, RetentionModel model, RetentionType type) {
+    public static void importRetention(OpenfactSession session, OrganizationModel organization, DocumentModel model, RetentionType type) {
         if (type.getReceiverParty() != null) {
             updateModel(model, type.getReceiverParty());
         }
@@ -179,7 +180,7 @@ public class SunatTypeToModel {
     }
 
     public static void importSummaryDocument(OpenfactSession session, OrganizationModel organization,
-                                             SummaryDocumentModel model, SummaryDocumentsType type) {
+                                             DocumentModel model, SummaryDocumentsType type) {
         if (type.getId() != null && type.getId().getValue() != null) {
             model.setDocumentId(type.getId().getValue());
         }
@@ -215,7 +216,7 @@ public class SunatTypeToModel {
     }
 
     public static void importVoidedDocument(OpenfactSession session, OrganizationModel organization,
-                                            VoidedDocumentModel model, VoidedDocumentsType type) {
+                                            DocumentModel model, VoidedDocumentsType type) {
         if (type.getID() != null && type.getID().getValue() != null) {
             model.setDocumentId(type.getID().getValue());
         }

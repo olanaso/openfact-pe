@@ -39,49 +39,39 @@ public class SunatRootResources {
         return new AdminEventBuilder(organization, adminAuth, session, clientConnection);
     }
 
-    @Path("invoices")
-    public InvoicesResource getInvoicesResource(@Context final HttpHeaders headers) {
+    @Path("documents")
+    public DocumentsResource getDocumentsResource(@Context final HttpHeaders headers) {
         AdminEventBuilder adminEvent = getAdminBuilder(headers);
-        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.INVOICE);
-        return new InvoicesResource(session, session.getContext().getOrganization(), adminEvent);
+        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DOCUMENT);
+        return new DocumentsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
-    @Path("credit-notes")
-    public CreditNotesResource getCreditNotesResource(@Context final HttpHeaders headers) {
+    @Path("document-extensions")
+    public DocumentExtensionsResource getInvoicesResource(@Context final HttpHeaders headers) {
         AdminEventBuilder adminEvent = getAdminBuilder(headers);
-        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.CREDIT_NOTE);
-        return new CreditNotesResource(session, session.getContext().getOrganization(), adminEvent);
-    }
-
-    @Path("debit-notes")
-    public DebitNotesResource getDebitNotesResource(@Context final HttpHeaders headers) {
-        AdminEventBuilder adminEvent = getAdminBuilder(headers);
-        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DEBIT_NOTE);
-        return new DebitNotesResource(session, session.getContext().getOrganization(), adminEvent);
+        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DOCUMENT);
+        return new DocumentExtensionsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
     @Path("ubl-extensions/retentions")
     public RetentionsResource getRentionsResource(@Context final HttpHeaders headers) {
         AdminEventBuilder adminEvent = getAdminBuilder(headers);
-        adminEvent.organization(session.getContext().getOrganization()).resource("RETENTION");
+        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DOCUMENT);
         return new RetentionsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
     @Path("ubl-extensions/perceptions")
     public PerceptionsResource getPerceptionsResource(@Context final HttpHeaders headers) {
         AdminEventBuilder adminEvent = getAdminBuilder(headers);
-        adminEvent.organization(session.getContext().getOrganization()).resource("PERCEPTION");
+        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DOCUMENT);
         return new PerceptionsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
-    @Path("ubl-extensions/sumary-documents")
-    public SummaryDocumentsResource getSummaryDocumentsResource() {
-        return new SummaryDocumentsResource(session, session.getContext().getOrganization());
-    }
-
-    @Path("ubl-extensions/voided-documents")
-    public VoidedDocumentsResource getVoidedDocumentsResource() {
-        return new VoidedDocumentsResource(session, session.getContext().getOrganization());
+    @Path("ubl-extensions/void-documents")
+    public VoidedDocumentsResource getVoidedDocumentsResource(@Context final HttpHeaders headers) {
+        AdminEventBuilder adminEvent = getAdminBuilder(headers);
+        adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DOCUMENT);
+        return new VoidedDocumentsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
     @Path("ubl-extensions/generic-types")

@@ -6,31 +6,28 @@ import org.openfact.models.OpenfactSessionFactory;
 import org.openfact.ubl.UBLDebitNoteProvider;
 import org.openfact.ubl.UBLDebitNoteProviderFactory;
 
-/**
- * Created by admin on 11/22/16.
- */
 public class SunatUBLDebitNoteProviderFactory implements UBLDebitNoteProviderFactory {
 
-	@Override
-	public UBLDebitNoteProvider create(OpenfactSession session) {
-		return new SunatUBLDebitNoteProvider(session);
-	}
+    @Override
+    public UBLDebitNoteProvider create(OpenfactSession session) {
+        return new SunatUBLDebitNoteProvider(session);
+    }
 
-	@Override
-	public void init(Scope config) {
-	}
+    @Override
+    public void init(Scope config) {
+    }
 
-	@Override
-	public void postInit(OpenfactSessionFactory factory) {
-	}
+    @Override
+    public void postInit(OpenfactSessionFactory factory) {
+    }
 
-	@Override
-	public void close() {
-	}
+    @Override
+    public void close() {
+    }
 
-	@Override
-	public String getId() {
-		return "sunat";
-	}
+    @Override
+    public String getId() {
+        return "sunat";
+    }
 
 }

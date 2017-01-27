@@ -1,183 +1,190 @@
 package org.openfact.pe.services.ubl;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.bind.JAXBException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.openfact.common.converts.DocumentUtils;
+import org.openfact.file.FileModel;
+import org.openfact.file.InternetMediaType;
 import org.openfact.models.*;
+import org.openfact.models.enums.DestinyType;
+import org.openfact.models.enums.RequiredAction;
+import org.openfact.models.enums.SendResultType;
+import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.UBLVoidedDocumentProvider;
-import org.openfact.pe.models.VoidedDocumentModel;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
+import org.openfact.pe.services.managers.SunatDocumentManager;
+import org.openfact.pe.services.util.SunatResponseUtils;
+import org.openfact.pe.services.util.SunatSenderUtils;
+import org.openfact.pe.services.util.SunatTemplateUtils;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReader;
 import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
 import org.w3c.dom.Document;
 
+import java.util.Map;
+
 public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider {
 
-	private OpenfactSession session;
+    private OpenfactSession session;
 
-	public SunatUBLVoidedDocumentProvider(OpenfactSession session) {
-		this.session = session;
-	}
+    public SunatUBLVoidedDocumentProvider(OpenfactSession session) {
+        this.session = session;
+    }
 
-	@Override
-	public void close() {
+    @Override
+    public void close() {
+    }
 
-	}
+    @Override
+    public UBLIDGenerator<VoidedDocumentsType> idGenerator() {
+        return new UBLIDGenerator<VoidedDocumentsType>() {
+            @Override
+            public void close() {
+            }
 
-	@Override
-	public UBLIDGenerator<VoidedDocumentsType> idGenerator() {
-		return new UBLIDGenerator<VoidedDocumentsType>() {
+            @Override
+            public String generateID(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
+                String documentId = SunatUBLIDGenerator.generateVoidedDocumentId(session, organization);
+                return documentId;
+            }
+        };
+    }
 
-			@Override
-			public void close() {
-			}
+    @Override
+    public UBLReader<VoidedDocumentsType> reader() {
+        return new UBLReader<VoidedDocumentsType>() {
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public String generateID(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
-				String documentId = SunatUBLIDGenerator.generateVoidedDocumentId(session, organization);
-				return documentId;
-			}
-		};
-	}
+            @Override
+            public VoidedDocumentsType read(Document document) {
+                VoidedDocumentsType type = SunatDocumentToType.toVoidedDocumentsType(document);
+                return type;
+            }
 
-	@Override
-	public UBLReader<VoidedDocumentsType> reader() {
-		return new UBLReader<VoidedDocumentsType>() {
+            @Override
+            public VoidedDocumentsType read(byte[] bytes) {
+                try {
+                    Document document = DocumentUtils.byteToDocument(bytes);
+                    return read(document);
+                } catch (Exception e) {
+                    throw new ModelException(e);
+                }
+            }
+        };
+    }
 
-			@Override
-			public void close() {
-			}
+    @Override
+    public UBLWriter<VoidedDocumentsType> writer() {
+        return new UBLWriter<VoidedDocumentsType>() {
+            @Override
+            public void close() {
+            }
 
-			@Override
-			public VoidedDocumentsType read(Document document) {
-				VoidedDocumentsType type = SunatDocumentToType.toVoidedDocumentsType(document);
-				return type;
-			}
+            @Override
+            public Document write(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
+                try {
+                    Document document = SunatTypeToDocument.toDocument(organization, voidedDocumentsType);
+                    return document;
+                } catch (JAXBException e) {
+                    throw new ModelException(e);
+                }
+            }
+        };
+    }
 
-			@Override
-			public VoidedDocumentsType read(byte[] bytes) {
-				try {
-					Document document = DocumentUtils.byteToDocument(bytes);
-					return read(document);
-				} catch (Exception e) {
-					throw new ModelException(e);
-				}
-			}
-		};
-	}
+    @Override
+    public UBLSender<DocumentModel> sender() {
+        return new UBLSender<DocumentModel>() {
+            @Override
+            public void close() {
 
-	@Override
-	public UBLWriter<VoidedDocumentsType> writer() {
-		return new UBLWriter<VoidedDocumentsType>() {
+            }
 
-			@Override
-			public void close() {
-			}
+            @Override
+            public SendEventModel sendToCustomer(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, document, sendEvent);
+                return sendEvent;
+            }
 
-			@Override
-			public Document write(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
-				try {
-					Document document = SunatTypeToDocument.toDocument(voidedDocumentsType);
-					return document;
-				} catch (JAXBException e) {
-					throw new ModelException(e);
-				}
-			}
-		};
-	}
+            @Override
+            public void sendToCustomer(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                SunatDocumentManager manager = new SunatDocumentManager(session);
+                manager.sendToThirdPartyByEmail(organization, document, sendEvent, document.getCustomerElectronicMail());
+            }
 
-	@Override
-	public UBLSender<VoidedDocumentModel> sender() {
-		return new UBLSender<VoidedDocumentModel>() {
+            @Override
+            public SendEventModel sendToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, document, sendEvent);
+                return sendEvent;
+            }
 
-			@Override
-			public SendEventModel sendToCustomer(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel) throws ModelInsuficientData, SendException {
-				return null;
-			}
+            @Override
+            public void sendToThirdParty(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+                String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
+                String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
 
-			@Override
-			public void sendToCustomer(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                if (sunatAddress == null) {
+                    throw new ModelInsuficientData("No se pudo encontrar una url de envio valida");
+                }
+                if (sunatUsername == null || sunatPassword == null) {
+                    throw new ModelInsuficientData("No se pudo encontrar un usuario y/o password valido en la organizacion");
+                }
 
-			}
+                String xmlFilename = "";
+                String zipFileName = "";
+                byte[] zipFile = null;
 
-			@Override
-			public SendEventModel sendToThirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel) throws ModelInsuficientData, SendException {
-				return null;
-			}
+                SunatSenderUtils sunatSender = null;
+                try {
+                    xmlFilename = SunatTemplateUtils.generateVoidedDocumentFileName(organization, document) + ".xml";
+                    zipFileName = SunatTemplateUtils.generateVoidedDocumentFileName(organization, document) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
-			@Override
-			public void sendToThirdParty(OrganizationModel organization, VoidedDocumentModel voidedDocumentModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                    sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
+                    String response = sunatSender.sendSummary(zipFile, zipFileName, InternetMediaType.ZIP);
 
-			}
+                    sendEvent.setType("SUNAT");
+                    sendEvent.setDescription("Invoice submitted successfully to SUNAT");
+                    sendEvent.setResult(SendResultType.SUCCESS);
 
-			@Override
-			public void close() {
-			}
+                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
+                    sendEvent.attachFile(zipFileModel);
 
-//			@Override
-//			public SendEventModel sendToThridParty(OrganizationModel organization, VoidedDocumentModel voidedDocument)
-//					throws SendException {
-//				SendEventModel model = null;
-//				byte[] zip = null;
-//				String fileName = "";
-//				try {
-//					fileName = SunatTemplateUtils.generateXmlFileName(organization, voidedDocument);
-//					zip = SunatTemplateUtils.generateZip(voidedDocument.getXmlDocument(), fileName);
-//					// sender
-//					String response = new SunatSenderUtils(organization, EmissionType.CPE).sendSummary(zip, fileName,
-//							InternetMediaType.ZIP);
-//					// Write event to the default database
-//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-//							SendResultType.SUCCESS, voidedDocument);
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					Map<String, String> result = new HashMap<>();
-//					result.put("ACCEPTED BY SUNAT", "YES");
-//					result.put("TICKET", response);
-//					model.setResponse(result);
-//					model.setDescription("Voided document submitted successfully to SUNAT");
-//					model.setType("SUNAT");
-//					if (model.getResult()) {
-//						voidedDocument.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
-//					}
-//				} catch (TransformerException e) {
-//					throw new SendException(e);
-//				} catch (SOAPFaultException e) {
-//					SOAPFault soapFault = e.getFault();
-//					// Write event to the default database
-//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-//							SendResultType.ERROR, voidedDocument);
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-//					model.setType("SUNAT");
-//					model.setDescription(soapFault.getFaultString());
-//					model.setResponse(
-//							SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()));
-//				} catch (Exception e) {
-//					model = session.getProvider(SunatSendEventProvider.class).addSendEvent(organization,
-//							SendResultType.ERROR, voidedDocument);
-//					model.addFileAttatchments(SunatTemplateUtils.toFileModel(InternetMediaType.ZIP, fileName, zip));
-//					model.setDestiny(SunatSenderUtils.getDestiny(EmissionType.CPE));
-//					model.setType("SUNAT");
-//					model.setDescription(e.getMessage());
-//				}
-//				return model;
-//			}
-//
-//			@Override
-//			public SendEventModel sendToCustomer(OrganizationModel organization, VoidedDocumentModel perception)
-//					throws SendException {
-//				return null;
-//			}
-		};
-	}
+                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+                    sendEvent.setSingleResponseAttribute("ticket", response);
+
+                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                } catch (SOAPFaultException e) {
+                    SOAPFault soapFault = e.getFault();
+
+                    sendEvent.setDescription(soapFault.getFaultString());
+
+                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
+                    sendEvent.attachFile(zipFileModel);
+
+                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+                    for (Map.Entry<String, String> entry : SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()).entrySet()) {
+                        sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
+                    }
+
+                    throw new SunatSendException(soapFault.getFaultString(), e);
+                } catch (Exception e) {
+                    throw new SendException("Could not generate send to third party", e);
+                } catch (Throwable e) {
+                    throw new SendException("Internal Server Error", e);
+                }
+            }
+        };
+    }
 
 }

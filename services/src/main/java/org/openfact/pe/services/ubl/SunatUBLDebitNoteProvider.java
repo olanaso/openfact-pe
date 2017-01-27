@@ -1,14 +1,11 @@
 package org.openfact.pe.services.ubl;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.soap.SOAPFaultException;
-
+import com.helger.ubl21.UBL21Reader;
+import com.helger.ubl21.UBL21Writer;
+import com.helger.xml.microdom.serialize.MicroWriter;
+import com.helger.xml.namespace.MapBasedNamespaceContext;
+import com.helger.xml.serialize.write.XMLWriterSettings;
+import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.file.FileModel;
 import org.openfact.file.InternetMediaType;
@@ -18,25 +15,18 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.utils.SunatMarshallerUtils;
+import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.services.managers.DebitNoteManager;
-import org.openfact.services.managers.DebitNoteManager;
-import org.openfact.ubl.UBLDebitNoteProvider;
-import org.openfact.ubl.UBLIDGenerator;
-import org.openfact.ubl.UBLReader;
-import org.openfact.ubl.UBLSender;
-import org.openfact.ubl.UBLWriter;
+import org.openfact.ubl.*;
 import org.w3c.dom.Document;
 
-import com.helger.ubl21.UBL21Reader;
-import com.helger.ubl21.UBL21Writer;
-import com.helger.xml.microdom.serialize.MicroWriter;
-import com.helger.xml.namespace.MapBasedNamespaceContext;
-import com.helger.xml.serialize.write.XMLWriterSettings;
-
-import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 
@@ -53,7 +43,6 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
     @Override
     public UBLIDGenerator<DebitNoteType> idGenerator() {
         return new UBLIDGenerator<DebitNoteType>() {
-
             @Override
             public void close() {
             }
@@ -68,7 +57,6 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
     @Override
     public UBLReader<DebitNoteType> reader() {
         return new UBLReader<DebitNoteType>() {
-
             @Override
             public void close() {
             }
@@ -82,14 +70,12 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
             public DebitNoteType read(Document document) {
                 return UBL21Reader.debitNote().read(document);
             }
-
         };
     }
 
     @Override
     public UBLWriter<DebitNoteType> writer() {
         return new UBLWriter<DebitNoteType>() {
-
             @Override
             public void close() {
             }
@@ -112,31 +98,31 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
     }
 
     @Override
-    public UBLSender<DebitNoteModel> sender() {
-        return new UBLSender<DebitNoteModel>() {
+    public UBLSender<DocumentModel> sender() {
+        return new UBLSender<DocumentModel>() {
 
             @Override
-            public SendEventModel sendToCustomer(OrganizationModel organization, DebitNoteModel debitNote) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = debitNote.addSendEvent(DestinyType.CUSTOMER);
-                sendToCustomer(organization, debitNote, sendEvent);
+            public SendEventModel sendToCustomer(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToCustomer(OrganizationModel organization, DebitNoteModel debitNote, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
-                DebitNoteManager debitNoteManager = new DebitNoteManager(session);
-                debitNoteManager.sendToThirdPartyByEmail(organization, debitNote, sendEvent, debitNote.getCustomerElectronicMail());
+            public void sendToCustomer(OrganizationModel organization, DocumentModel debitNote, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
+                sunatDocumentManager.sendToThirdPartyByEmail(organization, debitNote, sendEvent, debitNote.getCustomerElectronicMail());
             }
 
             @Override
-            public SendEventModel sendToThirdParty(OrganizationModel organization, DebitNoteModel debitNote) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = debitNote.addSendEvent(DestinyType.THIRD_PARTY);
-                sendToThirdParty(organization, debitNote, sendEvent);
+            public SendEventModel sendToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToThirdParty(OrganizationModel organization, DebitNoteModel debitNote, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+            public void sendToThirdParty(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
                 String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
                 String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
                 String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
@@ -154,9 +140,9 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
 
                 SunatSenderUtils sunatSender = null;
                 try {
-                    xmlFilename = SunatTemplateUtils.generateFileName(organization, debitNote) + ".xml";
-                    zipFileName = SunatTemplateUtils.generateFileName(organization, debitNote) + ".zip";
-                    zipFile = SunatTemplateUtils.generateZip(debitNote.getXmlAsFile().getFile(), xmlFilename);
+                    xmlFilename = SunatTemplateUtils.generateDebitNoteFileName(organization, document) + ".xml";
+                    zipFileName = SunatTemplateUtils.generateDebitNoteFileName(organization, document) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
                     byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
@@ -177,7 +163,7 @@ public class SunatUBLDebitNoteProvider implements UBLDebitNoteProvider {
                         sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
                     }
 
-                    debitNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 

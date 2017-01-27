@@ -13,14 +13,12 @@ import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.pe.models.PerceptionModel;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.UBLPerceptionProvider;
-import org.openfact.pe.models.enums.TipoInvoice;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
-import org.openfact.pe.services.managers.PerceptionManager;
+import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
@@ -45,7 +43,6 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
     @Override
     public UBLIDGenerator<PerceptionType> idGenerator() {
         return new UBLIDGenerator<PerceptionType>() {
-
             @Override
             public void close() {
             }
@@ -61,7 +58,6 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
     @Override
     public UBLReader<PerceptionType> reader() {
         return new UBLReader<PerceptionType>() {
-
             @Override
             public void close() {
             }
@@ -87,7 +83,6 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
     @Override
     public UBLWriter<PerceptionType> writer() {
         return new UBLWriter<PerceptionType>() {
-
             @Override
             public void close() {
             }
@@ -105,31 +100,31 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
     }
 
     @Override
-    public UBLSender<PerceptionModel> sender() {
-        return new UBLSender<PerceptionModel>() {
+    public UBLSender<DocumentModel> sender() {
+        return new UBLSender<DocumentModel>() {
 
             @Override
-            public SendEventModel sendToCustomer(OrganizationModel organization, PerceptionModel perception) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = perception.addSendEvent(DestinyType.CUSTOMER);
-                sendToCustomer(organization, perception, sendEvent);
+            public SendEventModel sendToCustomer(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToCustomer(OrganizationModel organization, PerceptionModel perceptionModel, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
-                PerceptionManager manager = new PerceptionManager(session);
-                manager.sendToThirdPartyByEmail(organization, perceptionModel, sendEvent, perceptionModel.getEntityEmail());
+            public void sendToCustomer(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                SunatDocumentManager manager = new SunatDocumentManager(session);
+                manager.sendToThirdPartyByEmail(organization, document, sendEvent, document.getCustomerElectronicMail());
             }
 
             @Override
-            public SendEventModel sendToThirdParty(OrganizationModel organization, PerceptionModel perception) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = perception.addSendEvent(DestinyType.THIRD_PARTY);
-                sendToThirdParty(organization, perception, sendEvent);
+            public SendEventModel sendToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToThirdParty(OrganizationModel organization, PerceptionModel perception, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+            public void sendToThirdParty(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
                 String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
                 String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
                 String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
@@ -147,9 +142,9 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 
                 SunatSenderUtils sunatSender = null;
                 try {
-                    xmlFilename = SunatTemplateUtils.generateFileName(organization, perception) + ".xml";
-                    zipFileName = SunatTemplateUtils.generateFileName(organization, perception) + ".zip";
-                    zipFile = SunatTemplateUtils.generateZip(perception.getXmlAsFile().getFile(), xmlFilename);
+                    xmlFilename = SunatTemplateUtils.generatePerceptionFileName(organization, document) + ".xml";
+                    zipFileName = SunatTemplateUtils.generatePerceptionFileName(organization, document) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
                     byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
@@ -170,7 +165,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
                         sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
                     }
 
-                    perception.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 
@@ -195,7 +190,6 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
             @Override
             public void close() {
             }
-
         };
     }
 

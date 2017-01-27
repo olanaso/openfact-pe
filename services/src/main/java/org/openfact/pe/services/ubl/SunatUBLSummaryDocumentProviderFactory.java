@@ -15,12 +15,10 @@ public class SunatUBLSummaryDocumentProviderFactory implements UBLSummaryDocumen
 
 	@Override
 	public void init(Scope config) {
-
 	}
 
 	@Override
 	public void postInit(OpenfactSessionFactory factory) {
-
 	}
 
 	@Override

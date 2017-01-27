@@ -1,19 +1,13 @@
 package org.openfact.pe.services.ubl;
 
-import java.io.ByteArrayOutputStream;
-import java.util.*;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.soap.SOAPFault;
-import javax.xml.ws.soap.SOAPFaultException;
-
-import org.apache.commons.validator.routines.EmailValidator;
+import com.helger.ubl21.UBL21Reader;
+import com.helger.ubl21.UBL21Writer;
+import com.helger.xml.microdom.serialize.MicroWriter;
+import com.helger.xml.namespace.MapBasedNamespaceContext;
+import com.helger.xml.serialize.write.XMLWriterSettings;
+import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.email.EmailException;
-import org.openfact.email.EmailTemplateProvider;
 import org.openfact.file.FileModel;
-import org.openfact.file.FileMymeTypeModel;
-import org.openfact.file.FileProvider;
 import org.openfact.file.InternetMediaType;
 import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
@@ -21,22 +15,18 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendResultType;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.utils.SunatMarshallerUtils;
+import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.report.ExportFormat;
-import org.openfact.report.ReportException;
-import org.openfact.services.managers.CreditNoteManager;
 import org.openfact.ubl.*;
 import org.w3c.dom.Document;
 
-import com.helger.ubl21.UBL21Reader;
-import com.helger.ubl21.UBL21Writer;
-import com.helger.xml.microdom.serialize.MicroWriter;
-import com.helger.xml.namespace.MapBasedNamespaceContext;
-import com.helger.xml.serialize.write.XMLWriterSettings;
-
-import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 
 public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 
@@ -53,7 +43,6 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
     @Override
     public UBLIDGenerator<CreditNoteType> idGenerator() {
         return new UBLIDGenerator<CreditNoteType>() {
-
             @Override
             public void close() {
             }
@@ -62,14 +51,12 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
             public String generateID(OrganizationModel organization, CreditNoteType creditNoteType) {
                 return SunatUBLIDGenerator.generateCreditNoteDocumentId(session, organization, creditNoteType);
             }
-
         };
     }
 
     @Override
     public UBLReader<CreditNoteType> reader() {
         return new UBLReader<CreditNoteType>() {
-
             @Override
             public void close() {
             }
@@ -83,14 +70,12 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
             public CreditNoteType read(Document document) {
                 return UBL21Reader.creditNote().read(document);
             }
-
         };
     }
 
     @Override
     public UBLWriter<CreditNoteType> writer() {
         return new UBLWriter<CreditNoteType>() {
-
             @Override
             public void close() {
             }
@@ -114,31 +99,31 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
     }
 
     @Override
-    public UBLSender<CreditNoteModel> sender() {
-        return new UBLSender<CreditNoteModel>() {
+    public UBLSender<DocumentModel> sender() {
+        return new UBLSender<DocumentModel>() {
 
             @Override
-            public SendEventModel sendToCustomer(OrganizationModel organization, CreditNoteModel creditNote) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = creditNote.addSendEvent(DestinyType.CUSTOMER);
-                sendToCustomer(organization, creditNote, sendEvent);
+            public SendEventModel sendToCustomer(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.CUSTOMER);
+                sendToCustomer(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToCustomer(OrganizationModel organization, CreditNoteModel creditNote, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
-                CreditNoteManager creditNoteManager = new CreditNoteManager(session);
-                creditNoteManager.sendToThirdPartyByEmail(organization, creditNote, sendEvent, creditNote.getCustomerElectronicMail());
+            public void sendToCustomer(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+                SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
+                sunatDocumentManager.sendToThirdPartyByEmail(organization, document, sendEvent, document.getCustomerElectronicMail());
             }
 
             @Override
-            public SendEventModel sendToThirdParty(OrganizationModel organization, CreditNoteModel creditNote) throws ModelInsuficientData, SendException {
-                SendEventModel sendEvent = creditNote.addSendEvent(DestinyType.THIRD_PARTY);
-                sendToThirdParty(organization, creditNote, sendEvent);
+            public SendEventModel sendToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendException {
+                SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
+                sendToThirdParty(organization, document, sendEvent);
                 return sendEvent;
             }
 
             @Override
-            public void sendToThirdParty(OrganizationModel organization, CreditNoteModel creditNote, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
+            public void sendToThirdParty(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
                 String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
                 String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
                 String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
@@ -156,9 +141,9 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
 
                 SunatSenderUtils sunatSender = null;
                 try {
-                    xmlFilename = SunatTemplateUtils.generateFileName(organization, creditNote) + ".xml";
-                    zipFileName = SunatTemplateUtils.generateFileName(organization, creditNote) + ".zip";
-                    zipFile = SunatTemplateUtils.generateZip(creditNote.getXmlAsFile().getFile(), xmlFilename);
+                    xmlFilename = SunatTemplateUtils.generateCreditNoteFileName(organization, document) + ".xml";
+                    zipFileName = SunatTemplateUtils.generateCreditNoteFileName(organization, document) + ".zip";
+                    zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
                     byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
@@ -179,7 +164,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
                         sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
                     }
 
-                    creditNote.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 

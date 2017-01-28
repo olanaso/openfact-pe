@@ -2,17 +2,15 @@ package org.openfact.pe.representations.idm;
 
 import java.math.BigDecimal;
 
-/**
- * Created by lxpary on 11/01/17.
- */
 public class GenericTypeRepresentation {
+
     private String id;
     private String codigo;
     private String abreviatura;
     private String denominacion;
     private String grupo;
-    private int length;
-    private boolean afectaIgv;
+    private Integer length;
+    private Boolean afectaIgv;
     private BigDecimal valor;
 
     public String getId() {
@@ -55,19 +53,19 @@ public class GenericTypeRepresentation {
         this.grupo = grupo;
     }
 
-    public int getLength() {
+    public Integer getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(Integer length) {
         this.length = length;
     }
 
-    public boolean isAfectaIgv() {
+    public Boolean getAfectaIgv() {
         return afectaIgv;
     }
 
-    public void setAfectaIgv(boolean afectaIgv) {
+    public void setAfectaIgv(Boolean afectaIgv) {
         this.afectaIgv = afectaIgv;
     }
 

@@ -9,16 +9,14 @@ import org.openfact.pe.models.utils.SunatEnumToRepresentation;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
 import org.openfact.services.ServicesLogger;
 
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by lxpary on 11/01/17.
- */
 public class GenericTypesResource {
     private static final ServicesLogger logger = ServicesLogger.LOGGER;
 
@@ -37,8 +35,8 @@ public class GenericTypesResource {
         this.organization = organization;
     }
 
-    @POST
-    @Path("afectacion-igv")
+    @GET
+    @Path("tipos-afectacion-igv")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoAfectacionIgv() {
@@ -49,8 +47,8 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
-    @Path("comprobante-electronico")
+    @GET
+    @Path("tipos-comprobante-pago")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoComprobante() {
@@ -61,7 +59,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("conceptos-tributarios")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -73,19 +71,19 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
-    @Path("tipo-documento")
+    @GET
+    @Path("tipos-documento-entidad")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoDocumento() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
-        for (TipoDocumento type : TipoDocumento.values()) {
+        for (TipoDocumentoEntidad type : TipoDocumentoEntidad.values()) {
             rep.add(SunatEnumToRepresentation.toRepresentation(type));
         }
         return rep;
     }
 
-    @POST
+    @GET
     @Path("documento-relacionado-guia")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -97,7 +95,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("documento-relacionado-tributo")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -109,7 +107,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("elementos-adicionales-comprobante")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -121,7 +119,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("estado-item")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -133,7 +131,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("modalidad-traslado")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -145,7 +143,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("moneda")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -157,7 +155,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("motivo-traslado")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -169,7 +167,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("tipo-nota-credito")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -181,7 +179,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("tipo-nota-debito")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -193,7 +191,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("tipo-operacion")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -205,7 +203,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("precio-venta-unitario")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -217,7 +215,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("recibo-servicios-publicos")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -229,7 +227,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("regimen-percepcion")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -241,7 +239,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("regimen-retencion")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -253,7 +251,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("sistema-calculo-isc")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -265,7 +263,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("tipo-tributo")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
@@ -277,7 +275,7 @@ public class GenericTypesResource {
         return rep;
     }
 
-    @POST
+    @GET
     @Path("valor-venta")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)

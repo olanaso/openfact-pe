@@ -1,6 +1,6 @@
 package org.openfact.pe.models.enums;
 
-public enum TipoDocumento {
+public enum TipoDocumentoEntidad {
 
     DOC_TRIB_NO_DOM_SIN_RUC("0", "NO DOMICILIADO", "DOC. TRIBUTARIO NO DOMICILIADO SIN RUC", 8),
     DNI("1", "DNI", "DOC.NACIONAL DE IDENTIDAD", 8),
@@ -31,7 +31,7 @@ public enum TipoDocumento {
     }
 
 
-    private TipoDocumento(String codigo, String abreviatura, String denominacion, int length) {
+    private TipoDocumentoEntidad(String codigo, String abreviatura, String denominacion, int length) {
         this.codigo = codigo;
         this.abreviatura = abreviatura;
         this.denominacion = denominacion;

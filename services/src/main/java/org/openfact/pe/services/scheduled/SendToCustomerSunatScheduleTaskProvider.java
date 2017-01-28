@@ -1,16 +1,10 @@
 package org.openfact.pe.services.scheduled;
 
-import org.openfact.models.CreditNoteModel;
-import org.openfact.models.DebitNoteModel;
-import org.openfact.models.InvoiceModel;
 import org.openfact.models.JobException;
 import org.openfact.models.JobReportModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.OrganizationScheduleTaskProvider;
-import org.openfact.services.managers.CreditNoteManager;
-import org.openfact.services.managers.DebitNoteManager;
-import org.openfact.services.managers.InvoiceManager;
 
 public class SendToCustomerSunatScheduleTaskProvider implements OrganizationScheduleTaskProvider {
 

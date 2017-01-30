@@ -19,7 +19,7 @@ public enum TipoAfectacionIgv {
     INAFECTO_RETIRO_POR_CONVENIO_COLECTIVO("34", "Inafecto - Retiro por Convenio Colectivo", false, TipoValorVenta.INAFECTO),
     INAFECTO_RETIRO_POR_PREMIO("35", "Inafecto - Retiro por premio", false, TipoValorVenta.INAFECTO),
     INAFECTO_RETIRO_POR_PUBLICIDAD("36", "Inafecto - Retiro por publicidad", false, TipoValorVenta.INAFECTO),
-    EXPORTACION("40", "Exportacion", false, TipoValorVenta.EXPORTACION);
+    EXPORTACION("40", "Exportacion", false, TipoValorVenta.INAFECTO);
 
     private final String codigo;
     private final String denominacion;

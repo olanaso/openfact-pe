@@ -25,6 +25,7 @@ public class SunatEnumToRepresentation {
         GenericTypeRepresentation rep = new GenericTypeRepresentation();
         rep.setCodigo(type.getCodigo());
         rep.setDenominacion(type.getDenominacion());
+        rep.setAbreviatura(type.getAbreviatura());
         return rep;
     }
 

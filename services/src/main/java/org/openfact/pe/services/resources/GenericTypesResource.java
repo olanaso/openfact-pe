@@ -14,6 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,18 @@ public class GenericTypesResource {
     public GenericTypesResource(OpenfactSession session, OrganizationModel organization) {
         this.session = session;
         this.organization = organization;
+    }
+
+    @GET
+    @Path("igv")
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    public GenericTypeRepresentation getIgv() {
+        GenericTypeRepresentation rep = new GenericTypeRepresentation();
+        rep.setDenominacion("Impuesto General a las Ventas");
+        rep.setAbreviatura("igv");
+        rep.setValor(new BigDecimal("0.18"));
+        return rep;
     }
 
     @GET

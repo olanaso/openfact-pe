@@ -2,15 +2,20 @@ package org.openfact.pe.models.enums;
 
 public enum TipoInvoice {
 
-    FACTURA("01", "FACTURA ELECTRONICA", "^[F]{1}\\d{1,3}[-]\\d{1,8}$"),
-    BOLETA("03", "BOLETA ELECTRONICA", "^[B]{1}\\d{1,3}[-]\\d{1,8}$");
+    FACTURA("01", "FACTURA", "FACTURA ELECTRONICA", "^[F]{1}\\d{1,3}[-]\\d{1,8}$"),
+    BOLETA("03", "BOLETA", "BOLETA ELECTRONICA", "^[B]{1}\\d{1,3}[-]\\d{1,8}$");
 
     private final String codigo;
+    private final String abreviatura;
     private final String denominacion;
     private final String documentIdPattern;
 
     public String getCodigo() {
         return codigo;
+    }
+
+    public String getAbreviatura() {
+        return abreviatura;
     }
 
     public String getDenominacion() {
@@ -21,8 +26,9 @@ public enum TipoInvoice {
         return documentIdPattern;
     }
 
-    TipoInvoice(String codigo, String denominacion, String documentIdPattern) {
+    TipoInvoice(String codigo, String abreviatura, String denominacion, String documentIdPattern) {
         this.codigo = codigo;
+        this.abreviatura = abreviatura;
         this.denominacion = denominacion;
         this.documentIdPattern = documentIdPattern;
     }

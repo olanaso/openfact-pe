@@ -8,92 +8,59 @@ import javax.activation.DataSource;
 
 import org.openfact.file.InternetMediaType;
 import org.openfact.models.OrganizationModel;
-import org.openfact.pe.constants.EmissionType;
+import org.openfact.pe.models.enums.EmissionType;
+import org.openfact.pe.services.send.ServiceConfigurationException;
 import org.openfact.pe.services.send.ServiceWrapper;
 import org.openfact.pe.services.sunat.BillService;
 
 import com.sun.xml.ws.util.ByteArrayDataSource;
 
 public class SunatSenderUtils {
-    private Map<String, String> config;
 
-    public SunatSenderUtils(OrganizationModel organization, EmissionType type) {
-        config = new HashMap<>();
-        config.put("username", organization.getAssignedIdentificationId() + "MODDATOS");
-        config.put("password", "MODDATOS");
-        switch (type) {
-            case CPE: {
-                config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService");
-            }
-            break;
-            case OCPE: {
-                config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itemision-otroscpe-gem-beta/billService");
-            }
-            break;
-            default: {
-                config.put("url", "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService");
-            }
-            break;
-        }
+    private Map<String, String> config = new HashMap<>();
 
+    public SunatSenderUtils(String address, String username, String password) {
+        this.config.put("address", address);
+        this.config.put("username", username);
+        this.config.put("password", password);
     }
 
-    public static Map<String, String> getDestiny(EmissionType type) {
-        Map<String, String> destiny = new HashMap<>();
-        switch (type) {
-            case CPE: {
-                destiny.put("Address", "{https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService}");
-            }
-            break;
-            case OCPE: {
-                destiny.put("Address", "{https://e-beta.sunat.gob.pe/ol-ti-itemision-otroscpe-gem-beta/billService}");
-            }
-            break;
-            default: {
-                destiny.put("Address", "{https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService}");
-            }
-            break;
-        }
-
-        return destiny;
+    public Map<String, String> getDestiny() {
+        return config;
     }
 
-    public byte[] sendBill(byte[] document, String fileName, InternetMediaType mediaType) {
-        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+    public byte[] sendBill(byte[] file, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
+        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        DataSource dataSource = new ByteArrayDataSource(file, mediaType.getMimeType());
+        DataHandler dataHandler = new DataHandler(dataSource);
+
+        return client.sendBill(fileName, dataHandler);
+    }
+
+    public String sendSummary(byte[] document, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
         BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
         DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
-        DataHandler contentFile = new DataHandler(dataSource);
-        // Send
-        byte[] result = client.sendBill(fileName + mediaType.getExtension(), contentFile);
-        return result;
+        DataHandler dataHandler = new DataHandler(dataSource);
+
+        return client.sendSummary(fileName, dataHandler);
     }
 
-    public String sendSummary(byte[] document, String fileName, InternetMediaType mediaType) {
-        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+    public String sendPack(byte[] document, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
         BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
         DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
-        DataHandler contentFile = new DataHandler(dataSource);
-        // Send
-        String result = client.sendSummary(fileName + mediaType.getExtension(), contentFile);
-        return result;
+        DataHandler dataHandler = new DataHandler(dataSource);
+
+        return client.sendPack(fileName, dataHandler);
     }
 
-    public String sendPack(byte[] document, String fileName, InternetMediaType mediaType) {
-        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
+    public byte[] getStatus(String ticket) throws ServiceConfigurationException {
+        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
         BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
-        DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
-        DataHandler contentFile = new DataHandler(dataSource);
-        // Send
-        String result = client.sendPack(fileName + mediaType.getExtension(), contentFile);
-        return result;
-    }
 
-    public byte[] getStatus(String ticket) {
-        ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<BillService>(config);
-        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
-        // send
-        byte[] send = client.getStatus(ticket).getContent();
-        return send;
+        return client.getStatus(ticket).getContent();
 
     }
 }

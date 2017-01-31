@@ -6,25 +6,25 @@ import org.openfact.provider.Spi;
 
 public class UBLPerceptionSpi implements Spi {
 
-	@Override
-	public boolean isInternal() {
-		return false;
-	}
+    @Override
+    public boolean isInternal() {
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return "ublPerception";
-	}
+    @Override
+    public String getName() {
+        return "ublPerception";
+    }
 
-	@Override
-	public Class<? extends Provider> getProviderClass() {
-		return UBLPerceptionProvider.class;
-	}
+    @Override
+    public Class<? extends Provider> getProviderClass() {
+        return UBLPerceptionProvider.class;
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Class<? extends ProviderFactory> getProviderFactoryClass() {
-		return UBLPerceptionProviderFactory.class;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Class<? extends ProviderFactory> getProviderFactoryClass() {
+        return UBLPerceptionProviderFactory.class;
+    }
 
 }

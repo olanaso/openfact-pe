@@ -1,7 +1,6 @@
 package org.openfact.pe.models.utils;
 
 
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -11,6 +10,7 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 
 import org.openfact.models.ModelException;
+import org.openfact.models.OrganizationModel;
 import org.openfact.pe.models.types.perception.PerceptionFactory;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.types.retention.RetentionFactory;
@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
 
 public class SunatTypeToDocument {
 
-    public static Document toDocument(PerceptionType type) throws JAXBException {
+    public static Document toDocument(OrganizationModel organization, PerceptionType type) throws JAXBException {
         try {
             PerceptionFactory factory = new PerceptionFactory();
             JAXBContext context = JAXBContext.newInstance(PerceptionFactory.class);
@@ -43,7 +43,7 @@ public class SunatTypeToDocument {
         }
     }
 
-    public static Document toDocument(RetentionType type) throws JAXBException {
+    public static Document toDocument(OrganizationModel organization, RetentionType type) throws JAXBException {
         try {
             RetentionFactory factory = new RetentionFactory();
             JAXBContext context = JAXBContext.newInstance(RetentionFactory.class);
@@ -65,7 +65,7 @@ public class SunatTypeToDocument {
     }
 
 
-    public static Document toDocument(SummaryDocumentsType type) throws JAXBException {
+    public static Document toDocument(OrganizationModel organization, SummaryDocumentsType type) throws JAXBException {
 
         try {
             SummaryDocumentFactory factory = new SummaryDocumentFactory();
@@ -85,7 +85,7 @@ public class SunatTypeToDocument {
         }
     }
 
-    public static Document toDocument(VoidedDocumentsType type) throws JAXBException {
+    public static Document toDocument(OrganizationModel organization, VoidedDocumentsType type) throws JAXBException {
 
         try {
             VoidedDocumentFactory factory = new VoidedDocumentFactory();

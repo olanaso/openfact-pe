@@ -8,29 +8,26 @@ import org.openfact.pe.models.UBLVoidedDocumentProviderFactory;
 
 public class SunatUBLVoidedDocumentProviderFactory implements UBLVoidedDocumentProviderFactory {
 
-	@Override
-	public UBLVoidedDocumentProvider create(OpenfactSession session) {
-		return new SunatUBLVoidedDocumentProvider(session);
-	}
+    @Override
+    public UBLVoidedDocumentProvider create(OpenfactSession session) {
+        return new SunatUBLVoidedDocumentProvider(session);
+    }
 
-	@Override
-	public void init(Scope config) {
+    @Override
+    public void init(Scope config) {
+    }
 
-	}
+    @Override
+    public void postInit(OpenfactSessionFactory factory) {
+    }
 
-	@Override
-	public void postInit(OpenfactSessionFactory factory) {
+    @Override
+    public void close() {
+    }
 
-	}
-
-	@Override
-	public void close() {
-
-	}
-
-	@Override
-	public String getId() {
-		return "sunat";
-	}
+    @Override
+    public String getId() {
+        return "sunat";
+    }
 
 }

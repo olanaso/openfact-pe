@@ -1,11 +1,8 @@
 package org.openfact.pe.models.utils;
 
-import org.openfact.pe.constants.*;
+import org.openfact.pe.models.enums.*;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
 
-/**
- * Created by lxpary on 11/01/17.
- */
 public class SunatEnumToRepresentation {
     public static GenericTypeRepresentation toRepresentation(TipoAfectacionIgv type) {
         GenericTypeRepresentation rep = new GenericTypeRepresentation();
@@ -24,6 +21,14 @@ public class SunatEnumToRepresentation {
         return rep;
     }
 
+    public static GenericTypeRepresentation toRepresentation(TipoInvoice type) {
+        GenericTypeRepresentation rep = new GenericTypeRepresentation();
+        rep.setCodigo(type.getCodigo());
+        rep.setDenominacion(type.getDenominacion());
+        rep.setAbreviatura(type.getAbreviatura());
+        return rep;
+    }
+
     public static GenericTypeRepresentation toRepresentation(TipoConceptosTributarios type) {
         GenericTypeRepresentation rep = new GenericTypeRepresentation();
         rep.setCodigo(type.getCodigo());
@@ -31,7 +36,7 @@ public class SunatEnumToRepresentation {
         return rep;
     }
 
-    public static GenericTypeRepresentation toRepresentation(TipoDocumento type) {
+    public static GenericTypeRepresentation toRepresentation(TipoDocumentoEntidad type) {
         GenericTypeRepresentation rep = new GenericTypeRepresentation();
         rep.setCodigo(type.getCodigo());
         rep.setAbreviatura(type.getAbreviatura());

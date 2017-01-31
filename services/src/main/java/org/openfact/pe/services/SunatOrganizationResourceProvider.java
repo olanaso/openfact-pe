@@ -1,7 +1,7 @@
 package org.openfact.pe.services;
 
 import org.openfact.models.OpenfactSession;
-import org.openfact.pe.services.resources.SunatResources;
+import org.openfact.pe.services.resources.SunatRootResources;
 import org.openfact.services.resource.OrganizationResourceProvider;
 
 public class SunatOrganizationResourceProvider implements OrganizationResourceProvider {
@@ -13,7 +13,7 @@ public class SunatOrganizationResourceProvider implements OrganizationResourcePr
     }
 
     public Object getResource() {
-        return new SunatResources(session);
+        return new SunatRootResources(session);
     }
 
     public void close() {

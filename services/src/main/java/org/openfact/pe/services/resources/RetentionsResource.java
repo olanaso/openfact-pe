@@ -1,53 +1,40 @@
 package org.openfact.pe.services.resources;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.openfact.common.converts.DocumentUtils;
-import org.openfact.file.FileModel;
-import org.openfact.file.InternetMediaType;
+import org.openfact.events.admin.OperationType;
 import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.SendResultType;
-import org.openfact.models.search.SearchCriteriaModel;
-import org.openfact.models.search.SearchResultsModel;
 import org.openfact.models.utils.ModelToRepresentation;
-import org.openfact.models.utils.RepresentationToModel;
-import org.openfact.pe.models.RetentionModel;
-import org.openfact.pe.models.RetentionProvider;
+import org.openfact.pe.models.SunatSendException;
+import org.openfact.pe.models.enums.SunatDocumentType;
 import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
-import org.openfact.pe.models.utils.SunatModelToRepresentation;
+import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
-import org.openfact.pe.services.managers.RetentionManager;
-import org.openfact.representations.idm.SendEventRepresentation;
-import org.openfact.representations.idm.search.SearchCriteriaRepresentation;
-import org.openfact.representations.idm.search.SearchResultsRepresentation;
+import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.services.ErrorResponse;
-import org.openfact.services.scheduled.ScheduledTaskRunner;
-import org.openfact.timer.ScheduledTask;
-import org.w3c.dom.Document;
+import org.openfact.services.managers.DocumentManager;
+import org.openfact.services.resources.admin.AdminEventBuilder;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Consumes(MediaType.APPLICATION_JSON)
 public class RetentionsResource {
@@ -56,81 +43,15 @@ public class RetentionsResource {
 
     private final OpenfactSession session;
     private final OrganizationModel organization;
+    private final AdminEventBuilder adminEvent;
 
     @Context
     protected UriInfo uriInfo;
 
-    public RetentionsResource(OpenfactSession session, OrganizationModel organization) {
+    public RetentionsResource(OpenfactSession session, OrganizationModel organization, AdminEventBuilder adminEvent) {
         this.session = session;
         this.organization = organization;
-    }
-
-    @GET
-    @Path("")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<DocumentoSunatRepresentation> getRetentions(@QueryParam("filterText") String filterText,
-                                                            @QueryParam("first") Integer firstResult, @QueryParam("max") Integer maxResults) {
-        firstResult = firstResult != null ? firstResult : -1;
-        maxResults = maxResults != null ? maxResults : -1;
-
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        List<RetentionModel> retentions;
-        if (filterText == null) {
-            retentions = retentionProvider.getRetentions(organization, firstResult, maxResults);
-        } else {
-            retentions = retentionProvider.searchForRetention(organization, filterText.trim(), firstResult, maxResults);
-        }
-        return retentions.stream().map(f -> SunatModelToRepresentation.toRepresentation(f))
-                .collect(Collectors.toList());
-    }
-
-    @POST
-    @Path("")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createRetention(DocumentoSunatRepresentation rep) {
-        RetentionManager retentionManager = new RetentionManager(session);
-
-        // Double-check duplicated ID
-        if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null && retentionManager
-                .getRetentionByDocumentId(rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
-            return ErrorResponse.exists("Retention exists with same documentId");
-        }
-
-        try {
-            RetentionModel retention = retentionManager.addRetention(organization, rep);
-            // Enviar a Cliente
-            if (rep.isEnviarAutomaticamenteAlCliente()) {
-                try {
-                    retentionManager.sendToCustomerParty(organization, retention);
-                } catch (SendException e) {
-                    logger.error("Error sending to Customer");
-                }
-            }
-
-            // Enviar Sunat
-            if (rep.isEnviarAutomaticamenteASunat()) {
-                try {
-                    retentionManager.sendToTrirdParty(organization, retention);
-                } catch (SendException e) {
-                    logger.error("Error sending to Sunat");
-                }
-            }
-
-            URI location = session.getContext().getUri().getAbsolutePathBuilder().path(retention.getId()).build();
-            return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(retention)).build();
-        } catch (ModelDuplicateException e) {
-            if (session.getTransactionManager().isActive()) {
-                session.getTransactionManager().setRollbackOnly();
-            }
-            return ErrorResponse.exists("Retention exists with same id or documentId");
-        } catch (ModelException me) {
-            if (session.getTransactionManager().isActive()) {
-                session.getTransactionManager().setRollbackOnly();
-            }
-            return ErrorResponse.exists("Could not create retention");
-        }
+        this.adminEvent = adminEvent;
     }
 
     @POST
@@ -138,6 +59,7 @@ public class RetentionsResource {
     @Consumes("multipart/form-data")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createRetention(final MultipartFormDataInput input) {
+
         Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
         List<InputPart> inputParts = uploadForm.get("file");
 
@@ -145,28 +67,24 @@ public class RetentionsResource {
             try {
                 InputStream inputStream = inputPart.getBody(InputStream.class, null);
                 byte[] bytes = IOUtils.toByteArray(inputStream);
-                Document document = DocumentUtils.byteToDocument(bytes);
-                RetentionType retentionType = SunatDocumentToType.toRetentionType(document);;
+
+                RetentionType retentionType = SunatDocumentToType.toRetentionType(DocumentUtils.byteToDocument(bytes));
+
                 if (retentionType == null) {
-                    throw new IOException("Invalid invoice Xml");
+                    throw new IOException("Invalid retention Xml");
                 }
 
-                RetentionManager retentionManager = new RetentionManager(session);
+                SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
 
-                // Double-check duplicated ID
-                if (retentionType.getId() != null && retentionManager
-                        .getRetentionByDocumentId(retentionType.getId().getValue(), organization) != null) {
-                    throw new ModelDuplicateException("Retention exists with same documentId");
+                // Double-check duplicated documentId
+                if (retentionType.getId() != null && sunatDocumentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.RETENTION.toString(), retentionType.getId().getValue(), organization) != null) {
+                    throw new ModelDuplicateException("Retention exists with same documentId[" + retentionType.getId().getValue() + "]");
                 }
 
-                RetentionModel retention = retentionManager.addRetention(organization, retentionType);
-                // Enviar Cliente
-                retentionManager.sendToCustomerParty(organization, retention);
-                // Enviar Sunat
-                retentionManager.sendToTrirdParty(organization, retention);
+                DocumentModel documentModel = sunatDocumentManager.addRetention(organization, retentionType);
 
-                URI location = session.getContext().getUri().getAbsolutePathBuilder().path(retention.getId()).build();
-                return Response.created(location).entity(SunatModelToRepresentation.toRepresentation(retention)).build();
+                URI location = session.getContext().getUri().getAbsolutePathBuilder().path(documentModel.getId()).build();
+                adminEvent.operation(OperationType.CREATE).resourcePath(location.toString(), documentModel.getId()).representation(retentionType).success();
             } catch (IOException e) {
                 if (session.getTransactionManager().isActive()) {
                     session.getTransactionManager().setRollbackOnly();
@@ -182,11 +100,6 @@ public class RetentionsResource {
                     session.getTransactionManager().setRollbackOnly();
                 }
                 return ErrorResponse.exists("Could not create retention");
-            } catch (SendException e) {
-                if (session.getTransactionManager().isActive()) {
-                    session.getTransactionManager().setRollbackOnly();
-                }
-                return ErrorResponse.exists("Could not send retention");
             } catch (Exception e) {
                 if (session.getTransactionManager().isActive()) {
                     session.getTransactionManager().setRollbackOnly();
@@ -199,264 +112,74 @@ public class RetentionsResource {
     }
 
     @POST
-    @Path("search")
+    @Path("")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    public SearchResultsRepresentation<DocumentoSunatRepresentation> search(final SearchCriteriaRepresentation criteria) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
+    public Response createRetention(DocumentoSunatRepresentation rep) {
+        SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
 
-        SearchCriteriaModel criteriaModel = RepresentationToModel.toModel(criteria);
-        String filterText = criteria.getFilterText();
-        SearchResultsModel<RetentionModel> results = null;
-        if (filterText != null) {
-            results = retentionProvider.searchForRetention(organization, criteriaModel, filterText.trim());
-        } else {
-            results = retentionProvider.searchForRetention(organization, criteriaModel);
-        }
-        SearchResultsRepresentation<DocumentoSunatRepresentation> rep = new SearchResultsRepresentation<>();
-        List<DocumentoSunatRepresentation> items = new ArrayList<>();
-        results.getModels().forEach(f -> items.add(SunatModelToRepresentation.toRepresentation(f)));
-        rep.setItems(items);
-        rep.setTotalSize(results.getTotalSize());
-        return rep;
-    }
-
-
-    @GET
-    @Path("{retentionId}")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public DocumentoSunatRepresentation getRetention(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-        if (retention == null) {
-            throw new NotFoundException("Retention not found");
+        if (rep.getSerieDocumento() != null || rep.getNumeroDocumento() != null) {
+            if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
+                if (sunatDocumentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.RETENTION.toString(), rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
+                    return ErrorResponse.exists("Retention exists with same documentId");
+                }
+            } else {
+                return ErrorResponse.error("Numero de serie y/o numero invalido", Response.Status.BAD_REQUEST);
+            }
         }
 
-        DocumentoSunatRepresentation rep = SunatModelToRepresentation.toRepresentation(retention);
-        return rep;
-    }
-
-    @GET
-    @Path("{retentionId}/representation/json")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getRetentionAsJson(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-        if (retention == null) {
-            return ErrorResponse.exists("Retention not found");
-        }
-
-        Document document;
         try {
-            document = DocumentUtils.byteToDocument(retention.getXmlDocument());
-        } catch (Exception e) {
-            return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
-        }
-        RetentionType type = SunatDocumentToType.toRetentionType(document);
-        Response.ResponseBuilder response = Response.ok(type);
-        return response.build();
+            RetentionType retentionType = SunatRepresentationToType.toRetentionType(session, organization, rep);
+            DocumentModel documentModel = sunatDocumentManager.addRetention(organization, retentionType);
 
-    }
+            if (rep.isEnviarAutomaticamenteASunat()) {
+                try {
+                    sunatDocumentManager.sendToThirdParty(organization, documentModel);
+                } catch (ModelInsuficientData e) {
+                    if (session.getTransactionManager().isActive()) {
+                        session.getTransactionManager().setRollbackOnly();
+                    }
+                    return ErrorResponse.error(e.getMessage(), Response.Status.BAD_REQUEST);
+                } catch (SendException e) {
+                    if (session.getTransactionManager().isActive()) {
+                        session.getTransactionManager().setRollbackOnly();
+                    }
+                    if (e instanceof SunatSendException) {
+                        return ErrorResponse.error(e.getMessage(), Response.Status.BAD_REQUEST);
+                    } else {
+                        return ErrorResponse.error("Could not send to sunat", Response.Status.BAD_REQUEST);
+                    }
+                }
+            }
 
-    @GET
-    @Path("{retentionId}/representation/text")
-    @NoCache
-    @Produces("application/text")
-    public Response getRetentionAsText(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-        if (retention == null) {
-            return ErrorResponse.exists("Retention not found");
-        }
+            if (rep.isEnviarAutomaticamenteAlCliente()) {
+                SendEventModel customerSendEvent = documentModel.addSendEvent(DestinyType.CUSTOMER);
+                try {
+                    sunatDocumentManager.sendToCustomerParty(organization, documentModel, customerSendEvent);
+                } catch (ModelInsuficientData e) {
+                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setDescription(e.getMessage());
+                } catch (SendException e) {
+                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setDescription("Internal server error");
+                    logger.error("Internal Server Error sending to customer", e);
+                }
+            }
 
-        String result = null;
-        try {
-            Document document = DocumentUtils.byteToDocument(retention.getXmlDocument());
-            result = DocumentUtils.getDocumentToString(document);
-        } catch (Exception e) {
-            return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
-        }
-
-        Response.ResponseBuilder response = Response.ok(result);
-        return response.build();
-    }
-
-    @GET
-    @Path("{retentionId}/representation/xml")
-    @NoCache
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getRetentionAsXml(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-        if (retention == null) {
-            return ErrorResponse.exists("Retention not found");
-        }
-
-        Document document = null;
-        try {
-            document = DocumentUtils.byteToDocument(retention.getXmlDocument());
-        } catch (Exception e) {
-            return ErrorResponse.error("Invalid xml parser", Status.INTERNAL_SERVER_ERROR);
-        }
-        ResponseBuilder response = Response.ok(document);
-        response.type("application/xml");
-        response.header("content-disposition", "attachment; filename=\"" + retention.getDocumentId() + "\".xml");
-        return response.build();
-    }
-
-    @GET
-    @Path("{retentionId}/representation/pdf")
-    @NoCache
-    @Produces("application/pdf")
-    public Response getRetentionAsPdf(@PathParam("retentionId") final String retentionId) {
-        return null;
-    }
-
-    @DELETE
-    @Path("{retentionId}")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRetention(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-        if (retention == null) {
-            return ErrorResponse.exists("Retention not found");
-        }
-
-        boolean removed = new RetentionManager(session).removeRetention(organization, retention);
-        if (removed) {
-            return Response.noContent().build();
-        } else {
-            return ErrorResponse.error("Retention couldn't be deleted", Response.Status.BAD_REQUEST);
+            URI location = session.getContext().getUri().getAbsolutePathBuilder().path(documentModel.getId()).build();
+            adminEvent.operation(OperationType.CREATE).resourcePath(location.toString()).representation(rep).success();
+            return Response.created(location).entity(ModelToRepresentation.toRepresentation(documentModel)).build();
+        } catch (ModelDuplicateException e) {
+            if (session.getTransactionManager().isActive()) {
+                session.getTransactionManager().setRollbackOnly();
+            }
+            return ErrorResponse.exists("Retention exists with same id or documentId");
+        } catch (ModelException me) {
+            if (session.getTransactionManager().isActive()) {
+                session.getTransactionManager().setRollbackOnly();
+            }
+            return ErrorResponse.exists("Could not create retention");
         }
     }
 
-    @GET
-    @Path("{retentionId}/send-events")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<SendEventRepresentation> getSendEvents(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-        if (retention == null) {
-            throw new NotFoundException("Retention not found");
-        }
-        List<SendEventModel> sendEvents = retention.getSendEvents();
-        return sendEvents.stream().map(f -> ModelToRepresentation.toRepresentation(f)).collect(Collectors.toList());
-    }
-
-    @GET
-    @Path("{retentionId}/representation/cdr")
-    @NoCache
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getCdr(@PathParam("retentionId") final String retentionId) {
-        RetentionModel retention = session.getProvider(RetentionProvider.class).getRetentionByID(organization, retentionId);
-        if (retention == null) {
-            throw new NotFoundException("Retention not found");
-        }
-
-        List<SendEventModel> sendEvents = retention.getSendEvents();
-
-        Optional<SendEventModel> op = sendEvents.stream()
-                .filter(p -> p.getDestityType().equals(DestinyType.THIRD_PARTY))
-                .filter(p -> p.getResult().equals(SendResultType.SUCCESS)).findFirst();
-
-        if (op.isPresent()) {
-            SendEventModel sendEvent = op.get();
-            FileModel file = sendEvent.getFileResponseAttatchments().get(0);
-
-            ResponseBuilder response = Response.ok(file.getFile());
-            response.type(InternetMediaType.getMymeTypeFromExtension(file.getExtension()));
-            response.header("content-disposition", "attachment; filename=\"" + file.getFileName() + "\"");
-            return response.build();
-        } else {
-            throw new NotFoundException("Cdr not found or was not generated.");
-        }
-    }
-
-    @POST
-    @Path("{retentionId}/send-to-customer")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public void sendToCustomer(@PathParam("retentionId") final String retentionId) {
-        RetentionManager retentionManager = new RetentionManager(session);
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        if (retentionId == null) {
-            throw new NotFoundException("Retention Id not found");
-        }
-        try {
-            RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-            OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
-            retentionManager.sendToCustomerParty(organization, retention);
-        } catch (SendException e) {
-            throw new NotFoundException("Error sending email");
-        }
-
-	/*	ExecutorService executorService = null;
-        try {
-			executorService = Executors.newCachedThreadPool();
-
-			ScheduledTaskRunner scheduledTaskRunner = new ScheduledTaskRunner(session.getOpenfactSessionFactory(), new ScheduledTask() {
-				@Override
-				public void run(OpenfactSession session) {
-					RetentionManager retentionManager = new RetentionManager(session);
-					try {
-						OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
-						RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-						retentionManager.sendToCustomerParty(organizationThread, retention);
-					} catch (SendException e) {
-						throw new InternalServerErrorException(e);
-					}
-				}
-			});
-			executorService.execute(scheduledTaskRunner);
-		} finally {
-			if(executorService != null) {
-				executorService.shutdown();
-			}
-		}*/
-    }
-
-    @POST
-    @Path("{retentionId}/send-to-third-party")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
-    public void sendToThridParty(@PathParam("retentionId") final String retentionId) {
-        RetentionProvider retentionProvider = session.getProvider(RetentionProvider.class);
-        if (retentionId == null) {
-            throw new NotFoundException("Retention Id not found");
-        }
-        try {
-            RetentionManager retentionManager = new RetentionManager(session);
-            OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
-            RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-            retentionManager.sendToTrirdParty(organizationThread, retention);
-        } catch (SendException e) {
-            throw new NotFoundException("Error sending sunat");
-        }
-		/*ExecutorService executorService = null;
-		try {
-			executorService = Executors.newCachedThreadPool();
-			ScheduledTaskRunner scheduledTaskRunner = new ScheduledTaskRunner(session.getOpenfactSessionFactory(), new ScheduledTask() {
-				@Override
-				public void run(OpenfactSession session) {
-					RetentionManager retentionManager = new RetentionManager(session);
-					try {
-						OrganizationModel organizationThread = session.organizations().getOrganization(organization.getId());
-						RetentionModel retention = retentionProvider.getRetentionById(organization, retentionId);
-						retentionManager.sendToTrirdParty(organizationThread, retention);
-					} catch (SendException e) {
-						throw new InternalServerErrorException(e);
-					}
-				}
-			});
-			executorService.execute(scheduledTaskRunner);
-		} finally {
-			if(executorService != null) {
-				executorService.shutdown();
-			}
-		}*/
-    }
 }

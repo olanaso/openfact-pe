@@ -15,60 +15,69 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 
-public class ServiceWrapper<T> {	
-	private Map<String, String> config;
-	private ServicePasswordThread passwordThread;
+public class ServiceWrapper<T> {
 
-	public ServiceWrapper(Map<String, String> config) {		
-		this.config = config;
-		passwordThread = new ServicePasswordThread(config);
-	}
+    private Map<String, String> config;
+    private ServicePasswordThread passwordThread;
 
-	public T initWebService(Class<?> serviceClass) {
-		Properties properties = System.getProperties();
-		properties.put("org.apache.cxf.stax.allowInsecureParser", "1");
-		System.setProperties(properties);
-		JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-		Map<String, Object> props = new HashMap<>();
-		props.put("mtom-enabled", Boolean.FALSE);
-		factory.setProperties(props);
-		factory.setAddress(config.get("url"));		
-		factory.getInInterceptors().add(new LoggingInInterceptor());
-		factory.getOutInterceptors().add(new LoggingOutInterceptor());
-		factory.setServiceClass(serviceClass);
-		T client = (T) factory.create();
-		try {
-			configureSSLOnTheClient(client, config.get("username"));
-			return client;
-		} catch (ServiceConfigurationException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
+    public ServiceWrapper(Map<String, String> config) {
+        this.config = config;
+        passwordThread = new ServicePasswordThread(config);
+    }
 
-	private void configureSSLOnTheClient(Object object, String username) throws ServiceConfigurationException {
-		Client client = ClientProxy.getClient(object);
-		HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
-		TLSClientParameters tlsParams = new TLSClientParameters();
-		tlsParams.setDisableCNCheck(true);		
-		HTTPClientPolicy policy = new HTTPClientPolicy();
-		policy.setConnectionTimeout(30000L);	
-		policy.setReceiveTimeout(15000L);
-		policy.setAllowChunking(false);
-		httpConduit.setClient(policy);		
-		FiltersType filter = new FiltersType();
-		filter.getInclude().add(".*_EXPORT_.*");
-		filter.getInclude().add(".*_EXPORT1024_.*");
-		filter.getInclude().add(".*_WITH_DES_.*");
-		filter.getInclude().add(".*_WITH_NULL_.*");
-		filter.getExclude().add(".*_DH_anon_.*");
-		tlsParams.setCipherSuitesFilter(filter);
-		httpConduit.setTlsClientParameters(tlsParams);
-		HashMap outProps = new HashMap();
-		outProps.put("action", "UsernameToken");
-		outProps.put("user", username);
-		outProps.put("passwordType", "PasswordText");
-		outProps.put("passwordCallbackClass", ServicePasswordCallback.class.getName());
-		WSS4JOutInterceptor wsOut = new WSS4JOutInterceptor(outProps);
-		client.getEndpoint().getOutInterceptors().add(wsOut);
-	}
+    public T initWebService(Class<?> serviceClass) throws ServiceConfigurationException {
+        Properties properties = System.getProperties();
+        properties.put("org.apache.cxf.stax.allowInsecureParser", "1");
+
+        System.setProperties(properties);
+
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+
+        Map<String, Object> props = new HashMap<>();
+        props.put("mtom-enabled", Boolean.FALSE);
+
+        factory.setProperties(props);
+        factory.setAddress(config.get("address"));
+        factory.getInInterceptors().add(new LoggingInInterceptor());
+        factory.getOutInterceptors().add(new LoggingOutInterceptor());
+        factory.setServiceClass(serviceClass);
+
+        T client = (T) factory.create();
+        configureSSLOnTheClient(client, config.get("username"));
+
+        return client;
+    }
+
+    private void configureSSLOnTheClient(Object object, String username) throws ServiceConfigurationException {
+        Client client = ClientProxy.getClient(object);
+        HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
+        TLSClientParameters tlsParams = new TLSClientParameters();
+        tlsParams.setDisableCNCheck(true);
+
+        HTTPClientPolicy policy = new HTTPClientPolicy();
+        policy.setConnectionTimeout(30000L);
+        policy.setReceiveTimeout(15000L);
+        policy.setAllowChunking(false);
+
+        httpConduit.setClient(policy);
+
+        FiltersType filter = new FiltersType();
+        filter.getInclude().add(".*_EXPORT_.*");
+        filter.getInclude().add(".*_EXPORT1024_.*");
+        filter.getInclude().add(".*_WITH_DES_.*");
+        filter.getInclude().add(".*_WITH_NULL_.*");
+        filter.getExclude().add(".*_DH_anon_.*");
+
+        tlsParams.setCipherSuitesFilter(filter);
+        httpConduit.setTlsClientParameters(tlsParams);
+        HashMap outProps = new HashMap();
+
+        outProps.put("action", "UsernameToken");
+        outProps.put("user", username);
+        outProps.put("passwordType", "PasswordText");
+        outProps.put("passwordCallbackClass", ServicePasswordCallback.class.getName());
+
+        WSS4JOutInterceptor wsOut = new WSS4JOutInterceptor(outProps);
+        client.getEndpoint().getOutInterceptors().add(wsOut);
+    }
 }

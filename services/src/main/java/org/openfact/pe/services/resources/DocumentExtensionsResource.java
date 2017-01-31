@@ -67,6 +67,10 @@ public class DocumentExtensionsResource {
             InvoiceType invoiceType = SunatRepresentationToType.toInvoiceType(organization, rep);
             DocumentModel documentModel = sunatDocumentManager.addInvoice(invoiceType, generateAttributes(rep), organization);
 
+            documentModel.setCustomerElectronicMail(rep.getEntidadEmail());
+            documentModel.setCustomerRegistrationName(rep.getEntidadDenominacion());
+            documentModel.setCustomerAssignedAccountId(rep.getEntidadNumeroDeDocumento());
+
             if (rep.isEnviarAutomaticamenteASunat()) {
                 try {
                     sunatDocumentManager.sendToThirdParty(organization, documentModel);
@@ -138,6 +142,10 @@ public class DocumentExtensionsResource {
             CreditNoteType creditNoteType = SunatRepresentationToType.toCreditNoteType(organization, rep);
             DocumentModel documentModel = sunatDocumentManager.addCreditNote(creditNoteType, generateAttributes(rep), organization);
 
+            documentModel.setCustomerElectronicMail(rep.getEntidadEmail());
+            documentModel.setCustomerRegistrationName(rep.getEntidadDenominacion());
+            documentModel.setCustomerAssignedAccountId(rep.getEntidadNumeroDeDocumento());
+
             if (rep.isEnviarAutomaticamenteASunat()) {
                 try {
                     sunatDocumentManager.sendToThirdParty(organization, documentModel);
@@ -208,6 +216,10 @@ public class DocumentExtensionsResource {
         try {
             DebitNoteType debitNoteType = SunatRepresentationToType.toDebitNoteType(organization, rep);
             DocumentModel documentModel = sunatDocumentManager.addDebitNote(debitNoteType, generateAttributes(rep), organization);
+
+            documentModel.setCustomerElectronicMail(rep.getEntidadEmail());
+            documentModel.setCustomerRegistrationName(rep.getEntidadDenominacion());
+            documentModel.setCustomerAssignedAccountId(rep.getEntidadNumeroDeDocumento());
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 try {

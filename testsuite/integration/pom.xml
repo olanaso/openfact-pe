@@ -40,10 +40,6 @@
             <groupId>org.openfact</groupId>
             <artifactId>openfact.pe-spi</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.openfact</groupId>
-            <artifactId>openfact.pe-model-jpa</artifactId>
-        </dependency>
 
         <!-- Openfact core -->
         <dependency>

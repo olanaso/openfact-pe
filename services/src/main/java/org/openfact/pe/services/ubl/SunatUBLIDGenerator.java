@@ -29,7 +29,12 @@ public class SunatUBLIDGenerator {
         }
 
         DocumentModel lastInvoice = null;
-        ScrollModel<DocumentModel> invoices = session.documents().getDocumentScroll(organization, DocumentType.INVOICE.toString(), 10, false);
+        ScrollModel<DocumentModel> invoices = session.documents()
+                .createQuery(organization)
+                .documentType(DocumentType.INVOICE.toString())
+                .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .getScrollResult(10);
+
         Iterator<DocumentModel> iterator = invoices.iterator();
 
         Pattern pattern = Pattern.compile(tipoInvoice.getDocumentIdPattern());

@@ -181,7 +181,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipo-nota-credito")
+    @Path("tipos-nota-credito")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoNotaCredito() {
@@ -193,7 +193,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipo-nota-debito")
+    @Path("tipos-nota-debito")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoNotaDebito() {

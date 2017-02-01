@@ -183,11 +183,11 @@ public class SunatRepresentationToType {
             payableAmountType.setCurrencyID(rep.getMoneda());
             gratuito.setPayableAmount(payableAmountType);
         }
-        AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
+        //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
 
         AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
         additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
-        additionalInformation.getAdditionalProperty().add(additionalProperty);
+        //additionalInformation.getAdditionalProperty().add(additionalProperty);
 
         extensionContentType.setAny(generateElement(additionalInformation));
         ublExtensionType.setExtensionContent(extensionContentType);
@@ -242,12 +242,12 @@ public class SunatRepresentationToType {
 
             // Tax Total
             TaxTotalType taxTotalType = new TaxTotalType();
-            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getTotal());
+            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getIgv());
             taxAmountType1.setCurrencyID(rep.getMoneda());
             taxTotalType.setTaxAmount(taxAmountType1);
 
             TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
-            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getTotal());
+            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getIgv());
             taxAmountType2.setCurrencyID(rep.getMoneda());
             taxSubtotalType.setTaxAmount(taxAmountType2);
 
@@ -304,25 +304,6 @@ public class SunatRepresentationToType {
             type.setDocumentCurrencyCode(rep.getMoneda());
         }
 
-        // Supplier
-        type.setAccountingSupplierParty(toSupplierParty(organization));
-
-        // Customer
-        type.setAccountingCustomerParty(toCustomerPartyType(rep));
-
-        // Tax Total
-        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
-
-        // Legal monetary total
-        type.setLegalMonetaryTotal(toLegalMonetaryTotalType(rep));
-
-        // Notes type
-        if (rep.getObservaciones() != null) {
-            List<NoteType> noteTypes = new ArrayList<>();
-            noteTypes.add(new NoteType(rep.getObservaciones()));
-            type.setNote(noteTypes);
-        }
-
         // Discrepancy response
         ResponseType responseType = new ResponseType();
         responseType.setReferenceID(rep.getDocumentoQueSeModifica());
@@ -348,6 +329,25 @@ public class SunatRepresentationToType {
         billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
 
         type.setBillingReference(Arrays.asList(billingReferenceType));
+
+        // Supplier
+        type.setAccountingSupplierParty(toSupplierParty(organization));
+
+        // Customer
+        type.setAccountingCustomerParty(toCustomerPartyType(rep));
+
+        // Tax Total
+        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+
+        // Legal monetary total
+        type.setLegalMonetaryTotal(toLegalMonetaryTotalType(rep));
+
+        // Notes type
+        if (rep.getObservaciones() != null) {
+            List<NoteType> noteTypes = new ArrayList<>();
+            noteTypes.add(new NoteType(rep.getObservaciones()));
+            type.setNote(noteTypes);
+        }
 
         // Signature
         type.setSignature(Arrays.asList(toSignatureType(organization)));
@@ -394,11 +394,11 @@ public class SunatRepresentationToType {
             payableAmountType.setCurrencyID(rep.getMoneda());
             gratuito.setPayableAmount(payableAmountType);
         }
-        AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
+        //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
 
         AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
         additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
-        additionalInformation.getAdditionalProperty().add(additionalProperty);
+        //additionalInformation.getAdditionalProperty().add(additionalProperty);
 
         extensionContentType.setAny(generateElement(additionalInformation));
         ublExtensionType.setExtensionContent(extensionContentType);
@@ -453,12 +453,12 @@ public class SunatRepresentationToType {
 
             // Tax Total
             TaxTotalType taxTotalType = new TaxTotalType();
-            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getTotal());
+            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getIgv());
             taxAmountType1.setCurrencyID(rep.getMoneda());
             taxTotalType.setTaxAmount(taxAmountType1);
 
             TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
-            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getTotal());
+            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getIgv());
             taxAmountType2.setCurrencyID(rep.getMoneda());
             taxSubtotalType.setTaxAmount(taxAmountType2);
 
@@ -470,6 +470,9 @@ public class SunatRepresentationToType {
             taxSchemeType.setTaxTypeCode(TipoTributo.IGV.getCodigo());
             taxCategoryType.setTaxScheme(taxSchemeType);
             taxSubtotalType.setTaxCategory(taxCategoryType);
+
+            taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
+            creditNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
 
             taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
             creditNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
@@ -602,11 +605,11 @@ public class SunatRepresentationToType {
             payableAmountType.setCurrencyID(rep.getMoneda());
             gratuito.setPayableAmount(payableAmountType);
         }
-        AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
+        //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
 
         AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
         additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
-        additionalInformation.getAdditionalProperty().add(additionalProperty);
+        //additionalInformation.getAdditionalProperty().add(additionalProperty);
 
         extensionContentType.setAny(generateElement(additionalInformation));
         ublExtensionType.setExtensionContent(extensionContentType);
@@ -661,12 +664,12 @@ public class SunatRepresentationToType {
 
             // Tax Total
             TaxTotalType taxTotalType = new TaxTotalType();
-            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getTotal());
+            TaxAmountType taxAmountType1 = new TaxAmountType(lineRep.getIgv());
             taxAmountType1.setCurrencyID(rep.getMoneda());
             taxTotalType.setTaxAmount(taxAmountType1);
 
             TaxSubtotalType taxSubtotalType = new TaxSubtotalType();
-            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getTotal());
+            TaxAmountType taxAmountType2 = new TaxAmountType(lineRep.getIgv());
             taxAmountType2.setCurrencyID(rep.getMoneda());
             taxSubtotalType.setTaxAmount(taxAmountType2);
 
@@ -678,6 +681,9 @@ public class SunatRepresentationToType {
             taxSchemeType.setTaxTypeCode(TipoTributo.IGV.getCodigo());
             taxCategoryType.setTaxScheme(taxSchemeType);
             taxSubtotalType.setTaxCategory(taxCategoryType);
+
+            taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
+            debitNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
 
             taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
             debitNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
@@ -1457,7 +1463,7 @@ public class SunatRepresentationToType {
 
     }
 
-    public static AdditionalPropertyType generateAdditionalInformationSunatTotal(BigDecimal amount) {
+    /*public static AdditionalPropertyType generateAdditionalInformationSunatTotal(BigDecimal amount) {
         MoneyConverters converter = MoneyConverters.SPANISH_BANKING_MONEY_VALUE;
         String valueAsWords = converter.asWords(amount);
 
@@ -1465,7 +1471,7 @@ public class SunatRepresentationToType {
         additionalProperty.setID(new IDType(TipoElementosAdicionalesComprobante.MONTO_EN_LETRAS.getCodigo()));
         additionalProperty.setValue(new ValueType(valueAsWords));
         return additionalProperty;
-    }
+    }*/
 
     public static MonetaryTotalType toLegalMonetaryTotalType(DocumentRepresentation rep) {
         MonetaryTotalType monetaryTotalType = new MonetaryTotalType();

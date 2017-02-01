@@ -1,5 +1,6 @@
 package org.openfact.pe.services.resources;
 
+import com.google.common.io.Files;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
@@ -22,7 +23,10 @@ import org.openfact.services.resources.admin.AdminEventBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +129,7 @@ public class DocumentExtensionsResource {
     @Path("credit-notes")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createCreditNote(DocumentRepresentation rep) {
+    public Response createCreditNote(DocumentRepresentation rep) throws IOException {
         SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
 
         if (rep.getSerie() != null || rep.getNumero() != null) {
@@ -141,6 +145,13 @@ public class DocumentExtensionsResource {
         try {
             CreditNoteType creditNoteType = SunatRepresentationToType.toCreditNoteType(organization, rep);
             DocumentModel documentModel = sunatDocumentManager.addCreditNote(creditNoteType, generateAttributes(rep), organization);
+
+            File file = new File("/home/admin/carlos.xml");
+            if (Paths.get("/home/admin/carlos.xml").toFile().exists()) {
+                Paths.get("/home/admin/carlos.xml").toFile().delete();
+            }
+
+            Files.write(documentModel.getXmlAsFile().getFile(), Paths.get("/home/admin/carlos.xml").toFile());
 
             documentModel.setCustomerElectronicMail(rep.getEntidadEmail());
             documentModel.setCustomerRegistrationName(rep.getEntidadDenominacion());

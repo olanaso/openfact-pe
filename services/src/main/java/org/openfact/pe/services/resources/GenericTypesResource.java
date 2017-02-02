@@ -157,7 +157,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("moneda")
+    @Path("monedas")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoMoneda() {
@@ -241,12 +241,24 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("regimen-percepcion")
+    @Path("tipos-regimen-percepcion")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoRegimenPercepcion() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoRegimenPercepcion type : TipoRegimenPercepcion.values()) {
+            rep.add(SunatEnumToRepresentation.toRepresentation(type));
+        }
+        return rep;
+    }
+
+    @GET
+    @Path("documentos-relacionados-percepcion")
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<GenericTypeRepresentation> getDocumentosRelacionadosPercepcion() {
+        List<GenericTypeRepresentation> rep = new ArrayList<>();
+        for (TipoDocumentoRelacionadoPercepcion type : TipoDocumentoRelacionadoPercepcion.values()) {
             rep.add(SunatEnumToRepresentation.toRepresentation(type));
         }
         return rep;

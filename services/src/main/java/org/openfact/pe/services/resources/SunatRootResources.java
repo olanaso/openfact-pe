@@ -67,7 +67,7 @@ public class SunatRootResources {
         return new PerceptionsResource(session, session.getContext().getOrganization(), adminEvent);
     }
 
-    @Path("ubl-extensions/void-documents")
+    @Path("ubl-extensions/voided-documents")
     public VoidedDocumentsResource getVoidedDocumentsResource(@Context final HttpHeaders headers) {
         AdminEventBuilder adminEvent = getAdminBuilder(headers);
         adminEvent.organization(session.getContext().getOrganization()).resource(ResourceType.DOCUMENT);

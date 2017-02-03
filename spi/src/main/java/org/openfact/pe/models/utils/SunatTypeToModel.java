@@ -1,5 +1,7 @@
 package org.openfact.pe.models.utils;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import org.openfact.models.DocumentModel;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
@@ -14,15 +16,23 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SunatTypeToModel extends TypeToModel {
 
     public static final String SUNAT_PERCEPTION_SYSTEM_CODE = "sunatPerceptionSystemCode";
     public static final String SUNAT_PERCEPTION_PERCENT = "sunatPerceptionPercent";
-    public static final String SUNAT_TOTAL_CASHED = "sunatTotalCashed";
+
+    public static final String SUNAT_TOTAL_CASHED_AMOUNT = "sunatTotalCashedAmount";
+    public static final String SUNAT_TOTAL_CASHED_CURRENCY_ID = "sunatTotalCashedCurrencyID";
+
     public static final String SUNAT_RETENTION_SYSTEM_CODE = "sunatRetentionSystemCode";
     public static final String SUNAT_RETENTION_PERCENT = "sunatRetentionPercent";
     public static final String SUNAT_TOTAL_PAID = "sunatTotalPaid";
+
+    public static final String RECEIVER_PARTY_REGISTRATION_NAME = "receiverPartyRegistrationName";
+    public static final String RECEIVER_PARTY_IDENTIFICATION_ID = "receiverPartyIdentificationID";
 
     public static LocalDate toDate(XMLGregorianCalendar xmlCal) {
         Date utilDate = xmlCal.toGregorianCalendar().getTime();
@@ -44,7 +54,11 @@ public class SunatTypeToModel extends TypeToModel {
             model.setSingleAttribute(SUNAT_PERCEPTION_PERCENT, type.getSunatPerceptionPercent().getValue().toString());
         }
         if (type.getSunatTotalCashed() != null) {
-            model.setSingleAttribute(SUNAT_TOTAL_CASHED, type.getSunatTotalCashed().getValue().toString());
+            model.setSingleAttribute(SUNAT_TOTAL_CASHED_AMOUNT, type.getSunatTotalCashed().getValue().toString());
+            model.setSingleAttribute(SUNAT_TOTAL_CASHED_CURRENCY_ID, type.getSunatTotalCashed().getCurrencyID());
+        }
+        if (type.getReceiverParty() != null) {
+            addReceiverAttributes(type.getReceiverParty(), model);
         }
     }
 
@@ -72,6 +86,17 @@ public class SunatTypeToModel extends TypeToModel {
     public static void importVoidedDocument(OpenfactSession session, OrganizationModel organization, DocumentModel model, VoidedDocumentsType type) {
         if (type.getIssueDate() != null) {
             model.setSingleAttribute(ISSUE_DATE, type.getIssueDate().getValue().toString());
+        }
+    }
+
+    public static void addReceiverAttributes(PartyType partyType, DocumentModel documentModel) {
+        if (partyType.getPartyIdentification() != null && !partyType.getPartyIdentification().isEmpty()) {
+            List<String> partyIdentification = partyType.getPartyIdentification().stream().map(f -> f.getIDValue()).collect(Collectors.toList());
+            documentModel.setAttribute(RECEIVER_PARTY_IDENTIFICATION_ID, partyIdentification);
+        }
+        if (partyType.getPartyLegalEntity() != null && !partyType.getPartyLegalEntity().isEmpty()) {
+            List<String> partyLegalEntityName = partyType.getPartyLegalEntity().stream().map(f -> f.getRegistrationNameValue()).collect(Collectors.toList());
+            documentModel.setAttribute(RECEIVER_PARTY_REGISTRATION_NAME, partyLegalEntityName);
         }
     }
 

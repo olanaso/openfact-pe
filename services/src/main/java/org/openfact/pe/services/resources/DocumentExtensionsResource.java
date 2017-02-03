@@ -146,13 +146,6 @@ public class DocumentExtensionsResource {
             CreditNoteType creditNoteType = SunatRepresentationToType.toCreditNoteType(organization, rep);
             DocumentModel documentModel = sunatDocumentManager.addCreditNote(creditNoteType, generateAttributes(rep), organization);
 
-            File file = new File("/home/admin/carlos.xml");
-            if (Paths.get("/home/admin/carlos.xml").toFile().exists()) {
-                Paths.get("/home/admin/carlos.xml").toFile().delete();
-            }
-
-            Files.write(documentModel.getXmlAsFile().getFile(), Paths.get("/home/admin/carlos.xml").toFile());
-
             documentModel.setCustomerElectronicMail(rep.getEntidadEmail());
             documentModel.setCustomerRegistrationName(rep.getEntidadDenominacion());
             documentModel.setCustomerAssignedAccountId(rep.getEntidadNumeroDeDocumento());

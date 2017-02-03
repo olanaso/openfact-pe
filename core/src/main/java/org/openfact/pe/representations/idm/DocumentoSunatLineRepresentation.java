@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class DocumentoSunatLineRepresentation {
+
     private String tipoDocumentoRelacionado;
     private String numeroDocumentoRelacionado;
     private Date fechaDocumentoRelacionado;
     private String monedaDocumentoRelacionado;
     private BigDecimal totalDocumentoRelacionado;
+
     private BigDecimal tipoCambio;
     private Date fechaCambio;
     private BigDecimal pagoDocumentoSunat;

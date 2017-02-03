@@ -7,32 +7,30 @@ import java.util.List;
 import java.util.Set;
 
 public class DocumentoSunatRepresentation {
+
     private String entidadTipoDeDocumento;
     private String entidadNumeroDeDocumento;
     private String entidadDenominacion;
-    protected String entidadDireccion;
+    private String entidadDireccion;
     private String entidadEmail;
+
     private String serieDocumento;
     private String numeroDocumento;
     private String monedaDocumento;
     private String codigoDocumento;
     private BigDecimal tasaDocumento;
+
     private boolean enviarAutomaticamenteASunat;
     private boolean enviarAutomaticamenteAlCliente;
+
     private String observaciones;
     private BigDecimal totalPago;
     private BigDecimal totalDocumentoSunat;
     private Date fechaDeEmision;
     private String codigoUnico;
-    protected Set<String> requiredActions;
-    private List<DocumentoSunatLineRepresentation> detalle;
 
-    public void addDetalle(DocumentoSunatLineRepresentation representation) {
-        if (detalle == null) {
-            detalle=new ArrayList<>();
-        }
-        detalle.add(representation);
-    }
+    private Set<String> requiredActions;
+    private List<DocumentoSunatLineRepresentation> detalle;
 
     public String getEntidadTipoDeDocumento() {
         return entidadTipoDeDocumento;
@@ -74,24 +72,16 @@ public class DocumentoSunatRepresentation {
         this.entidadEmail = entidadEmail;
     }
 
-    public String getNumeroDocumento() {
-        return numeroDocumento;
-    }
-
     public String getSerieDocumento() {
         return serieDocumento;
     }
 
-    public String getCodigoDocumento() {
-        return codigoDocumento;
-    }
-
-    public void setCodigoDocumento(String codigoDocumento) {
-        this.codigoDocumento = codigoDocumento;
-    }
-
     public void setSerieDocumento(String serieDocumento) {
         this.serieDocumento = serieDocumento;
+    }
+
+    public String getNumeroDocumento() {
+        return numeroDocumento;
     }
 
     public void setNumeroDocumento(String numeroDocumento) {
@@ -104,6 +94,14 @@ public class DocumentoSunatRepresentation {
 
     public void setMonedaDocumento(String monedaDocumento) {
         this.monedaDocumento = monedaDocumento;
+    }
+
+    public String getCodigoDocumento() {
+        return codigoDocumento;
+    }
+
+    public void setCodigoDocumento(String codigoDocumento) {
+        this.codigoDocumento = codigoDocumento;
     }
 
     public BigDecimal getTasaDocumento() {
@@ -170,19 +168,19 @@ public class DocumentoSunatRepresentation {
         this.codigoUnico = codigoUnico;
     }
 
-    public List<DocumentoSunatLineRepresentation> getDetalle() {
-        return detalle;
-    }
-
-    public void setDetalle(List<DocumentoSunatLineRepresentation> detalle) {
-        this.detalle = detalle;
-    }
-
     public Set<String> getRequiredActions() {
         return requiredActions;
     }
 
     public void setRequiredActions(Set<String> requiredActions) {
         this.requiredActions = requiredActions;
+    }
+
+    public List<DocumentoSunatLineRepresentation> getDetalle() {
+        return detalle;
+    }
+
+    public void setDetalle(List<DocumentoSunatLineRepresentation> detalle) {
+        this.detalle = detalle;
     }
 }

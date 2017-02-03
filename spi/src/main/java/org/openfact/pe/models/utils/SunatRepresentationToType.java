@@ -724,7 +724,7 @@ public class SunatRepresentationToType {
             type.setSunatPerceptionSystemCode(rep.getCodigoDocumento());
         }
         if (rep.getTasaDocumento() != null) {
-            type.setSunatPerceptionPercent(rep.getTasaDocumento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            type.setSunatPerceptionPercent(rep.getTasaDocumento());
         }
         if (rep.getObservaciones() != null) {
             type.addNote(rep.getObservaciones());
@@ -733,34 +733,11 @@ public class SunatRepresentationToType {
         ublExtensionType.setExtensionContent(extensionContentType);
         ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
         type.setUblExtensions(ublExtensionsType);
-        double totalInvoiceAmount = 0, totalPaid = 0;
-        for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
-            double amount = 0, paid = 0;
-            boolean change = false;
-            if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null) {
-                if (!reference.getMonedaDocumentoRelacionado().equalsIgnoreCase(rep.getMonedaDocumento())) {
-                    if (reference.getTipoCambio() != null && reference.getTipoCambio().doubleValue() != 0) {
-                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
-                        paid = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(new BigDecimal(amount))).doubleValue();
-                    } else {
-                        change = true;
-                    }
-                } else {
-                    change = true;
-                }
-            } else {
-                change = true;
-            }
-            if (change) {
-                reference.setTipoCambio(null);
-                amount = (reference.getPagoDocumentoSunat().multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
-                paid = (reference.getPagoDocumentoSunat().subtract(new BigDecimal(amount))).doubleValue();
-            }
-            totalInvoiceAmount = totalInvoiceAmount + amount;
-            totalPaid = totalPaid + paid;
-        }
-        type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
-        type.setSunatTotalCashed(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
+
+        // Totales
+        type.setTotalInvoiceAmount(rep.getTotalDocumentoSunat(), rep.getMonedaDocumento());
+        type.setSunatTotalCashed(rep.getTotalPago(), rep.getMonedaDocumento());
+
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
             type.addPerceptionDocumentReference(toPerceptionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
         }
@@ -774,7 +751,7 @@ public class SunatRepresentationToType {
             type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
-            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado().setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumentoRelacionado());
+            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
         }
         type.setPayment(toPaymentType(rep));
         type.setSunatPerceptionInformation(toSUNATPerceptionInformationType(rep, currencyCode, perception));
@@ -816,7 +793,7 @@ public class SunatRepresentationToType {
             type.setSunatRetentionSystemCode(rep.getCodigoDocumento());
         }
         if (rep.getTasaDocumento() != null) {
-            type.setSunatRetentionPercent(rep.getTasaDocumento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            type.setSunatRetentionPercent(rep.getTasaDocumento());
         }
         if (rep.getObservaciones() != null) {
             type.addNote(rep.getObservaciones());
@@ -825,34 +802,10 @@ public class SunatRepresentationToType {
         ublExtensionType.setExtensionContent(extensionContentType);
         ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
         type.setUblExtensions(ublExtensionsType);
-        double totalInvoiceAmount = 0, totalPaid = 0;
-        for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
-            double amount = 0, paid = 0;
-            boolean change = false;
-            if (rep.getMonedaDocumento() != null && reference.getMonedaDocumentoRelacionado() != null) {
-                if (!reference.getMonedaDocumentoRelacionado().equalsIgnoreCase(rep.getMonedaDocumento())) {
-                    if (reference.getTipoCambio() != null && reference.getTipoCambio().doubleValue() != 0) {
-                        amount = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
-                        paid = (reference.getPagoDocumentoSunat().multiply(reference.getTipoCambio()).subtract(new BigDecimal(amount))).doubleValue();
-                    } else {
-                        change = true;
-                    }
-                } else {
-                    change = true;
-                }
-            } else {
-                change = true;
-            }
-            if (change) {
-                reference.setTipoCambio(null);
-                amount = (reference.getPagoDocumentoSunat().multiply(rep.getTasaDocumento()).divide(new BigDecimal(100))).doubleValue();
-                paid = (reference.getPagoDocumentoSunat().subtract(new BigDecimal(amount))).doubleValue();
-            }
-            totalInvoiceAmount = totalInvoiceAmount + amount;
-            totalPaid = totalPaid + paid;
-        }
-        type.setTotalInvoiceAmount(new BigDecimal(totalInvoiceAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
-        type.setSunatTotalPaid(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumento());
+
+        // Totales
+        type.setTotalInvoiceAmount(rep.getTotalDocumentoSunat(), rep.getMonedaDocumento());
+        type.setSunatTotalPaid(rep.getTotalPago(), rep.getMonedaDocumento());
 
         for (DocumentoSunatLineRepresentation reference : rep.getDetalle()) {
             type.addRetentionDocumentReference(toRetentionDocumentReferenceType(reference, rep.getMonedaDocumento(), rep.getTasaDocumento()));
@@ -867,7 +820,7 @@ public class SunatRepresentationToType {
             type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
         }
         if (rep.getTotalDocumentoRelacionado() != null && rep.getMonedaDocumentoRelacionado() != null) {
-            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado().setScale(2, BigDecimal.ROUND_HALF_EVEN), rep.getMonedaDocumentoRelacionado());
+            type.setTotalInvoiceAmount(rep.getTotalDocumentoRelacionado(), rep.getMonedaDocumentoRelacionado());
         }
         type.setPayment(toPaymentType(rep));
         type.setSUNATRetentionInformation(toSUNATRetentionInformation(rep, currencyCode, retencion));
@@ -891,56 +844,21 @@ public class SunatRepresentationToType {
     private static AmountType tosetSUNATNetTotalPaidType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
-        double retentionAmount = 0, totalPaid = 0;
-        boolean change = false;
-        if (currencyCode != null && rep.getMonedaDocumentoRelacionado() != null) {
-            if (!rep.getMonedaDocumentoRelacionado().equalsIgnoreCase(currencyCode)) {
-                if (rep.getTipoCambio() != null && rep.getTipoCambio().doubleValue() != 0) {
-                    retentionAmount = (rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).multiply(retencion).divide(new BigDecimal(100))).doubleValue();
-                    totalPaid = (rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).subtract(new BigDecimal(retentionAmount))).doubleValue();
-                } else {
-                    change = true;
-                }
-            } else {
-                change = true;
-            }
-        }
-        if (change) {
-            retentionAmount = (rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100))).doubleValue();
-            totalPaid = (rep.getPagoDocumentoSunat().subtract(new BigDecimal(retentionAmount))).doubleValue();
-        }
-        type.setValue(new BigDecimal(totalPaid).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+        type.setValue(rep.getImportePago());
         return type;
     }
 
     private static AmountType toSUNATAmountType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         AmountType type = new AmountType();
         type.setCurrencyID(currencyCode);
-        double retentionAmount = 0, totalPaid = 0;
-        boolean change = false;
-        if (currencyCode != null && rep.getMonedaDocumentoRelacionado() != null) {
-            if (!rep.getMonedaDocumentoRelacionado().equalsIgnoreCase(currencyCode)) {
-                if (rep.getTipoCambio() != null && rep.getTipoCambio().doubleValue() != 0) {
-                    retentionAmount = (rep.getPagoDocumentoSunat().multiply(rep.getTipoCambio()).multiply(retencion).divide(new BigDecimal(100))).doubleValue();
-                } else {
-                    change = true;
-                }
-            } else {
-                change = true;
-            }
-        }
-        if (change) {
-            retentionAmount = (rep.getPagoDocumentoSunat().multiply(retencion).divide(new BigDecimal(100))).doubleValue();
-        }
-        type.setValue(new BigDecimal(retentionAmount).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+        type.setValue(rep.getImporteDocumentoSunat());
         return type;
-
     }
 
     private static ExchangeRateType toExchangeRateType(DocumentoSunatLineRepresentation rep, String currencyCode) {
         ExchangeRateType type = new ExchangeRateType();
         if (rep.getTipoCambio() != null) {
-            type.setCalculationRate(rep.getTipoCambio().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            type.setCalculationRate(rep.getTipoCambio());
             if (rep.getMonedaDocumentoRelacionado() != null) {
                 type.setSourceCurrencyCode(rep.getMonedaDocumentoRelacionado());
             }
@@ -949,7 +867,7 @@ public class SunatRepresentationToType {
                 type.setDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaCambio())));
             }
         } else {
-            type.setCalculationRate(new BigDecimal(1).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            type.setCalculationRate(new BigDecimal(1));
             type.setSourceCurrencyCode(currencyCode);
             type.setTargetCurrencyCode(currencyCode);
             type.setDate(toGregorianCalendar(LocalDate.now()));
@@ -975,7 +893,7 @@ public class SunatRepresentationToType {
             type.setCurrencyID(rep.getMonedaDocumentoRelacionado());
         }
         if (rep.getPagoDocumentoSunat() != null) {
-            type.setValue(rep.getPagoDocumentoSunat().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            type.setValue(rep.getPagoDocumentoSunat());
         }
         return type;
     }

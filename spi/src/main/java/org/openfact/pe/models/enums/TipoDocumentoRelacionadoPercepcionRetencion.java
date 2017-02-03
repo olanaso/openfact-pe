@@ -2,7 +2,7 @@ package org.openfact.pe.models.enums;
 
 import org.openfact.models.enums.DocumentType;
 
-public enum TipoDocumentoRelacionadoPercepcion {
+public enum TipoDocumentoRelacionadoPercepcionRetencion {
 
     FACTURA("01", "FACTURA", DocumentType.INVOICE),
     BOLETA("03", "BOLETA DE VENTA", DocumentType.INVOICE),
@@ -25,7 +25,7 @@ public enum TipoDocumentoRelacionadoPercepcion {
         return documentType;
     }
 
-    TipoDocumentoRelacionadoPercepcion(String codigo, String denominacion, DocumentType documentType) {
+    TipoDocumentoRelacionadoPercepcionRetencion(String codigo, String denominacion, DocumentType documentType) {
         this.codigo = codigo;
         this.denominacion = denominacion;
         this.documentType = documentType;

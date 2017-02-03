@@ -10,7 +10,6 @@ import org.openfact.pe.representations.idm.GenericTypeRepresentation;
 import org.openfact.services.ServicesLogger;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
@@ -258,19 +257,31 @@ public class GenericTypesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getDocumentosRelacionadosPercepcion() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
-        for (TipoDocumentoRelacionadoPercepcion type : TipoDocumentoRelacionadoPercepcion.values()) {
+        for (TipoDocumentoRelacionadoPercepcionRetencion type : TipoDocumentoRelacionadoPercepcionRetencion.values()) {
             rep.add(SunatEnumToRepresentation.toRepresentation(type));
         }
         return rep;
     }
 
     @GET
-    @Path("regimen-retencion")
+    @Path("tipos-regimen-retencion")
     @NoCache
     @Produces(MediaType.APPLICATION_JSON)
     public List<GenericTypeRepresentation> getTipoRegimenRetencion() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoRegimenRetencion type : TipoRegimenRetencion.values()) {
+            rep.add(SunatEnumToRepresentation.toRepresentation(type));
+        }
+        return rep;
+    }
+
+    @GET
+    @Path("documentos-relacionados-retencion")
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<GenericTypeRepresentation> getDocumentosRelacionadosRetencion() {
+        List<GenericTypeRepresentation> rep = new ArrayList<>();
+        for (TipoDocumentoRelacionadoPercepcionRetencion type : TipoDocumentoRelacionadoPercepcionRetencion.values()) {
             rep.add(SunatEnumToRepresentation.toRepresentation(type));
         }
         return rep;

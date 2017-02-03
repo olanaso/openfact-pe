@@ -29,7 +29,9 @@ public class SunatTypeToModel extends TypeToModel {
 
     public static final String SUNAT_RETENTION_SYSTEM_CODE = "sunatRetentionSystemCode";
     public static final String SUNAT_RETENTION_PERCENT = "sunatRetentionPercent";
-    public static final String SUNAT_TOTAL_PAID = "sunatTotalPaid";
+
+    public static final String SUNAT_TOTAL_PAID_AMOUNT = "sunatTotalPaidAmount";
+    public static final String SUNAT_TOTAL_PAID_CURRENCY_ID = "sunatTotalPaidAmountCurrencyID";
 
     public static final String RECEIVER_PARTY_REGISTRATION_NAME = "receiverPartyRegistrationName";
     public static final String RECEIVER_PARTY_IDENTIFICATION_ID = "receiverPartyIdentificationID";
@@ -73,7 +75,8 @@ public class SunatTypeToModel extends TypeToModel {
             model.setSingleAttribute(SUNAT_RETENTION_PERCENT, type.getSunatRetentionPercent().getValue().toString());
         }
         if (type.getSunatTotalPaid() != null) {
-            model.setSingleAttribute(SUNAT_TOTAL_PAID, type.getSunatTotalPaid().getValue().toString());
+            model.setSingleAttribute(SUNAT_TOTAL_PAID_AMOUNT, type.getSunatTotalPaid().getValue().toString());
+            model.setSingleAttribute(SUNAT_TOTAL_PAID_CURRENCY_ID, type.getSunatTotalPaid().getCurrencyID().toString());
         }
     }
 

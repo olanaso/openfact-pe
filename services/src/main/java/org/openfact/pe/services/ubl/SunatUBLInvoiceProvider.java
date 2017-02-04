@@ -115,6 +115,7 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
             public void sendToCustomer(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
                 SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
                 sunatDocumentManager.sendToThirdPartyByEmail(organization, document, sendEvent, document.getCustomerElectronicMail());
+                document.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
             }
 
             @Override

@@ -112,6 +112,7 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
             public void sendToCustomer(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
                 SunatDocumentManager manager = new SunatDocumentManager(session);
                 manager.sendToThirdPartyByEmail(organization, document, sendEvent, document.getCustomerElectronicMail());
+                document.removeRequiredAction(RequiredAction.SEND_TO_CUSTOMER);
             }
 
             @Override

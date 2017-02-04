@@ -76,7 +76,7 @@ public class VoidedDocumentsResource {
                 SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
 
                 // Double-check duplicated ID
-                if (voidedDocumentType.getID() != null && sunatDocumentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.VOIDED.toString(), voidedDocumentType.getID().getValue(), organization) != null) {
+                if (voidedDocumentType.getID() != null && sunatDocumentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentType.getID().getValue(), organization) != null) {
                     throw new ModelDuplicateException("Voided Document exists with same documentId");
                 }
 
@@ -124,7 +124,7 @@ public class VoidedDocumentsResource {
 
         if (rep.getSerieDocumento() != null || rep.getNumeroDocumento() != null) {
             if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
-                if (sunatDocumentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.VOIDED.toString(), rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
+                if (sunatDocumentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.VOIDED_DOCUMENTS.toString(), rep.getSerieDocumento() + "-" + rep.getNumeroDocumento(), organization) != null) {
                     return ErrorResponse.exists("Voided exists with same documentId");
                 }
             } else {

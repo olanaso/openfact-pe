@@ -127,7 +127,7 @@ public class SunatDocumentManager extends DocumentManager {
             voidedDocumentsType.setID(documentId);
         }
 
-        DocumentModel documentModel = model.addDocument(SunatDocumentType.VOIDED.toString(), documentId.getValue(), organization);
+        DocumentModel documentModel = model.addDocument(SunatDocumentType.VOIDED_DOCUMENTS.toString(), documentId.getValue(), organization);
         SunatTypeToModel.importVoidedDocument(session, organization, documentModel, voidedDocumentsType);
         RequiredAction.getDefaults().stream().forEach(c -> documentModel.addRequiredAction(c));
 

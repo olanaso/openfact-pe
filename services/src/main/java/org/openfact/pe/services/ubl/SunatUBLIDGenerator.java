@@ -279,7 +279,7 @@ public class SunatUBLIDGenerator {
     public static String generateVoidedDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante voidedDocumentCode = TipoComprobante.BAJA;
         DocumentModel lastVoidedDocument = null;
-        ScrollModel<DocumentModel> voidedDocuments = session.documents().getDocumentScroll(organization, SunatDocumentType.VOIDED.toString(), 10, false);
+        ScrollModel<DocumentModel> voidedDocuments = session.documents().getDocumentScroll(organization, SunatDocumentType.VOIDED_DOCUMENTS.toString(), 10, false);
         Iterator<DocumentModel> iterator = voidedDocuments.iterator();
 
         Pattern pattern = Pattern.compile(voidedDocumentCode.getMask());

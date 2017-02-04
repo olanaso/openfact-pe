@@ -4,7 +4,7 @@ import org.openfact.models.enums.DocumentType;
 
 public enum SunatDocumentType {
 
-    PERCEPTION, RETENTION, VOIDED, SUMMARY;
+    PERCEPTION, RETENTION, VOIDED_DOCUMENTS, SUMMARY;
 
     public static SunatDocumentType getFromString(String value) {
         SunatDocumentType[] elements = SunatDocumentType.values();

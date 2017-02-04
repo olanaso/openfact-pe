@@ -122,17 +122,11 @@
   },
 
   "organizationScheduleTask": {
-    "sendToThirdParty": {
-      "active": false
-    },
     "sendToCustomer": {
-      "active": false
+      "active": true
     },
     "sendToThridPartySunat": {
-      "active": false
-    },
-    "sendToCustomerSunat": {
-      "active": false
+      "active": true
     }
   }
 

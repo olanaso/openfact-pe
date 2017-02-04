@@ -8,30 +8,31 @@ import org.openfact.models.OrganizationScheduleTaskProviderFactory;
 
 public class SendToThridPartySunatScheduleTaskProviderFactory implements OrganizationScheduleTaskProviderFactory {
 
-	  protected boolean isActive;
-	@Override
-	public OrganizationScheduleTaskProvider create(OpenfactSession session) {
-		return new SendToThridPartySunatScheduleTaskProvider(isActive);
-	}
+    protected boolean isActive;
+    protected int retries;
 
-	@Override
-	public void init(Scope config) {
-		
-	}
+    @Override
+    public OrganizationScheduleTaskProvider create(OpenfactSession session) {
+        return new SendToThridPartySunatScheduleTaskProvider(isActive, retries);
+    }
 
-	@Override
-	public void postInit(OpenfactSessionFactory factory) {
-		
-	}
+    @Override
+    public void init(Scope config) {
+        isActive = config.getBoolean("active", true);
+        retries = config.getInt("retries", 30);
+    }
 
-	@Override
-	public void close() {
-		
-	}
+    @Override
+    public void postInit(OpenfactSessionFactory factory) {
+    }
 
-	@Override
-	public String getId() {
-		return "sendToThridPartySunat";
-	}
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public String getId() {
+        return "sendToThridPartySunat";
+    }
 
 }

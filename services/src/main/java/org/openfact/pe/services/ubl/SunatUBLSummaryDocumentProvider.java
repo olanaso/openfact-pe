@@ -1,5 +1,6 @@
 package org.openfact.pe.services.ubl;
 
+import javax.ws.rs.Path;
 import javax.xml.bind.JAXBException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -26,6 +27,11 @@ import org.openfact.ubl.UBLSender;
 import org.openfact.ubl.UBLWriter;
 import org.w3c.dom.Document;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvider {

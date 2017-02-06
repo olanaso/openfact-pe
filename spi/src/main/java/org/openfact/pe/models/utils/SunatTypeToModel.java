@@ -36,6 +36,16 @@ public class SunatTypeToModel extends TypeToModel {
     public static final String RECEIVER_PARTY_REGISTRATION_NAME = "receiverPartyRegistrationName";
     public static final String RECEIVER_PARTY_IDENTIFICATION_ID = "receiverPartyIdentificationID";
 
+    public static final String TOTAL_OPERACIONES_GRAVADAS = "totalOperacionesGravadas";
+    public static final String TOTAL_OPERACIONES_EXONERADAS = "totalOperacionesExoneradas";
+    public static final String TOTAL_OPERACIONES_INAFECTAS = "totalOperacionesInafectas";
+    public static final String TOTAL_OPERACIONES_GRATUITAS = "totalOperacionesGratuitas";
+    public static final String TOTAL_IGV = "totalIgv";
+    public static final String VALOR_IGV = "valorIgv";
+    public static final String PORCENTAJE_DESCUENTO_GLOBAL_APLICADO = "pocentajeDescuentoGlobalAplicado";
+    public static final String TOTAL_OTROS_CARGOS_APLICADO = "totalOtrosCargosAplicado";
+    public static final String ES_OPERACION_GRATUITA = "esOperacionGratuita";
+
     public static LocalDate toDate(XMLGregorianCalendar xmlCal) {
         Date utilDate = xmlCal.toGregorianCalendar().getTime();
         return LocalDateTime.ofInstant(utilDate.toInstant(), ZoneId.systemDefault()).toLocalDate();

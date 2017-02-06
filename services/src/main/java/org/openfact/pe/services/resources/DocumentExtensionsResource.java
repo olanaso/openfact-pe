@@ -14,6 +14,7 @@ import org.openfact.models.enums.SendResultType;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
+import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.services.ErrorResponse;
@@ -277,31 +278,31 @@ public class DocumentExtensionsResource {
 
     private Map<String, List<String>> generateAttributes(DocumentRepresentation rep) {
         Map<String, List<String>> attributes = new HashMap<>();
-        attributes.put("operacionGratuita", Arrays.asList(String.valueOf(rep.isOperacionGratuita())));
+        attributes.put(SunatTypeToModel.ES_OPERACION_GRATUITA, Arrays.asList(String.valueOf(rep.isOperacionGratuita())));
 
         if (rep.getTotalGravada() != null) {
-            attributes.put("totalGravada", Arrays.asList(String.valueOf(rep.getTotalGravada())));
+            attributes.put(SunatTypeToModel.TOTAL_OPERACIONES_GRAVADAS, Arrays.asList(String.valueOf(rep.getTotalGravada())));
         }
         if (rep.getTotalInafecta() != null) {
-            attributes.put("totalInafecta", Arrays.asList(String.valueOf(rep.getTotalInafecta())));
+            attributes.put(SunatTypeToModel.TOTAL_OPERACIONES_INAFECTAS, Arrays.asList(String.valueOf(rep.getTotalInafecta())));
         }
         if (rep.getTotalExonerada() != null) {
-            attributes.put("totalExonerada", Arrays.asList(String.valueOf(rep.getTotalExonerada())));
+            attributes.put(SunatTypeToModel.TOTAL_OPERACIONES_EXONERADAS, Arrays.asList(String.valueOf(rep.getTotalExonerada())));
         }
         if (rep.getTotalIgv() != null) {
-            attributes.put("totalIgv", Arrays.asList(String.valueOf(rep.getTotalIgv())));
+            attributes.put(SunatTypeToModel.TOTAL_IGV, Arrays.asList(String.valueOf(rep.getTotalIgv())));
         }
         if (rep.getTotalGratuita() != null) {
-            attributes.put("totalGratuita", Arrays.asList(String.valueOf(rep.getTotalGratuita())));
+            attributes.put(SunatTypeToModel.TOTAL_OPERACIONES_GRATUITAS, Arrays.asList(String.valueOf(rep.getTotalGratuita())));
         }
         if (rep.getIgv() != null) {
-            attributes.put("igv", Arrays.asList(String.valueOf(rep.getIgv())));
+            attributes.put(SunatTypeToModel.VALOR_IGV, Arrays.asList(String.valueOf(rep.getIgv())));
         }
         if (rep.getPorcentajeDescuento() != null) {
-            attributes.put("porcentajeDescuento", Arrays.asList(String.valueOf(rep.getPorcentajeDescuento())));
+            attributes.put(SunatTypeToModel.PORCENTAJE_DESCUENTO_GLOBAL_APLICADO, Arrays.asList(String.valueOf(rep.getPorcentajeDescuento())));
         }
         if (rep.getTotalOtrosCargos() != null) {
-            attributes.put("totalOtrosCargos", Arrays.asList(String.valueOf(rep.getTotalOtrosCargos())));
+            attributes.put(SunatTypeToModel.TOTAL_OTROS_CARGOS_APLICADO, Arrays.asList(String.valueOf(rep.getTotalOtrosCargos())));
         }
         return attributes;
     }

@@ -19,12 +19,13 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SummaryDocumentsType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1", propOrder = {
-        "ublExtensions", "ublVersionID", "customizationID", "id", "documentCurrencyCode", "issueDate",
-        "referenceDateTime", "signature", "accountingSupplierParty", "summaryDocumentsLines"
+        "ublExtensions", "ublVersionID", "customizationID", "id", "documentCurrencyCode",
+        "referenceDate", "issueDate", "signature", "accountingSupplierParty", "summaryDocumentsLine"
 
 })
 @CodingStyleguideUnaware
-public class SummaryDocumentsType   implements Serializable, Cloneable{
+public class SummaryDocumentsType implements Serializable, Cloneable {
+
     @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
     protected UBLExtensionsType ublExtensions;
 
@@ -36,13 +37,15 @@ public class SummaryDocumentsType   implements Serializable, Cloneable{
 
     @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IDType id;
+
     @XmlElement(name = "DocumentCurrencyCode", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     private DocumentCurrencyCodeType documentCurrencyCode;
+
+    @XmlElement(name = "ReferenceDate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
+    protected ReferenceDateType referenceDate;
+
     @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IssueDateType issueDate;
-
-    @XmlElement(name = "ReferenceDateTime", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
-    protected ReferenceDateType referenceDateTime;
 
     @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected List<SignatureType> signature;
@@ -50,8 +53,8 @@ public class SummaryDocumentsType   implements Serializable, Cloneable{
     @XmlElement(name = "AccountingSupplierParty", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected SupplierPartyType accountingSupplierParty;
 
-    @XmlElement(name = "SummaryDocumentsLines")
-    protected List<SummaryDocumentsLineType> summaryDocumentsLines;
+    @XmlElement(name = "SummaryDocumentsLine", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" )
+    protected List<SummaryDocumentsLineType> summaryDocumentsLine;
 
     public UBLExtensionsType getUblExtensions() {
         return ublExtensions;
@@ -101,12 +104,12 @@ public class SummaryDocumentsType   implements Serializable, Cloneable{
         this.documentCurrencyCode = documentCurrencyCode;
     }
 
-    public ReferenceDateType getReferenceDateTime() {
-        return referenceDateTime;
+    public ReferenceDateType getReferenceDate() {
+        return referenceDate;
     }
 
-    public void setReferenceDateTime(ReferenceDateType referenceDateTime) {
-        this.referenceDateTime = referenceDateTime;
+    public void setReferenceDate(ReferenceDateType referenceDate) {
+        this.referenceDate = referenceDate;
     }
 
     public List<SignatureType> getSignature() {
@@ -124,11 +127,11 @@ public class SummaryDocumentsType   implements Serializable, Cloneable{
         this.accountingSupplierParty = accountingSupplierParty;
     }
 
-    public List<SummaryDocumentsLineType> getSummaryDocumentsLines() {
-        if (summaryDocumentsLines == null) {
-            summaryDocumentsLines = new ArrayList<>();
+    public List<SummaryDocumentsLineType> getSummaryDocumentsLine() {
+        if (summaryDocumentsLine == null) {
+            summaryDocumentsLine = new ArrayList<>();
         }
-        return summaryDocumentsLines;
+        return summaryDocumentsLine;
     }
 
     @Nonnull
@@ -160,7 +163,7 @@ public class SummaryDocumentsType   implements Serializable, Cloneable{
     }
 
     public void addSummaryDocumentsLine(@Nonnull final SummaryDocumentsLineType elem) {
-        getSummaryDocumentsLines().add(elem);
+        getSummaryDocumentsLine().add(elem);
     }
 
     @Nonnull
@@ -189,10 +192,10 @@ public class SummaryDocumentsType   implements Serializable, Cloneable{
 
     @Nonnull
     public ReferenceDateType setReferenceDateTime(@Nullable final XMLGregorianCalendar valueParam) {
-        ReferenceDateType aObj = getReferenceDateTime();
+        ReferenceDateType aObj = getReferenceDate();
         if (aObj == null) {
             aObj = new ReferenceDateType(valueParam);
-            setReferenceDateTime(aObj);
+            setReferenceDate(aObj);
         } else {
             aObj.setValue(valueParam);
         }

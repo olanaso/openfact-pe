@@ -27,6 +27,7 @@ import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.utils.OpenfactModelUtils;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
+import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.enums.SunatDocumentType;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.types.retention.RetentionType;
@@ -215,6 +216,9 @@ public class SunatDocumentManager extends DocumentManager {
                     break;
                 case RETENTION:
                     ublProvider = session.getProvider(UBLRetentionProvider.class);
+                    break;
+                case SUMMARY:
+                    ublProvider = session.getProvider(UBLSummaryDocumentProvider.class);
                     break;
             }
         }

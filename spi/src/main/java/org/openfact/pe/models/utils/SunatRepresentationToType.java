@@ -1083,55 +1083,72 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    public static SummaryDocumentsType toSummaryDocumentType(OrganizationModel organization,
-                                                             SummaryRepresentation rep) {
+    public static SummaryDocumentsType toSummaryDocumentType(OpenfactSession session, OrganizationModel organization, SummaryRepresentation rep) {
         SummaryDocumentsType type = new SummaryDocumentsType();
+
+        // Firma ficticia
+        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
+        UBLExtensionType ublExtensionType = new UBLExtensionType();
+        ExtensionContentType extensionContentType = new ExtensionContentType();
+        extensionContentType.setAny(SunatSignerUtils.getSignToElement(session, organization));
+        ublExtensionType.setExtensionContent(extensionContentType);
+        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
+        type.setUblExtensions(ublExtensionsType);
+
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
         type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
-        type.setId(rep.getSerie() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumero());
+        if (rep.getFechaDeReferencia() != null) {
+            type.setReferenceDateTime(toGregorianCalendar(rep.getFechaDeReferencia().toLocalDate()));
+        }
         if (rep.getFechaDeEmision() != null) {
             type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+        } else {
+            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
         }
-        if (rep.getFechaDeReferencia() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDeReferencia().toLocalDate()));
-        }
+//        type.setId(rep.getSerie() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumero());
         type.addSignature(toSignatureType(organization));
         type.setAccountingSupplierParty(toAccountingSupplierPartyType(organization));
-        for (SummaryLineRepresentation line : rep.getLine()) {
-            type.addSummaryDocumentsLine(toSummaryDocumentsLineType(line));
-        }
-        return type;
-    }
 
-    private static SummaryDocumentsLineType toSummaryDocumentsLineType(SummaryLineRepresentation rep) {
-        SummaryDocumentsLineType type = new SummaryDocumentsLineType();
-        if (rep.getLineID() != null) {
-            type.setID(rep.getLineID());
-        }
-        if (rep.getCodigoDocumento() != null) {
-            type.setDocumentTypeCode(rep.getCodigoDocumento());
-        }
-        if (rep.getSerieDocumento() != null) {
-            type.setDocumentSerialID(rep.getSerieDocumento());
-        }
-        if (rep.getNumeroInicioDocumento() != null) {
-            type.setStartDocumentNumberID(rep.getNumeroInicioDocumento());
-        }
-        if (rep.getNumeroFinDocumento() != null) {
-            type.setEndDocumentNumberID(rep.getNumeroFinDocumento());
-        }
-        if (rep.getTotalAmount() != null && rep.getMoneda() != null) {
-            type.setTotalAmount(rep.getTotalAmount(), rep.getMoneda());
-        }
-        if (rep.getPayment() != null) {
-            for (BillingPaymentRepresentation payment : rep.getPayment()) {
-                type.addBillingPayment(toBillingPaymentType(payment, rep.getMoneda()));
+        if (rep.getLine() != null && !rep.getLine().isEmpty()) {
+            for (int i = 0; i < rep.getLine().size(); i++) {
+                SummaryLineRepresentation summaryLineRepresentation = rep.getLine().get(i);
+
+                SummaryDocumentsLineType lineType = new SummaryDocumentsLineType();
+                lineType.setLineID(String.valueOf(i + 1));
+
+                if (summaryLineRepresentation.getCodigoDocumento() != null) {
+                    lineType.setDocumentTypeCode(summaryLineRepresentation.getCodigoDocumento());
+                }
+                if (summaryLineRepresentation.getSerieDocumento() != null) {
+                    lineType.setDocumentSerialID(summaryLineRepresentation.getSerieDocumento());
+                }
+                if (summaryLineRepresentation.getNumeroInicioDocumento() != null) {
+                    lineType.setStartDocumentNumberID(summaryLineRepresentation.getNumeroInicioDocumento());
+                }
+                if (summaryLineRepresentation.getNumeroFinDocumento() != null) {
+                    lineType.setEndDocumentNumberID(summaryLineRepresentation.getNumeroFinDocumento());
+                }
+                if (summaryLineRepresentation.getTotalAmount() != null && summaryLineRepresentation.getMoneda() != null) {
+                    lineType.setTotalAmount(summaryLineRepresentation.getTotalAmount(), summaryLineRepresentation.getMoneda());
+                }
+                if (summaryLineRepresentation.getPayment() != null) {
+                    for (BillingPaymentRepresentation payment : summaryLineRepresentation.getPayment()) {
+                        lineType.addBillingPayment(toBillingPaymentType(payment, summaryLineRepresentation.getMoneda()));
+                    }
+                }
+                lineType.addAllowanceCharge(toAllowanceChargeType(summaryLineRepresentation, summaryLineRepresentation.getMoneda()));
+
+                if (summaryLineRepresentation.getTaxTotal() != null && !summaryLineRepresentation.getTaxTotal().isEmpty()) {
+                    for (TaxTotalRepresentation tax : summaryLineRepresentation.getTaxTotal()) {
+                        lineType.addTaxTotal(toTaxTotalType(tax, summaryLineRepresentation.getMoneda()));
+                    }
+                }
+
+                type.addSummaryDocumentsLine(lineType);
             }
         }
-        type.addAllowanceCharge(toAllowanceChargeType(rep));
-        for (TaxTotalRepresentation tax : rep.getTaxTotal()) {
-            type.addTaxTotal(toTaxTotalType(tax, rep.getMoneda()));
-        }
+
+
         return type;
     }
 
@@ -1178,11 +1195,14 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    private static AllowanceChargeType toAllowanceChargeType(SummaryLineRepresentation rep) {
+    private static AllowanceChargeType toAllowanceChargeType(SummaryLineRepresentation rep, String moneda) {
         AllowanceChargeType type = new AllowanceChargeType();
         type.setChargeIndicator(rep.isChargeIndicator());
         if (rep.getChargeAmount() != null) {
-            type.setAmount(rep.getChargeAmount());
+            AmountType amountType = new AmountType();
+            amountType.setValue(rep.getChargeAmount());
+            amountType.setCurrencyID(moneda);
+            type.setAmount(amountType);
         }
         return type;
     }

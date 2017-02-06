@@ -60,15 +60,11 @@ public class SunatSignerProvider implements SignerProvider {
         try {
             Reference reference = signatureFactory.newReference("",
                     signatureFactory.newDigestMethod(DigestMethod.SHA1, null),
-                    Collections.singletonList(
-                            signatureFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)),
-                    null, null);
+                    Collections.singletonList(signatureFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)), null, null);
 
             SignedInfo signedInfo = signatureFactory.newSignedInfo(
-                    signatureFactory.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE,
-                            (C14NMethodParameterSpec) null),
-                    signatureFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
-                    Collections.singletonList(reference));
+                    signatureFactory.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE, (C14NMethodParameterSpec) null),
+                    signatureFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null), Collections.singletonList(reference));
 
             KeyInfoFactory keyInfoFactory = signatureFactory.getKeyInfoFactory();
             List<X509Certificate> x509Content = new ArrayList<>();
@@ -80,8 +76,7 @@ public class SunatSignerProvider implements SignerProvider {
             X509Data xdata = keyInfoFactory.newX509Data(x509Content);
             KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(xdata));
 
-            DOMSignContext signContext = new DOMSignContext(keystore.getActiveKey(organizacion).getPrivateKey(),
-                    newdocument.getDocumentElement());
+            DOMSignContext signContext = new DOMSignContext(keystore.getActiveKey(organizacion).getPrivateKey(), newdocument.getDocumentElement());
             XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, keyInfo);
             if (parentNode != null) {
                 signContext.setParent(parentNode);
@@ -117,12 +112,9 @@ public class SunatSignerProvider implements SignerProvider {
 
             domSignCtx.setDefaultNamespacePrefix(PREFIX);
             Reference ref = xmlSigFactory.newReference("", xmlSigFactory.newDigestMethod(DigestMethod.SHA1, null),
-                    Collections.singletonList(
-                            xmlSigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)),
-                    null, null);
+                    Collections.singletonList(xmlSigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)), null, null);
             SignedInfo signedInfo = xmlSigFactory.newSignedInfo(
-                    xmlSigFactory.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE,
-                            (C14NMethodParameterSpec) null),
+                    xmlSigFactory.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE, (C14NMethodParameterSpec) null),
                     xmlSigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null), Collections.singletonList(ref));
 
             KeyInfoFactory keyInfoFactory = xmlSigFactory.getKeyInfoFactory();
@@ -132,8 +124,7 @@ public class SunatSignerProvider implements SignerProvider {
             KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(xdata));
 
             // Create a new XML Signature
-            XMLSignature xmlSignature = xmlSigFactory.newXMLSignature(signedInfo, keyInfo, null,
-                    "Signature" + organization.getName(), null);
+            XMLSignature xmlSignature = xmlSigFactory.newXMLSignature(signedInfo, keyInfo, null, "Signature" + organization.getName(), null);
             xmlSignature.sign(domSignCtx);
             return document;
         } catch (NoSuchAlgorithmException e) {

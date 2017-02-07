@@ -89,6 +89,7 @@
         <module>spi</module>
         <module>services</module>
         <module>testsuite</module>
+        <module>reports</module>
     </modules>
 
     <dependencyManagement>
@@ -106,6 +107,11 @@
             <dependency>
                 <groupId>org.openfact</groupId>
                 <artifactId>openfact.pe-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openfact</groupId>
+                <artifactId>openfact.pe-reports</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

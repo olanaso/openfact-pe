@@ -1423,6 +1423,11 @@ public class SunatRepresentationToType {
             chargeTotalAmountType.setCurrencyID(rep.getMoneda());
             monetaryTotalType.setChargeTotalAmount(chargeTotalAmountType);
         }
+        if (rep.getDescuentoGlobal() != null) {
+            AllowanceTotalAmountType allowanceTotalAmountType = new AllowanceTotalAmountType(rep.getDescuentoGlobal());
+            allowanceTotalAmountType.setCurrencyID(rep.getMoneda());
+            monetaryTotalType.setAllowanceTotalAmount(allowanceTotalAmountType);
+        }
 
         return monetaryTotalType;
     }

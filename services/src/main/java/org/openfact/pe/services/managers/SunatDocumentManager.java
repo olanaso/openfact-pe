@@ -50,7 +50,7 @@ public class SunatDocumentManager extends DocumentManager {
     }
 
     public DocumentModel getDocumentByTypeAndDocumentId(SunatDocumentToType type, String documentId, OrganizationModel organization) {
-        return model.getDocumentByDocumentTypeAndId(type.toString(), documentId, organization);
+        return model.getDocumentByTypeAndUblId(type.toString(), documentId, organization);
     }
 
     public DocumentModel addPerception(OrganizationModel organization, PerceptionType perceptionType) {

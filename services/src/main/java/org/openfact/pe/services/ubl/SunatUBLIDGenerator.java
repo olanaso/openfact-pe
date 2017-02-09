@@ -32,7 +32,9 @@ public class SunatUBLIDGenerator {
         ScrollModel<DocumentModel> invoices = session.documents()
                 .createQuery(organization)
                 .documentType(DocumentType.INVOICE.toString())
+                .entityQuery()
                 .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .resultScroll()
                 .getScrollResult(10);
 
         Iterator<DocumentModel> iterator = invoices.iterator();
@@ -80,7 +82,14 @@ public class SunatUBLIDGenerator {
         TipoComprobante tipoComprobante = TipoComprobante.NOTA_CREDITO;
 
         DocumentModel lastCreditNote = null;
-        ScrollModel<DocumentModel> creditNotes = session.documents().getDocumentScroll(organization, DocumentType.CREDIT_NOTE.toString(), 10, false);
+        ScrollModel<DocumentModel> creditNotes = session.documents()
+                .createQuery(organization)
+                .documentType(DocumentType.CREDIT_NOTE)
+                .entityQuery()
+                .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .resultScroll()
+                .getScrollResult(10);
+
         Iterator<DocumentModel> iterator = creditNotes.iterator();
 
         Pattern pattern = Pattern.compile(tipoComprobante.getMask());
@@ -126,7 +135,14 @@ public class SunatUBLIDGenerator {
         TipoComprobante tipoComprobante = TipoComprobante.NOTA_DEBITO;
 
         DocumentModel lastDebitNote = null;
-        ScrollModel<DocumentModel> debitNotes = session.documents().getDocumentScroll(organization, DocumentType.DEBIT_NOTE.toString(), 10, false);
+        ScrollModel<DocumentModel> debitNotes = session.documents()
+                .createQuery(organization)
+                .documentType(DocumentType.DEBIT_NOTE)
+                .entityQuery()
+                .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .resultScroll()
+                .getScrollResult(10);
+
         Iterator<DocumentModel> iterator = debitNotes.iterator();
 
         Pattern pattern = Pattern.compile(tipoComprobante.getMask());
@@ -164,7 +180,13 @@ public class SunatUBLIDGenerator {
     public static String generatePerceptionDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante perceptionCode = TipoComprobante.PERCEPCION;
         DocumentModel lastPerception = null;
-        ScrollModel<DocumentModel> perceptions = session.documents().getDocumentScroll(organization, SunatDocumentType.PERCEPTION.toString(), 10, false);
+        ScrollModel<DocumentModel> perceptions = session.documents().createQuery(organization)
+                .documentType(SunatDocumentType.PERCEPTION.toString())
+                .entityQuery()
+                .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .resultScroll()
+                .getScrollResult(10);
+
         Iterator<DocumentModel> iterator = perceptions.iterator();
 
         Pattern pattern = Pattern.compile(perceptionCode.getMask());
@@ -201,7 +223,14 @@ public class SunatUBLIDGenerator {
     public static String generateRetentionDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante retentionCode = TipoComprobante.RETENCION;
         DocumentModel lastRetention = null;
-        ScrollModel<DocumentModel> retentions = session.documents().getDocumentScroll(organization, SunatDocumentType.RETENTION.toString(), 10, false);
+        ScrollModel<DocumentModel> retentions = session.documents()
+                .createQuery(organization)
+                .documentType(SunatDocumentType.RETENTION.toString())
+                .entityQuery()
+                .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .resultScroll()
+                .getScrollResult(10);
+
         Iterator<DocumentModel> iterator = retentions.iterator();
 
         Pattern pattern = Pattern.compile(retentionCode.getMask());
@@ -238,7 +267,13 @@ public class SunatUBLIDGenerator {
     public static String generateSummaryDocumentDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante summaryDocumentCode = TipoComprobante.RESUMEN_DIARIO;
         DocumentModel lastSummaryDocument = null;
-        ScrollModel<DocumentModel> summaryDocuments = session.documents().getDocumentScroll(organization, SunatDocumentType.SUMMARY.toString(), 10, false);
+        ScrollModel<DocumentModel> summaryDocuments = session.documents().createQuery(organization)
+                .documentType(SunatDocumentType.SUMMARY.toString())
+                .entityQuery()
+                .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .resultScroll()
+                .getScrollResult(10);
+
         Iterator<DocumentModel> iterator = summaryDocuments.iterator();
 
         Pattern pattern = Pattern.compile(summaryDocumentCode.getMask());
@@ -279,7 +314,13 @@ public class SunatUBLIDGenerator {
     public static String generateVoidedDocumentId(OpenfactSession session, OrganizationModel organization) {
         TipoComprobante voidedDocumentCode = TipoComprobante.BAJA;
         DocumentModel lastVoidedDocument = null;
-        ScrollModel<DocumentModel> voidedDocuments = session.documents().getDocumentScroll(organization, SunatDocumentType.VOIDED_DOCUMENTS.toString(), 10, false);
+        ScrollModel<DocumentModel> voidedDocuments = session.documents().createQuery(organization)
+                .documentType(SunatDocumentType.VOIDED_DOCUMENTS.toString())
+                .entityQuery()
+                .orderByDesc(DocumentModel.DOCUMENT_ID)
+                .resultScroll()
+                .getScrollResult(10);
+
         Iterator<DocumentModel> iterator = voidedDocuments.iterator();
 
         Pattern pattern = Pattern.compile(voidedDocumentCode.getMask());

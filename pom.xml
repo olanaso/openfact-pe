@@ -5,7 +5,7 @@
 
     <groupId>org.openfact</groupId>
     <artifactId>openfact.pe</artifactId>
-    <version>1.0-beta-2</version>
+    <version>1.0-beta-3</version>
     <packaging>pom</packaging>
 
     <name>Openfact PE</name>
@@ -23,7 +23,7 @@
     <properties>
         <!-- Openfact Versions -->
         <product.version>${project.version}</product.version>
-        <openfact.version>1.0.0.Final</openfact.version>
+        <openfact.version>1.0-beta-3</openfact.version>
 
         <!-- apache cfx -->
         <version.apache.cxf>3.1.7</version.apache.cxf>

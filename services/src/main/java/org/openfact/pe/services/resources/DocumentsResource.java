@@ -1,29 +1,22 @@
 package org.openfact.pe.services.resources;
 
-import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
-import org.openfact.events.admin.OperationType;
 import org.openfact.file.FileModel;
 import org.openfact.file.InternetMediaType;
-import org.openfact.models.*;
+import org.openfact.models.DocumentModel;
+import org.openfact.models.OpenfactSession;
+import org.openfact.models.OrganizationModel;
+import org.openfact.models.SendEventModel;
 import org.openfact.models.enums.DestinyType;
-import org.openfact.models.enums.DocumentType;
-import org.openfact.models.enums.SendResultType;
-import org.openfact.models.utils.ModelToRepresentation;
-import org.openfact.pe.models.SunatSendException;
-import org.openfact.pe.models.utils.SunatRepresentationToType;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.models.enums.SendEventStatus;
 import org.openfact.services.ErrorResponse;
-import org.openfact.services.managers.DocumentManager;
 import org.openfact.services.resources.admin.AdminEventBuilder;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,15 +50,15 @@ public class DocumentsResource {
         }
 
         Map<String, String> params = new HashMap<>();
-        params.put(DocumentModel.SEND_EVENT_DESTINY_TYPE, DestinyType.THIRD_PARTY.toString());
-        params.put(DocumentModel.SEND_EVENT_RESULT, SendResultType.SUCCESS.toString());
+        params.put(DocumentModel.SEND_EVENT_DESTINY, DestinyType.THIRD_PARTY.toString());
+        params.put(DocumentModel.SEND_EVENT_STATUS, SendEventStatus.SUCCESS.toString());
 
         List<SendEventModel> sendEvents = document.searchForSendEvent(params, 0, 2);
         if (sendEvents.isEmpty()) {
             return ErrorResponse.error("No se encontro un evio valido a SUNAT", Response.Status.BAD_REQUEST);
         } else {
             SendEventModel sendEvent = sendEvents.get(0);
-            List<FileModel> responseFiles = sendEvent.getResponseFileAttatchments();
+            List<FileModel> responseFiles = sendEvent.getAttachedFiles();
             if (responseFiles.isEmpty()) {
                 return ErrorResponse.error("Cdr no encontrado", Response.Status.NOT_FOUND);
             } else if (responseFiles.size() > 1) {

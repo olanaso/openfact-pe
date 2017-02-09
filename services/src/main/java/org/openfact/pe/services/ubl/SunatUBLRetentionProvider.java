@@ -12,7 +12,7 @@ import org.openfact.file.InternetMediaType;
 import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
-import org.openfact.models.enums.SendResultType;
+import org.openfact.models.enums.SendEventStatus;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.types.retention.RetentionType;
@@ -148,20 +148,19 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
                     byte[] response = sunatSender.sendBill(zipFile, zipFileName, InternetMediaType.ZIP);
 
-                    sendEvent.setType("SUNAT");
                     sendEvent.setDescription("Invoice submitted successfully to SUNAT");
-                    sendEvent.setResult(SendResultType.SUCCESS);
+                    sendEvent.setResult(SendEventStatus.SUCCESS);
 
                     FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
                     sendEvent.attachFile(zipFileModel);
 
                     FileModel responseFileModel = session.files().createFile(organization, "R" + zipFileName, response);
-                    sendEvent.attachResponseFile(responseFileModel);
+                    sendEvent.attachFile(responseFileModel);
 
-                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+                    sendEvent.setAttribute("address", sunatAddress);
 
                     for (Map.Entry<String, String> entry : SunatResponseUtils.byteResponseToMap(response).entrySet()) {
-                        sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
+                        sendEvent.setAttribute(entry.getKey(), entry.getValue());
                     }
 
                     document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
@@ -173,9 +172,9 @@ public class SunatUBLRetentionProvider implements UBLRetentionProvider {
                     FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
                     sendEvent.attachFile(zipFileModel);
 
-                    sendEvent.setSingleDestinyAttribute("address", sunatAddress);
+                    sendEvent.setAttribute("address", sunatAddress);
                     for (Map.Entry<String, String> entry : SunatResponseUtils.faultToMap(soapFault.getFaultCode(), soapFault.getFaultString()).entrySet()) {
-                        sendEvent.setSingleResponseAttribute(entry.getKey(), entry.getValue());
+                        sendEvent.setAttribute(entry.getKey(), entry.getValue());
                     }
 
                     throw new SunatSendException(soapFault.getFaultString(), e);

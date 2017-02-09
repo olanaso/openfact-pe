@@ -1,6 +1,5 @@
 package org.openfact.pe.services.resources;
 
-import com.google.common.io.Files;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
@@ -10,7 +9,7 @@ import org.openfact.events.admin.OperationType;
 import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.DocumentType;
-import org.openfact.models.enums.SendResultType;
+import org.openfact.models.enums.SendEventStatus;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
@@ -18,16 +17,16 @@ import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.services.ErrorResponse;
-import org.openfact.services.managers.DocumentManager;
 import org.openfact.services.resources.admin.AdminEventBuilder;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -101,10 +100,10 @@ public class DocumentExtensionsResource {
                 try {
                     sunatDocumentManager.sendToCustomerParty(organization, documentModel, customerSendEvent);
                 } catch (ModelInsuficientData e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription(e.getMessage());
                 } catch (SendException e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription("Internal server error");
                     logger.error("Internal Server Error sending to customer", e);
                 }
@@ -176,10 +175,10 @@ public class DocumentExtensionsResource {
                 try {
                     sunatDocumentManager.sendToCustomerParty(organization, documentModel, customerSendEvent);
                 } catch (ModelInsuficientData e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription(e.getMessage());
                 } catch (SendException e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription("Internal server error");
                     logger.error("Internal Server Error sending to customer", e);
                 }
@@ -251,10 +250,10 @@ public class DocumentExtensionsResource {
                 try {
                     sunatDocumentManager.sendToCustomerParty(organization, documentModel, customerSendEvent);
                 } catch (ModelInsuficientData e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription(e.getMessage());
                 } catch (SendException e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription("Internal server error");
                     logger.error("Internal Server Error sending to customer", e);
                 }

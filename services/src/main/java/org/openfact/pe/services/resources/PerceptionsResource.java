@@ -9,7 +9,7 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.events.admin.OperationType;
 import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
-import org.openfact.models.enums.SendResultType;
+import org.openfact.models.enums.SendEventStatus;
 import org.openfact.models.utils.ModelToRepresentation;
 import org.openfact.pe.models.SunatSendException;
 import org.openfact.pe.models.enums.SunatDocumentType;
@@ -19,7 +19,6 @@ import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.services.ErrorResponse;
-import org.openfact.services.managers.DocumentManager;
 import org.openfact.services.resources.admin.AdminEventBuilder;
 
 import javax.ws.rs.Consumes;
@@ -152,10 +151,10 @@ public class PerceptionsResource {
                 try {
                     sunatDocumentManager.sendToCustomerParty(organization, documentModel, customerSendEvent);
                 } catch (ModelInsuficientData e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription(e.getMessage());
                 } catch (SendException e) {
-                    customerSendEvent.setResult(SendResultType.ERROR);
+                    customerSendEvent.setResult(SendEventStatus.ERROR);
                     customerSendEvent.setDescription("Internal server error");
                     logger.error("Internal Server Error sending to customer", e);
                 }

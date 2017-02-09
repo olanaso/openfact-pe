@@ -74,7 +74,9 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                 .filterText("B", DocumentModel.DOCUMENT_ID)
                 .documentType(DocumentType.INVOICE.toString())
                 .requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .entityQuery()
                 .orderByAsc(DocumentModel.DOCUMENT_ID)
+                .resultList()
                 .getResultList();
 
         Map<LocalDate, List<DocumentModel>> groups = document.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
@@ -172,6 +174,8 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                 .filterText("F", DocumentModel.DOCUMENT_ID)
                 .documentType(DocumentType.INVOICE.toString())
                 .requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .entityQuery()
+                .resultScroll()
                 .getScrollResultList(1000);
 
         Iterator<List<DocumentModel>> iterator = scroll.iterator();

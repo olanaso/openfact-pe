@@ -157,9 +157,6 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
                     sendEvent.setDescription("Invoice submitted successfully to SUNAT");
                     sendEvent.setResult(SendEventStatus.SUCCESS);
 
-                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
-                    sendEvent.attachFile(zipFileModel);
-
                     FileModel responseFileModel = session.files().createFile(organization, "R" + zipFileName, response);
                     sendEvent.attachFile(responseFileModel);
 

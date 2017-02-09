@@ -162,9 +162,6 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
                     sendEvent.setDescription("Invoice submitted successfully to SUNAT");
                     sendEvent.setResult(SendEventStatus.SUCCESS);
 
-                    FileModel zipFileModel = session.files().createFile(organization, zipFileName, zipFile);
-                    sendEvent.attachFile(zipFileModel);
-
                     sendEvent.setAttribute("address", sunatAddress);
                     sendEvent.setAttribute("ticket", response);
 

@@ -19,7 +19,6 @@ import javax.xml.transform.dom.DOMResult;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
 import org.openfact.common.converts.DateUtils;
-import org.openfact.common.finance.MoneyConverters;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
@@ -717,7 +716,7 @@ public class SunatRepresentationToType {
         UBLExtensionType ublExtensionType = new UBLExtensionType();
         ExtensionContentType extensionContentType = new ExtensionContentType();
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID10.getCodigo());
         type.addSignature(toSignatureType(organization));
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
             type.setId(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
@@ -783,7 +782,7 @@ public class SunatRepresentationToType {
     public static RetentionType toRetentionType(OpenfactSession session, OrganizationModel organization, DocumentoSunatRepresentation rep) {
         RetentionType type = new RetentionType();
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID10.getCodigo());
         type.addSignature(toSignatureType(organization));
         UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
         UBLExtensionType ublExtensionType = new UBLExtensionType();
@@ -1107,7 +1106,7 @@ public class SunatRepresentationToType {
         type.setUblExtensions(ublExtensionsType);
 
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID11.getCodigo());
         if (rep.getFechaDeReferencia() != null) {
             type.setReferenceDateTime(toGregorianCalendar(rep.getFechaDeReferencia().toLocalDate()));
         }
@@ -1242,7 +1241,7 @@ public class SunatRepresentationToType {
         UBLExtensionType ublExtensionType = new UBLExtensionType();
         ExtensionContentType extensionContentType = new ExtensionContentType();
         type.setUBLVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID11.getCodigo());
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
             type.setID(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }

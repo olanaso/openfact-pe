@@ -126,7 +126,7 @@ public class SunatUBLPerceptionProvider implements UBLPerceptionProvider {
 
             @Override
             public void sendToThirdParty(OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws ModelInsuficientData, SendException {
-                String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+                String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_2);
                 String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
                 String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
 

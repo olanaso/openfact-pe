@@ -91,7 +91,7 @@ public class SunatRepresentationToType {
 
         // documentId
         if (rep.getNumero() != null && rep.getSerie() != null) {
-            type.setID(rep.getNumero() + "-" + rep.getSerie());
+            type.setID(rep.getSerie().toUpperCase() + "-" + rep.getNumero());
         }
 
         // Issue Date

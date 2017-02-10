@@ -697,9 +697,11 @@ public class SunatRepresentationToType {
             taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
             debitNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
 
+            //En nota de credito el price va el total y no el valor unitario como en factura
+            // Price
             // Price
             PriceType priceType1 = new PriceType();
-            PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getValorUnitario());
+            PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getTotal());
             priceAmountType1.setCurrencyID(rep.getMoneda());
             priceType1.setPriceAmount(priceAmountType1);
             debitNoteLineType.setPrice(priceType1);

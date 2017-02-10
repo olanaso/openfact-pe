@@ -90,7 +90,7 @@ public class SunatRepresentationToType {
         type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
 
         // documentId
-        if (rep.getNumero() != null && rep.getSerie() != null) {
+        if (rep.getNumero() != null && rep.getSerie() != null && !rep.getNumero().trim().isEmpty() && !rep.getSerie().trim().isEmpty()) {
             type.setID(rep.getSerie().toUpperCase() + "-" + rep.getNumero());
         }
 

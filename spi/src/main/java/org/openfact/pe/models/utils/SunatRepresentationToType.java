@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -310,6 +311,8 @@ public class SunatRepresentationToType {
         responseType.setResponseCode(rep.getTipoDeNotaDeCredito());
         if (rep.getObservaciones() != null) {
             responseType.setDescription(Arrays.asList(new DescriptionType(rep.getObservaciones())));
+        } else {
+            responseType.setDescription(Arrays.asList(new DescriptionType("Sin observacion")));
         }
         type.setDiscrepancyResponse(Arrays.asList(responseType));
 
@@ -396,8 +399,13 @@ public class SunatRepresentationToType {
         }
         //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
 
+        // Se coloca solo los monetary mayores a cero ya que si se ponen todos la sunat lo rechaza
         AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
-        additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
+        List<AdditionalMonetaryTotalType> additionalMonetaryTotal = Arrays.asList(gravado, inafecto, exonerado, gratuito).stream()
+                .filter(p -> p.getPayableAmount().getValue().compareTo(BigDecimal.ZERO) > 0)
+                .collect(Collectors.toList());
+
+        additionalInformation.getAdditionalMonetaryTotal().addAll(additionalMonetaryTotal);
         //additionalInformation.getAdditionalProperty().add(additionalProperty);
 
         extensionContentType.setAny(generateElement(additionalInformation));
@@ -477,9 +485,10 @@ public class SunatRepresentationToType {
             taxTotalType.setTaxSubtotal(Arrays.asList(taxSubtotalType));
             creditNoteLineType.setTaxTotal(Arrays.asList(taxTotalType));
 
+            //En nota de credito el price va el total y no el valor unitario como en factura
             // Price
             PriceType priceType1 = new PriceType();
-            PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getValorUnitario());
+            PriceAmountType priceAmountType1 = new PriceAmountType(lineRep.getTotal());
             priceAmountType1.setCurrencyID(rep.getMoneda());
             priceType1.setPriceAmount(priceAmountType1);
             creditNoteLineType.setPrice(priceType1);

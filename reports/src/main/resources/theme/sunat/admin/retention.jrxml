@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-10T17:12:07 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="perception" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+<!-- 2017-02-10T17:21:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="retention" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="net.sf.jasperreports.awt.ignore.missing.font" value="true"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
@@ -66,7 +66,7 @@
 		</queryString>
 		<field name="sunat_payment_id" class="java.lang.String"/>
 		<field name="sunat_id" class="java.lang.String"/>
-		<field name="sunat_perception_amount" class="java.math.BigDecimal"/>
+		<field name="sunat_retention_amount" class="java.math.BigDecimal"/>
 		<field name="sunat_net_total_cashed" class="java.math.BigDecimal"/>
 		<field name="sunat_total_invoice_amount" class="java.math.BigDecimal"/>
 		<field name="sunat_payment_amount" class="java.math.BigDecimal"/>
@@ -85,13 +85,13 @@
 	<field name="sunat_ap_party_identification_id" class="java.lang.String"/>
 	<field name="sunat_rp_postal_address_city_name" class="java.lang.String"/>
 	<field name="sunat_total_invoice_amount" class="java.math.BigDecimal"/>
-	<field name="sunat_total_cashed" class="java.math.BigDecimal"/>
+	<field name="sunat_total_paid" class="java.math.BigDecimal"/>
 	<field name="sunat_total_invoice_currency_code" class="java.lang.String"/>
-	<field name="sunat_perception_document_reference" class="java.util.List"/>
+	<field name="sunat_retention_document_reference" class="java.util.List"/>
 	<field name="of_model_id" class="java.lang.String"/>
 	<field name="sunat_ap_postal_address_country_identification_code" class="java.lang.String"/>
 	<field name="sunat_ap_postal_address_city_name" class="java.lang.String"/>
-	<field name="sunat_total_cashed_currency_code" class="java.lang.String"/>
+	<field name="sunat_total_paid_currency_code" class="java.lang.String"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
@@ -117,7 +117,7 @@
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{sunat_total_cashed_currency_code}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{sunat_total_paid_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="370" y="6" width="40" height="12" uuid="b577de2f-4621-4382-98d4-507357684598"/>
@@ -129,7 +129,7 @@
 				<textField>
 					<reportElement x="410" y="18" width="144" height="12" uuid="b8842275-baf9-413d-9def-c58139c04beb"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_cashed},"", ",", ".", "2")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_paid},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
 					<reportElement x="410" y="6" width="144" height="12" uuid="cc425d56-220b-42ca-aab9-cd053ba164d9"/>
@@ -219,7 +219,7 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[COMPROBANTE DE PERCEPCIÓN ELECTRÓNICA]]></text>
+				<text><![CDATA[COMPROBANTE DE RETENCIÓN ELECTRÓNICA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="414" y="8" width="46" height="16" forecolor="#FFFFFF" uuid="0ef67c49-6612-4bda-aff1-09569c43aaaa"/>
@@ -275,7 +275,7 @@
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="lines" uuid="9ea09879-8b31-4628-8126-f0745becfdbd">
-						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{sunat_perception_document_reference}, false)]]></dataSourceExpression>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{sunat_retention_document_reference}, false)]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="50" uuid="c12bec93-7be4-4b33-8e3b-5a5569d66a9f">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
@@ -351,7 +351,7 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[COBRADO]]></text>
+								<text><![CDATA[PAGADO]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
@@ -376,7 +376,7 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[PERCEPCIÓN]]></text>
+								<text><![CDATA[RETENCIÓN]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
@@ -385,7 +385,7 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_perception_amount}, "", ",", "." ,"2")]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_retention_amount}, "", ",", "." ,"2")]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -393,13 +393,13 @@
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="91" height="30" forecolor="#FFFFFF" uuid="e841f15e-aff3-44a0-a21b-d4c08d795445">
+								<reportElement x="0" y="0" width="91" height="30" forecolor="#FFFFFF" uuid="1fd76f51-77c6-4497-9633-9705788cd0fe">
 									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 								</reportElement>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[COBRADO]]></text>
+								<text><![CDATA[PAGADO]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
@@ -458,7 +458,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Representación impresa de la PERCEPCIÓN ELECTRÓNICA, para consultar el documento visita www.openfact.com]]></text>
+				<text><![CDATA[Representación impresa de la RETENCIÓN ELECTRÓNICA, para consultar el documento visita www.openfact.com]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="200" y="110" width="159" height="20" backcolor="#FFFFFF" uuid="0fcd241d-1d0d-4de5-80ee-8b8aaa93161c"/>

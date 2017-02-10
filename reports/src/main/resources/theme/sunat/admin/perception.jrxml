@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-10T17:01:31 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="creditnote" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+<!-- 2017-02-10T17:01:01 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="net.sf.jasperreports.awt.ignore.missing.font" value="true"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
@@ -64,13 +64,12 @@
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
-		<field name="of_credited_quantity" class="java.math.BigDecimal"/>
-		<field name="of_unit_code" class="java.lang.String"/>
-		<field name="of_tt_tax_amount" class="java.util.List"/>
-		<field name="of_item_description" class="java.util.List"/>
-		<field name="of_pricing_reference_acp_price_amount" class="java.util.List"/>
-		<field name="of_price_amount" class="java.math.BigDecimal"/>
-		<field name="of_line_extension_amount" class="java.math.BigDecimal"/>
+		<field name="sunat_payment_id" class="java.lang.String"/>
+		<field name="sunat_id" class="java.lang.String"/>
+		<field name="sunat_perception_amount" class="java.math.BigDecimal"/>
+		<field name="sunat_net_total_cashed" class="java.math.BigDecimal"/>
+		<field name="sunat_total_invoice_amount" class="java.math.BigDecimal"/>
+		<field name="sunat_payment_amount" class="java.math.BigDecimal"/>
 	</subDataset>
 	<scriptlet name="OPENFACT_FORMAT" class="org.openfact.report.scriplet.BasicOpenfactFormats"/>
 	<queryString>
@@ -78,193 +77,64 @@
 	</queryString>
 	<field name="of_id" class="java.lang.String"/>
 	<field name="of_issue_date" class="java.lang.String"/>
-	<field name="of_sp_legal_entity_registration_name" class="java.util.List"/>
-	<field name="of_sp_postal_address_street_name" class="java.lang.String"/>
-	<field name="of_cp_legal_entity_registration_name" class="java.util.List"/>
-	<field name="of_cp_postal_address_street_name" class="java.lang.String"/>
-	<field name="of_cp_assigned_account_id" class="java.lang.String"/>
-	<field name="of_sp_assigned_account_id" class="java.lang.String"/>
-	<field name="of_cp_postal_address_city_name" class="java.lang.String"/>
-	<field name="of_lmt_payable_amount" class="java.math.BigDecimal"/>
-	<field name="of_lmt_charge_total_amount" class="java.math.BigDecimal"/>
-	<field name="of_lmt_allowance_total_amount" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="of_tt_tax_amount" class="java.util.List"/>
-	<field name="of_document_currency_code" class="java.lang.String"/>
-	<field name="of_credit_note_line" class="java.util.List"/>
+	<field name="sunat_ap_legal_entity_registration_name" class="java.lang.String"/>
+	<field name="sunat_ap_postal_address_street_name" class="java.lang.String"/>
+	<field name="sunat_rp_legal_entity_registration_name" class="java.lang.String"/>
+	<field name="sunat_rp_postal_address_street_name" class="java.lang.String"/>
+	<field name="sunat_rp_party_identification_id" class="java.lang.String"/>
+	<field name="sunat_ap_party_identification_id" class="java.lang.String"/>
+	<field name="sunat_rp_postal_address_city_name" class="java.lang.String"/>
+	<field name="sunat_total_invoice_amount" class="java.math.BigDecimal"/>
+	<field name="sunat_total_cashed" class="java.math.BigDecimal"/>
+	<field name="sunat_total_invoice_currency_code" class="java.lang.String"/>
+	<field name="sunat_perception_document_reference" class="java.util.List"/>
 	<field name="of_model_id" class="java.lang.String"/>
-	<field name="of_sp_postal_address_country_identification_code" class="java.lang.String"/>
-	<field name="of_sp_postal_address_city_name" class="java.lang.String"/>
-	<field name="sunat_total_valor_venta_operaciones_gravadas" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="sunat_total_valor_venta_operaciones_exoneradas" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="sunat_total_valor_venta_operaciones_inafectas" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="sunat_total_valor_venta_operaciones_gratuitas" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
+	<field name="sunat_ap_postal_address_country_identification_code" class="java.lang.String"/>
+	<field name="sunat_ap_postal_address_city_name" class="java.lang.String"/>
+	<field name="sunat_total_cashed_currency_code" class="java.lang.String"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
-			<band height="110">
+			<band height="42">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<textField pattern="">
-					<reportElement x="410" y="54" width="144" height="12" uuid="f518426a-b34f-4ba4-a9e2-e26730c9caab"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_allowance_total_amount},"", ",", ".", "2")]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="410" y="78" width="144" height="12" uuid="5529095b-11d3-4e8e-9412-98051a919502"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_tt_tax_amount}," ", "",",", ".", "2")]]></textFieldExpression>
-				</textField>
 				<staticText>
 					<reportElement x="200" y="6" width="170" height="12" uuid="f12362c3-317a-410c-9887-572e7a1105ff"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[OP. GRAVADA:]]></text>
+					<text><![CDATA[TOTAL PERCIBIDO:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="200" y="18" width="170" height="12" uuid="6d284a71-f122-4658-9c1b-84d5b8958572"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[OP. GRATUITA:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="200" y="30" width="170" height="12" uuid="a14a3c13-1777-4cd0-99c9-7ae9ad019fa5"/>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[OP. EXONERADA:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="200" y="42" width="170" height="12" uuid="83520915-7996-420c-8718-b86d37df4122"/>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[OP. INAFECTA:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="200" y="54" width="170" height="12" uuid="d9eae91a-9d58-4470-870d-14b43493b6b5"/>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[TOT. DESCUENTO GLOBAL:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="200" y="66" width="170" height="12" uuid="99338b5a-ced8-4866-916c-ac68c16bdab4"/>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[OTROS CARGOS:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="200" y="78" width="170" height="12" uuid="fe99bfcb-710f-4ab0-b652-2e2fad0f94b7"/>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[IGV:]]></text>
+					<text><![CDATA[TOTAL COBRADO:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="370" y="6" width="40" height="12" uuid="368b0722-5a62-4977-9bec-b455843c3778"/>
+					<reportElement x="370" y="18" width="40" height="12" uuid="368b0722-5a62-4977-9bec-b455843c3778"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{sunat_total_cashed_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="370" y="18" width="40" height="12" uuid="b577de2f-4621-4382-98d4-507357684598"/>
+					<reportElement x="370" y="6" width="40" height="12" uuid="b577de2f-4621-4382-98d4-507357684598"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{sunat_total_invoice_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="370" y="42" width="40" height="12" uuid="0bb2f234-b20b-4850-b838-ab19109c5f38"/>
-					<textElement textAlignment="Right">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="370" y="30" width="40" height="12" uuid="5c4bc28c-0c32-4a27-8d6a-3f23fd5106e1"/>
-					<textElement textAlignment="Right">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="370" y="66" width="40" height="12" uuid="c730f085-eac7-43f3-95bf-49d9192be328"/>
-					<textElement textAlignment="Right">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="370" y="54" width="40" height="12" uuid="4662216c-2ef7-4bf0-b33d-9b12ba6600ea"/>
-					<textElement textAlignment="Right">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="370" y="78" width="40" height="12" uuid="ae040395-fdc2-4df0-b1a4-4b389e2203cb"/>
-					<textElement textAlignment="Right">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="410" y="90" width="144" height="12" uuid="2aeff137-6d4c-440b-b8dd-c37a37dcbb5b"/>
+					<reportElement x="410" y="18" width="144" height="12" uuid="b8842275-baf9-413d-9def-c58139c04beb"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_payable_amount},"", ",", ".", "2")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_cashed},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="200" y="90" width="170" height="12" uuid="fa800a01-f29a-46af-a3bb-e4a54dd18f90"/>
-					<textElement textAlignment="Right">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[TOTAL VENTA:]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="370" y="90" width="40" height="12" uuid="986431a1-4b81-4e33-99e5-ad347fcf8fdf"/>
-					<textElement textAlignment="Right">
-						<font size="10"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="410" y="66" width="144" height="12" uuid="b8842275-baf9-413d-9def-c58139c04beb"/>
+				<textField evaluationTime="Report">
+					<reportElement x="410" y="6" width="144" height="12" uuid="cc425d56-220b-42ca-aab9-cd053ba164d9"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_charge_total_amount},"", ",", ".", "2")]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="410" y="6" width="144" height="12" uuid="c25bf2c9-96ab-4a68-a8ba-0949232a3a06"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_gravadas},"", ",", ".", "2")]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="410" y="18" width="144" height="12" uuid="48f4c8b6-fd68-4da9-847e-b70923ff5c6d"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_gratuitas},"", ",", ".", "2")]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="410" y="30" width="144" height="12" uuid="ee4997af-abb0-4461-b9b2-da66c6651006"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_exoneradas},"", ",", ".", "2")]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="410" y="42" width="144" height="12" uuid="a6d0eed4-7642-4565-926a-2f6b414a6e33"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_inafectas},"", ",", ".", "2")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_invoice_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -299,7 +169,7 @@
 				<textElement>
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_sp_legal_entity_registration_name},",",true)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_ap_legal_entity_registration_name},true)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="49" width="350" height="15" uuid="fb66a978-3fa2-4d6c-8082-6c6e52526ac2">
@@ -308,52 +178,35 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_sp_postal_address_street_name},true)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_ap_postal_address_street_name},true)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="110" width="360" height="15" uuid="fa5c83dc-49f8-47d7-858c-e825f986c2f7"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_cp_legal_entity_registration_name},",",true)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_rp_legal_entity_registration_name},true)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="125" width="360" height="15" uuid="7a4f8fdc-85c2-429c-be0c-ead18f605866"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{of_cp_assigned_account_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sunat_rp_party_identification_id}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="140" width="360" height="15" uuid="71c208ea-5b73-459c-bf5c-d7c5ae875ed3"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_cp_postal_address_street_name},true)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_rp_postal_address_street_name},true)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="155" width="360" height="15" uuid="760d3c65-b38f-4713-8988-9815ed5ccafe"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_cp_postal_address_city_name},true)]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="380" y="110" width="80" height="15" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[MONEDA:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="460" y="110" width="96" height="15" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{of_document_currency_code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_rp_postal_address_city_name},true)]]></textFieldExpression>
 			</textField>
 			<rectangle radius="5">
 				<reportElement x="380" y="0" width="176" height="80" forecolor="#FFFFFF" backcolor="#0088CE" uuid="3336c703-bc47-4879-be8b-8c150cb44a06"/>
@@ -366,19 +219,19 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[NOTA DE CREDITO ELECTRÓNICA]]></text>
+				<text><![CDATA[COMPROBANTE DE PERCEPCIÓN ELECTRÓNICA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="414" y="7" width="46" height="16" forecolor="#FFFFFF" uuid="0ef67c49-6612-4bda-aff1-09569c43aaaa"/>
+				<reportElement x="414" y="8" width="46" height="16" forecolor="#FFFFFF" uuid="0ef67c49-6612-4bda-aff1-09569c43aaaa"/>
 				<textElement textAlignment="Right">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[R.U.C.:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="7" width="85" height="16" forecolor="#FFFFFF" uuid="9baf9075-23a3-4c5a-93e9-a8ee03ee5ddd"/>
+				<reportElement x="460" y="8" width="85" height="16" forecolor="#FFFFFF" uuid="9baf9075-23a3-4c5a-93e9-a8ee03ee5ddd"/>
 				<textElement textAlignment="Left"/>
-				<textFieldExpression><![CDATA[$F{of_sp_assigned_account_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sunat_ap_party_identification_id}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="400" y="55" width="40" height="20" forecolor="#FFFFFF" uuid="f11a07f8-a5ba-4685-a437-50d69ec508a9"/>
@@ -398,14 +251,14 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_sp_postal_address_country_identification_code},true)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_ap_postal_address_country_identification_code},true)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="30" y="64" width="320" height="15" uuid="40b97cfa-aec9-441f-b9a6-63fb8ee7dfd5"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_sp_postal_address_city_name},true)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_ap_postal_address_city_name},true)]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -422,7 +275,7 @@
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="lines" uuid="9ea09879-8b31-4628-8126-f0745becfdbd">
-						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{of_credit_note_line}, false)]]></dataSourceExpression>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{sunat_perception_document_reference}, false)]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="50" uuid="c12bec93-7be4-4b33-8e3b-5a5569d66a9f">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
@@ -432,7 +285,7 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[CANT.]]></text>
+								<text><![CDATA[N° PAGO]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
@@ -441,98 +294,121 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{of_credited_quantity}, "", ",", "." ,"3")]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{sunat_payment_id}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="50" uuid="7cabf903-7654-44b3-9e28-babf119b1377">
+					<jr:column width="90" uuid="7cabf903-7654-44b3-9e28-babf119b1377">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="46" height="30" forecolor="#FFFFFF" uuid="a874200b-4e1a-460c-ba5b-73f781b25811"/>
+								<reportElement x="0" y="0" width="86" height="30" forecolor="#FFFFFF" uuid="c468f8e3-e1e7-488a-b2b7-223a4719f6ff"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[UM]]></text>
+								<text><![CDATA[ID]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="46" height="30" uuid="1ad4acc3-b12b-4aab-9e44-650e696972f3"/>
+								<reportElement x="0" y="0" width="86" height="30" uuid="1ad4acc3-b12b-4aab-9e44-650e696972f3"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{of_unit_code}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{sunat_id}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="336" uuid="a76f5413-8827-4417-bcd1-847797c0c93a">
+					<jr:column width="130" uuid="a76f5413-8827-4417-bcd1-847797c0c93a">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="332" height="30" forecolor="#FFFFFF" uuid="ff573864-7de2-486c-85ba-8ead127ecfd8"/>
+								<reportElement x="0" y="0" width="126" height="30" forecolor="#FFFFFF" uuid="0ee4039e-3ffd-43ae-aa40-bf98c7920070"/>
 								<textElement verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[DESCRIPCIÓN]]></text>
+								<text><![CDATA[TOTAL]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="332" height="30" uuid="7fa9cbe3-78ea-4098-9d96-a97499aa6109"/>
-								<textElement textAlignment="Left" verticalAlignment="Middle">
+								<reportElement x="0" y="0" width="126" height="30" uuid="7bdc5592-ee36-4cde-8098-75ae3c6f1912"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.stringFormat($F{of_item_description},",",true)]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_total_invoice_amount}, "", ",", "." ,"2")]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="60" uuid="7e3c857c-5fb5-4ede-bd84-170e0ae0ce8d">
+					<jr:column width="100" uuid="7e3c857c-5fb5-4ede-bd84-170e0ae0ce8d">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="56" height="30" forecolor="#FFFFFF" uuid="bc98f5a9-680d-4772-a8c9-1ed188c421af"/>
+								<reportElement x="0" y="0" width="96" height="30" forecolor="#FFFFFF" uuid="15d6d10c-a416-4fcd-9533-d025dd75e8eb"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[P/U]]></text>
+								<text><![CDATA[COBRADO]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="30" uuid="7afc9db8-1444-45c9-baa9-c52ea5ae00f7"/>
+								<reportElement x="0" y="0" width="96" height="30" uuid="935f1517-0706-42f7-92da-8d861c2f0c6e"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{of_pricing_reference_acp_price_amount}," ", "", ",", "." ,"2")]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_payment_amount}, "", ",", "." ,"2")]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="60" uuid="c371fdf4-43df-4dae-8528-b9c88d100741">
+					<jr:column width="100" uuid="c371fdf4-43df-4dae-8528-b9c88d100741">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="56" height="30" forecolor="#FFFFFF" uuid="21a2b6da-e9b0-4652-8447-4fa83df2a3bf">
+								<reportElement x="0" y="0" width="96" height="30" forecolor="#FFFFFF" uuid="a4cd2ade-63f5-4fab-87dd-68db72687ee2">
 									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 								</reportElement>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8" isBold="true"/>
 								</textElement>
-								<text><![CDATA[IMPORTE]]></text>
+								<text><![CDATA[PERCEPCIÓN]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="56" height="30" uuid="a4a5bb65-8a7d-4dea-bf9d-26aadc94c052"/>
+								<reportElement x="0" y="0" width="96" height="30" uuid="a4a5bb65-8a7d-4dea-bf9d-26aadc94c052"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.sumElementsAndFormat($F{of_line_extension_amount}, $F{of_tt_tax_amount}, "", ",", "." ,"2")]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_perception_amount}, "", ",", "." ,"2")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="95" uuid="d4236e8f-08e8-4a5e-846c-1914416f7876">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="91" height="30" forecolor="#FFFFFF" uuid="e841f15e-aff3-44a0-a21b-d4c08d795445">
+									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+								</reportElement>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[COBRADO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="91" height="30" uuid="e84d3976-a932-4ff3-8282-a58126db9e98"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_net_total_cashed}, "", ",", "." ,"2")]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -582,7 +458,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Representación impresa de la NOTA DE CRÉDITO ELECTRÓNICA, para consultar el documento visita www.openfact.com]]></text>
+				<text><![CDATA[Representación impresa de la PERCEPCIÓN ELECTRÓNICA, para consultar el documento visita www.openfact.com]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="200" y="110" width="159" height="20" backcolor="#FFFFFF" uuid="0fcd241d-1d0d-4de5-80ee-8b8aaa93161c"/>

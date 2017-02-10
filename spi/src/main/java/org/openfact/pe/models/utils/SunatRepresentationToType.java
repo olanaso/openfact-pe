@@ -946,11 +946,12 @@ public class SunatRepresentationToType {
     }
 
     private static AddressType toPostalAddressType(DocumentoSunatRepresentation rep) {
-        AddressType type = new AddressType();
         if (rep.getEntidadDireccion() != null) {
+            AddressType type = new AddressType();
             type.setStreetName(rep.getEntidadDireccion());
+            return type;
         }
-        return type;
+        return null;
     }
 
     private static List<PartyNameType> toPartyNameType(DocumentoSunatRepresentation rep) {

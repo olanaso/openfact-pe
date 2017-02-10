@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-10T11:37:17 -->
+<!-- 2017-02-10T17:01:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="debitnote" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="net.sf.jasperreports.awt.ignore.missing.font" value="true"/>
@@ -582,7 +582,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Representación impresa de la FACTURA ELECTRÓNICA, para consultar el documento visita www.openfact.com]]></text>
+				<text><![CDATA[Representación impresa de la NOTA DE DEBITO ELECTRÓNICA, para consultar el documento visita www.openfact.com]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="200" y="110" width="159" height="20" backcolor="#FFFFFF" uuid="0fcd241d-1d0d-4de5-80ee-8b8aaa93161c"/>

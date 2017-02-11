@@ -23,12 +23,15 @@ import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.file.FileModel;
 import org.openfact.models.*;
+import org.openfact.models.enums.DocumentType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.utils.OpenfactModelUtils;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.enums.SunatDocumentType;
+import org.openfact.pe.models.enums.TipoDocumentoRelacionadoPercepcionRetencion;
+import org.openfact.pe.models.enums.TipoRegimenPercepcion;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
@@ -40,6 +43,9 @@ import org.openfact.ubl.*;
 import org.w3c.dom.Document;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public class SunatDocumentManager extends DocumentManager {
 
@@ -83,6 +89,23 @@ public class SunatDocumentManager extends DocumentManager {
             throw new ModelException(e);
         }
 
+        if (perceptionType.getSunatPerceptionDocumentReference() != null && !perceptionType.getSunatPerceptionDocumentReference().isEmpty()) {
+            perceptionType.getSunatPerceptionDocumentReference().stream().forEach(c -> {
+                String attachedDocumentId = c.getId().getValue();
+                String attachedDocumentCodeType = c.getId().getSchemeID();
+                Optional<TipoDocumentoRelacionadoPercepcionRetencion> tipoDocumentoRelacionadoPercepcion = Arrays
+                        .stream(TipoDocumentoRelacionadoPercepcionRetencion.values())
+                        .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
+                        .findAny();
+                if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
+                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                    if (attachedDocument != null) {
+                        documentModel.addAttachedDocument(attachedDocument);
+                    }
+                }
+            });
+        }
+
         fireDocumentPostCreate(documentModel);
         return documentModel;
     }
@@ -114,6 +137,23 @@ public class SunatDocumentManager extends DocumentManager {
         } catch (TransformerException e) {
             logger.error("Error parsing to byte XML", e);
             throw new ModelException(e);
+        }
+
+        if (retentionType.getSunatRetentionDocumentReference() != null && !retentionType.getSunatRetentionDocumentReference().isEmpty()) {
+            retentionType.getSunatRetentionDocumentReference().stream().forEach(c -> {
+                String attachedDocumentId = c.getID().getValue();
+                String attachedDocumentCodeType = c.getID().getSchemeID();
+                Optional<TipoDocumentoRelacionadoPercepcionRetencion> tipoDocumentoRelacionadoPercepcion = Arrays
+                        .stream(TipoDocumentoRelacionadoPercepcionRetencion.values())
+                        .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
+                        .findAny();
+                if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
+                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                    if (attachedDocument != null) {
+                        documentModel.addAttachedDocument(attachedDocument);
+                    }
+                }
+            });
         }
 
         fireDocumentPostCreate(documentModel);

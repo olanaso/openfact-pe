@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>openfact.pe</artifactId>
 		<groupId>org.openfact</groupId>
-		<version>1.0-beta-4-SNAPSHOT</version>
+		<version>1.0-beta-4</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<name>Openfact PE SPI</name>

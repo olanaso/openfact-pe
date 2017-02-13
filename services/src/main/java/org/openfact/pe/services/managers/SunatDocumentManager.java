@@ -23,7 +23,6 @@ import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.file.FileModel;
 import org.openfact.models.*;
-import org.openfact.models.enums.DocumentType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.utils.OpenfactModelUtils;
 import org.openfact.pe.models.UBLPerceptionProvider;
@@ -32,7 +31,6 @@ import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.enums.SunatDocumentType;
 import org.openfact.pe.models.enums.TipoDocumentoRelacionadoPercepcionRetencion;
-import org.openfact.pe.models.enums.TipoRegimenPercepcion;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.types.retention.RetentionType;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
@@ -219,7 +217,7 @@ public class SunatDocumentManager extends DocumentManager {
             summaryDocumentsType.setId(documentId);
         }
 
-        DocumentModel documentModel = model.addDocument(SunatDocumentType.SUMMARY.toString(), documentId.getValue(), organization);
+        DocumentModel documentModel = model.addDocument(SunatDocumentType.SUMMARY_DOCUMENTS.toString(), documentId.getValue(), organization);
         SunatTypeToModel.importSummaryDocument(session, organization, documentModel, summaryDocumentsType);
         RequiredAction.getDefaults().stream().forEach(c -> documentModel.addRequiredAction(c));
 
@@ -279,7 +277,7 @@ public class SunatDocumentManager extends DocumentManager {
                 case VOIDED_DOCUMENTS:
                     ublProvider = session.getProvider(UBLVoidedDocumentProvider.class);
                     break;
-                case SUMMARY:
+                case SUMMARY_DOCUMENTS:
                     ublProvider = session.getProvider(UBLSummaryDocumentProvider.class);
                     break;
             }

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SendToThridPartySunatScheduleTaskProvider implements OrganizationScheduleTaskProvider {
@@ -79,44 +80,39 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 
     private long sendSummaryDocument(OpenfactSession session, OrganizationModel organization) {
         List<DocumentModel> document = session.documents().createQuery(organization)
-                .filterText("B", DocumentModel.DOCUMENT_ID)
-                .documentType(DocumentType.INVOICE)
-                .enabled(true)
-                .requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
-                .entityQuery()
-                .orderByAsc(DocumentModel.DOCUMENT_ID)
-                .resultList()
-                .getResultList();
+                .filterTextReplaceAsterisk("B*", DocumentModel.DOCUMENT_ID)
+                .documentType(DocumentType.INVOICE).requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .thirdPartySendEventFailures(maxRetries, false).enabled(true)
+                .entityQuery().orderByAsc(DocumentModel.DOCUMENT_ID).resultList().getResultList();
 
-        Map<LocalDate, List<DocumentModel>> groups = document.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
+        Map<LocalDate, List<DocumentModel>> documentsGroupedByDates = document.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
 
-        for (Map.Entry<LocalDate, List<DocumentModel>> entrySet : groups.entrySet()) {
-            Map<String, List<DocumentModel>> groupsBySerie = entrySet.getValue().stream().collect(Collectors.groupingBy(f -> f.getDocumentId().split("-")[0]));
+        for (Map.Entry<LocalDate, List<DocumentModel>> entrySet : documentsGroupedByDates.entrySet()) {
+            Map<String, List<DocumentModel>> documentsGroupedBySerie = entrySet.getValue().stream().collect(Collectors.groupingBy(f -> f.getDocumentId().split("-")[0]));
 
-            for (Map.Entry<String, List<DocumentModel>> entrySetBySerie : groupsBySerie.entrySet()) {
+            for (Map.Entry<String, List<DocumentModel>> entrySetBySerie : documentsGroupedBySerie.entrySet()) {
                 String serie = entrySetBySerie.getKey();
                 List<DocumentModel> documents = entrySetBySerie.getValue();
 
-                SummaryLineRepresentation lineBoletasRep = new SummaryLineRepresentation();
-                SummaryLineRepresentation lineNotaCreditoRep = new SummaryLineRepresentation();
-                SummaryLineRepresentation lineNotaDebitoRep = new SummaryLineRepresentation();
+                SummaryLineRepresentation summaryLineRepresentation = new SummaryLineRepresentation();
 
                 // Boletas
-                lineBoletasRep.setCodigoDocumento(TipoInvoice.BOLETA.getCodigo());
-                lineBoletasRep.setSerieDocumento(serie);
-                lineBoletasRep.setNumeroInicioDocumento(Integer.valueOf(documents.get(0).getDocumentId().split("-")[1]).toString());
-                lineBoletasRep.setNumeroFinDocumento(Integer.valueOf(documents.get(document.size() - 1).getDocumentId().split("-")[1]).toString());
-                lineBoletasRep.setMoneda(TipoMoneda.PEN.getCodigo());
-                lineBoletasRep.setTotalAmount(documents.stream()
+                summaryLineRepresentation.setCodigoDocumento(TipoInvoice.BOLETA.getCodigo());
+                summaryLineRepresentation.setSerieDocumento(serie);
+                summaryLineRepresentation.setNumeroInicioDocumento(Integer.valueOf(documents.get(0).getDocumentId().split("-")[1]).toString());
+                summaryLineRepresentation.setNumeroFinDocumento(Integer.valueOf(documents.get(document.size() - 1).getDocumentId().split("-")[1]).toString());
+                summaryLineRepresentation.setMoneda(TipoMoneda.PEN.getCodigo());
+
+                summaryLineRepresentation.setTotalAmount(documents.stream()
                         .map(f -> f.getFirstAttribute(TypeToModel.LEGAL_MONETARY_TOTAL_PAYABLE_AMOUNT))
                         .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
-                lineBoletasRep.setChargeAmount(documents.stream()
+                summaryLineRepresentation.setChargeAmount(documents.stream()
                         .map(f -> f.getFirstAttribute(TypeToModel.LEGAL_MONETARY_TOTAL_CHARGE_TOTAL_AMOUNT))
                         .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-                //
+                // Totales
                 BillingPaymentRepresentation totalOperacionesGravadas = new BillingPaymentRepresentation();
                 totalOperacionesGravadas.setInstructionID(TipoValorVenta.GRAVADO.getCodigo());
                 totalOperacionesGravadas.setPaidAmount(documents.stream()
@@ -138,7 +134,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                         .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-                lineBoletasRep.setPayment(Arrays.asList(totalOperacionesGravadas, totalOperacionesExoneradas, totalOperacionesInafectas));
+                summaryLineRepresentation.setPayment(Arrays.asList(totalOperacionesGravadas, totalOperacionesExoneradas, totalOperacionesInafectas));
 
                 //
                 TaxTotalRepresentation taxTotalRepresentation = new TaxTotalRepresentation();
@@ -150,25 +146,35 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                         .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
                         .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-                lineBoletasRep.setTaxTotal(Arrays.asList(taxTotalRepresentation));
+                summaryLineRepresentation.setTaxTotal(Arrays.asList(taxTotalRepresentation));
 
                 SummaryRepresentation summaryRep = new SummaryRepresentation();
                 summaryRep.setFechaDeEmision(LocalDateTime.now());
                 summaryRep.setFechaDeReferencia(entrySet.getKey().atStartOfDay());
-                summaryRep.setLine(Arrays.asList(lineBoletasRep/*, lineNotaCreditoRep, lineNotaDebitoRep*/));
+                summaryRep.setLine(Arrays.asList(summaryLineRepresentation/*, lineNotaCreditoRep, lineNotaDebitoRep*/));
 
                 SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
                 SummaryDocumentsType summaryType = SunatRepresentationToType.toSummaryDocumentType(session, organization, summaryRep);
                 DocumentModel summaryModel = sunatDocumentManager.addSummaryDocument(organization, summaryType);
+
+                SendEventModel sendEvent = null;
                 try {
-                    sunatDocumentManager.sendToThirdParty(organization, summaryModel);
+                    sendEvent = sunatDocumentManager.sendToThirdParty(organization, summaryModel);
                     summaryModel.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
                     entrySet.getValue().stream().forEach(c -> c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY));
                 } catch (ModelInsuficientData e) {
-                    log.error(e.getMessage());
+                    if (sendEvent != null) {
+                        sendEvent.setResult(SendEventStatus.ERROR);
+                    }
+                    throw new JobException("Insufient data to send", e);
                 } catch (SendException e) {
-                    log.error(e.getMessage());
+                    if (sendEvent != null) {
+                        sendEvent.setResult(SendEventStatus.ERROR);
+                    }
+                    throw new JobException("error on execute job", e);
                 }
+
+                documents.forEach(c -> summaryModel.addAttachedDocument(c));
             }
         }
 
@@ -234,10 +240,14 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
             document.incrementThirdPartySendEventFailures();
             document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
         } catch (ModelInsuficientData e) {
-            sendEvent.setResult(SendEventStatus.ERROR);
+            if (sendEvent != null) {
+                sendEvent.setResult(SendEventStatus.ERROR);
+            }
             throw new JobException("Insufient data to send", e);
         } catch (SendException e) {
-            sendEvent.setResult(SendEventStatus.ERROR);
+            if (sendEvent != null) {
+                sendEvent.setResult(SendEventStatus.ERROR);
+            }
             throw new JobException("error on execute job", e);
         }
     }

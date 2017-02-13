@@ -268,7 +268,7 @@ public class SunatUBLIDGenerator {
         TipoComprobante summaryDocumentCode = TipoComprobante.RESUMEN_DIARIO;
         DocumentModel lastSummaryDocument = null;
         ScrollModel<DocumentModel> summaryDocuments = session.documents().createQuery(organization)
-                .documentType(SunatDocumentType.SUMMARY.toString())
+                .documentType(SunatDocumentType.SUMMARY_DOCUMENTS.toString())
                 .entityQuery()
                 .orderByDesc(DocumentModel.DOCUMENT_ID)
                 .resultScroll()

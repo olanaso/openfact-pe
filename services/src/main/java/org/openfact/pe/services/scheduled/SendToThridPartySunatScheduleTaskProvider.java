@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 import org.openfact.models.*;
 import org.openfact.models.enums.DocumentType;
 import org.openfact.models.enums.RequiredAction;
+import org.openfact.models.enums.SendEventStatus;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.models.enums.*;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
@@ -19,7 +20,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,13 +30,13 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 
     public static final String JOB_NAME = "SENT_TO_THRID_PARTY_SUNAT";
 
-    private int RETRY = 20;
+    private int maxRetries = 20;
 
     protected boolean isActive;
 
     public SendToThridPartySunatScheduleTaskProvider(boolean isActive, int retries) {
         this.isActive = isActive;
-        this.RETRY = retries;
+        this.maxRetries = retries;
     }
 
     @Override
@@ -54,8 +54,15 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
         long startTime = System.currentTimeMillis();
         long readCount = 0;
 
+        readCount += sendInvoicesFactura(session, session.organizations().getOrganization(organization.getId()));
+
+        readCount += sendCreditNotes(session, session.organizations().getOrganization(organization.getId()));
+        readCount += sendDebitNotes(session, session.organizations().getOrganization(organization.getId()));
+
+        readCount += sendPerceptions(session, session.organizations().getOrganization(organization.getId()));
+        readCount += sendRetentions(session, session.organizations().getOrganization(organization.getId()));
+
         readCount += sendSummaryDocument(session, session.organizations().getOrganization(organization.getId()));
-        readCount += sendFacturas(session, session.organizations().getOrganization(organization.getId()));
 
         long endTime = System.currentTimeMillis();
 
@@ -72,7 +79,8 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
     private long sendSummaryDocument(OpenfactSession session, OrganizationModel organization) {
         List<DocumentModel> document = session.documents().createQuery(organization)
                 .filterText("B", DocumentModel.DOCUMENT_ID)
-                .documentType(DocumentType.INVOICE.toString())
+                .documentType(DocumentType.INVOICE)
+                .enabled(true)
                 .requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
                 .entityQuery()
                 .orderByAsc(DocumentModel.DOCUMENT_ID)
@@ -166,41 +174,65 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
         return document.size();
     }
 
-    private long sendFacturas(OpenfactSession session, OrganizationModel organization) {
+    private long sendInvoicesFactura(OpenfactSession session, OrganizationModel organization) {
+        List<DocumentModel> documents = session.documents().createQuery(organization)
+                .filterTextReplaceAsterisk("F*", DocumentModel.DOCUMENT_ID)
+                .documentType(DocumentType.INVOICE).requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .thirdPartySendEventFailures(maxRetries, false).enabled(true)
+                .entityQuery().resultList().getResultList();
+
+        documents.stream().forEach(document -> sendToThirdParty(session, organization, document));
+        return documents.size();
+    }
+
+    private long sendCreditNotes(OpenfactSession session, OrganizationModel organization) {
         long readCount = 0;
-
-        ScrollModel<List<DocumentModel>> scroll = session.documents()
-                .createQuery(organization)
-                .filterText("F", DocumentModel.DOCUMENT_ID)
-                .documentType(DocumentType.INVOICE.toString())
-                .requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
-                .entityQuery()
-                .resultScroll()
-                .getScrollResultList(1000);
-
-        Iterator<List<DocumentModel>> iterator = scroll.iterator();
-
-        while (iterator.hasNext()) {
-            List<DocumentModel> documents = iterator.next();
-
-            readCount += documents.size();
-
-            documents.stream()
-                    .filter(p -> p.getRequiredActions().contains(RequiredAction.SEND_TO_TRIRD_PARTY.toString()))
-                    .filter(p -> p.getSendEvents().size() < RETRY).forEach(c -> {
-                SunatDocumentManager manager = new SunatDocumentManager(session);
-                try {
-                    manager.sendToThirdParty(organization, c);
-                    c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
-                } catch (ModelInsuficientData e) {
-                    throw new JobException("Insufient data to send", e);
-                } catch (SendException e) {
-                    throw new JobException("error on execute job", e);
-                }
-            });
-        }
-
+        readCount += processDocument(session, organization, DocumentType.CREDIT_NOTE.toString());
         return readCount;
+    }
+
+    private long sendDebitNotes(OpenfactSession session, OrganizationModel organization) {
+        long readCount = 0;
+        readCount += processDocument(session, organization, DocumentType.DEBIT_NOTE.toString());
+        return readCount;
+    }
+
+    private long sendPerceptions(OpenfactSession session, OrganizationModel organization) {
+        long readCount = 0;
+        readCount += processDocument(session, organization, SunatDocumentType.PERCEPTION.toString());
+        return readCount;
+    }
+
+    private long sendRetentions(OpenfactSession session, OrganizationModel organization) {
+        long readCount = 0;
+        readCount += processDocument(session, organization, SunatDocumentType.RETENTION.toString());
+        return readCount;
+    }
+
+    private long processDocument(OpenfactSession session, OrganizationModel organization, String documentType) {
+        List<DocumentModel> documents = session.documents().createQuery(organization)
+                .documentType(documentType).requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .thirdPartySendEventFailures(maxRetries, false).enabled(true)
+                .entityQuery().resultList().getResultList();
+
+        documents.stream().forEach(document -> sendToThirdParty(session, organization, document));
+        return documents.size();
+    }
+
+    private void sendToThirdParty(OpenfactSession session, OrganizationModel organization, DocumentModel document) {
+        SunatDocumentManager sunatManager = new SunatDocumentManager(session);
+        SendEventModel sendEvent = null;
+        try {
+            sendEvent = sunatManager.sendToThirdParty(organization, document);
+            document.incrementThirdPartySendEventFailures();
+            document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+        } catch (ModelInsuficientData e) {
+            sendEvent.setResult(SendEventStatus.ERROR);
+            throw new JobException("Insufient data to send", e);
+        } catch (SendException e) {
+            sendEvent.setResult(SendEventStatus.ERROR);
+            throw new JobException("error on execute job", e);
+        }
     }
 
 }

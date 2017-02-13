@@ -1242,7 +1242,7 @@ public class SunatRepresentationToType {
         UBLExtensionType ublExtensionType = new UBLExtensionType();
         ExtensionContentType extensionContentType = new ExtensionContentType();
         type.setUBLVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID11.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID10.getCodigo());
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
             type.setID(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }
@@ -1264,29 +1264,25 @@ public class SunatRepresentationToType {
         ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
         type.setUBLExtensions(ublExtensionsType);
         if (rep.getDetalle() != null) {
-            for (VoidedLineRepresentation line : rep.getDetalle()) {
-                type.addVoidedDocumentsLine(toVoidedDocumentsLineType(line));
+            for (int i = 0; i < rep.getDetalle().size(); i++) {
+                VoidedLineRepresentation lineRepresentation =  rep.getDetalle().get(i);
+                VoidedDocumentsLineType voidedDocumentsLineType = new VoidedDocumentsLineType();
+
+                voidedDocumentsLineType.setLineID(String.valueOf(i + 1));
+                if (lineRepresentation.getTipoDocumentoRelacionado() != null) {
+                    voidedDocumentsLineType.setDocumentTypeCode(lineRepresentation.getTipoDocumentoRelacionado());
+                }
+                if (lineRepresentation.getNumeroDocumentoRelacionado() != null) {
+                    String[] splits = (lineRepresentation.getNumeroDocumentoRelacionado().toUpperCase()).split("-");
+                    voidedDocumentsLineType.setDocumentSerialID(splits[0]);
+                    voidedDocumentsLineType.setDocumentNumberID(splits[1]);
+                }
+                if (lineRepresentation.getDescripcionDocumentoRelacionado() != null) {
+                    voidedDocumentsLineType.setVoidReasonDescription(lineRepresentation.getDescripcionDocumentoRelacionado());
+                }
+
+                type.addVoidedDocumentsLine(voidedDocumentsLineType);
             }
-        }
-        return type;
-    }
-
-
-    private static VoidedDocumentsLineType toVoidedDocumentsLineType(VoidedLineRepresentation rep) {
-        VoidedDocumentsLineType type = new VoidedDocumentsLineType();
-        if (rep.getId() != null) {
-            type.setLineID(rep.getId());
-        }
-        if (rep.getTipoDocumentoRelacionado() != null) {
-            type.setDocumentTypeCode(rep.getTipoDocumentoRelacionado());
-        }
-        if (rep.getNumeroDocumentoRelacionado() != null) {
-            String[] splits = (rep.getNumeroDocumentoRelacionado().toUpperCase()).split("-");
-            type.setDocumentSerialID(splits[0]);
-            type.setDocumentNumberID(splits[1]);
-        }
-        if (rep.getDescripcionDocumentoRelacionado() != null) {
-            type.setVoidReasonDescription(rep.getDescripcionDocumentoRelacionado());
         }
         return type;
     }

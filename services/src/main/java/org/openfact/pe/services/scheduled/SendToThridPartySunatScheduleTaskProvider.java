@@ -62,6 +62,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
         readCount += sendPerceptions(session, session.organizations().getOrganization(organization.getId()));
         readCount += sendRetentions(session, session.organizations().getOrganization(organization.getId()));
 
+        readCount += sendVoidedDocuments(session, session.organizations().getOrganization(organization.getId()));
         readCount += sendSummaryDocument(session, session.organizations().getOrganization(organization.getId()));
 
         long endTime = System.currentTimeMillis();
@@ -206,6 +207,12 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
     private long sendRetentions(OpenfactSession session, OrganizationModel organization) {
         long readCount = 0;
         readCount += processDocument(session, organization, SunatDocumentType.RETENTION.toString());
+        return readCount;
+    }
+
+    private long sendVoidedDocuments(OpenfactSession session, OrganizationModel organization) {
+        long readCount = 0;
+        readCount += processDocument(session, organization, SunatDocumentType.VOIDED_DOCUMENTS.toString());
         return readCount;
     }
 

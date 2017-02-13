@@ -12,7 +12,9 @@ import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.enums.SendEventStatus;
 import org.openfact.pe.models.SunatSendException;
+import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.UBLVoidedDocumentProvider;
+import org.openfact.pe.models.enums.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
@@ -20,13 +22,12 @@ import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
-import org.openfact.ubl.UBLIDGenerator;
-import org.openfact.ubl.UBLReader;
-import org.openfact.ubl.UBLSender;
-import org.openfact.ubl.UBLWriter;
+import org.openfact.ubl.*;
 import org.w3c.dom.Document;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider {
 
@@ -161,6 +162,24 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
                     sendEvent.setAttribute("ticket", response);
 
                     document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+
+                    // Disable all related documents
+                    UBLProvider ublProvider = session.getProvider(UBLVoidedDocumentProvider.class);
+                    VoidedDocumentsType voidedDocumentsType = (VoidedDocumentsType) ublProvider.reader().read(document.getXmlAsFile().getFile());
+                    voidedDocumentsType.getVoidedDocumentsLine().stream().forEach(c -> {
+                        String attachedDocumentId = c.getDocumentSerialID().getValue() + "-" + c.getDocumentNumberID().getValue();
+                        String attachedDocumentCodeType = c.getDocumentTypeCode().getValue();
+                        Optional<TipoDocumentoRelacionadoPercepcionRetencion> tipoDocumentoRelacionadoPercepcion = Arrays
+                                .stream(TipoDocumentoRelacionadoPercepcionRetencion.values())
+                                .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
+                                .findAny();
+                        if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
+                            DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                            attachedDocument.disable();
+                        }
+                    });
+
+                    document.getXmlAsFile();
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 

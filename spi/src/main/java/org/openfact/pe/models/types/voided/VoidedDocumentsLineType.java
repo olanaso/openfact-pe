@@ -13,17 +13,22 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VoidedDocumentsLineType", propOrder = {"lineID", "documentTypeCode", "documentSerialID",
-        "documentNumberID", "voidReasonDescription"})
+@XmlType(name = "VoidedDocumentsLineType", propOrder = {"lineID", "documentTypeCode", "documentSerialID", "documentNumberID", "voidReasonDescription"}
+)
 public class VoidedDocumentsLineType {
+
     @XmlElement(name = "LineID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected LineIDType lineID;
+
     @XmlElement(name = "DocumentTypeCode", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected DocumentTypeCodeType documentTypeCode;
+
     @XmlElement(name = "DocumentSerialID", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", required = true)
     protected IdentifierType documentSerialID;
+
     @XmlElement(name = "DocumentNumberID", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", required = true)
     protected IdentifierType documentNumberID;
+
     @XmlElement(name = "VoidReasonDescription", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", required = true)
     protected TextType voidReasonDescription;
 

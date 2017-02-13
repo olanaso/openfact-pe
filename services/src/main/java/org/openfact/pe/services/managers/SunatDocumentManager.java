@@ -29,6 +29,7 @@ import org.openfact.models.utils.OpenfactModelUtils;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.UBLSummaryDocumentProvider;
+import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.enums.SunatDocumentType;
 import org.openfact.pe.models.enums.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.models.enums.TipoRegimenPercepcion;
@@ -189,6 +190,24 @@ public class SunatDocumentManager extends DocumentManager {
             logger.error("Error parsing to byte XML", e);
             throw new ModelException(e);
         }
+
+        if (voidedDocumentsType.getVoidedDocumentsLine() != null && !voidedDocumentsType.getVoidedDocumentsLine().isEmpty()) {
+            voidedDocumentsType.getVoidedDocumentsLine().stream().forEach(c -> {
+                String attachedDocumentId = c.getDocumentSerialID().getValue() + "-" + c.getDocumentNumberID().getValue();
+                String attachedDocumentCodeType = c.getDocumentTypeCode().getValue();
+                Optional<TipoDocumentoRelacionadoPercepcionRetencion> tipoDocumentoRelacionadoPercepcion = Arrays
+                        .stream(TipoDocumentoRelacionadoPercepcionRetencion.values())
+                        .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
+                        .findAny();
+                if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
+                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                    if (attachedDocument != null) {
+                        documentModel.addAttachedDocument(attachedDocument);
+                    }
+                }
+            });
+        }
+
         return documentModel;
     }
 
@@ -256,6 +275,9 @@ public class SunatDocumentManager extends DocumentManager {
                     break;
                 case RETENTION:
                     ublProvider = session.getProvider(UBLRetentionProvider.class);
+                    break;
+                case VOIDED_DOCUMENTS:
+                    ublProvider = session.getProvider(UBLVoidedDocumentProvider.class);
                     break;
                 case SUMMARY:
                     ublProvider = session.getProvider(UBLSummaryDocumentProvider.class);

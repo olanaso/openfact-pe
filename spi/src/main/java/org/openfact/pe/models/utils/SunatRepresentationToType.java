@@ -286,8 +286,8 @@ public class SunatRepresentationToType {
         type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
 
         // ID
-        if (rep.getNumero() != null && rep.getSerie() != null) {
-            type.setID(rep.getNumero() + "-" + rep.getSerie());
+        if (rep.getNumero() != null && rep.getSerie() != null && !rep.getNumero().trim().isEmpty() && !rep.getSerie().trim().isEmpty()) {
+            type.setID(rep.getSerie().toUpperCase() + "-" + rep.getNumero());
         }
 
         // Issue Date
@@ -505,8 +505,8 @@ public class SunatRepresentationToType {
         type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
 
         // ID
-        if (rep.getNumero() != null && rep.getSerie() != null) {
-            type.setID(rep.getNumero() + "-" + rep.getSerie());
+        if (rep.getNumero() != null && rep.getSerie() != null && !rep.getNumero().trim().isEmpty() && !rep.getSerie().trim().isEmpty()) {
+            type.setID(rep.getSerie().toUpperCase() + "-" + rep.getNumero());
         }
 
         // Issue Date
@@ -615,8 +615,12 @@ public class SunatRepresentationToType {
         }
         //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
 
+        // Se coloca solo los monetary mayores a cero ya que si se ponen todos la sunat lo rechaza
         AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
-        additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
+        List<AdditionalMonetaryTotalType> additionalMonetaryTotal = Arrays.asList(gravado, inafecto, exonerado, gratuito).stream()
+                .filter(p -> p.getPayableAmount().getValue().compareTo(BigDecimal.ZERO) > 0)
+                .collect(Collectors.toList());
+        additionalInformation.getAdditionalMonetaryTotal().addAll(additionalMonetaryTotal);
         //additionalInformation.getAdditionalProperty().add(additionalProperty);
 
         extensionContentType.setAny(generateElement(additionalInformation));

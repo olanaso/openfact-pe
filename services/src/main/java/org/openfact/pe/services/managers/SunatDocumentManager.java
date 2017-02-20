@@ -19,12 +19,19 @@ package org.openfact.pe.services.managers;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSubtotalType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxTotalType;
+import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.file.FileModel;
+import org.openfact.file.FileProvider;
 import org.openfact.models.*;
+import org.openfact.models.enums.DocumentType;
 import org.openfact.models.enums.RequiredAction;
 import org.openfact.models.utils.OpenfactModelUtils;
+import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.models.UBLPerceptionProvider;
 import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.UBLSummaryDocumentProvider;
@@ -44,7 +51,11 @@ import org.w3c.dom.Document;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class SunatDocumentManager extends DocumentManager {
 
@@ -56,6 +67,40 @@ public class SunatDocumentManager extends DocumentManager {
 
     public DocumentModel getDocumentByTypeAndDocumentId(SunatDocumentToType type, String documentId, OrganizationModel organization) {
         return model.getDocumentByTypeAndDocumentId(type.toString(), documentId, organization);
+    }
+
+    @Override
+    public DocumentModel addInvoice(InvoiceType invoiceType, Map<String, List<String>> attributes, OrganizationModel organization) {
+        DocumentModel invoice = super.addInvoice(invoiceType, attributes, organization);
+
+        if (invoiceType.getInvoiceLine() != null && !invoiceType.getInvoiceLine().isEmpty()) {
+            Consumer<InvoiceLineType> consumer = invoiceLineType -> {
+                DocumentLineModel documentLine = invoice.addDocumentLine();
+                if (invoiceLineType.getItem() != null && invoiceLineType.getItem().getDescription() != null && !invoiceLineType.getItem().getDescription().isEmpty()) {
+                    documentLine.setAttribute("itemDescription", invoiceLineType.getItem().getDescription().stream().map(f -> f.getValue()).collect(Collectors.joining(",")));
+                }
+                if (invoiceLineType.getInvoicedQuantity() != null) {
+                    documentLine.setAttribute("quantity", invoiceLineType.getInvoicedQuantityValue());
+                }
+                if (invoiceLineType.getPrice() != null && invoiceLineType.getPrice().getPriceAmount() != null) {
+                    documentLine.setAttribute("priceAmount", invoiceLineType.getPrice().getPriceAmountValue());
+                }
+                if (invoiceLineType.getTaxTotal() != null && !invoiceLineType.getTaxTotal().isEmpty()) {
+                    // IGV
+                    TaxTotalType taxTotalType = invoiceLineType.getTaxTotal().get(0);//.getTaxSubtotal().get(0).getTaxCategory().getTaxExemptionReasonCode().getValue();
+                    if (taxTotalType.getTaxSubtotal() != null && !taxTotalType.getTaxSubtotal().isEmpty()) {
+                        TaxSubtotalType taxSubtotalType = taxTotalType.getTaxSubtotal().get(0);
+                        if (taxSubtotalType.getTaxCategory() != null && taxSubtotalType.getTaxCategory().getTaxExemptionReasonCode() != null) {
+                            documentLine.setAttribute("taxExemptionReasonCodeIGV", taxSubtotalType.getTaxCategory().getTaxExemptionReasonCodeValue());
+                        }
+                    }
+                }
+            };
+
+            invoiceType.getInvoiceLine().forEach(consumer);
+        }
+
+        return invoice;
     }
 
     public DocumentModel addPerception(OrganizationModel organization, PerceptionType perceptionType) {

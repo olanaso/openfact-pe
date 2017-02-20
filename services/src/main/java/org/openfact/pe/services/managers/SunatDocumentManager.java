@@ -55,7 +55,7 @@ public class SunatDocumentManager extends DocumentManager {
     }
 
     public DocumentModel getDocumentByTypeAndDocumentId(SunatDocumentToType type, String documentId, OrganizationModel organization) {
-        return model.getDocumentByTypeAndUblId(type.toString(), documentId, organization);
+        return model.getDocumentByTypeAndDocumentId(type.toString(), documentId, organization);
     }
 
     public DocumentModel addPerception(OrganizationModel organization, PerceptionType perceptionType) {
@@ -97,7 +97,7 @@ public class SunatDocumentManager extends DocumentManager {
                         .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
                         .findAny();
                 if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
-                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndDocumentId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
                     if (attachedDocument != null) {
                         documentModel.addAttachedDocument(attachedDocument);
                     }
@@ -147,7 +147,7 @@ public class SunatDocumentManager extends DocumentManager {
                         .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
                         .findAny();
                 if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
-                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndDocumentId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
                     if (attachedDocument != null) {
                         documentModel.addAttachedDocument(attachedDocument);
                     }
@@ -198,7 +198,7 @@ public class SunatDocumentManager extends DocumentManager {
                         .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
                         .findAny();
                 if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
-                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                    DocumentModel attachedDocument = session.documents().getDocumentByTypeAndDocumentId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
                     if (attachedDocument != null) {
                         documentModel.addAttachedDocument(attachedDocument);
                     }

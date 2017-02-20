@@ -81,7 +81,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
     private long sendSummaryDocument(OpenfactSession session, OrganizationModel organization) {
         List<DocumentModel> document = session.documents().createQuery(organization)
                 .filterTextReplaceAsterisk("B*", DocumentModel.DOCUMENT_ID)
-                .documentType(DocumentType.INVOICE).requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .documentType(DocumentType.INVOICE).requiredAction(RequiredAction.SEND_TO_THIRD_PARTY)
                 .thirdPartySendEventFailures(maxRetries, false).enabled(true)
                 .entityQuery().orderByAsc(DocumentModel.DOCUMENT_ID).resultList().getResultList();
 
@@ -160,8 +160,8 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                 SendEventModel sendEvent = null;
                 try {
                     sendEvent = sunatDocumentManager.sendToThirdParty(organization, summaryModel);
-                    summaryModel.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
-                    entrySet.getValue().stream().forEach(c -> c.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY));
+                    summaryModel.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
+                    entrySet.getValue().stream().forEach(c -> c.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY));
                 } catch (ModelInsuficientData e) {
                     if (sendEvent != null) {
                         sendEvent.setResult(SendEventStatus.ERROR);
@@ -184,7 +184,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
     private long sendInvoicesFactura(OpenfactSession session, OrganizationModel organization) {
         List<DocumentModel> documents = session.documents().createQuery(organization)
                 .filterTextReplaceAsterisk("F*", DocumentModel.DOCUMENT_ID)
-                .documentType(DocumentType.INVOICE).requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .documentType(DocumentType.INVOICE).requiredAction(RequiredAction.SEND_TO_THIRD_PARTY)
                 .thirdPartySendEventFailures(maxRetries, false).enabled(true)
                 .entityQuery().resultList().getResultList();
 
@@ -224,7 +224,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
 
     private long processDocument(OpenfactSession session, OrganizationModel organization, String documentType) {
         List<DocumentModel> documents = session.documents().createQuery(organization)
-                .documentType(documentType).requiredAction(RequiredAction.SEND_TO_TRIRD_PARTY)
+                .documentType(documentType).requiredAction(RequiredAction.SEND_TO_THIRD_PARTY)
                 .thirdPartySendEventFailures(maxRetries, false).enabled(true)
                 .entityQuery().resultList().getResultList();
 
@@ -238,7 +238,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
         try {
             sendEvent = sunatManager.sendToThirdParty(organization, document);
             document.incrementThirdPartySendEventFailures();
-            document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+            document.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
         } catch (ModelInsuficientData e) {
             if (sendEvent != null) {
                 sendEvent.setResult(SendEventStatus.ERROR);

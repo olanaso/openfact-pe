@@ -160,8 +160,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
 
                     sendEvent.setAttribute("address", sunatAddress);
                     sendEvent.setAttribute("ticket", response);
-
-                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
 
                     // Disable all related documents
                     UBLProvider ublProvider = session.getProvider(UBLVoidedDocumentProvider.class);
@@ -174,7 +173,7 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
                                 .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
                                 .findAny();
                         if (tipoDocumentoRelacionadoPercepcion.isPresent()) {
-                            DocumentModel attachedDocument = session.documents().getDocumentByTypeAndUblId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
+                            DocumentModel attachedDocument = session.documents().getDocumentByTypeAndDocumentId(tipoDocumentoRelacionadoPercepcion.get().getDocumentType(), attachedDocumentId, organization);
                             attachedDocument.disable();
                         }
                     });

@@ -165,7 +165,7 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
                     sendEvent.setAttribute("address", sunatAddress);
                     sendEvent.setAttribute("ticket", response);
 
-                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 

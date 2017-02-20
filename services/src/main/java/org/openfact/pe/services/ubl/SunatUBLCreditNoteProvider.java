@@ -161,7 +161,7 @@ public class SunatUBLCreditNoteProvider implements UBLCreditNoteProvider {
                         sendEvent.setAttribute(entry.getKey(), entry.getValue());
                     }
 
-                    document.removeRequiredAction(RequiredAction.SEND_TO_TRIRD_PARTY);
+                    document.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 

@@ -1337,6 +1337,7 @@ public class SunatRepresentationToType {
                 throw new ModelException("Inssuficient information on organization");
             }
 
+            addressType.setID(organization.getPostalAddressId());
             addressType.setStreetName(organization.getStreetName());
             addressType.setCitySubdivisionName(organization.getCitySubdivisionName());
             addressType.setCityName(organization.getCityName());

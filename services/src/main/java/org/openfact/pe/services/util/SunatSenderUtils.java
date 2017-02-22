@@ -31,7 +31,7 @@ public class SunatSenderUtils {
 
     public byte[] sendBill(byte[] file, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
         ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
-        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        BillService client = serviceWrapper.initWebService(BillService.class);
         DataSource dataSource = new ByteArrayDataSource(file, mediaType.getMimeType());
         DataHandler dataHandler = new DataHandler(dataSource);
 
@@ -40,7 +40,7 @@ public class SunatSenderUtils {
 
     public String sendSummary(byte[] document, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
         ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
-        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        BillService client = serviceWrapper.initWebService(BillService.class);
         DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
         DataHandler dataHandler = new DataHandler(dataSource);
 
@@ -49,7 +49,7 @@ public class SunatSenderUtils {
 
     public String sendPack(byte[] document, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
         ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
-        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        BillService client = serviceWrapper.initWebService(BillService.class);
         DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
         DataHandler dataHandler = new DataHandler(dataSource);
 
@@ -58,7 +58,7 @@ public class SunatSenderUtils {
 
     public byte[] getStatus(String ticket) throws ServiceConfigurationException {
         ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
-        BillService client = (BillService) serviceWrapper.initWebService(BillService.class);
+        BillService client = serviceWrapper.initWebService(BillService.class);
 
         return client.getStatus(ticket).getContent();
 

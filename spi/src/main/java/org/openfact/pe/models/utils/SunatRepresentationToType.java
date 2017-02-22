@@ -19,6 +19,7 @@ import javax.xml.transform.dom.DOMResult;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
 import org.openfact.common.converts.DateUtils;
+import org.openfact.common.finance.MoneyConverters;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
@@ -73,59 +74,54 @@ public class SunatRepresentationToType {
         } catch (DatatypeConfigurationException e) {
             throw new ModelException(e);
         }
-
-      /*  GregorianCalendar gcal = GregorianCalendar.from(date.atZone(ZoneId.systemDefault()));
-        try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
-        } catch (DatatypeConfigurationException e) {
-            throw new ModelException(e);
-        }*/
     }
 
     public static InvoiceType toInvoiceType(OrganizationModel organization, DocumentRepresentation rep) {
-        InvoiceType type = new InvoiceType();
+        InvoiceType invoiceType = new InvoiceType();
 
         // General config
-        type.setUBLVersionID(SunatRepresentationToType.UBL_VERSION_ID);
-        type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
+        invoiceType.setUBLVersionID(SunatRepresentationToType.UBL_VERSION_ID);
+        invoiceType.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
 
         // documentId
         if (rep.getNumero() != null && rep.getSerie() != null && !rep.getNumero().trim().isEmpty() && !rep.getSerie().trim().isEmpty()) {
-            type.setID(rep.getSerie().toUpperCase() + "-" + rep.getNumero());
+            invoiceType.setID(rep.getSerie().toUpperCase() + "-" + rep.getNumero());
         }
 
         // Issue Date
         if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
-            type.setIssueTime(toGregorianCalendarTime(rep.getFechaDeEmision()));
+            invoiceType.setIssueDate(toGregorianCalendar(rep.getFechaDeEmision().toLocalDate()));
+            invoiceType.setIssueTime(toGregorianCalendarTime(rep.getFechaDeEmision()));
         } else {
-            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
-            type.setIssueTime(toGregorianCalendarTime(LocalDateTime.now()));
+            invoiceType.setIssueDate(toGregorianCalendar(LocalDate.now()));
+            invoiceType.setIssueTime(toGregorianCalendarTime(LocalDateTime.now()));
         }
         if (rep.getFechaDeVencimiento() != null) {
-            type.setDueDate(toGregorianCalendar(rep.getFechaDeVencimiento().toLocalDate()));
+            invoiceType.setDueDate(toGregorianCalendar(rep.getFechaDeVencimiento().toLocalDate()));
         }
 
         // Currency
         if (rep.getMoneda() != null) {
-            type.setDocumentCurrencyCode(rep.getMoneda());
+            invoiceType.setDocumentCurrencyCode(rep.getMoneda());
         }
 
         // Supplier
-        type.setAccountingSupplierParty(toSupplierParty(organization));
+        invoiceType.setAccountingSupplierParty(toSupplierParty(organization));
 
         // Customer
-        type.setAccountingCustomerParty(toCustomerPartyType(rep));
+        invoiceType.setAccountingCustomerParty(toCustomerPartyType(rep));
 
         // Tax Total
-        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+        if (rep.getTotalIgv() != null && rep.getTotalIgv().compareTo(BigDecimal.ZERO) > 0) {
+            invoiceType.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+        }
 
         // Legal monetary total
-        type.setLegalMonetaryTotal(toLegalMonetaryTotalType(rep));
+        invoiceType.setLegalMonetaryTotal(toLegalMonetaryTotalType(rep));
 
         // Invoice type code
         if (rep.getTipo() != null) {
-            type.setInvoiceTypeCode(rep.getTipo());
+            invoiceType.setInvoiceTypeCode(rep.getTipo());
         }
 
         if (rep.getTipoDeCambio() != null) {
@@ -135,66 +131,21 @@ public class SunatRepresentationToType {
         if (rep.getObservaciones() != null) {
             List<NoteType> noteTypes = new ArrayList<>();
             noteTypes.add(new NoteType(rep.getObservaciones()));
-            type.setNote(noteTypes);
+            invoiceType.setNote(noteTypes);
         }
 
         // Signature
-        type.setSignature(Arrays.asList(toSignatureType(organization)));
+        invoiceType.setSignature(Arrays.asList(toSignatureType(organization)));
 
         // Lines
         if (rep.getDetalle() != null) {
-            type.setInvoiceLine(toInvoiceLineType(rep));
+            invoiceType.setInvoiceLine(toInvoiceLineType(rep));
         }
 
         // Extensions
-        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
-        UBLExtensionType ublExtensionType = new UBLExtensionType();
-        ExtensionContentType extensionContentType = new ExtensionContentType();
+        invoiceType.setUBLExtensions(toUBLExtensionsType(rep));
 
-        AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
-        if (rep.getTotalGravada() != null) {
-            gravado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            gravado.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
-        if (rep.getTotalInafecta() != null) {
-            inafecto.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            inafecto.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
-        if (rep.getTotalExonerada() != null) {
-            exonerado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            exonerado.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
-        if (rep.getTotalGratuita() != null) {
-            gratuito.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            gratuito.setPayableAmount(payableAmountType);
-        }
-        //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
-
-        AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
-        additionalInformation.getAdditionalMonetaryTotal().addAll(Arrays.asList(gravado, inafecto, exonerado, gratuito));
-        //additionalInformation.getAdditionalProperty().add(additionalProperty);
-
-        extensionContentType.setAny(generateElement(additionalInformation));
-        ublExtensionType.setExtensionContent(extensionContentType);
-        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
-        type.setUBLExtensions(ublExtensionsType);
-
-        return type;
+        return invoiceType;
     }
 
     private static List<InvoiceLineType> toInvoiceLineType(DocumentRepresentation rep) {
@@ -222,17 +173,28 @@ public class SunatRepresentationToType {
 
             // Pricing reference
             PricingReferenceType pricingReferenceType = new PricingReferenceType();
-            PriceType priceType = new PriceType();
+            List<PriceType> priceTypes = new ArrayList<>();
 
-            PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
-            priceAmountType.setCurrencyID(rep.getMoneda());
-            priceType.setPriceAmount(priceAmountType);
-            if (!rep.isOperacionGratuita()) {
-                priceType.setPriceTypeCode("01");
-            } else {
-                priceType.setPriceTypeCode("02");
+            PriceType primaryPriceType = null; // Operaciones gravadas y exoneradas
+            PriceType secondaryPriceType = null; // Operaciones inafectas, necesitan dos AlternativeConditionPrice una con valor cero y otra con el valor del producto
+
+            TipoAfectacionIgv tipoAfectacionIgv = TipoAfectacionIgv.searchFromCodigo(lineRep.getTipoDeIgv());
+            if (tipoAfectacionIgv == null) {
+                throw new IllegalStateException("Invalid IGV code");
             }
-            pricingReferenceType.setAlternativeConditionPrice(Arrays.asList(priceType));
+
+            if (!tipoAfectacionIgv.isOperacionNoOnerosa()) {
+                primaryPriceType = toPriceType(rep.getMoneda(), lineRep.getPrecioUnitario(), TipoPrecioVentaUnitario.PRECIO_UNITARIO.getCodigo());
+                priceTypes.add(primaryPriceType);
+            } else {
+                primaryPriceType = toPriceType(rep.getMoneda(), BigDecimal.ZERO, TipoPrecioVentaUnitario.PRECIO_UNITARIO.getCodigo());
+                priceTypes.add(primaryPriceType);
+
+                secondaryPriceType = toPriceType(rep.getMoneda(), lineRep.getPrecioUnitario(), TipoPrecioVentaUnitario.VALOR_REF_UNIT_EN_OPER_NO_ORENOSAS.getCodigo());
+                priceTypes.add(secondaryPriceType);
+            }
+
+            pricingReferenceType.setAlternativeConditionPrice(priceTypes);
             invoiceLineType.setPricingReference(pricingReferenceType);
 
             // Item
@@ -285,7 +247,7 @@ public class SunatRepresentationToType {
         type.setUBLVersionID(SunatRepresentationToType.UBL_VERSION_ID);
         type.setCustomizationID(SunatRepresentationToType.CUSTOMIZATION_ID);
 
-        // ID
+        // documentId
         if (rep.getNumero() != null && rep.getSerie() != null && !rep.getNumero().trim().isEmpty() && !rep.getSerie().trim().isEmpty()) {
             type.setID(rep.getSerie().toUpperCase() + "-" + rep.getNumero());
         }
@@ -339,7 +301,9 @@ public class SunatRepresentationToType {
         type.setAccountingCustomerParty(toCustomerPartyType(rep));
 
         // Tax Total
-        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+        if (rep.getTotalIgv() != null && rep.getTotalIgv().compareTo(BigDecimal.ZERO) > 0) {
+            type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+        }
 
         // Legal monetary total
         type.setLegalMonetaryTotal(toLegalMonetaryTotalType(rep));
@@ -360,57 +324,7 @@ public class SunatRepresentationToType {
         }
 
         // Extensions
-        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
-        UBLExtensionType ublExtensionType = new UBLExtensionType();
-        ExtensionContentType extensionContentType = new ExtensionContentType();
-
-        AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
-        if (rep.getTotalGravada() != null) {
-            gravado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            gravado.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
-        if (rep.getTotalInafecta() != null) {
-            inafecto.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            inafecto.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
-        if (rep.getTotalExonerada() != null) {
-            exonerado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            exonerado.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
-        if (rep.getTotalGratuita() != null) {
-            gratuito.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            gratuito.setPayableAmount(payableAmountType);
-        }
-        //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
-
-        // Se coloca solo los monetary mayores a cero ya que si se ponen todos la sunat lo rechaza
-        AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
-        List<AdditionalMonetaryTotalType> additionalMonetaryTotal = Arrays.asList(gravado, inafecto, exonerado, gratuito).stream()
-                .filter(p -> p.getPayableAmount().getValue().compareTo(BigDecimal.ZERO) > 0)
-                .collect(Collectors.toList());
-
-        additionalInformation.getAdditionalMonetaryTotal().addAll(additionalMonetaryTotal);
-        //additionalInformation.getAdditionalProperty().add(additionalProperty);
-
-        extensionContentType.setAny(generateElement(additionalInformation));
-        ublExtensionType.setExtensionContent(extensionContentType);
-        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
-        type.setUBLExtensions(ublExtensionsType);
+        type.setUBLExtensions(toUBLExtensionsType(rep));
 
         return type;
     }
@@ -440,17 +354,28 @@ public class SunatRepresentationToType {
 
             // Pricing reference
             PricingReferenceType pricingReferenceType = new PricingReferenceType();
-            PriceType priceType = new PriceType();
+            List<PriceType> priceTypes = new ArrayList<>();
 
-            PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
-            priceAmountType.setCurrencyID(rep.getMoneda());
-            priceType.setPriceAmount(priceAmountType);
-            if (!rep.isOperacionGratuita()) {
-                priceType.setPriceTypeCode("01");
-            } else {
-                priceType.setPriceTypeCode("02");
+            PriceType primaryPriceType = null; // Operaciones gravadas y exoneradas
+            PriceType secondaryPriceType = null; // Operaciones inafectas, necesitan dos AlternativeConditionPrice una con valor cero y otra con el valor del producto
+
+            TipoAfectacionIgv tipoAfectacionIgv = TipoAfectacionIgv.searchFromCodigo(lineRep.getTipoDeIgv());
+            if (tipoAfectacionIgv == null) {
+                throw new IllegalStateException("Invalid IGV code");
             }
-            pricingReferenceType.setAlternativeConditionPrice(Arrays.asList(priceType));
+
+            if (!tipoAfectacionIgv.isOperacionNoOnerosa()) {
+                primaryPriceType = toPriceType(rep.getMoneda(), lineRep.getPrecioUnitario(), TipoPrecioVentaUnitario.PRECIO_UNITARIO.getCodigo());
+                priceTypes.add(primaryPriceType);
+            } else {
+                primaryPriceType = toPriceType(rep.getMoneda(), BigDecimal.ZERO, TipoPrecioVentaUnitario.PRECIO_UNITARIO.getCodigo());
+                priceTypes.add(primaryPriceType);
+
+                secondaryPriceType = toPriceType(rep.getMoneda(), lineRep.getPrecioUnitario(), TipoPrecioVentaUnitario.VALOR_REF_UNIT_EN_OPER_NO_ORENOSAS.getCodigo());
+                priceTypes.add(secondaryPriceType);
+            }
+
+            pricingReferenceType.setAlternativeConditionPrice(priceTypes);
             creditNoteLineType.setPricingReference(pricingReferenceType);
 
             // Item
@@ -530,7 +455,9 @@ public class SunatRepresentationToType {
         type.setAccountingCustomerParty(toCustomerPartyType(rep));
 
         // Tax Total
-        type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+        if (rep.getTotalIgv() != null && rep.getTotalIgv().compareTo(BigDecimal.ZERO) > 0) {
+            type.setTaxTotal(Arrays.asList(toTaxTotalIGV(rep)));
+        }
 
         // Notes type
         if (rep.getObservaciones() != null) {
@@ -577,56 +504,7 @@ public class SunatRepresentationToType {
         }
 
         // Extensions
-        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
-        UBLExtensionType ublExtensionType = new UBLExtensionType();
-        ExtensionContentType extensionContentType = new ExtensionContentType();
-
-        AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
-        if (rep.getTotalGravada() != null) {
-            gravado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            gravado.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
-        if (rep.getTotalInafecta() != null) {
-            inafecto.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            inafecto.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
-        if (rep.getTotalExonerada() != null) {
-            exonerado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            exonerado.setPayableAmount(payableAmountType);
-        }
-        AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
-        if (rep.getTotalGratuita() != null) {
-            gratuito.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
-
-            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
-            payableAmountType.setCurrencyID(rep.getMoneda());
-            gratuito.setPayableAmount(payableAmountType);
-        }
-        //AdditionalPropertyType additionalProperty = generateAdditionalInformationSunatTotal(rep.getTotal());
-
-        // Se coloca solo los monetary mayores a cero ya que si se ponen todos la sunat lo rechaza
-        AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
-        List<AdditionalMonetaryTotalType> additionalMonetaryTotal = Arrays.asList(gravado, inafecto, exonerado, gratuito).stream()
-                .filter(p -> p.getPayableAmount().getValue().compareTo(BigDecimal.ZERO) > 0)
-                .collect(Collectors.toList());
-        additionalInformation.getAdditionalMonetaryTotal().addAll(additionalMonetaryTotal);
-        //additionalInformation.getAdditionalProperty().add(additionalProperty);
-
-        extensionContentType.setAny(generateElement(additionalInformation));
-        ublExtensionType.setExtensionContent(extensionContentType);
-        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
-        type.setUBLExtensions(ublExtensionsType);
+        type.setUBLExtensions(toUBLExtensionsType(rep));
 
         return type;
     }
@@ -656,17 +534,28 @@ public class SunatRepresentationToType {
 
             // Pricing reference
             PricingReferenceType pricingReferenceType = new PricingReferenceType();
-            PriceType priceType = new PriceType();
+            List<PriceType> priceTypes = new ArrayList<>();
 
-            PriceAmountType priceAmountType = new PriceAmountType(lineRep.getPrecioUnitario());
-            priceAmountType.setCurrencyID(rep.getMoneda());
-            priceType.setPriceAmount(priceAmountType);
-            if (!rep.isOperacionGratuita()) {
-                priceType.setPriceTypeCode("01");
-            } else {
-                priceType.setPriceTypeCode("02");
+            PriceType primaryPriceType = null; // Operaciones gravadas y exoneradas
+            PriceType secondaryPriceType = null; // Operaciones inafectas, necesitan dos AlternativeConditionPrice una con valor cero y otra con el valor del producto
+
+            TipoAfectacionIgv tipoAfectacionIgv = TipoAfectacionIgv.searchFromCodigo(lineRep.getTipoDeIgv());
+            if (tipoAfectacionIgv == null) {
+                throw new IllegalStateException("Invalid IGV code");
             }
-            pricingReferenceType.setAlternativeConditionPrice(Arrays.asList(priceType));
+
+            if (!tipoAfectacionIgv.isOperacionNoOnerosa()) {
+                primaryPriceType = toPriceType(rep.getMoneda(), lineRep.getPrecioUnitario(), TipoPrecioVentaUnitario.PRECIO_UNITARIO.getCodigo());
+                priceTypes.add(primaryPriceType);
+            } else {
+                primaryPriceType = toPriceType(rep.getMoneda(), BigDecimal.ZERO, TipoPrecioVentaUnitario.PRECIO_UNITARIO.getCodigo());
+                priceTypes.add(primaryPriceType);
+
+                secondaryPriceType = toPriceType(rep.getMoneda(), lineRep.getPrecioUnitario(), TipoPrecioVentaUnitario.VALOR_REF_UNIT_EN_OPER_NO_ORENOSAS.getCodigo());
+                priceTypes.add(secondaryPriceType);
+            }
+
+            pricingReferenceType.setAlternativeConditionPrice(priceTypes);
             debitNoteLineType.setPricingReference(pricingReferenceType);
 
             // Item
@@ -854,6 +743,99 @@ public class SunatRepresentationToType {
         }
         return type;
     }
+
+    public static UBLExtensionsType toUBLExtensionsType(DocumentRepresentation rep) {
+        UBLExtensionsType ublExtensionsType = new UBLExtensionsType();
+        UBLExtensionType ublExtensionType = new UBLExtensionType();
+        ExtensionContentType extensionContentType = new ExtensionContentType();
+
+        AdditionalMonetaryTotalType gravado = new AdditionalMonetaryTotalType();
+        if (rep.getTotalGravada() != null) {
+            gravado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGravada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gravado.setPayableAmount(payableAmountType);
+        }
+
+        AdditionalMonetaryTotalType inafecto = new AdditionalMonetaryTotalType();
+        if (rep.getTotalInafecta() != null) {
+            inafecto.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_INAFECTAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalInafecta());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            inafecto.setPayableAmount(payableAmountType);
+        }
+
+        AdditionalMonetaryTotalType exonerado = new AdditionalMonetaryTotalType();
+        if (rep.getTotalExonerada() != null) {
+            exonerado.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_EXONERADAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalExonerada());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            exonerado.setPayableAmount(payableAmountType);
+        }
+
+        AdditionalMonetaryTotalType gratuito = new AdditionalMonetaryTotalType();
+        if (rep.getTotalGratuita() != null) {
+            gratuito.setID(new IDType(TipoConceptosTributarios.TOTAL_VALOR_VENTA_OPERACIONES_GRATUITAS.getCodigo()));
+
+            PayableAmountType payableAmountType = new PayableAmountType(rep.getTotalGratuita());
+            payableAmountType.setCurrencyID(rep.getMoneda());
+            gratuito.setPayableAmount(payableAmountType);
+        }
+
+        AdditionalPropertyType leyendaMontoTexto = null;
+        AdditionalPropertyType leyendaGratuito = null;
+
+        if (rep.getTotal().compareTo(new BigDecimal(Integer.MAX_VALUE)) < 0) {
+            MoneyConverters converter = MoneyConverters.SPANISH_BANKING_MONEY_VALUE;
+            String valueAsWords = converter.asWords(rep.getTotal());
+
+            leyendaMontoTexto = new AdditionalPropertyType();
+            leyendaMontoTexto.setID(new IDType(TipoElementosAdicionalesComprobante.MONTO_EN_LETRAS.getCodigo()));
+            leyendaMontoTexto.setValue(new ValueType(valueAsWords));
+        }
+        if (rep.isOperacionGratuita()) {
+            leyendaGratuito = new AdditionalPropertyType();
+            leyendaGratuito.setID(new IDType(TipoElementosAdicionalesComprobante.LEYENDA_TRANSFERENCIA_GRATUITA.getCodigo()));
+            leyendaGratuito.setValue(new ValueType(TipoElementosAdicionalesComprobante.LEYENDA_TRANSFERENCIA_GRATUITA.getDenominacion()));
+        }
+
+        // Se coloca solo los monetary mayores a cero ya que si se ponen todos la sunat lo rechaza
+        List<AdditionalMonetaryTotalType> additionalMonetaryTotalTypes = Arrays.asList(gravado, inafecto, exonerado, gratuito).stream()
+                .filter(p -> p.getPayableAmount().getValue().compareTo(BigDecimal.ZERO) > 0)
+                .collect(Collectors.toList());
+        List<AdditionalPropertyType> additionalPropertyTypes = Arrays.asList(leyendaMontoTexto, leyendaGratuito).stream()
+                .filter(p -> p != null)
+                .collect(Collectors.toList());
+
+        AdditionalInformationTypeSunatAgg additionalInformation = new AdditionalInformationTypeSunatAgg();
+        if (!additionalMonetaryTotalTypes.isEmpty()) {
+            additionalInformation.getAdditionalMonetaryTotal().addAll(additionalMonetaryTotalTypes);
+        }
+        if (!additionalPropertyTypes.isEmpty()) {
+            additionalInformation.getAdditionalProperty().addAll(additionalPropertyTypes);
+        }
+
+        extensionContentType.setAny(generateElement(additionalInformation));
+        ublExtensionType.setExtensionContent(extensionContentType);
+        ublExtensionsType.setUBLExtension(new ArrayList<>(Arrays.asList(ublExtensionType)));
+        return ublExtensionsType;
+    }
+
+    public static PriceType toPriceType(String currencyID, BigDecimal amount, String priceTypeCode) {
+        PriceType priceType = new PriceType();
+
+        PriceAmountType amountType = new PriceAmountType(amount);
+        amountType.setCurrencyID(currencyID);
+
+        priceType.setPriceTypeCode(priceTypeCode);
+        priceType.setPriceAmount(amountType);
+
+        return priceType;
+    }
+
 
     private static AmountType tosetSUNATNetTotalPaidType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         AmountType type = new AmountType();
@@ -1163,7 +1145,6 @@ public class SunatRepresentationToType {
             }
         }
 
-
         return type;
     }
 
@@ -1269,7 +1250,7 @@ public class SunatRepresentationToType {
         type.setUBLExtensions(ublExtensionsType);
         if (rep.getDetalle() != null) {
             for (int i = 0; i < rep.getDetalle().size(); i++) {
-                VoidedLineRepresentation lineRepresentation =  rep.getDetalle().get(i);
+                VoidedLineRepresentation lineRepresentation = rep.getDetalle().get(i);
                 VoidedDocumentsLineType voidedDocumentsLineType = new VoidedDocumentsLineType();
 
                 voidedDocumentsLineType.setLineID(String.valueOf(i + 1));
@@ -1413,16 +1394,6 @@ public class SunatRepresentationToType {
 
     }
 
-    /*public static AdditionalPropertyType generateAdditionalInformationSunatTotal(BigDecimal amount) {
-        MoneyConverters converter = MoneyConverters.SPANISH_BANKING_MONEY_VALUE;
-        String valueAsWords = converter.asWords(amount);
-
-        AdditionalPropertyType additionalProperty = new AdditionalPropertyType();
-        additionalProperty.setID(new IDType(TipoElementosAdicionalesComprobante.MONTO_EN_LETRAS.getCodigo()));
-        additionalProperty.setValue(new ValueType(valueAsWords));
-        return additionalProperty;
-    }*/
-
     public static MonetaryTotalType toLegalMonetaryTotalType(DocumentRepresentation rep) {
         MonetaryTotalType monetaryTotalType = new MonetaryTotalType();
         if (rep.getTotal() != null) {
@@ -1430,12 +1401,12 @@ public class SunatRepresentationToType {
             payableAmountType.setCurrencyID(rep.getMoneda());
             monetaryTotalType.setPayableAmount(payableAmountType);
         }
-        if (rep.getTotalOtrosCargos() != null) {
+        if (rep.getTotalOtrosCargos() != null && rep.getTotalOtrosCargos().compareTo(BigDecimal.ZERO) > 0) {
             ChargeTotalAmountType chargeTotalAmountType = new ChargeTotalAmountType(rep.getTotalOtrosCargos());
             chargeTotalAmountType.setCurrencyID(rep.getMoneda());
             monetaryTotalType.setChargeTotalAmount(chargeTotalAmountType);
         }
-        if (rep.getDescuentoGlobal() != null) {
+        if (rep.getDescuentoGlobal() != null && rep.getDescuentoGlobal().compareTo(BigDecimal.ZERO) > 0) {
             AllowanceTotalAmountType allowanceTotalAmountType = new AllowanceTotalAmountType(rep.getDescuentoGlobal());
             allowanceTotalAmountType.setCurrencyID(rep.getMoneda());
             monetaryTotalType.setAllowanceTotalAmount(allowanceTotalAmountType);

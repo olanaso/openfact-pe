@@ -137,9 +137,9 @@ public class SunatUBLInvoiceProvider implements UBLInvoiceProvider {
                 if (sunatUsername == null || sunatPassword == null) {
                     throw new ModelInsuficientData("No se pudo encontrar un usuario y/o password valido en la organizacion");
                 }
-                if (document.getFirstAttribute(TypeToModel.INVOICE_TYPE_CODE).equals(TipoInvoice.BOLETA.getCodigo())) {
+                /*if (document.getFirstAttribute(TypeToModel.INVOICE_TYPE_CODE).equals(TipoInvoice.BOLETA.getCodigo())) {
                     throw new SunatSendException("Las boletas no pueden ser enviadas individualmente. Use el Resumen diario");
-                }
+                }*/
 
                 String xmlFilename = "";
                 String zipFileName = "";

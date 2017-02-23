@@ -46,6 +46,8 @@ public class SunatTypeToModel extends TypeToModel {
     public static final String TOTAL_OTROS_CARGOS_APLICADO = "totalOtrosCargosAplicado";
     public static final String ES_OPERACION_GRATUITA = "esOperacionGratuita";
 
+    public static final String NUMERO_TICKET = "ticket";
+
     public static LocalDate toDate(XMLGregorianCalendar xmlCal) {
         Date utilDate = xmlCal.toGregorianCalendar().getTime();
         return LocalDateTime.ofInstant(utilDate.toInstant(), ZoneId.systemDefault()).toLocalDate();

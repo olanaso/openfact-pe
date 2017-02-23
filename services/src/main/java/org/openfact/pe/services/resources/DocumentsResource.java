@@ -4,12 +4,12 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.openfact.file.FileModel;
 import org.openfact.file.InternetMediaType;
-import org.openfact.models.DocumentModel;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.SendEventModel;
+import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.SendEventStatus;
+import org.openfact.pe.models.utils.SunatTypeToModel;
+import org.openfact.pe.services.ubl.SunatUBLVoidedDocumentProvider;
+import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.resources.admin.AdminEventBuilder;
 
@@ -73,4 +73,44 @@ public class DocumentsResource {
             }
         }
     }
+
+    @GET
+    @Path("{documentId}/check-ticket")
+    @NoCache
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response checkTicket(@PathParam("documentId") final String documentId) {
+        DocumentModel document = session.documents().getDocumentById(documentId, organization);
+        if (document == null) {
+            return ErrorResponse.error("Document not found", Response.Status.NOT_FOUND);
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put(DocumentModel.SEND_EVENT_DESTINY, DestinyType.THIRD_PARTY.toString());
+        params.put(DocumentModel.SEND_EVENT_STATUS, SendEventStatus.SUCCESS.toString());
+
+        List<SendEventModel> sendEvents = document.searchForSendEvent(params, 0, 2);
+        if (sendEvents.isEmpty()) {
+            return ErrorResponse.error("No se encontro un evio valido a SUNAT", Response.Status.BAD_REQUEST);
+        } else {
+            if (sendEvents.size() > 1) {
+                return ErrorResponse.error("Se encontro mas de un envio valido, debe existir solo un envio", Response.Status.BAD_REQUEST);
+            } else {
+                SendEventModel sendEvent = sendEvents.get(0);
+                try {
+                    FileModel fileModel = SunatUBLVoidedDocumentProvider.checkTicket(session, organization, sendEvent);
+
+                    ResponseBuilder response = Response.ok(fileModel.getFile());
+                    String internetMediaType = InternetMediaType.getMymeTypeFromExtension(fileModel.getExtension());
+                    if (internetMediaType != null && !internetMediaType.isEmpty()) response.type(internetMediaType);
+                    response.header("content-disposition", "attachment; filename=\"" + fileModel.getFileName() + "\"");
+                    return response.build();
+                } catch (SendException e) {
+                    return ErrorResponse.error("Error al consultar el ticket", Response.Status.BAD_REQUEST);
+                } catch (ModelInsuficientData modelInsuficientData) {
+                    return ErrorResponse.error("El evento de envio no contiene un numero de ticket valido", Response.Status.BAD_REQUEST);
+                }
+            }
+        }
+    }
+
 }

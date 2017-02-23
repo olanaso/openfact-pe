@@ -1,5 +1,9 @@
 package org.openfact.pe.models.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 /**
  * Created by lxpary on 10/01/17.
  */
@@ -49,12 +53,21 @@ public enum TipoComprobante {
         return visible;
     }
 
-    private TipoComprobante(String codigo, String denominacion, String mask, int length, boolean visible) {
+    TipoComprobante(String codigo, String denominacion, String mask, int length, boolean visible) {
         this.codigo = codigo;
         this.denominacion = denominacion;
         this.mask = mask;
         this.length = length;
         this.visible = visible;
+    }
+
+    public static TipoComprobante getFromCode(String codigo) {
+        Optional<TipoComprobante> op = Stream.of(TipoComprobante.values()).filter(p -> p.getCodigo().equals(codigo)).findFirst();
+        if (op.isPresent()) {
+            return op.get();
+        } else {
+            return null;
+        }
     }
 
 }

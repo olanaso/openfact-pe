@@ -6,6 +6,7 @@ import org.openfact.JSONObjectUtils;
 import org.openfact.pe.models.enums.TipoConceptosTributarios;
 import org.openfact.pe.services.ubl.data.xml.entity.XmlSUNATPerceptionDocumentReference;
 import org.openfact.pe.services.ubl.data.xml.entity.XmlSUNATRetentionDocumentReference;
+import org.openfact.pe.services.ubl.data.xml.entity.XmlSUNATVoidedDocumentLine;
 import org.openfact.ubl.data.xml.XMLAttributeContainer;
 import org.openfact.ubl.data.xml.XmlConverter;
 import org.openfact.ubl.data.xml.entity.XmlInvoiceDocumentLineEntity;
@@ -125,13 +126,19 @@ public enum SunatXmlSupportedAttribute {
     SUNAT_PERCEPTION_DOCUMENT_REFERENCE(XMLAttributeContainer.objectArrayKey(XmlSUNATPerceptionDocumentReference.class, "SUNATPerceptionDocumentReference")),
 
     /**
-     * Retention*/
+     * Retention
+     */
     SUNAT_TOTAL_PAID(XMLAttributeContainer.simpleKey(value -> value != null ? new BigDecimal(String.valueOf(value)) : null,
             "SUNATTotalPaid", "content")),
     SUNAT_TOTAL_PAID_CURRENCY_CODE(XMLAttributeContainer.simpleKey(value -> value != null ? String.valueOf(value) : null,
             "SUNATTotalPaid", "currencyID")),
 
-    SUNAT_RETENTION_DOCUMENT_REFERENCE(XMLAttributeContainer.objectArrayKey(XmlSUNATRetentionDocumentReference.class, "SUNATRetentionDocumentReference"));
+    SUNAT_RETENTION_DOCUMENT_REFERENCE(XMLAttributeContainer.objectArrayKey(XmlSUNATRetentionDocumentReference.class, "SUNATRetentionDocumentReference")),
+
+    /**
+     * Voided documents
+     */
+    SUNAT_VOIDED_DOCUMENTS_LINE(XMLAttributeContainer.objectArrayKey(XmlSUNATVoidedDocumentLine.class, "VoidedDocumentsLine"));
 
     private XmlConverter converter;
 

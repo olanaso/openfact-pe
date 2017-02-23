@@ -1,5 +1,8 @@
 package org.openfact.pe.models.enums;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 public enum TipoInvoice {
 
     FACTURA("01", "FACTURA", "FACTURA ELECTRONICA", "^[F]{1}\\d{1,3}[-]\\d{1,8}$"),
@@ -32,4 +35,14 @@ public enum TipoInvoice {
         this.denominacion = denominacion;
         this.documentIdPattern = documentIdPattern;
     }
+
+    public static TipoInvoice getFromCode(String codigo) {
+        Optional<TipoInvoice> op = Stream.of(TipoInvoice.values()).filter(p -> p.getCodigo().equals(codigo)).findFirst();
+        if (op.isPresent()) {
+            return op.get();
+        } else {
+            return null;
+        }
+    }
+
 }

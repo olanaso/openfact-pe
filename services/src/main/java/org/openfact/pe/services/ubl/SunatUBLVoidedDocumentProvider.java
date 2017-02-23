@@ -18,7 +18,9 @@ import org.openfact.pe.models.enums.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.models.types.voided.VoidedDocumentsType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
+import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.services.managers.SunatDocumentManager;
+import org.openfact.pe.services.send.ServiceConfigurationException;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
 import org.openfact.pe.services.util.SunatTemplateUtils;
@@ -153,14 +155,16 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
                     zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
-                    String response = sunatSender.sendSummary(zipFile, zipFileName, InternetMediaType.ZIP);
+                    String numeroTicket = sunatSender.sendSummary(zipFile, zipFileName, InternetMediaType.ZIP);
 
                     sendEvent.setDescription("Invoice submitted successfully to SUNAT");
                     sendEvent.setResult(SendEventStatus.SUCCESS);
 
                     sendEvent.setAttribute("address", sunatAddress);
-                    sendEvent.setAttribute("ticket", response);
+                    sendEvent.setAttribute("ticket", numeroTicket);
                     document.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
+
+                    document.setSingleAttribute(SunatTypeToModel.NUMERO_TICKET, numeroTicket);
 
                     // Disable all related documents
                     UBLProvider ublProvider = session.getProvider(UBLVoidedDocumentProvider.class);
@@ -200,6 +204,27 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
                 }
             }
         };
+    }
+
+    public static FileModel checkTicket(OpenfactSession session, OrganizationModel organization, SendEventModel sendEvent) throws SendException, ModelInsuficientData {
+        String ticket = sendEvent.getAttribute(SunatTypeToModel.NUMERO_TICKET);
+        if (ticket == null) {
+            throw new ModelInsuficientData("ticket not found on send event");
+        }
+
+        String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+        String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
+        String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
+
+        try {
+            byte[] result = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword).getStatus(ticket);
+
+            FileModel responseFileModel = session.files().createFile(organization, "R" + ticket + ".zip", result);
+            sendEvent.attachFile(responseFileModel);
+            return responseFileModel;
+        } catch (ServiceConfigurationException e) {
+            throw new SendException("Could not generate send to third party", e);
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import org.openfact.file.InternetMediaType;
 import org.openfact.models.*;
 import org.openfact.models.enums.DestinyType;
 import org.openfact.models.enums.SendEventStatus;
+import org.openfact.pe.models.enums.SunatRequiredAction;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.services.ubl.SunatUBLVoidedDocumentProvider;
 import org.openfact.pe.services.util.SunatSenderUtils;
@@ -96,19 +97,37 @@ public class DocumentsResource {
                 return ErrorResponse.error("Se encontro mas de un envio valido, debe existir solo un envio", Response.Status.BAD_REQUEST);
             } else {
                 SendEventModel sendEvent = sendEvents.get(0);
-                try {
-                    FileModel fileModel = SunatUBLVoidedDocumentProvider.checkTicket(session, organization, sendEvent);
 
-                    ResponseBuilder response = Response.ok(fileModel.getFile());
-                    String internetMediaType = InternetMediaType.getMymeTypeFromExtension(fileModel.getExtension());
-                    if (internetMediaType != null && !internetMediaType.isEmpty()) response.type(internetMediaType);
-                    response.header("content-disposition", "attachment; filename=\"" + fileModel.getFileName() + "\"");
-                    return response.build();
-                } catch (SendException e) {
-                    return ErrorResponse.error("Error al consultar el ticket", Response.Status.BAD_REQUEST);
-                } catch (ModelInsuficientData modelInsuficientData) {
-                    return ErrorResponse.error("El evento de envio no contiene un numero de ticket valido", Response.Status.BAD_REQUEST);
+                if (document.getRequiredActions().contains(SunatRequiredAction.CONSULTAR_TICKET.toString())) {
+                    try {
+                        FileModel fileModel = SunatSenderUtils.checkTicket(session, organization, document, sendEvent);
+
+                        ResponseBuilder response = Response.ok(fileModel.getFile());
+                        String internetMediaType = InternetMediaType.getMymeTypeFromExtension(fileModel.getExtension());
+                        if (internetMediaType != null && !internetMediaType.isEmpty()) response.type(internetMediaType);
+                        response.header("content-disposition", "attachment; filename=\"" + fileModel.getFileName() + "\"");
+                        return response.build();
+                    } catch (SendException e) {
+                        return ErrorResponse.error("Error al consultar el ticket", Response.Status.BAD_REQUEST);
+                    } catch (ModelInsuficientData modelInsuficientData) {
+                        return ErrorResponse.error("El evento de envio no contiene un numero de ticket valido", Response.Status.BAD_REQUEST);
+                    }
+                } else {
+                    List<FileModel> responseFiles = sendEvent.getAttachedFiles();
+                    if (responseFiles.isEmpty()) {
+                        return ErrorResponse.error("Cdr no encontrado", Response.Status.NOT_FOUND);
+                    } else if (responseFiles.size() > 1) {
+                        return ErrorResponse.error("Se encontraron mas de un cdr, no se puede identificar el valido", Response.Status.CONFLICT);
+                    } else {
+                        FileModel cdrFile = responseFiles.get(0);
+                        ResponseBuilder response = Response.ok(cdrFile.getFile());
+                        String internetMediaType = InternetMediaType.getMymeTypeFromExtension(cdrFile.getExtension());
+                        if (internetMediaType != null && !internetMediaType.isEmpty()) response.type(internetMediaType);
+                        response.header("content-disposition", "attachment; filename=\"" + cdrFile.getFileName() + "\"");
+                        return response.build();
+                    }
                 }
+
             }
         }
     }

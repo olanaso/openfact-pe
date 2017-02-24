@@ -17,6 +17,7 @@ import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.types.summary.SummaryDocumentsType;
 import org.openfact.pe.models.utils.SunatDocumentToType;
 import org.openfact.pe.models.utils.SunatTypeToDocument;
+import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.services.managers.SunatDocumentManager;
 import org.openfact.pe.services.util.SunatResponseUtils;
 import org.openfact.pe.services.util.SunatSenderUtils;
@@ -166,6 +167,8 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
                     sendEvent.setAttribute("ticket", response);
 
                     document.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
+
+                    document.setSingleAttribute(SunatTypeToModel.NUMERO_TICKET, response);
                 } catch (SOAPFaultException e) {
                     SOAPFault soapFault = e.getFault();
 

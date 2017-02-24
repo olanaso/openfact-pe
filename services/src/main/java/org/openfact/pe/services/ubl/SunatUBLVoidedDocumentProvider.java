@@ -206,25 +206,4 @@ public class SunatUBLVoidedDocumentProvider implements UBLVoidedDocumentProvider
         };
     }
 
-    public static FileModel checkTicket(OpenfactSession session, OrganizationModel organization, SendEventModel sendEvent) throws SendException, ModelInsuficientData {
-        String ticket = sendEvent.getAttribute(SunatTypeToModel.NUMERO_TICKET);
-        if (ticket == null) {
-            throw new ModelInsuficientData("ticket not found on send event");
-        }
-
-        String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
-        String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
-        String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
-
-        try {
-            byte[] result = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword).getStatus(ticket);
-
-            FileModel responseFileModel = session.files().createFile(organization, "R" + ticket + ".zip", result);
-            sendEvent.attachFile(responseFileModel);
-            return responseFileModel;
-        } catch (ServiceConfigurationException e) {
-            throw new SendException("Could not generate send to third party", e);
-        }
-    }
-
 }

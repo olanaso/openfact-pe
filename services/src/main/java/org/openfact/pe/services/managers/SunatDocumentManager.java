@@ -37,6 +37,7 @@ import org.openfact.pe.models.UBLRetentionProvider;
 import org.openfact.pe.models.UBLSummaryDocumentProvider;
 import org.openfact.pe.models.UBLVoidedDocumentProvider;
 import org.openfact.pe.models.enums.SunatDocumentType;
+import org.openfact.pe.models.enums.SunatRequiredAction;
 import org.openfact.pe.models.enums.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.models.types.perception.PerceptionType;
 import org.openfact.pe.models.types.retention.RetentionType;
@@ -216,6 +217,9 @@ public class SunatDocumentManager extends DocumentManager {
         SunatTypeToModel.importVoidedDocument(session, organization, documentModel, voidedDocumentsType);
         RequiredAction.getDefaults().stream().forEach(c -> documentModel.addRequiredAction(c));
 
+        // SUNAT REQUIRED ACTION
+        documentModel.addRequiredAction(SunatRequiredAction.CONSULTAR_TICKET.toString());
+
         try {
             // Generate Document
             Document baseDocument = SunatTypeToDocument.toDocument(organization, voidedDocumentsType);
@@ -265,6 +269,9 @@ public class SunatDocumentManager extends DocumentManager {
         DocumentModel documentModel = model.addDocument(SunatDocumentType.SUMMARY_DOCUMENTS.toString(), documentId.getValue(), organization);
         SunatTypeToModel.importSummaryDocument(session, organization, documentModel, summaryDocumentsType);
         RequiredAction.getDefaults().stream().forEach(c -> documentModel.addRequiredAction(c));
+
+        // SUNAT REQUIRED ACTION
+        documentModel.addRequiredAction(SunatRequiredAction.CONSULTAR_TICKET.toString());
 
         try {
             // Generate Document

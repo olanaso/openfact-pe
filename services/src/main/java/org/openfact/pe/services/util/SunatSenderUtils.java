@@ -6,14 +6,18 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.openfact.file.FileModel;
 import org.openfact.file.InternetMediaType;
-import org.openfact.models.OrganizationModel;
+import org.openfact.models.*;
 import org.openfact.pe.models.enums.EmissionType;
+import org.openfact.pe.models.enums.SunatRequiredAction;
+import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.services.send.ServiceConfigurationException;
 import org.openfact.pe.services.send.ServiceWrapper;
 import org.openfact.pe.services.sunat.BillService;
 
 import com.sun.xml.ws.util.ByteArrayDataSource;
+import org.openfact.pe.services.ubl.SunatConfig;
 
 public class SunatSenderUtils {
 
@@ -61,6 +65,31 @@ public class SunatSenderUtils {
         BillService client = serviceWrapper.initWebService(BillService.class);
 
         return client.getStatus(ticket).getContent();
+    }
 
+    public static FileModel checkTicket(OpenfactSession session, OrganizationModel organization, DocumentModel document, SendEventModel sendEvent) throws SendException, ModelInsuficientData {
+        String ticket = sendEvent.getAttribute(SunatTypeToModel.NUMERO_TICKET);
+
+        if (ticket == null) {
+            throw new ModelInsuficientData("ticket not found on send event");
+        }
+
+        String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+        String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
+        String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
+
+        try {
+            byte[] result = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword).getStatus(ticket);
+
+            FileModel responseFileModel = session.files().createFile(organization, "R" + ticket + ".zip", result);
+            sendEvent.attachFile(responseFileModel);
+
+            // Remove required action
+            document.removeRequiredAction(SunatRequiredAction.CONSULTAR_TICKET.toString());
+
+            return responseFileModel;
+        } catch (ServiceConfigurationException e) {
+            throw new SendException("Could not generate send to third party", e);
+        }
     }
 }

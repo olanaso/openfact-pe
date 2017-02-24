@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SendToThridPartySunatScheduleTaskProvider implements OrganizationScheduleTaskProvider {
@@ -79,14 +78,36 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
     }
 
     private long sendSummaryDocument(OpenfactSession session, OrganizationModel organization) {
-        List<DocumentModel> document = session.documents().createQuery(organization)
+        List<DocumentModel> boletas = session.documents().createQuery(organization)
                 .filterTextReplaceAsterisk("B*", DocumentModel.DOCUMENT_ID)
                 .documentType(DocumentType.INVOICE).requiredAction(RequiredAction.SEND_TO_THIRD_PARTY)
                 .thirdPartySendEventFailures(maxRetries, false).enabled(true)
                 .entityQuery().orderByAsc(DocumentModel.DOCUMENT_ID).resultList().getResultList();
 
-        Map<LocalDate, List<DocumentModel>> documentsGroupedByDates = document.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
+        List<DocumentModel> notasDeCredito = session.documents().createQuery(organization)
+                .filterTextReplaceAsterisk("B*", DocumentModel.DOCUMENT_ID)
+                .documentType(DocumentType.CREDIT_NOTE).requiredAction(RequiredAction.SEND_TO_THIRD_PARTY)
+                .thirdPartySendEventFailures(maxRetries, false).enabled(true)
+                .entityQuery().orderByAsc(DocumentModel.DOCUMENT_ID).resultList().getResultList();
 
+        List<DocumentModel> notasDeDebito = session.documents().createQuery(organization)
+                .filterTextReplaceAsterisk("B*", DocumentModel.DOCUMENT_ID)
+                .documentType(DocumentType.DEBIT_NOTE).requiredAction(RequiredAction.SEND_TO_THIRD_PARTY)
+                .thirdPartySendEventFailures(maxRetries, false).enabled(true)
+                .entityQuery().orderByAsc(DocumentModel.DOCUMENT_ID).resultList().getResultList();
+
+        Map<LocalDate, List<DocumentModel>> boletasGroupedByDates = boletas.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
+        Map<LocalDate, List<DocumentModel>> notasDeCreditoGroupedByDates = notasDeCredito.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
+        Map<LocalDate, List<DocumentModel>> notasDeDebitoGroupedByDates = notasDeDebito.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
+
+        buildAndSendSummary(session, organization, boletas, boletasGroupedByDates);
+        buildAndSendSummary(session, organization, notasDeCredito, notasDeCreditoGroupedByDates);
+        buildAndSendSummary(session, organization, notasDeDebito, notasDeDebitoGroupedByDates);
+
+        return boletas.size();
+    }
+
+    private void buildAndSendSummary(OpenfactSession session, OrganizationModel organization, List<DocumentModel> totalDocumentsList, Map<LocalDate, List<DocumentModel>> documentsGroupedByDates) {
         for (Map.Entry<LocalDate, List<DocumentModel>> entrySet : documentsGroupedByDates.entrySet()) {
             Map<String, List<DocumentModel>> documentsGroupedBySerie = entrySet.getValue().stream().collect(Collectors.groupingBy(f -> f.getDocumentId().split("-")[0]));
 
@@ -100,7 +121,7 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                 summaryLineRepresentation.setCodigoDocumento(TipoInvoice.BOLETA.getCodigo());
                 summaryLineRepresentation.setSerieDocumento(serie);
                 summaryLineRepresentation.setNumeroInicioDocumento(Integer.valueOf(documents.get(0).getDocumentId().split("-")[1]).toString());
-                summaryLineRepresentation.setNumeroFinDocumento(Integer.valueOf(documents.get(document.size() - 1).getDocumentId().split("-")[1]).toString());
+                summaryLineRepresentation.setNumeroFinDocumento(Integer.valueOf(documents.get(totalDocumentsList.size() - 1).getDocumentId().split("-")[1]).toString());
                 summaryLineRepresentation.setMoneda(TipoMoneda.PEN.getCodigo());
 
                 summaryLineRepresentation.setTotalAmount(documents.stream()
@@ -177,8 +198,6 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                 documents.forEach(c -> summaryModel.addAttachedDocument(c));
             }
         }
-
-        return document.size();
     }
 
     private long sendInvoicesFactura(OpenfactSession session, OrganizationModel organization) {

@@ -157,6 +157,8 @@ public class SunatUBLSummaryDocumentProvider implements UBLSummaryDocumentProvid
                     zipFileName = SunatTemplateUtils.generateSummaryFileName(organization, document) + ".zip";
                     zipFile = SunatTemplateUtils.generateZip(document.getXmlAsFile().getFile(), xmlFilename);
 
+
+
                     sunatSender = new SunatSenderUtils(sunatAddress, sunatUsername, sunatPassword);
                     String response = sunatSender.sendSummary(zipFile, zipFileName, InternetMediaType.ZIP);
 

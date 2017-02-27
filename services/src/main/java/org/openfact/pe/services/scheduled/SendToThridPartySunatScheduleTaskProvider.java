@@ -16,13 +16,16 @@ import org.openfact.pe.representations.idm.SummaryRepresentation;
 import org.openfact.pe.representations.idm.TaxTotalRepresentation;
 import org.openfact.pe.services.managers.SunatDocumentManager;
 
+import java.io.*;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SendToThridPartySunatScheduleTaskProvider implements OrganizationScheduleTaskProvider {
 
@@ -54,6 +57,8 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
         long startTime = System.currentTimeMillis();
         long readCount = 0;
 
+        readCount += sendSummaryDocument(session, session.organizations().getOrganization(organization.getId()));
+
         readCount += sendInvoicesFactura(session, session.organizations().getOrganization(organization.getId()));
 
         readCount += sendCreditNotes(session, session.organizations().getOrganization(organization.getId()));
@@ -63,7 +68,6 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
         readCount += sendRetentions(session, session.organizations().getOrganization(organization.getId()));
 
         readCount += sendVoidedDocuments(session, session.organizations().getOrganization(organization.getId()));
-        readCount += sendSummaryDocument(session, session.organizations().getOrganization(organization.getId()));
 
         long endTime = System.currentTimeMillis();
 
@@ -96,108 +100,150 @@ public class SendToThridPartySunatScheduleTaskProvider implements OrganizationSc
                 .thirdPartySendEventFailures(maxRetries, false).enabled(true)
                 .entityQuery().orderByAsc(DocumentModel.DOCUMENT_ID).resultList().getResultList();
 
-        Map<LocalDate, List<DocumentModel>> boletasGroupedByDates = boletas.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
-        Map<LocalDate, List<DocumentModel>> notasDeCreditoGroupedByDates = notasDeCredito.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
-        Map<LocalDate, List<DocumentModel>> notasDeDebitoGroupedByDates = notasDeDebito.stream().collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
+        Stream<DocumentModel> documents = Stream.of(boletas, notasDeCredito, notasDeDebito).flatMap(Collection::stream);
 
-        buildAndSendSummary(session, organization, boletas, boletasGroupedByDates);
-        buildAndSendSummary(session, organization, notasDeCredito, notasDeCreditoGroupedByDates);
-        buildAndSendSummary(session, organization, notasDeDebito, notasDeDebitoGroupedByDates);
-
-        return boletas.size();
+        buildAndSendSummary(session, organization, documents);
+        return boletas.size() + notasDeCredito.size() + notasDeDebito.size();
     }
 
-    private void buildAndSendSummary(OpenfactSession session, OrganizationModel organization, List<DocumentModel> totalDocumentsList, Map<LocalDate, List<DocumentModel>> documentsGroupedByDates) {
+    private void buildAndSendSummary(OpenfactSession session, OrganizationModel organization, Stream<DocumentModel> documents) {
+        Map<LocalDate, List<DocumentModel>> documentsGroupedByDates = documents.collect(Collectors.groupingBy(f -> f.getCreatedTimestamp().toLocalDate()));
         for (Map.Entry<LocalDate, List<DocumentModel>> entrySet : documentsGroupedByDates.entrySet()) {
             Map<String, List<DocumentModel>> documentsGroupedBySerie = entrySet.getValue().stream().collect(Collectors.groupingBy(f -> f.getDocumentId().split("-")[0]));
 
+            SummaryRepresentation summaryRep = new SummaryRepresentation();
+            summaryRep.setFechaDeEmision(LocalDateTime.now());
+            summaryRep.setFechaDeReferencia(entrySet.getKey().atStartOfDay());
+
+            List<SummaryLineRepresentation> lines = new ArrayList<>();
+
             for (Map.Entry<String, List<DocumentModel>> entrySetBySerie : documentsGroupedBySerie.entrySet()) {
                 String serie = entrySetBySerie.getKey();
-                List<DocumentModel> documents = entrySetBySerie.getValue();
+                List<DocumentModel> allDocuments = entrySetBySerie.getValue();
+                Map<DocumentType, List<DocumentModel>> documentsGroupedByType = allDocuments.stream()
+                        .sorted(Comparator.comparing(DocumentModel::getDocumentType))
+                        .collect(Collectors.groupingBy(f -> DocumentType.valueOf(f.getDocumentType())));
 
-                SummaryLineRepresentation summaryLineRepresentation = new SummaryLineRepresentation();
 
-                // Boletas
-                summaryLineRepresentation.setCodigoDocumento(TipoInvoice.BOLETA.getCodigo());
-                summaryLineRepresentation.setSerieDocumento(serie);
-                summaryLineRepresentation.setNumeroInicioDocumento(Integer.valueOf(documents.get(0).getDocumentId().split("-")[1]).toString());
-                summaryLineRepresentation.setNumeroFinDocumento(Integer.valueOf(documents.get(totalDocumentsList.size() - 1).getDocumentId().split("-")[1]).toString());
-                summaryLineRepresentation.setMoneda(TipoMoneda.PEN.getCodigo());
-
-                summaryLineRepresentation.setTotalAmount(documents.stream()
-                        .map(f -> f.getFirstAttribute(TypeToModel.LEGAL_MONETARY_TOTAL_PAYABLE_AMOUNT))
-                        .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
-                summaryLineRepresentation.setChargeAmount(documents.stream()
-                        .map(f -> f.getFirstAttribute(TypeToModel.LEGAL_MONETARY_TOTAL_CHARGE_TOTAL_AMOUNT))
-                        .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
-
-                // Totales
-                BillingPaymentRepresentation totalOperacionesGravadas = new BillingPaymentRepresentation();
-                totalOperacionesGravadas.setInstructionID(TipoValorVenta.GRAVADO.getCodigo());
-                totalOperacionesGravadas.setPaidAmount(documents.stream()
-                        .map(f -> f.getFirstAttribute(SunatTypeToModel.TOTAL_OPERACIONES_GRAVADAS))
-                        .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
-
-                BillingPaymentRepresentation totalOperacionesExoneradas = new BillingPaymentRepresentation();
-                totalOperacionesExoneradas.setInstructionID(TipoValorVenta.EXONERADO.getCodigo());
-                totalOperacionesExoneradas.setPaidAmount(documents.stream()
-                        .map(f -> f.getFirstAttribute(SunatTypeToModel.TOTAL_OPERACIONES_EXONERADAS))
-                        .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
-
-                BillingPaymentRepresentation totalOperacionesInafectas = new BillingPaymentRepresentation();
-                totalOperacionesInafectas.setInstructionID(TipoValorVenta.INAFECTO.getCodigo());
-                totalOperacionesInafectas.setPaidAmount(documents.stream()
-                        .map(f -> f.getFirstAttribute(SunatTypeToModel.TOTAL_OPERACIONES_INAFECTAS))
-                        .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
-
-                summaryLineRepresentation.setPayment(Arrays.asList(totalOperacionesGravadas, totalOperacionesExoneradas, totalOperacionesInafectas));
-
-                //
-                TaxTotalRepresentation taxTotalRepresentation = new TaxTotalRepresentation();
-                taxTotalRepresentation.setTaxSchemeID(TipoTributo.IGV.getId());
-                taxTotalRepresentation.setTaxSchemeName(TipoTributo.IGV.toString());
-                taxTotalRepresentation.setTaxTypeCode(TipoTributo.IGV.getCodigo());
-                taxTotalRepresentation.setTaxAmount(documents.stream()
-                        .map(f -> f.getFirstAttribute(SunatTypeToModel.TAX_TOTAL_AMOUNT))
-                        .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add));
-
-                summaryLineRepresentation.setTaxTotal(Arrays.asList(taxTotalRepresentation));
-
-                SummaryRepresentation summaryRep = new SummaryRepresentation();
-                summaryRep.setFechaDeEmision(LocalDateTime.now());
-                summaryRep.setFechaDeReferencia(entrySet.getKey().atStartOfDay());
-                summaryRep.setLine(Arrays.asList(summaryLineRepresentation/*, lineNotaCreditoRep, lineNotaDebitoRep*/));
-
-                SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
-                SummaryDocumentsType summaryType = SunatRepresentationToType.toSummaryDocumentType(session, organization, summaryRep);
-                DocumentModel summaryModel = sunatDocumentManager.addSummaryDocument(organization, summaryType);
-
-                SendEventModel sendEvent = null;
-                try {
-                    sendEvent = sunatDocumentManager.sendToThirdParty(organization, summaryModel);
-                    summaryModel.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
-                    entrySet.getValue().stream().forEach(c -> c.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY));
-                } catch (ModelInsuficientData e) {
-                    if (sendEvent != null) {
-                        sendEvent.setResult(SendEventStatus.ERROR);
-                    }
-                    throw new JobException("Insufient data to send", e);
-                } catch (SendException e) {
-                    if (sendEvent != null) {
-                        sendEvent.setResult(SendEventStatus.ERROR);
-                    }
-                    throw new JobException("error on execute job", e);
+                for (Map.Entry<DocumentType, List<DocumentModel>> entry : documentsGroupedByType.entrySet()) {
+                    SummaryLineRepresentation line = buildSummaryDocumentLine(serie, entry.getValue(), entry.getKey());
+                    lines.add(line);
                 }
-
-                documents.forEach(c -> summaryModel.addAttachedDocument(c));
+                summaryRep.setLine(lines);
             }
+
+            SummaryDocumentsType summaryType = SunatRepresentationToType.toSummaryDocumentType(session, organization, summaryRep);
+            SunatDocumentManager sunatDocumentManager = new SunatDocumentManager(session);
+            DocumentModel summaryModel = sunatDocumentManager.addSummaryDocument(organization, summaryType);
+
+            try {
+                Path path = Paths.get("/home/admin/summary.xml");
+                Files.write(path, summaryModel.getXmlAsFile().getFile());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            SendEventModel sendEvent = null;
+            try {
+                sendEvent = sunatDocumentManager.sendToThirdParty(organization, summaryModel);
+                summaryModel.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY);
+                entrySet.getValue().stream().forEach(c -> c.removeRequiredAction(RequiredAction.SEND_TO_THIRD_PARTY));
+            } catch (ModelInsuficientData e) {
+                if (sendEvent != null) {
+                    sendEvent.setResult(SendEventStatus.ERROR);
+                }
+                throw new JobException("Insufient data to send", e);
+            } catch (SendException e) {
+                if (sendEvent != null) {
+                    sendEvent.setResult(SendEventStatus.ERROR);
+                }
+                throw new JobException("error on execute job", e);
+            }
+
+            entrySet.getValue().forEach(c -> summaryModel.addAttachedDocument(c));
         }
+    }
+
+    private SummaryLineRepresentation buildSummaryDocumentLine(String serie, List<DocumentModel> allDocuments, DocumentType documentType) {
+        String codigoDocumento = null;
+        switch (documentType) {
+            case INVOICE:
+                codigoDocumento = TipoInvoice.BOLETA.getCodigo();
+                break;
+            case CREDIT_NOTE:
+                codigoDocumento = TipoComprobante.NOTA_CREDITO.getCodigo();
+                break;
+            case DEBIT_NOTE:
+                codigoDocumento = TipoComprobante.NOTA_DEBITO.getCodigo();
+                break;
+            default:
+                throw new IllegalStateException("Invalid document to summary");
+        }
+
+        SummaryLineRepresentation summaryLineRepresentation = new SummaryLineRepresentation();
+
+        // Boletas
+        summaryLineRepresentation.setCodigoDocumento(codigoDocumento);
+        summaryLineRepresentation.setSerieDocumento(serie);
+        summaryLineRepresentation.setNumeroInicioDocumento(Integer.valueOf(allDocuments.get(0).getDocumentId().split("-")[1]).toString());
+        summaryLineRepresentation.setNumeroFinDocumento(Integer.valueOf(allDocuments.get(allDocuments.size() - 1).getDocumentId().split("-")[1]).toString());
+        summaryLineRepresentation.setMoneda(TipoMoneda.PEN.getCodigo());
+
+        summaryLineRepresentation.setTotalAmount(allDocuments.stream()
+                .map(f -> f.getFirstAttribute(TypeToModel.LEGAL_MONETARY_TOTAL_PAYABLE_AMOUNT))
+                .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        summaryLineRepresentation.setChargeAmount(allDocuments.stream()
+                .map(f -> f.getFirstAttribute(TypeToModel.LEGAL_MONETARY_TOTAL_CHARGE_TOTAL_AMOUNT))
+                .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        summaryLineRepresentation.setChargeIndicator(true);
+
+        // Totales
+        BillingPaymentRepresentation totalOperacionesGravadas = new BillingPaymentRepresentation();
+        totalOperacionesGravadas.setInstructionID(TipoValorVenta.GRAVADO.getCodigo());
+        totalOperacionesGravadas.setPaidAmount(allDocuments.stream()
+                .map(f -> f.getFirstAttribute(SunatTypeToModel.TOTAL_OPERACIONES_GRAVADAS))
+                .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+        BillingPaymentRepresentation totalOperacionesExoneradas = new BillingPaymentRepresentation();
+        totalOperacionesExoneradas.setInstructionID(TipoValorVenta.EXONERADO.getCodigo());
+        totalOperacionesExoneradas.setPaidAmount(allDocuments.stream()
+                .map(f -> f.getFirstAttribute(SunatTypeToModel.TOTAL_OPERACIONES_EXONERADAS))
+                .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+        BillingPaymentRepresentation totalOperacionesInafectas = new BillingPaymentRepresentation();
+        totalOperacionesInafectas.setInstructionID(TipoValorVenta.INAFECTO.getCodigo());
+        totalOperacionesInafectas.setPaidAmount(allDocuments.stream()
+                .map(f -> f.getFirstAttribute(SunatTypeToModel.TOTAL_OPERACIONES_INAFECTAS))
+                .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+        summaryLineRepresentation.setPayment(Arrays.asList(totalOperacionesGravadas, totalOperacionesExoneradas, totalOperacionesInafectas));
+
+        //
+        TaxTotalRepresentation igvTaxTotalRepresentation = new TaxTotalRepresentation();
+        igvTaxTotalRepresentation.setTaxSchemeID(TipoTributo.IGV.getId());
+        igvTaxTotalRepresentation.setTaxSchemeName(TipoTributo.IGV.toString());
+        igvTaxTotalRepresentation.setTaxTypeCode(TipoTributo.IGV.getCodigo());
+        igvTaxTotalRepresentation.setTaxAmount(allDocuments.stream()
+                .map(f -> f.getFirstAttribute(SunatTypeToModel.TAX_TOTAL_AMOUNT))
+                .map(f -> f != null ? new BigDecimal(f) : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+        TaxTotalRepresentation iscTaxTotalRepresentation = new TaxTotalRepresentation();
+        iscTaxTotalRepresentation.setTaxSchemeID(TipoTributo.ISC.getId());
+        iscTaxTotalRepresentation.setTaxSchemeName(TipoTributo.ISC.toString());
+        iscTaxTotalRepresentation.setTaxTypeCode(TipoTributo.ISC.getCodigo());
+        iscTaxTotalRepresentation.setTaxAmount(BigDecimal.ZERO);
+
+        summaryLineRepresentation.setTaxTotal(Arrays.asList(igvTaxTotalRepresentation, iscTaxTotalRepresentation));
+
+        return summaryLineRepresentation;
     }
 
     private long sendInvoicesFactura(OpenfactSession session, OrganizationModel organization) {

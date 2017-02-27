@@ -1093,7 +1093,7 @@ public class SunatRepresentationToType {
         type.setUblExtensions(ublExtensionsType);
 
         type.setUblVersionID(UblSunatConfiguration.VERSION_ID.getCodigo());
-        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID11.getCodigo());
+        type.setCustomizationID(UblSunatConfiguration.CUSTOMIZATION_ID10.getCodigo());
         if (rep.getFechaDeReferencia() != null) {
             type.setReferenceDateTime(toGregorianCalendar(rep.getFechaDeReferencia().toLocalDate()));
         }

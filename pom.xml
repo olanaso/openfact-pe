@@ -87,7 +87,7 @@
         <module>integration</module>
         <module>services</module>
         <module>spi</module>
-        <!--<module>testsuite</module>-->
+        <module>web-console</module>
         <module>reports</module>
     </modules>
 
@@ -292,6 +292,13 @@
                 <!--<artifactId>xmlgraphics-commons</artifactId>-->
                 <!--<version>${version.xmlgraphics-commons}</version>-->
             <!--</dependency>-->
+
+            <!-- Primefaces -->
+            <dependency>
+                <groupId>org.primefaces</groupId>
+                <artifactId>primefaces</artifactId>
+                <version>${primefaces.version}</version>
+            </dependency>
 
             <!--zip builder-->
             <dependency>

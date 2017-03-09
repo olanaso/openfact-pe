@@ -1,6 +1,6 @@
 package org.openfact.pe.models.utils;
 
-import org.openfact.pe.models.enums.*;
+import org.openfact.pe.ubl.types.*;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
 
 public class SunatEnumToRepresentation {

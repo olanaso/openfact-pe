@@ -1,16 +1,15 @@
 package org.openfact.pe.models.utils;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import org.openfact.models.DocumentModel;
-import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.utils.TypeToModel;
-import org.openfact.pe.models.types.perception.PerceptionType;
-import org.openfact.pe.models.types.retention.RetentionType;
-import org.openfact.pe.models.types.summary.SummaryDocumentsType;
-import org.openfact.pe.models.types.voided.VoidedDocumentsType;
+import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
+import org.openfact.pe.ubl.ubl21.retention.RetentionType;
+import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
+import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 
+import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +18,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SunatTypeToModel extends TypeToModel {
+@Stateless
+public class SunatTypeToModel {
 
     public static final String SUNAT_PERCEPTION_SYSTEM_CODE = "sunatPerceptionSystemCode";
     public static final String SUNAT_PERCEPTION_PERCENT = "sunatPerceptionPercent";
@@ -57,9 +57,9 @@ public class SunatTypeToModel extends TypeToModel {
         return date.toGregorianCalendar().toZonedDateTime().toLocalDateTime();
     }
 
-    public static void importPerception(OpenfactSession session, OrganizationModel organization, DocumentModel model, PerceptionType type) {
+    public void importPerception(OrganizationModel organization, DocumentModel model, PerceptionType type) {
         if (type.getIssueDate() != null) {
-            model.setSingleAttribute(ISSUE_DATE, type.getIssueDate().getValue().toString());
+            model.setSingleAttribute(TypeToModel.ISSUE_DATE, type.getIssueDate().getValue().toString());
         }
         if (type.getSunatPerceptionSystemCode() != null) {
             model.setSingleAttribute(SUNAT_PERCEPTION_SYSTEM_CODE, type.getSunatPerceptionSystemCode().getValue());
@@ -76,9 +76,9 @@ public class SunatTypeToModel extends TypeToModel {
         }
     }
 
-    public static void importRetention(OpenfactSession session, OrganizationModel organization, DocumentModel model, RetentionType type) {
+    public void importRetention(OrganizationModel organization, DocumentModel model, RetentionType type) {
         if (type.getIssueDate() != null) {
-            model.setSingleAttribute(ISSUE_DATE, type.getIssueDate().getValue().toString());
+            model.setSingleAttribute(TypeToModel.ISSUE_DATE, type.getIssueDate().getValue().toString());
         }
         if (type.getSunatRetentionSystemCode() != null) {
             model.setSingleAttribute(SUNAT_RETENTION_SYSTEM_CODE, type.getSunatRetentionSystemCode().getValue());
@@ -92,19 +92,19 @@ public class SunatTypeToModel extends TypeToModel {
         }
     }
 
-    public static void importSummaryDocument(OpenfactSession session, OrganizationModel organization, DocumentModel model, SummaryDocumentsType type) {
+    public void importSummaryDocument(OrganizationModel organization, DocumentModel model, SummaryDocumentsType type) {
         if (type.getIssueDate() != null) {
-            model.setSingleAttribute(ISSUE_DATE, type.getIssueDate().getValue().toString());
+            model.setSingleAttribute(TypeToModel.ISSUE_DATE, type.getIssueDate().getValue().toString());
         }
     }
 
-    public static void importVoidedDocument(OpenfactSession session, OrganizationModel organization, DocumentModel model, VoidedDocumentsType type) {
+    public void importVoidedDocument(OrganizationModel organization, DocumentModel model, VoidedDocumentsType type) {
         if (type.getIssueDate() != null) {
-            model.setSingleAttribute(ISSUE_DATE, type.getIssueDate().getValue().toString());
+            model.setSingleAttribute(TypeToModel.ISSUE_DATE, type.getIssueDate().getValue().toString());
         }
     }
 
-    public static void addReceiverAttributes(PartyType partyType, DocumentModel documentModel) {
+    public void addReceiverAttributes(PartyType partyType, DocumentModel documentModel) {
         if (partyType.getPartyIdentification() != null && !partyType.getPartyIdentification().isEmpty()) {
             List<String> partyIdentification = partyType.getPartyIdentification().stream().map(f -> f.getIDValue()).collect(Collectors.toList());
             documentModel.setAttribute(RECEIVER_PARTY_IDENTIFICATION_ID, partyIdentification);

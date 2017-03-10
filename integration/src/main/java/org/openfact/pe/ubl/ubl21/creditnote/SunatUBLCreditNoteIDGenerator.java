@@ -3,7 +3,7 @@ package org.openfact.pe.ubl.ubl21.creditnote;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.models.DocumentModel;
-import org.openfact.models.DocumentQuery;
+import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.types.DocumentType;
@@ -22,13 +22,15 @@ import java.util.regex.Pattern;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("CREDIT_NOTE")
-public class SunatUBLCreditNoteIDGenerator implements UBLCreditNoteIDGenerator {
+public class SunatUBLCreditNoteIDGenerator extends AbstractCreditNoteProvider implements UBLCreditNoteIDGenerator {
 
     @Inject
-    private DocumentQuery documentQuery;
+    private DocumentProvider documentProvider;
 
     @Override
-    public String generateID(OrganizationModel organization, CreditNoteType creditNoteType) {
+    public String generateID(OrganizationModel organization, Object o) {
+        CreditNoteType creditNoteType = resolve(o);
+
         String invoiceDocumentReferenceID = null;
         if (creditNoteType.getDiscrepancyResponseCount() > 0) {
             invoiceDocumentReferenceID = creditNoteType.getDiscrepancyResponse().get(0).getReferenceIDValue();
@@ -39,7 +41,7 @@ public class SunatUBLCreditNoteIDGenerator implements UBLCreditNoteIDGenerator {
         TipoComprobante tipoComprobante = TipoComprobante.NOTA_CREDITO;
 
         DocumentModel lastCreditNote = null;
-        ScrollModel<DocumentModel> creditNotes = documentQuery.organization(organization)
+        ScrollModel<DocumentModel> creditNotes = documentProvider.createQuery(organization)
                 .documentType(DocumentType.CREDIT_NOTE)
                 .entityQuery()
                 .orderByDesc(DocumentModel.DOCUMENT_ID)
@@ -79,5 +81,4 @@ public class SunatUBLCreditNoteIDGenerator implements UBLCreditNoteIDGenerator {
 
         return documentId.toString();
     }
-
 }

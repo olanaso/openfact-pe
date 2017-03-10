@@ -3,7 +3,7 @@ package org.openfact.pe.ubl.ubl21.debitnote;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.models.DocumentModel;
-import org.openfact.models.DocumentQuery;
+import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.ScrollModel;
 import org.openfact.models.types.DocumentType;
@@ -22,13 +22,15 @@ import java.util.regex.Pattern;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("CREDIT_NOTE")
-public class SunatUBLDebitNoteIDGenerator implements UBLDebitNoteIDGenerator {
+public class SunatUBLDebitNoteIDGenerator extends AbstractDebitNoteProvider implements UBLDebitNoteIDGenerator {
 
     @Inject
-    private DocumentQuery documentQuery;
+    private DocumentProvider documentProvider;
 
     @Override
-    public String generateID(OrganizationModel organization, DebitNoteType debitNoteType) {
+    public String generateID(OrganizationModel organization, Object o) {
+        DebitNoteType debitNoteType = resolve(o);
+
         String invoiceDocumentReferenceID = null;
         if (debitNoteType.getDiscrepancyResponseCount() > 0) {
             invoiceDocumentReferenceID = debitNoteType.getDiscrepancyResponse().get(0).getReferenceIDValue();
@@ -39,7 +41,7 @@ public class SunatUBLDebitNoteIDGenerator implements UBLDebitNoteIDGenerator {
         TipoComprobante tipoComprobante = TipoComprobante.NOTA_DEBITO;
 
         DocumentModel lastDebitNote = null;
-        ScrollModel<DocumentModel> debitNotes = documentQuery.organization(organization)
+        ScrollModel<DocumentModel> debitNotes = documentProvider.createQuery(organization)
                 .documentType(DocumentType.DEBIT_NOTE)
                 .entityQuery()
                 .orderByDesc(DocumentModel.DOCUMENT_ID)
@@ -79,5 +81,4 @@ public class SunatUBLDebitNoteIDGenerator implements UBLDebitNoteIDGenerator {
 
         return documentId.toString();
     }
-
 }

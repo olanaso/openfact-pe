@@ -1,10 +1,7 @@
 package org.openfact.pe.ubl.ubl21.summarydocument;
 
 import org.openfact.common.converts.StringUtils;
-import org.openfact.models.DocumentModel;
-import org.openfact.models.DocumentQuery;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.ScrollModel;
+import org.openfact.models.*;
 import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
@@ -25,13 +22,13 @@ import java.util.regex.Pattern;
 public class SunatUBLSummaryDocumentIDGenerator implements UBLRetentionIDGenerator {
 
     @Inject
-    private DocumentQuery documentQuery;
+    private DocumentProvider documentProvider;
 
     @Override
     public String generateID(OrganizationModel organization, RetentionType retentionType) {
         TipoComprobante summaryDocumentCode = TipoComprobante.RESUMEN_DIARIO;
         DocumentModel lastSummaryDocument = null;
-        ScrollModel<DocumentModel> summaryDocuments = documentQuery.organization(organization)
+        ScrollModel<DocumentModel> summaryDocuments = documentProvider.createQuery(organization)
                 .documentType(SunatDocumentType.SUMMARY_DOCUMENTS.toString())
                 .entityQuery()
                 .orderByDesc(DocumentModel.DOCUMENT_ID)

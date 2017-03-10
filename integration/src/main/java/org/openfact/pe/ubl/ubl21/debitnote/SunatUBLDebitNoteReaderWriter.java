@@ -9,7 +9,7 @@ import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
-import org.openfact.ubl.ubl21.debitnote.UBLDebitNoteReaderWriterProvider;
+import org.openfact.ubl.ubl21.debitnote.UBLDebitNoteReaderWriter;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 import org.w3c.dom.Document;
@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("DEBIT_NOTE")
-public class SunatUBLDebitNoteReaderWriter implements UBLDebitNoteReaderWriterProvider {
+public class SunatUBLDebitNoteReaderWriter implements UBLDebitNoteReaderWriter {
 
     @Override
     public UBLReader<DebitNoteType> reader() {

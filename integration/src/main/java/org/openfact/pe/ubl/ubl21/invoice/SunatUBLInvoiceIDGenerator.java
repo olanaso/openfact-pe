@@ -19,13 +19,15 @@ import java.util.regex.Pattern;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("INVOICE")
-public class SunatUBLInvoiceIDGenerator implements UBLInvoiceIDGenerator {
+public class SunatUBLInvoiceIDGenerator extends AbstractInvoiceProvider implements UBLInvoiceIDGenerator {
 
     @Inject
-    private DocumentQuery documentQuery;
+    private DocumentProvider documentProvider;
 
     @Override
-    public String generateID(OrganizationModel organization, InvoiceType invoiceType) {
+    public String generateID(OrganizationModel organization, Object o) {
+        InvoiceType invoiceType = resolve(o);
+
         String invoiceTypeCode = invoiceType.getInvoiceTypeCodeValue();
 
         TipoInvoice tipoInvoice;
@@ -38,7 +40,7 @@ public class SunatUBLInvoiceIDGenerator implements UBLInvoiceIDGenerator {
         }
 
         DocumentModel lastInvoice = null;
-        ScrollModel<DocumentModel> invoices = documentQuery.organization(organization)
+        ScrollModel<DocumentModel> invoices = documentProvider.createQuery(organization)
                 .documentType(DocumentType.INVOICE.toString())
                 .entityQuery()
                 .orderByDesc(DocumentModel.DOCUMENT_ID)
@@ -78,5 +80,4 @@ public class SunatUBLInvoiceIDGenerator implements UBLInvoiceIDGenerator {
 
         return documentId.toString();
     }
-
 }

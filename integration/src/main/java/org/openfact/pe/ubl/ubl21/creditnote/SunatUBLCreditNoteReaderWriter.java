@@ -9,7 +9,7 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
-import org.openfact.ubl.ubl21.creditnote.UBLCreditNoteReaderWriterProvider;
+import org.openfact.ubl.ubl21.creditnote.UBLCreditNoteReaderWriter;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 import org.w3c.dom.Document;
@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("CREDIT_NOTE")
-public class SunatUBLCreditNoteReaderWriter implements UBLCreditNoteReaderWriterProvider {
+public class SunatUBLCreditNoteReaderWriter implements UBLCreditNoteReaderWriter {
 
     @Override
     public UBLReader<CreditNoteType> reader() {

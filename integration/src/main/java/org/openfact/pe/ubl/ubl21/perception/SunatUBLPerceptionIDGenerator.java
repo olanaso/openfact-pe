@@ -1,10 +1,7 @@
 package org.openfact.pe.ubl.ubl21.perception;
 
 import org.openfact.common.converts.StringUtils;
-import org.openfact.models.DocumentModel;
-import org.openfact.models.DocumentQuery;
-import org.openfact.models.OrganizationModel;
-import org.openfact.models.ScrollModel;
+import org.openfact.models.*;
 import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
@@ -23,13 +20,13 @@ import java.util.regex.Pattern;
 public class SunatUBLPerceptionIDGenerator implements UBLPerceptionIDGenerator {
 
     @Inject
-    private DocumentQuery documentQuery;
+    private DocumentProvider documentProvider;
 
     @Override
     public String generateID(OrganizationModel organization, PerceptionType perceptionType) {
         TipoComprobante perceptionCode = TipoComprobante.PERCEPCION;
         DocumentModel lastPerception = null;
-        ScrollModel<DocumentModel> perceptions = documentQuery.organization(organization)
+        ScrollModel<DocumentModel> perceptions = documentProvider.createQuery(organization)
                 .documentType(SunatDocumentType.PERCEPTION.toString())
                 .entityQuery()
                 .orderByDesc(DocumentModel.DOCUMENT_ID)

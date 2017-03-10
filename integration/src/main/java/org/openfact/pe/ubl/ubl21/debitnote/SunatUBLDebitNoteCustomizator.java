@@ -6,7 +6,7 @@ import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.types.DocumentType;
 import org.openfact.models.utils.TypeToModel;
-import org.openfact.ubl.ubl21.debitnote.UBLDebitNoteCustomizationProvider;
+import org.openfact.ubl.ubl21.debitnote.UBLDebitNoteCustomizator;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
@@ -16,7 +16,7 @@ import javax.inject.Inject;
 @Stateless
 @UBLProviderType("default")
 @UBLDocumentType("DEBIT_NOTE")
-public class SunatUBLDebitNoteCustomizationProvider implements UBLDebitNoteCustomizationProvider {
+public class SunatUBLDebitNoteCustomizator extends AbstractDebitNoteProvider implements UBLDebitNoteCustomizator {
 
     @Inject
     private TypeToModel typeToModel;
@@ -25,7 +25,9 @@ public class SunatUBLDebitNoteCustomizationProvider implements UBLDebitNoteCusto
     private DocumentProvider documentProvider;
 
     @Override
-    public void config(OrganizationModel organization, DocumentModel document, DebitNoteType debitNoteType) {
+    public void config(OrganizationModel organization, DocumentModel document, Object o) {
+        DebitNoteType debitNoteType = resolve(o);
+
         typeToModel.importDebitNote(organization, document, debitNoteType);
 
         // attach file
@@ -41,5 +43,4 @@ public class SunatUBLDebitNoteCustomizationProvider implements UBLDebitNoteCusto
                     });
         }
     }
-
 }

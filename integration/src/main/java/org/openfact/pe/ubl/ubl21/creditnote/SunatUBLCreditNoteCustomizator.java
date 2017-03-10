@@ -6,7 +6,7 @@ import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.types.DocumentType;
 import org.openfact.models.utils.TypeToModel;
-import org.openfact.ubl.ubl21.creditnote.UBLCreditNoteCustomizationProvider;
+import org.openfact.ubl.ubl21.creditnote.UBLCreditNoteCustomizator;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
@@ -14,9 +14,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 @Stateless
-@UBLProviderType("default")
+@UBLProviderType("sunat")
 @UBLDocumentType("CREDIT_NOTE")
-public class SunatUBLCreditNoteCustomizationProvider implements UBLCreditNoteCustomizationProvider {
+public class SunatUBLCreditNoteCustomizator extends AbstractCreditNoteProvider implements UBLCreditNoteCustomizator {
 
     @Inject
     private TypeToModel typeToModel;
@@ -25,7 +25,9 @@ public class SunatUBLCreditNoteCustomizationProvider implements UBLCreditNoteCus
     private DocumentProvider documentProvider;
 
     @Override
-    public void config(OrganizationModel organization, DocumentModel document, CreditNoteType creditNoteType) {
+    public void config(OrganizationModel organization, DocumentModel document, Object o) {
+        CreditNoteType creditNoteType = resolve(o);
+
         typeToModel.importCreditNote(organization, document, creditNoteType);
 
         // attach file
@@ -41,5 +43,4 @@ public class SunatUBLCreditNoteCustomizationProvider implements UBLCreditNoteCus
                     });
         }
     }
-
 }

@@ -23,7 +23,6 @@ import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
-import org.openfact.pe.services.resources.GenericTypesResource;
 import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
 import org.openfact.pe.ubl.ubl21.retention.RetentionType;
@@ -33,6 +32,7 @@ import org.openfact.services.ErrorResponse;
 import org.openfact.services.managers.DocumentManager;
 import org.openfact.services.managers.EventStoreManager;
 import org.openfact.services.managers.OrganizationManager;
+import org.openfact.services.resource.OrganizationAdminResourceProvider;
 import org.openfact.services.resource.security.OrganizationAuth;
 import org.openfact.services.resource.security.Resource;
 import org.openfact.services.resource.security.SecurityContextProvider;
@@ -58,10 +58,12 @@ import java.util.Map;
 
 @Stateless
 @Consumes(MediaType.APPLICATION_JSON)
-public class SunatAdminOrganizationResourceProvider {
+public class SunatDocumentsAdminResourceProvider implements OrganizationAdminResourceProvider {
 
+    private static final String PATH = "sunat";
     private static final String UPLOAD_FILE_NAME = "file";
-    private static final Logger logger = Logger.getLogger(SunatAdminOrganizationResourceProvider.class);
+
+    private static final Logger logger = Logger.getLogger(SunatDocumentsAdminResourceProvider.class);
 
     @Context
     protected UriInfo uriInfo;
@@ -99,8 +101,14 @@ public class SunatAdminOrganizationResourceProvider {
     @Inject
     private ModelToRepresentation modelToRepresentation;
 
-    @Inject
-    private GenericTypesResource genericTypesResource;
+    @Override
+    public String getPath() {
+        return PATH;
+    }
+
+    public Object getResource() {
+        return this;
+    }
 
     private OrganizationModel getOrganizationModel() {
         String organizationName = session.getContext().getOrganization().getName();
@@ -194,7 +202,7 @@ public class SunatAdminOrganizationResourceProvider {
     private void setPerceptionIDType(OrganizationModel organization, final PerceptionType perceptionType) {
         IDType documentId = perceptionType.getId();
         if (documentId == null || documentId.getValue() == null) {
-            UBLIDGenerator<PerceptionType> ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.PERCEPTION.toString());
+            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.PERCEPTION.toString());
             String newDocumentId = ublIDGenerator.generateID(organization, perceptionType);
             documentId = new IDType(newDocumentId);
             perceptionType.setId(documentId);
@@ -204,7 +212,7 @@ public class SunatAdminOrganizationResourceProvider {
     private void setRetentionIDType(OrganizationModel organization, final RetentionType retentionType) {
         IDType documentId = retentionType.getId();
         if (documentId == null || documentId.getValue() == null) {
-            UBLIDGenerator<RetentionType> ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.RETENTION.toString());
+            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.RETENTION.toString());
             String newDocumentId = ublIDGenerator.generateID(organization, retentionType);
             documentId = new IDType(newDocumentId);
             retentionType.setId(documentId);
@@ -214,7 +222,7 @@ public class SunatAdminOrganizationResourceProvider {
     private void setVoidedDocumentIDType(OrganizationModel organization, final VoidedDocumentsType voidedDocumentsType) {
         IDType documentId = voidedDocumentsType.getID();
         if (documentId == null || documentId.getValue() == null) {
-            UBLIDGenerator<VoidedDocumentsType> ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.VOIDED_DOCUMENTS.toString());
+            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.VOIDED_DOCUMENTS.toString());
             String newDocumentId = ublIDGenerator.generateID(organization, voidedDocumentsType);
             documentId = new IDType(newDocumentId);
             voidedDocumentsType.setID(documentId);
@@ -280,7 +288,7 @@ public class SunatAdminOrganizationResourceProvider {
 
             IDType documentId = creditNoteType.getID();
             if (documentId == null) {
-                UBLIDGenerator<CreditNoteType> ublIDGenerator = ublUtil.getIDGenerator(DocumentType.CREDIT_NOTE);
+                UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(DocumentType.CREDIT_NOTE);
                 String newDocumentId = ublIDGenerator.generateID(organization, creditNoteType);
                 documentId = new IDType(newDocumentId);
                 creditNoteType.setID(documentId);
@@ -324,7 +332,7 @@ public class SunatAdminOrganizationResourceProvider {
 
             IDType documentId = debitNoteType.getID();
             if (documentId == null) {
-                UBLIDGenerator<DebitNoteType> ublIDGenerator = ublUtil.getIDGenerator(DocumentType.DEBIT_NOTE);
+                UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(DocumentType.DEBIT_NOTE);
                 String newDocumentId = ublIDGenerator.generateID(organization, debitNoteType);
                 documentId = new IDType(newDocumentId);
                 debitNoteType.setID(documentId);
@@ -682,11 +690,6 @@ public class SunatAdminOrganizationResourceProvider {
 //            }
 //        }
         return null;
-    }
-
-    @Path("ubl21-extensions/generic-types")
-    public GenericTypesResource getGenericTypesResource() {
-        return genericTypesResource;
     }
 
 }

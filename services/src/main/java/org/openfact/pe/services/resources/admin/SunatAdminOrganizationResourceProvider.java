@@ -33,7 +33,6 @@ import org.openfact.services.ErrorResponse;
 import org.openfact.services.managers.DocumentManager;
 import org.openfact.services.managers.EventStoreManager;
 import org.openfact.services.managers.OrganizationManager;
-import org.openfact.services.resource.OrganizationResourceProvider;
 import org.openfact.services.resource.security.OrganizationAuth;
 import org.openfact.services.resource.security.Resource;
 import org.openfact.services.resource.security.SecurityContextProvider;
@@ -59,9 +58,8 @@ import java.util.Map;
 
 @Stateless
 @Consumes(MediaType.APPLICATION_JSON)
-public class SunatAdminOrganizationResourceProvider implements OrganizationResourceProvider {
+public class SunatAdminOrganizationResourceProvider {
 
-    private static final String PATH = "sunat";
     private static final String UPLOAD_FILE_NAME = "file";
     private static final Logger logger = Logger.getLogger(SunatAdminOrganizationResourceProvider.class);
 
@@ -103,15 +101,6 @@ public class SunatAdminOrganizationResourceProvider implements OrganizationResou
 
     @Inject
     private GenericTypesResource genericTypesResource;
-
-    @Override
-    public String getPath() {
-        return PATH;
-    }
-
-    public Object getResource() {
-        return this;
-    }
 
     private OrganizationModel getOrganizationModel() {
         String organizationName = session.getContext().getOrganization().getName();

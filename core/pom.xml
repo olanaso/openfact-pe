@@ -27,7 +27,7 @@
         <!-- Openfact Core -->
         <dependency>
             <groupId>org.openfact</groupId>
-            <artifactId>openfact-integration</artifactId>
+            <artifactId>openfact-server-spi-private</artifactId>
         </dependency>
 
         <!-- Test -->

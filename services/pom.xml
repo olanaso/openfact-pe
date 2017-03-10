@@ -17,6 +17,7 @@
     </properties>
 
     <dependencies>
+        <!--Openfact PE-->
         <dependency>
             <groupId>org.openfact</groupId>
             <artifactId>openfact-pe-core</artifactId>

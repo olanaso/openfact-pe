@@ -1,12 +1,7 @@
 package org.openfact.pe.ubl.ubl21.summarydocument;
 
 import org.openfact.models.*;
-import org.openfact.pe.ubl.types.SunatDocumentType;
-import org.openfact.pe.ubl.types.TipoComprobante;
-import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
-import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
-import org.openfact.ubl.UBLReaderWriterProvider;
 import org.openfact.ubl.UBLThirdPartySender;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
@@ -14,8 +9,6 @@ import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Optional;
 
 @Stateless
 @UBLProviderType("sunat")

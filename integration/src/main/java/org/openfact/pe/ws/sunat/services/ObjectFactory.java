@@ -1,4 +1,3 @@
-
 package org.openfact.pe.ws.sunat.services;
 
 import javax.xml.bind.JAXBElement;
@@ -8,18 +7,17 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
  * generated in the org.openfact.ubl21.pe.send package.
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -35,14 +33,12 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openfact.ubl21.pe.send
-     * 
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link GetStatusResponse }
-     * 
      */
     public GetStatusResponse createGetStatusResponse() {
         return new GetStatusResponse();
@@ -50,7 +46,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SendPackResponse }
-     * 
      */
     public SendPackResponse createSendPackResponse() {
         return new SendPackResponse();
@@ -58,7 +53,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SendBillResponse }
-     * 
      */
     public SendBillResponse createSendBillResponse() {
         return new SendBillResponse();
@@ -66,7 +60,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SendPack }
-     * 
      */
     public SendPack createSendPack() {
         return new SendPack();
@@ -74,7 +67,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SendSummaryResponse }
-     * 
      */
     public SendSummaryResponse createSendSummaryResponse() {
         return new SendSummaryResponse();
@@ -82,7 +74,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetStatus }
-     * 
      */
     public GetStatus createGetStatus() {
         return new GetStatus();
@@ -90,7 +81,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SendSummary }
-     * 
      */
     public SendSummary createSendSummary() {
         return new SendSummary();
@@ -98,7 +88,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SendBill }
-     * 
      */
     public SendBill createSendBill() {
         return new SendBill();
@@ -106,7 +95,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StatusResponse }
-     * 
      */
     public StatusResponse createStatusResponse() {
         return new StatusResponse();
@@ -114,7 +102,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SendPackResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "sendPackResponse")
     public JAXBElement<SendPackResponse> createSendPackResponse(SendPackResponse value) {
@@ -123,7 +110,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetStatusResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "getStatusResponse")
     public JAXBElement<GetStatusResponse> createGetStatusResponse(GetStatusResponse value) {
@@ -132,7 +118,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SendBill }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "sendBillAddress1")
     public JAXBElement<SendBill> createSendBill(SendBill value) {
@@ -141,7 +126,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetStatus }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "getStatus")
     public JAXBElement<GetStatus> createGetStatus(GetStatus value) {
@@ -150,7 +134,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SendSummary }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "sendSummary")
     public JAXBElement<SendSummary> createSendSummary(SendSummary value) {
@@ -159,7 +142,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SendSummaryResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "sendSummaryResponse")
     public JAXBElement<SendSummaryResponse> createSendSummaryResponse(SendSummaryResponse value) {
@@ -168,7 +150,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SendPack }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "sendPack")
     public JAXBElement<SendPack> createSendPack(SendPack value) {
@@ -177,7 +158,6 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SendBillResponse }{@code >}}
-     * 
      */
     @XmlElementDecl(namespace = "http://service.sunat.gob.pe", name = "sendBillResponse")
     public JAXBElement<SendBillResponse> createSendBillResponse(SendBillResponse value) {

@@ -25,6 +25,7 @@ public enum TipoRegimenRetencion {
     public BigDecimal getValor() {
         return valor;
     }
+
     private TipoRegimenRetencion(String codigo, String denominacion, BigDecimal valor) {
         this.codigo = codigo;
         this.denominacion = denominacion;

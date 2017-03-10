@@ -1,6 +1,5 @@
 package org.openfact.pe.ubl.ubl21.debitnote;
 
-import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.models.DocumentModel;
@@ -10,7 +9,6 @@ import org.openfact.models.ScrollModel;
 import org.openfact.models.types.DocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
-import org.openfact.ubl.ubl21.creditnote.UBLCreditNoteIDGenerator;
 import org.openfact.ubl.ubl21.debitnote.UBLDebitNoteIDGenerator;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;

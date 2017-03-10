@@ -8,24 +8,24 @@
 
 package org.openfact.pe.ubl.ubl21.commons;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.RoadTransportType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.BrandNameType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TransportAuthorizationCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TransportMeansTypeCodeType;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * <p>Java class for SUNATRoadTransportType complex type.
- * 
+ * <p>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>
  * <pre>
  * &lt;complexType name="SUNATRoadTransportType"&gt;
  *   &lt;complexContent&gt;
@@ -40,19 +40,16 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Transpo
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SUNATRoadTransportType", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", propOrder = {
-    "transportMeansTypeCode",
-    "transportAuthorizationCode",
-    "semiTrailer",
-    "brandName"
+        "transportMeansTypeCode",
+        "transportAuthorizationCode",
+        "semiTrailer",
+        "brandName"
 })
 public class SUNATRoadTransportType
-    extends RoadTransportType
-{
+        extends RoadTransportType {
 
     @XmlElement(name = "TransportMeansTypeCode", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
     protected TransportMeansTypeCodeType transportMeansTypeCode;
@@ -65,11 +62,9 @@ public class SUNATRoadTransportType
 
     /**
      * Gets the value of the transportMeansTypeCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransportMeansTypeCodeType }
-     *     
+     *
+     * @return possible object is
+     * {@link TransportMeansTypeCodeType }
      */
     public TransportMeansTypeCodeType getTransportMeansTypeCode() {
         return transportMeansTypeCode;
@@ -77,11 +72,9 @@ public class SUNATRoadTransportType
 
     /**
      * Sets the value of the transportMeansTypeCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransportMeansTypeCodeType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TransportMeansTypeCodeType }
      */
     public void setTransportMeansTypeCode(TransportMeansTypeCodeType value) {
         this.transportMeansTypeCode = value;
@@ -89,11 +82,9 @@ public class SUNATRoadTransportType
 
     /**
      * Gets the value of the transportAuthorizationCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransportAuthorizationCodeType }
-     *     
+     *
+     * @return possible object is
+     * {@link TransportAuthorizationCodeType }
      */
     public TransportAuthorizationCodeType getTransportAuthorizationCode() {
         return transportAuthorizationCode;
@@ -101,11 +92,9 @@ public class SUNATRoadTransportType
 
     /**
      * Sets the value of the transportAuthorizationCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransportAuthorizationCodeType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TransportAuthorizationCodeType }
      */
     public void setTransportAuthorizationCode(TransportAuthorizationCodeType value) {
         this.transportAuthorizationCode = value;
@@ -113,25 +102,23 @@ public class SUNATRoadTransportType
 
     /**
      * Gets the value of the semiTrailer property.
-     * 
+     * <p>
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the semiTrailer property.
-     * 
+     * <p>
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSemiTrailer().add(newItem);
      * </pre>
-     * 
-     * 
+     * <p>
+     * <p>
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link RoadTransportType }
-     * 
-     * 
      */
     public List<RoadTransportType> getSemiTrailer() {
         if (semiTrailer == null) {
@@ -142,11 +129,9 @@ public class SUNATRoadTransportType
 
     /**
      * Gets the value of the brandName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BrandNameType }
-     *     
+     *
+     * @return possible object is
+     * {@link BrandNameType }
      */
     public BrandNameType getBrandName() {
         return brandName;
@@ -154,11 +139,9 @@ public class SUNATRoadTransportType
 
     /**
      * Sets the value of the brandName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BrandNameType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link BrandNameType }
      */
     public void setBrandName(BrandNameType value) {
         this.brandName = value;

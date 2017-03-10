@@ -3,7 +3,7 @@ package org.openfact.pe.ubl.types;
 /**
  * Created by lxpary on 11/01/17.
  */
-public enum  TipoModalidadTraslado {
+public enum TipoModalidadTraslado {
     PUBLICO("01", "TRANSPORTE PUBLICO"),
     PRIVADO("02", "TRANSPORTE PRIVADO");
 

@@ -16,14 +16,14 @@
  *******************************************************************************/
 package org.openfact.pe.utils.finance.internal.languages.spanish;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.openfact.pe.utils.finance.internal.BaseValues;
 import org.openfact.pe.utils.finance.internal.languages.GenderForms;
 import org.openfact.pe.utils.finance.internal.languages.PluralForms;
 import org.openfact.pe.utils.finance.internal.support.BaseNumbersBuilder;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class SpanishValues implements BaseValues {
 
@@ -75,14 +75,14 @@ public class SpanishValues implements BaseValues {
                 .put(600, "seiscientos")
                 .put(700, "setecientos")
                 .put(800, "ochocientos")
-                .put(900, "novecientos")                
+                .put(900, "novecientos")
                 .build();
     }
 
     @Override
     public List<PluralForms> pluralForms() {
         return Arrays.<PluralForms>asList(
-        		new SpanishPluralForms(""),
+                new SpanishPluralForms(""),
                 new SpanishPluralForms("mil"),
                 new SpanishPluralForms("millones"),
                 new SpanishPluralForms("billones"));

@@ -15,7 +15,7 @@ import javax.xml.bind.JAXBException;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("VOIDED_DOCUMENTS")
-public class SunatUBLVoidedDocumentReaderWriter implements UBLVoidedDocumentReaderWriterProvider{
+public class SunatUBLVoidedDocumentReaderWriter implements UBLVoidedDocumentReaderWriterProvider {
 
     @Override
     public UBLReader<VoidedDocumentsType> reader() {

@@ -17,11 +17,11 @@
 package org.openfact.pe.utils.finance.internal.languages.czech;
 
 import com.google.common.collect.ImmutableMap;
-import org.openfact.pe.utils.finance.internal.languages.GenderType;
-import org.openfact.pe.utils.finance.internal.support.BaseNumbersBuilder;
 import org.openfact.pe.utils.finance.internal.BaseValues;
 import org.openfact.pe.utils.finance.internal.languages.GenderForms;
+import org.openfact.pe.utils.finance.internal.languages.GenderType;
 import org.openfact.pe.utils.finance.internal.languages.PluralForms;
+import org.openfact.pe.utils.finance.internal.support.BaseNumbersBuilder;
 
 import java.util.Arrays;
 import java.util.List;

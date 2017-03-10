@@ -1,14 +1,6 @@
 package org.openfact.pe.ubl.ubl21.factories;
 
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.stream.FactoryConfigurationError;
-
-import javax.xml.transform.dom.DOMResult;
-
 import org.openfact.models.ModelException;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionFactory;
@@ -21,6 +13,13 @@ import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentFactory;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.transform.dom.DOMResult;
 
 public class SunatTypeToDocument {
 

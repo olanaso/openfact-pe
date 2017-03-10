@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AdditionalInformationType complex type.
- * 
+ * <p>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>
  * <pre>
  * &lt;complexType name="AdditionalInformationType"&gt;
  *   &lt;simpleContent&gt;
@@ -26,14 +26,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AdditionalInformationType")
 public class AdditionalInformationType
-    extends TextTypeUnqDat
-{
+        extends TextTypeUnqDat {
 
 
 }

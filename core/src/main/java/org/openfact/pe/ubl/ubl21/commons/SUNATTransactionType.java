@@ -8,19 +8,19 @@
 
 package org.openfact.pe.ubl.ubl21.commons;
 
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
-
 
 /**
  * <p>Java class for SUNATTransactionType complex type.
- * 
+ * <p>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>
  * <pre>
  * &lt;complexType name="SUNATTransactionType"&gt;
  *   &lt;complexContent&gt;
@@ -32,12 +32,10 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SUNATTransactionType", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", propOrder = {
-    "id"
+        "id"
 })
 public class SUNATTransactionType {
 
@@ -46,11 +44,9 @@ public class SUNATTransactionType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IDType }
-     *     
+     *
+     * @return possible object is
+     * {@link IDType }
      */
     public IDType getID() {
         return id;
@@ -58,11 +54,9 @@ public class SUNATTransactionType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IDType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link IDType }
      */
     public void setID(IDType value) {
         this.id = value;

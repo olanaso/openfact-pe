@@ -7,7 +7,7 @@ public enum SunatDocumentType {
     public static SunatDocumentType getFromString(String value) {
         SunatDocumentType[] elements = SunatDocumentType.values();
         for (int i = 0; i < elements.length; i++) {
-            if(elements[i].toString().equals(value)) {
+            if (elements[i].toString().equals(value)) {
                 return elements[i];
             }
         }

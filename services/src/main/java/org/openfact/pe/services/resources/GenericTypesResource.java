@@ -1,8 +1,8 @@
 package org.openfact.pe.services.resources;
 
-import org.openfact.pe.ubl.types.*;
 import org.openfact.pe.models.utils.SunatEnumToRepresentation;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
+import org.openfact.pe.ubl.types.*;
 
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;

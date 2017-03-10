@@ -1,24 +1,19 @@
-
 package org.openfact.pe.ws.sunat.services;
+
+import org.jvnet.jaxb2_commons.lang.*;
+import org.jvnet.jaxb2_commons.locator.ObjectLocator;
+import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.jvnet.jaxb2_commons.lang.Equals;
-import org.jvnet.jaxb2_commons.lang.EqualsStrategy;
-import org.jvnet.jaxb2_commons.lang.JAXBEqualsStrategy;
-import org.jvnet.jaxb2_commons.lang.JAXBToStringStrategy;
-import org.jvnet.jaxb2_commons.lang.ToString;
-import org.jvnet.jaxb2_commons.lang.ToStringStrategy;
-import org.jvnet.jaxb2_commons.locator.ObjectLocator;
-import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
 
 /**
  * <p>Clase Java para statusResponse complex type.
- * 
+ * <p>
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
- * 
+ * <p>
  * <pre>
  * &lt;complexType name="statusResponse">
  *   &lt;complexContent>
@@ -31,27 +26,23 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "statusResponse", propOrder = {
-    "content",
-    "statusCode"
+        "content",
+        "statusCode"
 })
 public class StatusResponse
-    implements Equals, ToString
-{
+        implements Equals, ToString {
 
     protected byte[] content;
     protected String statusCode;
 
     /**
      * Obtiene el valor de la propiedad content.
-     * 
-     * @return
-     *     possible object is
-     *     byte[]
+     *
+     * @return possible object is
+     * byte[]
      */
     public byte[] getContent() {
         return content;
@@ -59,10 +50,9 @@ public class StatusResponse
 
     /**
      * Define el valor de la propiedad content.
-     * 
-     * @param value
-     *     allowed object is
-     *     byte[]
+     *
+     * @param value allowed object is
+     *              byte[]
      */
     public void setContent(byte[] value) {
         this.content = value;
@@ -70,11 +60,9 @@ public class StatusResponse
 
     /**
      * Obtiene el valor de la propiedad statusCode.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getStatusCode() {
         return statusCode;
@@ -82,11 +70,9 @@ public class StatusResponse
 
     /**
      * Define el valor de la propiedad statusCode.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setStatusCode(String value) {
         this.statusCode = value;

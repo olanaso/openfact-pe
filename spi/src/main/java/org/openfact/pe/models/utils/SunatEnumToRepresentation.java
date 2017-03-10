@@ -1,7 +1,7 @@
 package org.openfact.pe.models.utils;
 
-import org.openfact.pe.ubl.types.*;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
+import org.openfact.pe.ubl.types.*;
 
 public class SunatEnumToRepresentation {
     public static GenericTypeRepresentation toRepresentation(TipoAfectacionIgv type) {

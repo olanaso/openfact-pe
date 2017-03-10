@@ -8,21 +8,21 @@
 
 package org.openfact.pe.ubl.ubl21.commons;
 
-import java.util.ArrayList;
-import java.util.List;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TransportMeansType;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TransportMeansType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * <p>Java class for SUNATTransportMeansType complex type.
- * 
+ * <p>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>
  * <pre>
  * &lt;complexType name="SUNATTransportMeansType"&gt;
  *   &lt;complexContent&gt;
@@ -35,17 +35,14 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Tra
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SUNATTransportMeansType", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", propOrder = {
-    "driverParty",
-    "sunatRoadTransport"
+        "driverParty",
+        "sunatRoadTransport"
 })
 public class SUNATTransportMeansType
-    extends TransportMeansType
-{
+        extends TransportMeansType {
 
     @XmlElement(name = "DriverParty")
     protected List<DriverPartyType> driverParty;
@@ -54,25 +51,23 @@ public class SUNATTransportMeansType
 
     /**
      * Gets the value of the driverParty property.
-     * 
+     * <p>
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the driverParty property.
-     * 
+     * <p>
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDriverParty().add(newItem);
      * </pre>
-     * 
-     * 
+     * <p>
+     * <p>
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DriverPartyType }
-     * 
-     * 
      */
     public List<DriverPartyType> getDriverParty() {
         if (driverParty == null) {
@@ -83,25 +78,23 @@ public class SUNATTransportMeansType
 
     /**
      * Gets the value of the sunatRoadTransport property.
-     * 
+     * <p>
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sunatRoadTransport property.
-     * 
+     * <p>
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSUNATRoadTransport().add(newItem);
      * </pre>
-     * 
-     * 
+     * <p>
+     * <p>
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SUNATRoadTransportType }
-     * 
-     * 
      */
     public List<SUNATRoadTransportType> getSUNATRoadTransport() {
         if (sunatRoadTransport == null) {

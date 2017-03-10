@@ -8,8 +8,6 @@ import org.openfact.models.ScrollModel;
 import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
-import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
-import org.openfact.pe.ubl.ubl21.perception.UBLPerceptionIDGenerator;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 

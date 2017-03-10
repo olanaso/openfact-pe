@@ -4,17 +4,12 @@ import org.openfact.models.DocumentModel;
 import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.models.utils.SunatTypeToModel;
-import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
-import org.openfact.pe.ubl.ubl21.retention.RetentionType;
-import org.openfact.pe.ubl.ubl21.retention.UBLRetentionCustomizationProvider;
 import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Optional;
 
 @Stateless
 @UBLProviderType("default")

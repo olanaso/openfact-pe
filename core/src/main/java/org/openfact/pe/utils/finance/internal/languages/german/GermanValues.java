@@ -16,16 +16,15 @@
  *******************************************************************************/
 package org.openfact.pe.utils.finance.internal.languages.german;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
 import org.openfact.pe.utils.finance.internal.languages.GenderForms;
 import org.openfact.pe.utils.finance.internal.languages.GenderType;
 import org.openfact.pe.utils.finance.internal.languages.PluralForms;
 import org.openfact.pe.utils.finance.internal.support.BaseNumbersBuilder;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class GermanValues {
 

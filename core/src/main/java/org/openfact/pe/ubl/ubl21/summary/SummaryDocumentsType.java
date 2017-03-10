@@ -53,7 +53,7 @@ public class SummaryDocumentsType implements Serializable, Cloneable {
     @XmlElement(name = "AccountingSupplierParty", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
     protected SupplierPartyType accountingSupplierParty;
 
-    @XmlElement(name = "SummaryDocumentsLine", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1" )
+    @XmlElement(name = "SummaryDocumentsLine", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1")
     protected List<SummaryDocumentsLineType> summaryDocumentsLine;
 
     public UBLExtensionsType getUblExtensions() {

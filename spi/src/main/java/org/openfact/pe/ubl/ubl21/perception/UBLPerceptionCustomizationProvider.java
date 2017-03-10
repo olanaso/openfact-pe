@@ -2,7 +2,6 @@ package org.openfact.pe.ubl.ubl21.perception;
 
 import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.ubl.UBLCustomizationProvider;
-import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
 
 public interface UBLPerceptionCustomizationProvider extends UBLCustomizationProvider<PerceptionType> {
 

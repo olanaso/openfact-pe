@@ -22,6 +22,9 @@
         <!-- Openfact Versions -->
         <openfact.version>1.0-beta-7-SNAPSHOT</openfact.version>
 
+        <!--Wildfly-->
+        <version.jboss.bom>8.2.2.Final</version.jboss.bom>
+
         <!-- Wildfly Swarm -->
         <version.wildfly-swarm>2017.3.2</version.wildfly-swarm>
 
@@ -93,6 +96,22 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--wildfly-->
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>jboss-javaee-7.0-with-tools</artifactId>
+                <version>${version.jboss.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>jboss-javaee-7.0-with-hibernate</artifactId>
+                <version>${version.jboss.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Wildfly Swarm -->
             <dependency>
                 <groupId>org.wildfly.swarm</groupId>
@@ -273,24 +292,24 @@
 
             <!--Jasper Reports-->
             <!--<dependency>-->
-                <!--<groupId>org.apache.xmlgraphics</groupId>-->
-                <!--<artifactId>batik-bridge</artifactId>-->
-                <!--<version>${version.batik}</version>-->
+            <!--<groupId>org.apache.xmlgraphics</groupId>-->
+            <!--<artifactId>batik-bridge</artifactId>-->
+            <!--<version>${version.batik}</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>org.apache.xmlgraphics</groupId>-->
-                <!--<artifactId>batik-dom</artifactId>-->
-                <!--<version>${version.batik}</version>-->
+            <!--<groupId>org.apache.xmlgraphics</groupId>-->
+            <!--<artifactId>batik-dom</artifactId>-->
+            <!--<version>${version.batik}</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>org.apache.xmlgraphics</groupId>-->
-                <!--<artifactId>batik-svg-dom</artifactId>-->
-                <!--<version>${version.batik}</version>-->
+            <!--<groupId>org.apache.xmlgraphics</groupId>-->
+            <!--<artifactId>batik-svg-dom</artifactId>-->
+            <!--<version>${version.batik}</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>org.apache.xmlgraphics</groupId>-->
-                <!--<artifactId>xmlgraphics-commons</artifactId>-->
-                <!--<version>${version.xmlgraphics-commons}</version>-->
+            <!--<groupId>org.apache.xmlgraphics</groupId>-->
+            <!--<artifactId>xmlgraphics-commons</artifactId>-->
+            <!--<version>${version.xmlgraphics-commons}</version>-->
             <!--</dependency>-->
 
             <!-- Primefaces -->

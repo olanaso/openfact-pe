@@ -3,10 +3,10 @@ package org.openfact.pe.ubl.data.xml;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openfact.JSONObjectUtils;
-import org.openfact.pe.ubl.types.TipoConceptosTributarios;
 import org.openfact.pe.ubl.data.xml.entity.XmlSUNATPerceptionDocumentReference;
 import org.openfact.pe.ubl.data.xml.entity.XmlSUNATRetentionDocumentReference;
 import org.openfact.pe.ubl.data.xml.entity.XmlSUNATVoidedDocumentLine;
+import org.openfact.pe.ubl.types.TipoConceptosTributarios;
 import org.openfact.ubl.data.xml.XMLAttributeContainer;
 import org.openfact.ubl.data.xml.XmlConverter;
 

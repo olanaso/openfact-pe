@@ -21,19 +21,19 @@ import org.openfact.pe.utils.finance.internal.languages.PluralForms;
 
 public class SpanishPluralForms implements PluralForms {
 
-	private final String form;
+    private final String form;
 
-	public SpanishPluralForms(String form) {
+    public SpanishPluralForms(String form) {
         this.form = form;
     }
 
-	@Override
-	public String formFor(Integer value) {
-		return form;
-	}
+    @Override
+    public String formFor(Integer value) {
+        return form;
+    }
 
-	@Override
-	public GenderType genderType() {
-		return GenderType.NON_APPLICABLE;
-	}
+    @Override
+    public GenderType genderType() {
+        return GenderType.NON_APPLICABLE;
+    }
 }

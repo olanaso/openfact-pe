@@ -8,7 +8,6 @@ import org.openfact.pe.ws.sunat.services.BillService;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.ejb.Stateless;
 import java.util.HashMap;
 import java.util.Map;
 

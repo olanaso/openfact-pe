@@ -19,5 +19,6 @@ package org.openfact.pe.utils.finance.internal.languages;
 public interface PluralForms {
 
     String formFor(Integer value);
+
     GenderType genderType();
 }

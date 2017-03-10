@@ -1,26 +1,21 @@
-
 package org.openfact.pe.ws.sunat.services;
+
+import org.jvnet.jaxb2_commons.lang.*;
+import org.jvnet.jaxb2_commons.locator.ObjectLocator;
+import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
 import javax.activation.DataHandler;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlMimeType;
 import javax.xml.bind.annotation.XmlType;
-import org.jvnet.jaxb2_commons.lang.Equals;
-import org.jvnet.jaxb2_commons.lang.EqualsStrategy;
-import org.jvnet.jaxb2_commons.lang.JAXBEqualsStrategy;
-import org.jvnet.jaxb2_commons.lang.JAXBToStringStrategy;
-import org.jvnet.jaxb2_commons.lang.ToString;
-import org.jvnet.jaxb2_commons.lang.ToStringStrategy;
-import org.jvnet.jaxb2_commons.locator.ObjectLocator;
-import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
 
 
 /**
  * <p>Clase Java para sendBillAddress1 complex type.
- * 
+ * <p>
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
- * 
+ * <p>
  * <pre>
  * &lt;complexType name="sendBillAddress1">
  *   &lt;complexContent>
@@ -33,17 +28,14 @@ import org.jvnet.jaxb2_commons.locator.util.LocatorUtils;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sendBill", propOrder = {
-    "fileName",
-    "contentFile"
+        "fileName",
+        "contentFile"
 })
 public class SendBill
-    implements Equals, ToString
-{
+        implements Equals, ToString {
 
     protected String fileName;
     @XmlMimeType("application/octet-stream")
@@ -51,11 +43,9 @@ public class SendBill
 
     /**
      * Obtiene el valor de la propiedad fileName.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getFileName() {
         return fileName;
@@ -63,11 +53,9 @@ public class SendBill
 
     /**
      * Define el valor de la propiedad fileName.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setFileName(String value) {
         this.fileName = value;
@@ -75,11 +63,9 @@ public class SendBill
 
     /**
      * Obtiene el valor de la propiedad contentFile.
-     * 
-     * @return
-     *     possible object is
-     *     {@link DataHandler }
-     *     
+     *
+     * @return possible object is
+     * {@link DataHandler }
      */
     public DataHandler getContentFile() {
         return contentFile;
@@ -87,11 +73,9 @@ public class SendBill
 
     /**
      * Define el valor de la propiedad contentFile.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link DataHandler }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link DataHandler }
      */
     public void setContentFile(DataHandler value) {
         this.contentFile = value;

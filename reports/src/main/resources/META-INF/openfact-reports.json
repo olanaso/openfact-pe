@@ -1,12 +1,16 @@
 {
-	"themes": [
-		{
-			"name": "openfact",
-			"types": [ "admin"]
-		},
-		{
-			"name": "sunat",
-			"types": [ "admin"]
-		}
-	]
+  "themes": [
+    {
+      "name": "openfact",
+      "types": [
+        "admin"
+      ]
+    },
+    {
+      "name": "sunat",
+      "types": [
+        "admin"
+      ]
+    }
+  ]
 }

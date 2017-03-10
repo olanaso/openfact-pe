@@ -1,11 +1,37 @@
 package org.openfact.pe.models.utils;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
+import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
+import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
+import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
+import org.openfact.common.converts.DateUtils;
+import org.openfact.models.ModelException;
+import org.openfact.models.OpenfactSession;
+import org.openfact.models.OrganizationModel;
+import org.openfact.pe.representations.idm.*;
+import org.openfact.pe.ubl.types.*;
+import org.openfact.pe.ubl.ubl21.SunatSignerUtils;
+import org.openfact.pe.ubl.ubl21.commons.AdditionalInformationTypeSunatAgg;
+import org.openfact.pe.ubl.ubl21.commons.AdditionalMonetaryTotalType;
+import org.openfact.pe.ubl.ubl21.commons.AdditionalPropertyType;
+import org.openfact.pe.ubl.ubl21.commons.InvoiceFactory;
+import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
+import org.openfact.pe.ubl.ubl21.perception.SUNATPerceptionDocumentReferenceType;
+import org.openfact.pe.ubl.ubl21.perception.SUNATPerceptionInformationType;
+import org.openfact.pe.ubl.ubl21.retention.RetentionType;
+import org.openfact.pe.ubl.ubl21.retention.SUNATRetentionDocumentReferenceType;
+import org.openfact.pe.ubl.ubl21.retention.SUNATRetentionInformationType;
+import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsLineType;
+import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
+import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsLineType;
+import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
+import org.openfact.pe.utils.finance.MoneyConverters;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -17,40 +43,15 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.dom.DOMResult;
-
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.*;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.*;
-import org.openfact.common.converts.DateUtils;
-import org.openfact.models.ModelException;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.pe.ubl.ubl21.SunatSignerUtils;
-import org.openfact.pe.ubl.ubl21.commons.AdditionalInformationTypeSunatAgg;
-import org.openfact.pe.ubl.ubl21.commons.AdditionalMonetaryTotalType;
-import org.openfact.pe.ubl.ubl21.commons.AdditionalPropertyType;
-import org.openfact.pe.ubl.ubl21.commons.InvoiceFactory;
-import org.openfact.pe.ubl.types.*;
-import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
-import org.openfact.pe.ubl.ubl21.perception.SUNATPerceptionDocumentReferenceType;
-import org.openfact.pe.ubl.ubl21.perception.SUNATPerceptionInformationType;
-import org.openfact.pe.ubl.ubl21.retention.SUNATRetentionDocumentReferenceType;
-import org.openfact.pe.ubl.ubl21.retention.SUNATRetentionInformationType;
-import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsLineType;
-import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
-import org.openfact.pe.ubl.ubl21.retention.RetentionType;
-import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsLineType;
-import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
-import org.openfact.pe.utils.finance.MoneyConverters;
-import org.openfact.pe.representations.idm.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
-import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
-import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
-import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 @Stateless
 public class SunatRepresentationToType {
@@ -61,7 +62,7 @@ public class SunatRepresentationToType {
 
     @Inject
     private SunatSignerUtils sunatSingerUtils;
-    
+
     public XMLGregorianCalendar toGregorianCalendar(LocalDate date) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

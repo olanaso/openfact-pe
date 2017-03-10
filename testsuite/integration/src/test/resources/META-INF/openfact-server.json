@@ -2,11 +2,9 @@
   "admin": {
     "organization": "master"
   },
-
   "adminConsole": {
     "url": "http://localhost:4200"
   },
-
   "ublConfig": {
     "ublDocuments": [
       "{\"denomination\": \"INVOICE\", \"documentTypeCode\": [\"01\",\"03\"]}",
@@ -14,38 +12,30 @@
       "{\"denomination\": \"DEBIT_NOTE\", \"documentTypeCode\": [\"05\"]}"
     ]
   },
-
   "eventsStore": {
     "provider": "${openfact.eventsStore.provider:jpa}"
   },
-
   "eventsListener": {
-    "jboss-logging" : {
+    "jboss-logging": {
       "success-level": "debug",
       "error-level": "warn"
     }
   },
-
   "organization": {
     "provider": "${openfact.organization.provider:jpa}"
   },
-
   "invoice": {
     "provider": "${openfact.invoice.provider:jpa}"
   },
-
   "creditNote": {
     "provider": "${openfact.creditNote.provider:jpa}"
   },
-
   "debitNote": {
     "provider": "${openfact.debitNote.provider:jpa}"
   },
-
   "storageFile": {
     "provider": "${openfact.storageFile.provider:jpa}"
   },
-
   "file": {
     "provider": "${openfact.storageFile.provider:jpa}",
     "jpa": {},
@@ -53,11 +43,9 @@
       "accessToken": "hhPoLjoclSAAAAAAAAAFaeE8cU53NgEmV3Sw0zKWZbPIEmvETOdai2gggvHkZqi6"
     }
   },
-
   "timer": {
     "provider": "basic"
   },
-
   "theme": {
     "staticMaxAge": "${openfact.theme.staticMaxAge:2592000}",
     "cacheTemplates": "${openfact.theme.cacheTemplates:true}",
@@ -66,22 +54,17 @@
       "dir": "${openfact.theme.dir}"
     }
   },
-
   "report": {
     "folder": {
       "dir": "${openfact.report.dir}"
     }
   },
-
   "scheduled": {
     "interval": 900
   },
-
   "connectionsHttpClient": {
     "default": {}
   },
-
-
   "connectionsJpa": {
     "default": {
       "url": "${openfact.connectionsJpa.url:jdbc:h2:mem:test}",
@@ -96,31 +79,24 @@
       "globalStatsInterval": "${openfact.connectionsJpa.globalStatsInterval:-1}"
     }
   },
-
   "jta-lookup": {
     "provider": "${openfact.jta.lookup.provider:jboss}",
-    "jboss" : {
+    "jboss": {
       "enabled": true
     }
   },
-
-
   "signer": {
     "provider": "sunat"
   },
-
   "ublInvoice": {
     "provider": "sunat"
   },
-
   "ublCreditNote": {
     "provider": "sunat"
   },
-
   "ublDebitNote": {
     "provider": "sunat"
   },
-
   "organizationScheduleTask": {
     "sendToCustomer": {
       "active": true
@@ -129,5 +105,4 @@
       "active": true
     }
   }
-
 }

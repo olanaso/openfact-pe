@@ -58,12 +58,11 @@ import java.util.Map;
 
 @Stateless
 @Consumes(MediaType.APPLICATION_JSON)
-public class SunatDocumentsAdminResourceProvider implements OrganizationAdminResourceProvider {
+public class SunatDocumentsAdminResource {
 
-    private static final String PATH = "sunat";
     private static final String UPLOAD_FILE_NAME = "file";
 
-    private static final Logger logger = Logger.getLogger(SunatDocumentsAdminResourceProvider.class);
+    private static final Logger logger = Logger.getLogger(SunatDocumentsAdminResource.class);
 
     @Context
     protected UriInfo uriInfo;
@@ -100,15 +99,6 @@ public class SunatDocumentsAdminResourceProvider implements OrganizationAdminRes
 
     @Inject
     private ModelToRepresentation modelToRepresentation;
-
-    @Override
-    public String getPath() {
-        return PATH;
-    }
-
-    public Object getResource() {
-        return this;
-    }
 
     private OrganizationModel getOrganizationModel() {
         String organizationName = session.getContext().getOrganization().getName();

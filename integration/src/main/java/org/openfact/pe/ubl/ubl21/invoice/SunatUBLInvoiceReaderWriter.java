@@ -41,6 +41,7 @@ public class SunatUBLInvoiceReaderWriter implements UBLInvoiceReaderWriter {
     public UBLWriter<InvoiceType> writer() {
         return (organizationModel, invoiceType) -> {
             try {
+                com.helger.jaxb.JAXBNamespacePrefixMapper a;
                 MapBasedNamespaceContext mapBasedNamespace = SunatMarshallerUtils.getBasedNamespaceContext("urn:oasis:names:specification:ubl21:schema:xsd:Invoice-2");
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 MicroWriter.writeToStream(UBL21Writer.invoice().getAsMicroDocument(invoiceType), out, new XMLWriterSettings().setNamespaceContext(mapBasedNamespace).setPutNamespaceContextPrefixesInRoot(true));

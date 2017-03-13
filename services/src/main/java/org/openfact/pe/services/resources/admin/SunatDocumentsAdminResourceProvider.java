@@ -38,7 +38,7 @@ import org.openfact.services.resource.security.Resource;
 import org.openfact.services.resource.security.SecurityContextProvider;
 import org.openfact.services.resources.admin.AdminEventBuilder;
 import org.openfact.ubl.UBLIDGenerator;
-import org.openfact.ubl.UBLReaderWriterProvider;
+import org.openfact.ubl.UBLReaderWriter;
 import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.Stateless;
@@ -191,7 +191,7 @@ public class SunatDocumentsAdminResourceProvider implements OrganizationAdminRes
         byte[] bytes = IOUtils.toByteArray(inputStream);
 
         String provider = Config.scope(documentType.toLowerCase()).get("provider");
-        UBLReaderWriterProvider<T> readerWriter = (UBLReaderWriterProvider<T>) ublUtil.getReaderWriter(provider, documentType).reader();
+        UBLReaderWriter<T> readerWriter = (UBLReaderWriter<T>) ublUtil.getReaderWriter(provider, documentType).reader();
         T t = readerWriter.reader().read(bytes);
         if (t == null) {
             throw new ModelException("Could not read file");

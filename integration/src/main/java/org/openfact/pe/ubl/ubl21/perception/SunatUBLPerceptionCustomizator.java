@@ -1,11 +1,10 @@
-package org.openfact.pe.ubl.ubl21.voideddocument;
+package org.openfact.pe.ubl.ubl21.perception;
 
 import org.openfact.models.DocumentModel;
 import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
-import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
@@ -16,8 +15,8 @@ import java.util.Optional;
 
 @Stateless
 @UBLProviderType("default")
-@UBLDocumentType("VOIDED_DOCUMENTS")
-public class SunatUBLVoidedDocumentCustomizationProvider implements UBLVoidedDocumentCustomizationProvider {
+@UBLDocumentType("PERCEPTION")
+public class SunatUBLPerceptionCustomizator extends AbstractPerceptionProvider implements UBLPerceptionCustomizationProvider {
 
     @Inject
     private SunatTypeToModel typeToModel;
@@ -26,13 +25,15 @@ public class SunatUBLVoidedDocumentCustomizationProvider implements UBLVoidedDoc
     private DocumentProvider documentProvider;
 
     @Override
-    public void config(OrganizationModel organization, DocumentModel document, VoidedDocumentsType voidedDocumentsType) {
-        typeToModel.importVoidedDocument(organization, document, voidedDocumentsType);
+    public void config(OrganizationModel organization, DocumentModel document, Object o) {
+        PerceptionType perceptionType = resolve(o);
 
-        if (voidedDocumentsType.getVoidedDocumentsLine() != null && !voidedDocumentsType.getVoidedDocumentsLine().isEmpty()) {
-            voidedDocumentsType.getVoidedDocumentsLine().stream().forEach(c -> {
-                String attachedDocumentId = c.getDocumentSerialID().getValue() + "-" + c.getDocumentNumberID().getValue();
-                String attachedDocumentCodeType = c.getDocumentTypeCode().getValue();
+        typeToModel.importPerception(organization, document, perceptionType);
+
+        if (perceptionType.getSunatPerceptionDocumentReference() != null && !perceptionType.getSunatPerceptionDocumentReference().isEmpty()) {
+            perceptionType.getSunatPerceptionDocumentReference().stream().forEach(c -> {
+                String attachedDocumentId = c.getId().getValue();
+                String attachedDocumentCodeType = c.getId().getSchemeID();
                 Optional<TipoDocumentoRelacionadoPercepcionRetencion> tipoDocumentoRelacionadoPercepcion = Arrays
                         .stream(TipoDocumentoRelacionadoPercepcionRetencion.values())
                         .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
@@ -45,6 +46,5 @@ public class SunatUBLVoidedDocumentCustomizationProvider implements UBLVoidedDoc
                 }
             });
         }
-
     }
 }

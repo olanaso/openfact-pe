@@ -23,7 +23,7 @@ public class SunatUBLPerceptionIDGenerator implements UBLPerceptionIDGenerator {
     private DocumentProvider documentProvider;
 
     @Override
-    public String generateID(OrganizationModel organization, PerceptionType perceptionType) {
+    public String generateID(OrganizationModel organization, Object o) {
         TipoComprobante perceptionCode = TipoComprobante.PERCEPCION;
         DocumentModel lastPerception = null;
         ScrollModel<DocumentModel> perceptions = documentProvider.createQuery(organization)
@@ -65,5 +65,4 @@ public class SunatUBLPerceptionIDGenerator implements UBLPerceptionIDGenerator {
 
         return documentId.toString();
     }
-
 }

@@ -16,7 +16,7 @@ import java.util.Optional;
 @Stateless
 @UBLProviderType("default")
 @UBLDocumentType("RETENTION")
-public class SunatUBLRetentionCustomizationProvider implements UBLRetentionCustomizationProvider {
+public class SunatUBLRetentionCustomizator extends AbstractRetentionProvider implements UBLRetentionCustomizator {
 
     @Inject
     private SunatTypeToModel typeToModel;
@@ -25,7 +25,9 @@ public class SunatUBLRetentionCustomizationProvider implements UBLRetentionCusto
     private DocumentProvider documentProvider;
 
     @Override
-    public void config(OrganizationModel organization, DocumentModel document, RetentionType retentionType) {
+    public void config(OrganizationModel organization, DocumentModel document, Object o) {
+        RetentionType retentionType = resolve(o);
+
         typeToModel.importRetention(organization, document, retentionType);
 
         if (retentionType.getSunatRetentionDocumentReference() != null && !retentionType.getSunatRetentionDocumentReference().isEmpty()) {
@@ -44,6 +46,5 @@ public class SunatUBLRetentionCustomizationProvider implements UBLRetentionCusto
                 }
             });
         }
-
     }
 }

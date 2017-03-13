@@ -1,11 +1,13 @@
 package org.openfact.pe.ubl.ubl21.voideddocument;
 
 import org.openfact.common.converts.StringUtils;
-import org.openfact.models.*;
+import org.openfact.models.DocumentModel;
+import org.openfact.models.DocumentProvider;
+import org.openfact.models.OrganizationModel;
+import org.openfact.models.ScrollModel;
 import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
-import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
@@ -24,7 +26,7 @@ public class SunatUBLVoidedDocumentIDGenerator implements UBLVoidedDocumentIDGen
     private DocumentProvider documentProvider;
 
     @Override
-    public String generateID(OrganizationModel organization, VoidedDocumentsType voidedDocumentsType) {
+    public String generateID(OrganizationModel organization, Object o) {
         TipoComprobante voidedDocumentCode = TipoComprobante.BAJA;
         DocumentModel lastVoidedDocument = null;
         ScrollModel<DocumentModel> voidedDocuments = documentProvider.createQuery(organization)
@@ -70,5 +72,4 @@ public class SunatUBLVoidedDocumentIDGenerator implements UBLVoidedDocumentIDGen
 
         return documentId.toString();
     }
-
 }

@@ -14,7 +14,7 @@ import javax.inject.Inject;
 @Stateless
 @UBLProviderType("default")
 @UBLDocumentType("SUMMARY_DOCUMENTS")
-public class SunatUBLSummaryDocumentCustomizationProvider implements UBLSummaryDocumentCustomizationProvider {
+public class SunatUBLSummaryDocumentCustomizator extends AbstractSummaryDocumentProvider implements UBLSummaryDocumentCustomizator {
 
     @Inject
     private SunatTypeToModel typeToModel;
@@ -23,7 +23,9 @@ public class SunatUBLSummaryDocumentCustomizationProvider implements UBLSummaryD
     private DocumentProvider documentProvider;
 
     @Override
-    public void config(OrganizationModel organization, DocumentModel document, SummaryDocumentsType summaryDocumentsType) {
+    public void config(OrganizationModel organization, DocumentModel document, Object o) {
+        SummaryDocumentsType summaryDocumentsType = resolve(o);
+
         typeToModel.importSummaryDocument(organization, document, summaryDocumentsType);
     }
 }

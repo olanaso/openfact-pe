@@ -1,11 +1,13 @@
 package org.openfact.pe.ubl.ubl21.summarydocument;
 
 import org.openfact.common.converts.StringUtils;
-import org.openfact.models.*;
+import org.openfact.models.DocumentModel;
+import org.openfact.models.DocumentProvider;
+import org.openfact.models.OrganizationModel;
+import org.openfact.models.ScrollModel;
 import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
-import org.openfact.pe.ubl.ubl21.retention.RetentionType;
 import org.openfact.pe.ubl.ubl21.retention.UBLRetentionIDGenerator;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
@@ -25,7 +27,7 @@ public class SunatUBLSummaryDocumentIDGenerator implements UBLRetentionIDGenerat
     private DocumentProvider documentProvider;
 
     @Override
-    public String generateID(OrganizationModel organization, RetentionType retentionType) {
+    public String generateID(OrganizationModel organization, Object o) {
         TipoComprobante summaryDocumentCode = TipoComprobante.RESUMEN_DIARIO;
         DocumentModel lastSummaryDocument = null;
         ScrollModel<DocumentModel> summaryDocuments = documentProvider.createQuery(organization)
@@ -71,5 +73,4 @@ public class SunatUBLSummaryDocumentIDGenerator implements UBLRetentionIDGenerat
 
         return documentId.toString();
     }
-
 }

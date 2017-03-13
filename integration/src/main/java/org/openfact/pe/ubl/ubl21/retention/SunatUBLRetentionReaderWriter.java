@@ -14,7 +14,7 @@ import javax.xml.bind.JAXBException;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("RETENTION")
-public class SunatUBLRetentionReaderWriter implements UBLRetentionReaderWriterProvider {
+public class SunatUBLRetentionReaderWriter implements UBLRetentionReaderWriter {
 
     @Override
     public UBLReader<RetentionType> reader() {

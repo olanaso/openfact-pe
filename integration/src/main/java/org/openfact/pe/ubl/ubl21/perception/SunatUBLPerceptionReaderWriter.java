@@ -4,6 +4,7 @@ import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.pe.ubl.ubl21.factories.SunatDocumentToType;
 import org.openfact.pe.ubl.ubl21.factories.SunatTypeToDocument;
+import org.openfact.ubl.UBLReaderWriter;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 import org.w3c.dom.Document;
@@ -14,10 +15,10 @@ import javax.xml.bind.JAXBException;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("PERCEPTION")
-public class SunatUBLPerceptionReaderWriter implements UBLPerceptionReaderWriterProvider {
+public class SunatUBLPerceptionReaderWriter implements UBLPerceptionReaderWriter {
 
     @Override
-    public UBLReader<PerceptionType> reader() {
+    public UBLReaderWriter.UBLReader<PerceptionType> reader() {
         return new UBLReader<PerceptionType>() {
             @Override
             public PerceptionType read(Document document) {

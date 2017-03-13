@@ -15,7 +15,7 @@ import javax.xml.bind.JAXBException;
 @Stateless
 @UBLProviderType("sunat")
 @UBLDocumentType("SUMMARY_DOCUMENTS")
-public class SunatUBLSummaryDocumentReaderWriter implements UBLSummaryDocumentReaderWriterProvider {
+public class SunatUBLSummaryDocumentReaderWriter implements UBLSummaryDocumentReaderWriter {
 
     @Override
     public UBLReader<SummaryDocumentsType> reader() {

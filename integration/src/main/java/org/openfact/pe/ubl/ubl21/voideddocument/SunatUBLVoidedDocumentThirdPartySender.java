@@ -5,7 +5,7 @@ import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
-import org.openfact.ubl.UBLReaderWriterProvider;
+import org.openfact.ubl.UBLReaderWriter;
 import org.openfact.ubl.UBLThirdPartySender;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
@@ -35,7 +35,7 @@ public class SunatUBLVoidedDocumentThirdPartySender implements UBLThirdPartySend
         SendEventModel sendEvent = sunatSenderManager.sendSummary(organization, document, generateFileName(organization, document));
 
         // Disable all related documents
-        UBLReaderWriterProvider readerWriter = ublUtil.getReaderWriter(SunatDocumentType.VOIDED_DOCUMENTS.toString());
+        UBLReaderWriter readerWriter = ublUtil.getReaderWriter(SunatDocumentType.VOIDED_DOCUMENTS.toString());
         VoidedDocumentsType voidedDocumentsType = (VoidedDocumentsType) readerWriter.reader().read(document.getXmlAsFile().getFile());
         voidedDocumentsType.getVoidedDocumentsLine().stream().forEach(c -> {
             String attachedDocumentId = c.getDocumentSerialID().getValue() + "-" + c.getDocumentNumberID().getValue();

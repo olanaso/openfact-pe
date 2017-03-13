@@ -23,7 +23,7 @@ public class SunatUBLRetentionIDGenerator implements UBLRetentionIDGenerator {
     private DocumentProvider documentProvider;
 
     @Override
-    public String generateID(OrganizationModel organization, RetentionType retentionType) {
+    public String generateID(OrganizationModel organization, Object o) {
         TipoComprobante retentionCode = TipoComprobante.RETENCION;
         DocumentModel lastRetention = null;
         ScrollModel<DocumentModel> retentions = documentProvider.createQuery(organization)
@@ -65,5 +65,4 @@ public class SunatUBLRetentionIDGenerator implements UBLRetentionIDGenerator {
 
         return documentId.toString();
     }
-
 }

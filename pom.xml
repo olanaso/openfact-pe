@@ -12,8 +12,7 @@
 
     <properties>
         <product.name>Openfact PE</product.name>
-        <product.name-html>\u003Cdiv class="of-logo-text"\u003E\u003Cspan\u003EOpenfact
-            PE\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E
+        <product.name-html>\u003Cdiv class="of-logo-text"\u003E\u003Cspan\u003EOpenfact PE\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E
         </product.name-html>
         <product.version>${project.version}</product.version>
         <product.build-time>${timestamp}</product.build-time>
@@ -36,6 +35,8 @@
         <version.woodstox>4.4.1</version.woodstox>
         <version.jaxws-rt>2.2.8</version.jaxws-rt>
         <jaxb2.basics.runtime>1.11.1</jaxb2.basics.runtime>
+
+        <version.jaxb>2.2.11</version.jaxb>
 
         <!-- Explicitly declaring the source encoding eliminates the following message: -->
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -68,6 +69,8 @@
 
         <!-- Jasper reports-->
         <version.jasperreports>6.3.1</version.jasperreports>
+        <version.jasperreports.fonts>6.0.0</version.jasperreports.fonts>
+        <version.barcode4j>2.1</version.barcode4j>
 
         <!--zip builder-->
         <version.jodd-core>3.8.1</version.jodd-core>
@@ -283,6 +286,17 @@
                 <version>${version.jaxws-rt}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>${version.jaxb}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${version.jaxb}</version>
+            </dependency>
+
             <!-- Commons lang -->
             <dependency>
                 <groupId>commons-validator</groupId>
@@ -291,26 +305,26 @@
             </dependency>
 
             <!--Jasper Reports-->
-            <!--<dependency>-->
-            <!--<groupId>org.apache.xmlgraphics</groupId>-->
-            <!--<artifactId>batik-bridge</artifactId>-->
-            <!--<version>${version.batik}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-            <!--<groupId>org.apache.xmlgraphics</groupId>-->
-            <!--<artifactId>batik-dom</artifactId>-->
-            <!--<version>${version.batik}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-            <!--<groupId>org.apache.xmlgraphics</groupId>-->
-            <!--<artifactId>batik-svg-dom</artifactId>-->
-            <!--<version>${version.batik}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-            <!--<groupId>org.apache.xmlgraphics</groupId>-->
-            <!--<artifactId>xmlgraphics-commons</artifactId>-->
-            <!--<version>${version.xmlgraphics-commons}</version>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-bridge</artifactId>
+                <version>${version.batik}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-dom</artifactId>
+                <version>${version.batik}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-svg-dom</artifactId>
+                <version>${version.batik}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>xmlgraphics-commons</artifactId>
+                <version>${version.xmlgraphics-commons}</version>
+            </dependency>
 
             <!-- Primefaces -->
             <dependency>

@@ -16,9 +16,6 @@ import javax.xml.ws.ResponseWrapper;
  * Generated source version: 2.2
  */
 @WebService(name = "billService", targetNamespace = "http://service.sunat.gob.pe")
-@XmlSeeAlso({
-        ObjectFactory.class
-})
 public interface BillService {
 
 

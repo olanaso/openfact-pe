@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-02-23T15:48:06 -->
+<!-- 2017-02-23T15:55:06 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voideddocuments" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="net.sf.jasperreports.awt.ignore.missing.font" value="true"/>
@@ -61,7 +61,7 @@
 	</subDataset>
 	<subDataset name="lines" uuid="f77cd308-0c19-4ba3-b814-3e14c7f20d2c">
 		<scriptlet name="OPENFACT_FORMAT_LINE" class="org.openfact.report.scriplet.BasicOpenfactFormats"/>
-		<scriptlet name="SUNAT_CODE_FORMAT_LINE" class="org.openfact.pe.services.report.scriptlet.SunatCodes"/>
+		<scriptlet name="SUNAT_CODE_FORMAT_LINE" class="org.openfact.pe.report.scriptlet.SunatCodes"/>
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -89,6 +89,7 @@
 	<field name="sunat_voided_documents_line" class="java.util.List">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="of_sp_postal_address_country_identification_code" class="java.lang.String"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 	</group>
@@ -181,6 +182,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sunat_model_ticket}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="0" y="64" width="30" height="15" uuid="4c231a31-9b0e-4d3f-b0c0-e0275053df00"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_sp_postal_address_country_identification_code},true)]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>
@@ -215,7 +223,7 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{SUNAT_CODE_FORMAT_LINE}.tipoComprobanteFromCode($F{document_type_code})]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{SUNAT_CODE_FORMAT_LINE_SCRIPTLET}.tipoComprobanteFromCode($F{document_type_code})]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

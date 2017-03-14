@@ -1,4 +1,4 @@
-package org.openfact.pe.report.scriplet;
+package org.openfact.pe.report.scriptlet;
 
 import net.sf.jasperreports.engine.JRDefaultScriptlet;
 import org.openfact.pe.ubl.types.TipoComprobante;

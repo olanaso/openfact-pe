@@ -29,6 +29,10 @@
     <name>Openfact Reports PE</name>
     <description/>
 
+    <properties>
+        <Export-Package>org.krysalis.barcode4j.*</Export-Package>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -51,6 +55,28 @@
                         <groupId>net.sf.jasperreports</groupId>
                         <artifactId>jasperreports</artifactId>
                         <version>${version.jasperreports}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.sf.jasperreports</groupId>
+                        <artifactId>jasperreports-fonts</artifactId>
+                        <version>${version.jasperreports.fonts}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>net.sf.barcode4j</groupId>
+                        <artifactId>barcode4j</artifactId>
+                        <version>${version.barcode4j}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.openfact</groupId>
+                        <artifactId>openfact-integration</artifactId>
+                        <version>${openfact.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openfact</groupId>
+                        <artifactId>openfact-pe-integration</artifactId>
+                        <version>${project.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

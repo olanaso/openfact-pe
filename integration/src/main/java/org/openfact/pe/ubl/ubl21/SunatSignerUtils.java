@@ -5,7 +5,7 @@ import org.openfact.models.KeyManager;
 import org.openfact.models.ModelException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
-import org.openfact.ubl.UBLSignerProvider;
+import org.openfact.ubl.UBLSigner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -32,7 +32,7 @@ import java.util.List;
 public class SunatSignerUtils {
 
     @Inject
-    private UBLSignerProvider signerProvider;
+    private UBLSigner ublSigner;
 
     @Inject
     private KeyManager keystore;
@@ -43,7 +43,7 @@ public class SunatSignerUtils {
     }
 
     public Document getSignToDocument(OpenfactSession session, OrganizationModel organization, Document document) {
-        Document signedDocument = signerProvider.sign(document, organization);
+        Document signedDocument = ublSigner.sign(document, organization);
         return signedDocument;
     }
 

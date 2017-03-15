@@ -39,6 +39,7 @@ import org.openfact.services.resource.security.SecurityContextProvider;
 import org.openfact.services.resources.admin.AdminEventBuilder;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReaderWriter;
+import org.openfact.ubl.UBLSigner;
 import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.Stateless;
@@ -90,9 +91,6 @@ public class SunatDocumentsAdminResource {
 
     @Inject
     private UBLUtil ublUtil;
-
-    @Inject
-    private SunatSender sunatSender;
 
     @Inject
     private SunatRepresentationToType representationToType;

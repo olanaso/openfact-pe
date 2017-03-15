@@ -6,7 +6,6 @@
 
     <alternatives>
         <class>org.openfact.services.security.UnrestrictedSecurityContextProvider</class>
-        <class>org.openfact.pe.ubl.ubl21.SunatSignerProvider</class>
     </alternatives>
 
 </beans>

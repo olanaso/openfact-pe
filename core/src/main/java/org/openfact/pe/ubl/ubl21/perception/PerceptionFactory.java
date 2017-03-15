@@ -11,12 +11,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class PerceptionFactory {
     private final static QName _Perception_QNAME = new QName(
-            "urn:sunat:names:specification:ubl21:peru:schema:xsd:Perception-1", "Perception");
+            "urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1", "Perception");
 
     public PerceptionFactory() {
     }
 
-    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:Perception-1", name = "Perception")
+    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Perception-1", name = "Perception")
     public JAXBElement<PerceptionType> createPerception(PerceptionType value) {
         return new JAXBElement<PerceptionType>(_Perception_QNAME, PerceptionType.class, null, value);
     }

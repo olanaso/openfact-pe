@@ -11,12 +11,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class SummaryDocumentFactory {
     private final static QName _SummaryDocuments_QNAME = new QName(
-            "urn:sunat:names:specification:ubl21:peru:schema:xsd:SummaryDocuments-1", "SummaryDocuments");
+            "urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1", "SummaryDocuments");
 
     public SummaryDocumentFactory() {
     }
 
-    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SummaryDocuments-1", name = "SummaryDocuments")
+    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1", name = "SummaryDocuments")
     public JAXBElement<SummaryDocumentsType> createSummaryDocuments(SummaryDocumentsType value) {
         return new JAXBElement<SummaryDocumentsType>(_SummaryDocuments_QNAME, SummaryDocumentsType.class,
                 null, value);

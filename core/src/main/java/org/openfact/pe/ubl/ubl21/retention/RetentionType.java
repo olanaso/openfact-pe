@@ -19,54 +19,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "RetentionType", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:Retention-1", propOrder = {
+@XmlType(name = "RetentionType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1", propOrder = {
         "ublExtensions", "ublVersionID", "customizationID", "signature", "id", "issueDate", "agentParty",
         "receiverParty", "sunatRetentionSystemCode", "sunatRetentionPercent", "note",
         "totalInvoiceAmount", "sunatTotalPaid", "sunatRetentionDocumentReference"
 
 })
 @CodingStyleguideUnaware
-public class RetentionType implements Serializable, Cloneable {
-    @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonExtensionComponents-2")
+public class RetentionType  implements Serializable, Cloneable{
+    @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
     protected UBLExtensionsType ublExtensions;
 
-    @XmlElement(name = "UBLVersionID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "UBLVersionID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected UBLVersionIDType ublVersionID;
 
-    @XmlElement(name = "CustomizationID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "CustomizationID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected CustomizationIDType customizationID;
 
-    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected List<SignatureType> signature;
 
-    @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IDType id;
 
-    @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IssueDateType issueDate;
 
-    @XmlElement(name = "AgentParty", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "AgentParty", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected PartyType agentParty;
 
-    @XmlElement(name = "ReceiverParty", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "ReceiverParty", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected PartyType receiverParty;
 
-    @XmlElement(name = "SUNATRetentionSystemCode", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", required = true)
+    @XmlElement(name = "SUNATRetentionSystemCode", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", required = true)
     protected IDType sunatRetentionSystemCode;
 
-    @XmlElement(name = "SUNATRetentionPercent", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1")
+    @XmlElement(name = "SUNATRetentionPercent", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1")
     protected PercentType sunatRetentionPercent;
 
-    @XmlElement(name = "Note", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "Note", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected List<NoteType> note;
 
-    @XmlElement(name = "TotalInvoiceAmount", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "TotalInvoiceAmount", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected TotalInvoiceAmountType totalInvoiceAmount;
 
-    @XmlElement(name = "SUNATTotalPaid", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", required = true)
+    @XmlElement(name = "SUNATTotalPaid", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected AmountType sunatTotalPaid;
 
-    @XmlElement(name = "SUNATRetentionDocumentReference", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1")
+    @XmlElement(name = "SUNATRetentionDocumentReference",namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1")
     protected List<SUNATRetentionDocumentReferenceType> sunatRetentionDocumentReference;
 
     public UBLExtensionsType getUblExtensions() {
@@ -245,7 +245,7 @@ public class RetentionType implements Serializable, Cloneable {
     }
 
     public TotalInvoiceAmountType setTotalInvoiceAmount(@Nullable final BigDecimal valueParam,
-                                                        @Nullable final String currencyID) {
+            @Nullable final String currencyID) {
         TotalInvoiceAmountType aObj = getTotalInvoiceAmount();
         if (aObj == null) {
             aObj = new TotalInvoiceAmountType(valueParam);
@@ -259,7 +259,7 @@ public class RetentionType implements Serializable, Cloneable {
     }
 
     public AmountType setSunatTotalPaid(@Nullable final BigDecimal valueParam,
-                                        @Nullable final String currencyID) {
+            @Nullable final String currencyID) {
         AmountType aObj = getSunatTotalPaid();
         if (aObj == null) {
             aObj = new AmountType(valueParam);

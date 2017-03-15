@@ -14,23 +14,24 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SUNATRetentionInformationType", propOrder = {"sunatRetentionAmount", "sunatRetentionDate",
-        "sunatNetTotalPaid", "exchangeRate"})
+@XmlType(name = "SUNATRetentionInformationType", propOrder = { "sunatRetentionAmount", "sunatRetentionDate",
+        "sunatNetTotalPaid", "exchangeRate" })
 public class SUNATRetentionInformationType {
 
-    @XmlElement(name = "SUNATRetentionAmount", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", required = true)
+    @XmlElement(name = "SUNATRetentionAmount", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected AmountType sunatRetentionAmount;
-    @XmlElement(name = "SUNATRetentionDate", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", required = true)
+    @XmlElement(name = "SUNATRetentionDate", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected DateType sunatRetentionDate;
-    @XmlElement(name = "SUNATNetTotalPaid", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", required = true)
+    @XmlElement(name = "SUNATNetTotalPaid", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" , required = true)
     protected AmountType sunatNetTotalPaid;
-    @XmlElement(name = "ExchangeRate", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "ExchangeRate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected ExchangeRateType exchangeRate;
 
     /**
      * Gets the value of the sunatRetentionAmount property.
-     *
+     * 
      * @return possible object is {@link AmountType }
+     * 
      */
     public AmountType getSUNATRetentionAmount() {
         return sunatRetentionAmount;
@@ -38,8 +39,10 @@ public class SUNATRetentionInformationType {
 
     /**
      * Sets the value of the sunatRetentionAmount property.
-     *
-     * @param value allowed object is {@link AmountType }
+     * 
+     * @param value
+     *            allowed object is {@link AmountType }
+     * 
      */
     public void setSUNATRetentionAmount(AmountType value) {
         this.sunatRetentionAmount = value;
@@ -47,8 +50,9 @@ public class SUNATRetentionInformationType {
 
     /**
      * Gets the value of the sunatRetentionDate property.
-     *
+     * 
      * @return possible object is {@link SUNATRetentionDateType }
+     * 
      */
     public DateType getSUNATRetentionDate() {
         return sunatRetentionDate;
@@ -56,8 +60,10 @@ public class SUNATRetentionInformationType {
 
     /**
      * Sets the value of the sunatRetentionDate property.
-     *
-     * @param value allowed object is {@link SUNATRetentionDateType }
+     * 
+     * @param value
+     *            allowed object is {@link SUNATRetentionDateType }
+     * 
      */
     public void setSUNATRetentionDate(DateType value) {
         this.sunatRetentionDate = value;
@@ -65,8 +71,9 @@ public class SUNATRetentionInformationType {
 
     /**
      * Gets the value of the sunatNetTotalPaid property.
-     *
+     * 
      * @return possible object is {@link AmountType }
+     * 
      */
     public AmountType getSUNATNetTotalPaid() {
         return sunatNetTotalPaid;
@@ -74,8 +81,10 @@ public class SUNATRetentionInformationType {
 
     /**
      * Sets the value of the sunatNetTotalPaid property.
-     *
-     * @param value allowed object is {@link AmountType }
+     * 
+     * @param value
+     *            allowed object is {@link AmountType }
+     * 
      */
     public void setSUNATNetTotalPaid(AmountType value) {
         this.sunatNetTotalPaid = value;
@@ -83,8 +92,9 @@ public class SUNATRetentionInformationType {
 
     /**
      * Gets the value of the exchangeRate property.
-     *
+     * 
      * @return possible object is {@link ExchangeRateType }
+     * 
      */
     public ExchangeRateType getExchangeRate() {
         return exchangeRate;
@@ -92,8 +102,10 @@ public class SUNATRetentionInformationType {
 
     /**
      * Sets the value of the exchangeRate property.
-     *
-     * @param value allowed object is {@link ExchangeRateType }
+     * 
+     * @param value
+     *            allowed object is {@link ExchangeRateType }
+     * 
      */
     public void setExchangeRate(ExchangeRateType value) {
         this.exchangeRate = value;
@@ -123,7 +135,7 @@ public class SUNATRetentionInformationType {
     }
 
     public AmountType setSUNATNetTotalPaid(@Nullable final BigDecimal valueParam,
-                                           @Nullable final String currencyID) {
+            @Nullable final String currencyID) {
         AmountType aObj = getSUNATNetTotalPaid();
         if (aObj == null) {
             aObj = new AmountType(valueParam);

@@ -8,57 +8,61 @@
 
 package org.openfact.pe.ubl.ubl21.commons;
 
-import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AdditionalAccountIDType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomerAssignedAccountIDType;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.List;
+
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AdditionalAccountIDType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomerAssignedAccountIDType;
 
 
 /**
  * <p>Java class for DriverPartyType complex type.
- * <p>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * 
  * <pre>
  * &lt;complexType name="DriverPartyType"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element ref="{urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2}CustomerAssignedAccountID" minOccurs="0"/&gt;
- *         &lt;element ref="{urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2}AdditionalAccountID" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element ref="{urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2}Party" minOccurs="0"/&gt;
+ *         &lt;element ref="{urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2}CustomerAssignedAccountID" minOccurs="0"/&gt;
+ *         &lt;element ref="{urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2}AdditionalAccountID" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2}Party" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DriverPartyType", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1", propOrder = {
-        "customerAssignedAccountID",
-        "additionalAccountID",
-        "party"
+@XmlType(name = "DriverPartyType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1", propOrder = {
+    "customerAssignedAccountID",
+    "additionalAccountID",
+    "party"
 })
 public class DriverPartyType {
 
-    @XmlElement(name = "CustomerAssignedAccountID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "CustomerAssignedAccountID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected CustomerAssignedAccountIDType customerAssignedAccountID;
-    @XmlElement(name = "AdditionalAccountID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "AdditionalAccountID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected List<AdditionalAccountIDType> additionalAccountID;
-    @XmlElement(name = "Party", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "Party", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected PartyType party;
 
     /**
      * Gets the value of the customerAssignedAccountID property.
-     *
-     * @return possible object is
-     * {@link CustomerAssignedAccountIDType }
+     * 
+     * @return
+     *     possible object is
+     *     {@link CustomerAssignedAccountIDType }
+     *     
      */
     public CustomerAssignedAccountIDType getCustomerAssignedAccountID() {
         return customerAssignedAccountID;
@@ -66,9 +70,11 @@ public class DriverPartyType {
 
     /**
      * Sets the value of the customerAssignedAccountID property.
-     *
-     * @param value allowed object is
-     *              {@link CustomerAssignedAccountIDType }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link CustomerAssignedAccountIDType }
+     *     
      */
     public void setCustomerAssignedAccountID(CustomerAssignedAccountIDType value) {
         this.customerAssignedAccountID = value;
@@ -76,23 +82,25 @@ public class DriverPartyType {
 
     /**
      * Gets the value of the additionalAccountID property.
-     * <p>
+     * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the additionalAccountID property.
-     * <p>
+     * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAdditionalAccountID().add(newItem);
      * </pre>
-     * <p>
-     * <p>
+     * 
+     * 
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AdditionalAccountIDType }
+     * 
+     * 
      */
     public List<AdditionalAccountIDType> getAdditionalAccountID() {
         if (additionalAccountID == null) {
@@ -103,9 +111,11 @@ public class DriverPartyType {
 
     /**
      * Gets the value of the party property.
-     *
-     * @return possible object is
-     * {@link PartyType }
+     * 
+     * @return
+     *     possible object is
+     *     {@link PartyType }
+     *     
      */
     public PartyType getParty() {
         return party;
@@ -113,9 +123,11 @@ public class DriverPartyType {
 
     /**
      * Sets the value of the party property.
-     *
-     * @param value allowed object is
-     *              {@link PartyType }
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link PartyType }
+     *     
      */
     public void setParty(PartyType value) {
         this.party = value;

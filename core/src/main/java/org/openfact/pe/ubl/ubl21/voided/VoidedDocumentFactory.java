@@ -11,12 +11,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class VoidedDocumentFactory {
     private final static QName _VoidedDocuments_QNAME = new QName(
-            "urn:sunat:names:specification:ubl21:peru:schema:xsd:VoidedDocuments-1", "VoidedDocuments");
+            "urn:sunat:names:specification:ubl:peru:schema:xsd:VoidedDocuments-1", "VoidedDocuments");
 
     public VoidedDocumentFactory() {
     }
 
-    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:VoidedDocuments-1", name = "VoidedDocuments")
+    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:VoidedDocuments-1", name = "VoidedDocuments")
     public JAXBElement<VoidedDocumentsType> createVoidedDocuments(VoidedDocumentsType value) {
         return new JAXBElement<VoidedDocumentsType>(_VoidedDocuments_QNAME, VoidedDocumentsType.class, null,
                 value);

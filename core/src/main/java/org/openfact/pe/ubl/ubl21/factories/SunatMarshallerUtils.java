@@ -43,9 +43,9 @@ public class SunatMarshallerUtils {
         UBL21NamespaceContext namespace = UBL21NamespaceContext.getInstance();
         namespace.setMapping("ccts", "urn:un:unece:uncefact:documentation:2");
         namespace.setMapping("ds", "http://www.w3.org/2000/09/xmldsig#");
-        namespace.setMapping("ext", "urn:oasis:names:specification:ubl21:schema:xsd:CommonExtensionComponents-2");
-        namespace.setMapping("qdt", "urn:oasis:names:specification:ubl21:schema:xsd:QualifiedDatatypes-2");
-        namespace.setMapping("sac", "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1");
+        namespace.setMapping("ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
+        namespace.setMapping("qdt", "urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2");
+        namespace.setMapping("sac", "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1");
         namespace.setMapping("udt", "urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2");
         MapBasedNamespaceContext mapBasedNamespace = new MapBasedNamespaceContext();
         mapBasedNamespace.addMappings(namespace);

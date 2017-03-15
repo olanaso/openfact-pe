@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for QualifierType complex type.
- * <p>
+ * 
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * 
  * <pre>
  * &lt;complexType name="QualifierType"&gt;
  *   &lt;simpleContent&gt;
@@ -26,11 +26,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent&gt;
  * &lt;/complexType&gt;
  * </pre>
+ * 
+ * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QualifierType")
 public class QualifierType
-        extends TextTypeUnqDat {
+    extends TextTypeUnqDat
+{
 
 
 }

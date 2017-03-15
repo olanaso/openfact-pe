@@ -11,12 +11,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class RetentionFactory {
     private final static QName _Retention_QNAME = new QName(
-            "urn:sunat:names:specification:ubl21:peru:schema:xsd:Retention-1", "Retention");
+            "urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1", "Retention");
 
     public RetentionFactory() {
     }
 
-    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:Retention-1", name = "Retention")
+    @XmlElementDecl(namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:Retention-1", name = "Retention")
     public JAXBElement<RetentionType> createRetention(RetentionType value) {
         return new JAXBElement<RetentionType>(_Retention_QNAME, RetentionType.class, null, value);
     }

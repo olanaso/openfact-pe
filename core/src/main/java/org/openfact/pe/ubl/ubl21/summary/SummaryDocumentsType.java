@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SummaryDocumentsType", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SummaryDocuments-1", propOrder = {
+@XmlType(name = "SummaryDocumentsType", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1", propOrder = {
         "ublExtensions", "ublVersionID", "customizationID", "id", "documentCurrencyCode",
         "referenceDate", "issueDate", "signature", "accountingSupplierParty", "summaryDocumentsLine"
 
@@ -26,34 +26,34 @@ import java.util.List;
 @CodingStyleguideUnaware
 public class SummaryDocumentsType implements Serializable, Cloneable {
 
-    @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonExtensionComponents-2")
+    @XmlElement(name = "UBLExtensions", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2")
     protected UBLExtensionsType ublExtensions;
 
-    @XmlElement(name = "UBLVersionID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "UBLVersionID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected UBLVersionIDType ublVersionID;
 
-    @XmlElement(name = "CustomizationID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "CustomizationID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected CustomizationIDType customizationID;
 
-    @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IDType id;
 
-    @XmlElement(name = "DocumentCurrencyCode", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "DocumentCurrencyCode", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     private DocumentCurrencyCodeType documentCurrencyCode;
 
-    @XmlElement(name = "ReferenceDate", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2")
+    @XmlElement(name = "ReferenceDate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2")
     protected ReferenceDateType referenceDate;
 
-    @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IssueDateType issueDate;
 
-    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "Signature", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected List<SignatureType> signature;
 
-    @XmlElement(name = "AccountingSupplierParty", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "AccountingSupplierParty", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected SupplierPartyType accountingSupplierParty;
 
-    @XmlElement(name = "SummaryDocumentsLine", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1")
+    @XmlElement(name = "SummaryDocumentsLine", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" )
     protected List<SummaryDocumentsLineType> summaryDocumentsLine;
 
     public UBLExtensionsType getUblExtensions() {

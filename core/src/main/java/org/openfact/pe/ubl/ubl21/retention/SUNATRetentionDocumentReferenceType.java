@@ -15,24 +15,25 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SUNATRetentionDocumentReferenceType", propOrder = {"id", "issueDate", "totalInvoiceAmount",
-        "payment", "sunatRetentionInformation"})
+@XmlType(name = "SUNATRetentionDocumentReferenceType", propOrder = { "id", "issueDate", "totalInvoiceAmount",
+        "payment", "sunatRetentionInformation" })
 public class SUNATRetentionDocumentReferenceType {
-    @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "ID", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IDType id;
-    @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "IssueDate", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected IssueDateType issueDate;
-    @XmlElement(name = "TotalInvoiceAmount", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonBasicComponents-2", required = true)
+    @XmlElement(name = "TotalInvoiceAmount", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2", required = true)
     protected TotalInvoiceAmountType totalInvoiceAmount;
-    @XmlElement(name = "Payment", namespace = "urn:oasis:names:specification:ubl21:schema:xsd:CommonAggregateComponents-2")
+    @XmlElement(name = "Payment", namespace = "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2")
     protected PaymentType payment;
-    @XmlElement(name = "SUNATRetentionInformation", namespace = "urn:sunat:names:specification:ubl21:peru:schema:xsd:SunatAggregateComponents-1")
+    @XmlElement(name = "SUNATRetentionInformation", namespace = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" )
     protected SUNATRetentionInformationType sunatRetentionInformation;
 
     /**
      * Gets the value of the id property.
-     *
+     * 
      * @return possible object is {@link IDType }
+     * 
      */
     public IDType getID() {
         return id;
@@ -40,8 +41,10 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Sets the value of the id property.
-     *
-     * @param value allowed object is {@link IDType }
+     * 
+     * @param value
+     *            allowed object is {@link IDType }
+     * 
      */
     public void setID(IDType value) {
         this.id = value;
@@ -49,8 +52,9 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Gets the value of the issueDate property.
-     *
+     * 
      * @return possible object is {@link IssueDateType }
+     * 
      */
     public IssueDateType getIssueDate() {
         return issueDate;
@@ -58,8 +62,10 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Sets the value of the issueDate property.
-     *
-     * @param value allowed object is {@link IssueDateType }
+     * 
+     * @param value
+     *            allowed object is {@link IssueDateType }
+     * 
      */
     public void setIssueDate(IssueDateType value) {
         this.issueDate = value;
@@ -67,8 +73,9 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Gets the value of the totalInvoiceAmount property.
-     *
+     * 
      * @return possible object is {@link TotalInvoiceAmountType }
+     * 
      */
     public TotalInvoiceAmountType getTotalInvoiceAmount() {
         return totalInvoiceAmount;
@@ -76,8 +83,10 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Sets the value of the totalInvoiceAmount property.
-     *
-     * @param value allowed object is {@link TotalInvoiceAmountType }
+     * 
+     * @param value
+     *            allowed object is {@link TotalInvoiceAmountType }
+     * 
      */
     public void setTotalInvoiceAmount(TotalInvoiceAmountType value) {
         this.totalInvoiceAmount = value;
@@ -85,8 +94,9 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Gets the value of the payment property.
-     *
+     * 
      * @return possible object is {@link PaymentType }
+     * 
      */
     public PaymentType getPayment() {
         return payment;
@@ -94,8 +104,10 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Sets the value of the payment property.
-     *
-     * @param value allowed object is {@link PaymentType }
+     * 
+     * @param value
+     *            allowed object is {@link PaymentType }
+     * 
      */
     public void setPayment(PaymentType value) {
         this.payment = value;
@@ -103,8 +115,9 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Gets the value of the sunatRetentionInformation property.
-     *
+     * 
      * @return possible object is {@link SUNATRetentionInformationType }
+     * 
      */
     public SUNATRetentionInformationType getSUNATRetentionInformation() {
         return sunatRetentionInformation;
@@ -112,8 +125,10 @@ public class SUNATRetentionDocumentReferenceType {
 
     /**
      * Sets the value of the sunatRetentionInformation property.
-     *
-     * @param value allowed object is {@link SUNATRetentionInformationType }
+     * 
+     * @param value
+     *            allowed object is {@link SUNATRetentionInformationType }
+     * 
      */
     public void setSUNATRetentionInformation(SUNATRetentionInformationType value) {
         this.sunatRetentionInformation = value;
@@ -144,7 +159,7 @@ public class SUNATRetentionDocumentReferenceType {
     }
 
     public TotalInvoiceAmountType setTotalInvoiceAmount(@Nullable final BigDecimal valueParam,
-                                                        @Nullable final String currencyID) {
+            @Nullable final String currencyID) {
         TotalInvoiceAmountType aObj = getTotalInvoiceAmount();
         if (aObj == null) {
             aObj = new TotalInvoiceAmountType(valueParam);

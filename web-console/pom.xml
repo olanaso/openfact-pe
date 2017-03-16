@@ -41,6 +41,11 @@
             <groupId>org.openfact</groupId>
             <artifactId>openfact-services</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-web-console</artifactId>
+            <type>war</type>
+        </dependency>
 
         <!-- Java EE 7 -->
         <dependency>
@@ -60,7 +65,16 @@
         <finalName>openfact</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <groupId>org.openfact</groupId>
+                            <artifactId>openfact-web-console</artifactId>
+                        </overlay>
+                    </overlays>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

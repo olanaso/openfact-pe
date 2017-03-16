@@ -1,6 +1,5 @@
 package org.openfact.pe.ws.sunat;
 
-import com.sun.xml.ws.util.ByteArrayDataSource;
 import org.openfact.models.types.InternetMediaType;
 import org.openfact.pe.ws.ServiceConfigurationException;
 import org.openfact.pe.ws.ServiceWrapper;
@@ -8,6 +7,7 @@ import org.openfact.pe.ws.sunat.services.BillService;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.mail.util.ByteArrayDataSource;
 import java.util.HashMap;
 import java.util.Map;
 

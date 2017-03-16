@@ -198,6 +198,11 @@
                 <artifactId>openfact-testsuite-integration</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.openfact</groupId>
+                <artifactId>openfact-web-console</artifactId>
+                <version>${openfact.version}</version>
+            </dependency>
 
             <!-- Java EE 7 -->
             <dependency>

@@ -8,10 +8,22 @@ import org.openfact.models.types.SendEventStatus;
 import org.openfact.pe.models.SunatSendEventException;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.ubl.types.SunatCodigoErrores;
+import pe.gob.sunat.UsernameTokenCallbackHandler;
+import pe.gob.sunat.servicio.registro.comppago.factura.gem.service.BillService;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.mail.util.ByteArrayDataSource;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPFaultException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Stateless
@@ -19,6 +31,9 @@ public class SunatSenderManager {
 
     @Inject
     private FileProvider fileProvider;
+
+    @WebServiceRef()
+    private BillService service;
 
     public SendEventModel sendBillAddress1(OrganizationModel organization, DocumentModel document, String fileName) throws ModelInsuficientData, SendEventException {
         return sendBill(organization, document, fileName, organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1));
@@ -93,12 +108,32 @@ public class SunatSenderManager {
                     .save()
                     .toBytes();
 
-            Map<String, String> config = SunatSender.buildConfig()
-                    .address(sunatAddress)
-                    .username(sunatUsername)
-                    .password(sunatPassword).build();
+            pe.gob.sunat.service.BillService port = service.getBillServicePort();
+            //configureTimeout(port);
 
-            byte[] response = new SunatSender().sendBill(config, zipFile, zipFileName, InternetMediaType.ZIP);
+            BindingProvider bp = (BindingProvider) port;
+            configureAddress(bp, sunatAddress);
+//            configureUser(bp, sunatUsername, sunatPassword);
+            service.setHandlerResolver(new HandlerResolver() {
+                @Override
+                public List<Handler> getHandlerChain(PortInfo portInfo) {
+                    List<Handler> handlerList = new ArrayList<>();
+                    handlerList.add(new UsernameTokenCallbackHandler(sunatUsername, sunatPassword));
+                    return handlerList;
+                }
+            });
+
+
+            DataSource dataSource = new ByteArrayDataSource(zipFile, InternetMediaType.ZIP.getMimeType());
+            DataHandler dataHandler = new DataHandler(dataSource);
+            byte[] response = port.sendBill(zipFileName, dataHandler);
+
+//            Map<String, String> config = SunatSender.buildConfig()
+//                    .address(sunatAddress)
+//                    .username(sunatUsername)
+//                    .password(sunatPassword).build();
+//
+//            byte[] response = new SunatSender().sendBill(config, zipFile, zipFileName, InternetMediaType.ZIP);
 
             SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
             sendEvent.setResult(SendEventStatus.SUCCESS);
@@ -119,6 +154,24 @@ public class SunatSenderManager {
         } catch (Exception e) {
             throw new SendEventException("Could not generate send to third party", e);
         }
+    }
+
+    private void configureTimeout(pe.gob.sunat.service.BillService port) throws Exception {
+        //Set timeout until a connection is established
+        ((BindingProvider)port).getRequestContext().put("javax.xml.ws.client.connectionTimeout", "6000");
+
+        //Set timeout until the response is received
+        ((BindingProvider) port).getRequestContext().put("javax.xml.ws.client.receiveTimeout", "1000");
+    }
+
+    private void configureAddress(BindingProvider bindingProvider, String address) {
+        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, address);
+    }
+
+    private void configureUser(BindingProvider bp, String username, String password) {
+        List<Handler> handlers = new ArrayList<>();
+        handlers.add(new UsernameTokenCallbackHandler(username, password));
+        bp.getBinding().setHandlerChain(handlers);
     }
 
 }

@@ -9,16 +9,16 @@ import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.invoice.UBLInvoiceReaderWriter;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 import org.w3c.dom.Document;
 
 import javax.ejb.Stateless;
 import java.io.ByteArrayOutputStream;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("INVOICE")
 public class SunatUBLInvoiceReaderWriter implements UBLInvoiceReaderWriter {
 

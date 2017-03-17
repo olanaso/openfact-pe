@@ -9,9 +9,9 @@ import org.openfact.models.DocumentModel;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.models.utils.TypeToModel;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.invoice.UBLInvoiceCustomizator;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("INVOICE")
 public class SunatUBLInvoiceCustomizator extends AbstractInvoiceProvider implements UBLInvoiceCustomizator {
 

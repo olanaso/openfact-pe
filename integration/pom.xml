@@ -47,6 +47,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--Wildfly-->
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-controller</artifactId>
+        </dependency>
+
+        <!--Deltaspike-->
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-api</artifactId>
+        </dependency>
+
         <!-- Zip builder -->
         <dependency>
             <groupId>org.jodd</groupId>

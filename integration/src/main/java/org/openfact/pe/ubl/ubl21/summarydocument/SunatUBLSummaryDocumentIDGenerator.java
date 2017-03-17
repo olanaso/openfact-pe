@@ -9,8 +9,8 @@ import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
 import org.openfact.pe.ubl.ubl21.retention.UBLRetentionIDGenerator;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("SUMMARY_DOCUMENTS")
 public class SunatUBLSummaryDocumentIDGenerator implements UBLRetentionIDGenerator {
 

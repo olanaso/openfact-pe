@@ -5,15 +5,15 @@ import org.openfact.models.ModelException;
 import org.openfact.pe.ubl.ubl21.factories.SunatDocumentToType;
 import org.openfact.pe.ubl.ubl21.factories.SunatTypeToDocument;
 import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 import org.w3c.dom.Document;
 
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXBException;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("SUMMARY_DOCUMENTS")
 public class SunatUBLSummaryDocumentReaderWriter implements UBLSummaryDocumentReaderWriter {
 

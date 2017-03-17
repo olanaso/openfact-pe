@@ -1,12 +1,15 @@
 package org.openfact.pe.ubl.ubl21.perception;
 
 import org.openfact.common.converts.StringUtils;
-import org.openfact.models.*;
+import org.openfact.models.DocumentModel;
+import org.openfact.models.DocumentProvider;
+import org.openfact.models.OrganizationModel;
+import org.openfact.models.ScrollModel;
 import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("PERCEPTION")
 public class SunatUBLPerceptionIDGenerator implements UBLPerceptionIDGenerator {
 

@@ -5,14 +5,14 @@ import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 @Stateless
-@UBLProviderType("default")
+@ProviderType("default")
 @UBLDocumentType("SUMMARY_DOCUMENTS")
 public class SunatUBLSummaryDocumentCustomizator extends AbstractSummaryDocumentProvider implements UBLSummaryDocumentCustomizator {
 

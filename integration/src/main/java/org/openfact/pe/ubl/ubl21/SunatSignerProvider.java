@@ -3,17 +3,15 @@ package org.openfact.pe.ubl.ubl21;
 import org.openfact.models.KeyManager;
 import org.openfact.models.ModelException;
 import org.openfact.models.OrganizationModel;
+import org.openfact.provider.SingleProviderType;
 import org.openfact.ubl.UBLSigner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.annotation.Priority;
 import javax.ejb.Stateless;
-import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
-import javax.interceptor.Interceptor;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
@@ -30,8 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Stateless
-@Alternative
-@Priority(value = Interceptor.Priority.APPLICATION + 10)
+@SingleProviderType(provider = "ublSigner", value = "sunat")
 public class SunatSignerProvider implements UBLSigner {
 
     @Inject

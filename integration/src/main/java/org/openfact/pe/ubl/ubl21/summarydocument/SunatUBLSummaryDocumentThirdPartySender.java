@@ -2,16 +2,16 @@ package org.openfact.pe.ubl.ubl21.summarydocument;
 
 import org.openfact.models.*;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.UBLThirdPartySender;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("RETENTION")
 public class SunatUBLSummaryDocumentThirdPartySender implements UBLThirdPartySender {
 

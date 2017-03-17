@@ -6,6 +6,7 @@
             <module name="org.apache.cxf"/>
             <module name="org.apache.cxf.impl"/>
             <module name="com.sun.xml.messaging.saaj" />
+            <module name="com.fasterxml.jackson.datatype.jackson-datatype-jsr310" />
         </dependencies>
     </deployment>
 </jboss-deployment-structure>

@@ -5,10 +5,10 @@ import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.UBLReaderWriter;
 import org.openfact.ubl.UBLThirdPartySender;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.Stateless;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("VOIDED_DOCUMENTS")
 public class SunatUBLVoidedDocumentThirdPartySender implements UBLThirdPartySender {
 

@@ -3,8 +3,7 @@ package org.openfact.pe;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.logging.Logger;
-import org.openfact.models.OpenfactConfigResolver;
-import org.openfact.services.managers.ServerStartup;
+import org.openfact.OpenfactConfigResolver;
 
 import javax.ejb.Stateless;
 import java.io.IOException;

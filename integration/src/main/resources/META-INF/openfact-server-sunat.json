@@ -24,6 +24,9 @@
       "dir": "${openfact.report.dir}"
     }
   },
+  "ublSigner": {
+    "provider": "sunat"
+  },
   "invoice": {
     "readerWriter": "sunat",
     "idGenerator": "sunat",

@@ -4,15 +4,15 @@ import org.openfact.models.*;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.pe.ubl.types.TipoInvoice;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
+import org.openfact.provider.ProviderType;
 import org.openfact.ubl.UBLThirdPartySender;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
-import org.openfact.ubl.ubl21.qualifiers.UBLProviderType;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 @Stateless
-@UBLProviderType("sunat")
+@ProviderType("sunat")
 @UBLDocumentType("CREDIT_NOTE")
 public class SunatUBLCreditNoteThirdPartySender implements UBLThirdPartySender {
 

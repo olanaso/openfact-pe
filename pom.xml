@@ -64,6 +64,12 @@
         <!-- Resteasy -->
         <version.resteasy>3.1.1.Final</version.resteasy>
 
+        <!--Deltaspike-->
+        <version.deltaspike>1.7.2</version.deltaspike>
+
+        <!-- Wildfly -->
+        <wildfly.core.version>2.0.10.Final</wildfly.core.version>
+
         <!-- Apache commons -->
         <version.commons.validator>1.5.1</version.commons.validator>
 
@@ -249,6 +255,19 @@
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging-processor</artifactId>
                 <version>${jboss.logging.tools.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-controller</artifactId>
+                <version>${wildfly.core.version}</version>
+            </dependency>
+
+            <!--Deltaspike-->
+            <dependency>
+                <groupId>org.apache.deltaspike.core</groupId>
+                <artifactId>deltaspike-core-api</artifactId>
+                <version>${version.deltaspike}</version>
             </dependency>
 
             <!--Apache JXF-->

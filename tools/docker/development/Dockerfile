@@ -18,6 +18,4 @@ RUN ${JBOSS_HOME}/bin/jboss-cli.sh --file=${JBOSS_HOME}/bin/keycloak-install.cli
 RUN ${JBOSS_HOME}/bin/add-user-keycloak.sh -u ${KEYCLOAK_ADMIN_USER} -p ${KEYCLOAK_ADMIN_PASWORD}
 
 
-ENTRYPOINT [ "/opt/jboss/docker-entrypoint.sh" ]
-
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "-Dkeycloak.import=/opt/jboss/wildfly/openfact-realm.json"]

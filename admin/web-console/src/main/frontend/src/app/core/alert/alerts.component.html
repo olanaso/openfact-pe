@@ -1,9 +1,0 @@
-<div class="feedback-aligner">
-	<of-alert *ngFor="let alert of alerts" 
-				[alert]="alert" 
-				(click)="click(toast)" 
-				(clickEvent)="childClick($event)" 
-				(mouseover)="stopTimer(alert)" 
-				(mouseout)="restartTimer">
-	</of-alert>
-</div>

@@ -1,0 +1,23 @@
+<ol class="breadcrumb">
+  <li><a href="javascript:void(0);" routerLink="../dashboard">{{'settings' | translate}}</a></li>
+  <li class="active"> {{organization.organization}}</li>
+</ol>
+<div>
+  <h3>{{organization.organization}}
+    <small>{{'created' | translate}} 
+      <span>
+        {{organization.createdTimestamp | amTimeAgo}}
+      </span>
+		</small>
+  </h3>
+</div>
+
+<ul class="nav nav-tabs">
+  <li routerLinkActive="active"><a [routerLink]="['/organizations', organization.organization, 'settings', 'general-information']">{{'general' | translate}}</a></li>
+  <li routerLinkActive="active"><a [routerLink]="['/organizations', organization.organization, 'settings', 'additional-information']">{{'additional-info' | translate}}</a></li>
+  <li routerLinkActive="active"><a [routerLink]="['/organizations', organization.organization, 'settings', 'keys']">{{'keys' | translate}}</a></li>
+  <li routerLinkActive="active"><a [routerLink]="['/organizations', organization.organization, 'settings', 'smtp-settings']">{{'email' | translate}}</a></li>
+  <li routerLinkActive="active"><a [routerLink]="['/organizations', organization.organization, 'settings', 'theme-settings']">{{'themes' | translate}}</a></li>
+  <li routerLinkActive="active"><a [routerLink]="['/organizations', organization.organization, 'settings', 'tasks-settings']">{{'tasks' | translate}}</a></li>
+  <li routerLinkActive="active"><a [routerLink]="['/organizations', organization.organization, 'settings', 'sunat']">Sunat</a></li>
+</ul>

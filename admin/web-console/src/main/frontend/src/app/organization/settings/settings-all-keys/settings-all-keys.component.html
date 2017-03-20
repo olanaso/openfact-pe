@@ -1,0 +1,50 @@
+<of-settings-tabset [organization]="organization"></of-settings-tabset>
+
+<ul class="nav nav-tabs nav-tabs-pf">
+  <li routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+    <a routerLink="../">{{'active' | translate}}</a>
+  </li>
+  <li class="active">
+    <a href="javascript:void(0)">{{'all' | translate}}</a>
+  </li>
+  <li routerLinkActive="active">
+    <a routerLink="../providers">{{'providers' | translate}}</a>
+  </li>
+</ul>
+
+<br>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Type</th>
+      <th>Kid</th>
+      <th>Priority</th>
+      <th>Provider</th>
+      <th>Public key</th>
+      <th>Certificate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of keys.keys">
+      <td>{{item.status}}</td>
+      <td>{{item.type}}</td>
+      <td>{{item.kid}}</td>
+      <td>{{item.providerPriority}}</td>
+      <td>
+        <a *ngIf="item.provider" [routerLink]="['../providers', item.provider.providerId, item.provider.id]">{{item.provider.name}}</a>
+      </td>
+
+      <td *ngIf="item.publicKey" class="kc-action-cell">
+        <of-view-key [key]="item.publicKey" [label]="'view' | translate" [isLink]="true"></of-view-key>
+      </td>
+      <td *ngIf="!item.publicKey"></td>
+
+      <td *ngIf="item.certificate" class="kc-action-cell">
+        <of-view-key [key]="item.certificate" [label]="'view' | translate" [isLink]="true"></of-view-key>
+      </td>
+      <td *ngIf="!item.certificate"></td>
+    </tr>
+  </tbody>
+</table>

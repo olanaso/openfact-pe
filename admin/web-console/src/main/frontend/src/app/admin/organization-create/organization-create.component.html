@@ -1,0 +1,62 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+
+      <ol class="breadcrumb">
+        <li>
+          <a href="javascript:void(0);" routerLink="../">{{'organizations' | translate}}</a>
+        </li>
+        <li class="active">{{'create-organization' | translate}}</li>
+      </ol>
+
+      <div>
+        <h3>{{'create-organization' | translate}}</h3>
+        <form [formGroup]="form" (ngSubmit)="save(form)" class="form-horizontal">
+          <of-form-fields-status [ofForm]="form"></of-form-fields-status>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{'import' | translate}}
+              <i class="fa fa-question-circle text-muted" ngbTooltip="Select a file for import organization configuration." placement="right"></i>
+            </label>
+            <div class="col-md-9" [hidden]="importing">
+              <of-read-file (complete)="importFile($event)"></of-read-file>
+            </div>
+            <div class="col-md-9" [hidden]="!importing">
+              <of-view-object [object]="organization" [label]="'view-details' | translate"></of-view-object>
+              <input type="button" class="btn btn-default" (click)="reset()" [value]="'clear-import' | translate" />
+            </div>
+          </div>
+
+          <div class="form-group" [ofFormFieldValidationState]="form.get('organization')">
+            <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('organization')">{{'name' | translate}}
+						  <i class="fa fa-question-circle text-muted" ngbTooltip="Name of the organization." placement="right"></i>
+            </label>
+            <div class="col-md-9">
+              <input formControlName="organization" type="text" class="form-control" autofocus/>
+              <of-form-field-validation-messages [ofFormControl]="form.get('organization')">
+              </of-form-field-validation-messages>
+            </div>
+          </div>
+          <div class="form-group" [ofFormFieldValidationState]="form.get('description')">
+            <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('description')">{{'description' | translate}}
+						  <i class="fa fa-question-circle text-muted" ngbTooltip="Description of the organization." placement="right"></i>
+            </label>
+            <div class="col-md-9">
+              <textarea formControlName="description" type="text" class="form-control"></textarea>
+              <of-form-field-validation-messages [ofFormControl]="form.get('description')">
+              </of-form-field-validation-messages>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-2 col-lg-offset-2">
+              <of-button-save [ofForm]="form" [working]="working"></of-button-save>
+              <of-button-cancel (ofOnCancel)="cancel($event)"></of-button-cancel>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

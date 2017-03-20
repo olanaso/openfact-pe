@@ -1,0 +1,53 @@
+<of-settings-tabset [organization]="organization"></of-settings-tabset>
+
+<form [formGroup]="form" (ngSubmit)="save(form)" class="form-horizontal">
+  <of-form-fields-status [ofForm]="form"></of-form-fields-status>
+
+  <div class="form-group" [ofFormFieldValidationState]="form.get('sunatUsername')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('sunatUsername')">Username
+		  <i class="fa fa-question-circle text-muted" ngbTooltip="Sunat username." placement="right"></i>
+    </label>
+    <div class="col-md-3">
+      <input formControlName="sunatUsername" type="text" class="form-control" />
+      <of-form-field-validation-messages [ofFormControl]="form.get('sunatUsername')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [ofFormFieldValidationState]="form.get('sunatPassword')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('sunatPassword')">Password
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Sunat password." placement="right"></i>
+    </label>
+    <div class="col-md-3">
+      <input formControlName="sunatPassword" type="password" class="form-control" />
+      <of-form-field-validation-messages [ofFormControl]="form.get('sunatPassword')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [ofFormFieldValidationState]="form.get('sunatAddress1')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('sunatAddress1')">End point
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Sunat web service endpoint address." placement="right"></i>
+    </label>
+    <div class="col-md-4">
+      <input formControlName="sunatAddress1" type="text" class="form-control" />
+      <of-form-field-validation-messages [ofFormControl]="form.get('sunatAddress1')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [ofFormFieldValidationState]="form.get('sunatAddress2')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('sunatAddress2')">End point Otros documentos
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Sunat web service endpoint address." placement="right"></i>
+    </label>
+    <div class="col-md-4">
+      <input formControlName="sunatAddress2" type="text" class="form-control" />
+      <of-form-field-validation-messages [ofFormControl]="form.get('sunatAddress2')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-2 col-lg-offset-2">
+      <of-button-save [ofForm]="form" [working]="working"></of-button-save>
+      <of-button-reset [ofForm]="form" (ofOnReset)="loadData()"></of-button-reset>
+    </div>
+  </div>
+</form>

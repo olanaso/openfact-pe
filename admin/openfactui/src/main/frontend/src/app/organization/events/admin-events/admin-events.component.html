@@ -1,0 +1,41 @@
+<div class="container-fluid">
+  <div>
+    <h3>Events</h3>
+  </div>
+</div>
+
+<br>
+<div class="row">
+  <div class="col-md-12">
+    <div class="tab-container">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:void(0)">Admin</a></li>
+        <li routerLinkActive="active"><a routerLink="../events-settings">Config</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<br>
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <td>Time</td>
+      <td>Operation Type</td>
+      <td>Resource Type</td>
+      <td>Resource Path</td>
+      <td>Details</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of adminEvents">
+      <td>{{item.time | toDate | date: 'yyyy/MM/dd HH:mm:ss'}}</td>
+      <td>{{item.operationType}}</td>
+      <td>{{item.resourceType}}</td>
+      <td>{{item.resourcePath}}</td>
+      <td>
+        <of-view-object [object]="item" [label]="'view-details' | translate"></of-view-object>
+      </td>
+    </tr>
+  </tbody>
+</table>

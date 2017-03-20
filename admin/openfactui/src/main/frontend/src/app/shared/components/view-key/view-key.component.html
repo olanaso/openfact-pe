@@ -1,0 +1,9 @@
+<template #viewKeyModalContent let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <div style="padding: 20px 20px 20px 20px; word-wrap: break-word;">{{key}}</div>
+</div>
+</template>
+
+<span *ngIf="isSpan" (click)="internalOpen()">{{label || 'View details'}}</span>
+<button *ngIf="isButton" type="button" class="btn btn-default" (click)="internalOpen()">{{label || 'View details'}}</button>
+<a *ngIf="isLink" href="javascript:void(0)" (click)="internalOpen()">{{label || 'View details'}}</a>

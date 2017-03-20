@@ -10,75 +10,67 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>openfact-pe-web-console</artifactId>
-    <name>Openfact PE Web Console</name>
+    <name>Openfact PE JSF Web Console</name>
     <packaging>war</packaging>
 
+    <dependencies>
+        <!--Openfact -->
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-pe-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-pe-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-pe-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-pe-services</artifactId>
+        </dependency>
+
+        <!--Openfact Core-->
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-services</artifactId>
+        </dependency>
+
+        <!-- Java EE 7 -->
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Primefaces -->
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
-        <finalName>openfactui</finalName>
+        <finalName>openfact</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <!-- this is relative to the pom.xml directory -->
-                            <directory>src/main/frontend/dist</directory>
-                        </resource>
-                    </webResources>
-                </configuration>
             </plugin>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.3</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <nodeVersion>v6.10.0</nodeVersion>
-                    <workingDirectory>src/main/frontend</workingDirectory>
-                    <installDirectory>target</installDirectory>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm run build</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run ng -- build --base-href /openfactui/ --env=war</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>

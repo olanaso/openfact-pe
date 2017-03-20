@@ -1,0 +1,80 @@
+<div class="container-fluid">
+  <div>
+    <h3>Events</h3>
+  </div>
+</div>
+
+<br>
+<div class="row">
+  <div class="col-md-12">
+    <div class="tab-container">
+      <ul class="nav nav-tabs">
+        <li routerLinkActive="active"><a routerLink="../events">Admin</a></li>
+        <li class="active"><a href="javascript:void(0);">Config</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<br>
+
+<form [formGroup]="form" (ngSubmit)="save(form.value)" class="form-horizontal">
+  <of-form-fields-status [ofForm]="form"></of-form-fields-status>
+  
+  <fieldset>
+    <legend>Event Config</legend>
+    <div class="form-group">
+      <label class="col-md-2 control-label required-pf">Event Listeners
+			<i class="fa fa-question-circle text-muted" ngbTooltip="organization of the organization" placement="right"></i>
+    </label>
+      <div class="col-md-9">
+        <ng-select 
+          (data)="eventsConfig.eventsListeners"   
+          [active]="eventsConfig.eventsListeners"        
+          [multiple]="true" 
+          [items]="eventListeners"
+          placeholder="No listener selected"></ng-select>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Admin Events Settings</legend>
+    <div class="form-group" [ngClass]="{ 'has-error' : !form.get('adminEventsEnabled').valid && form.get('adminEventsEnabled').dirty }">
+      <label class="col-md-2 control-label required-pf">Save Events
+					<i class="fa fa-question-circle text-muted" ngbTooltip="adminEventsEnabled of the organization" placement="right"></i>
+      </label>
+      <div class="col-md-4">
+        <of-button-switch formControlName="adminEventsEnabled"></of-button-switch>
+        <div *ngIf="!form.get('adminEventsEnabled').valid && form.get('adminEventsEnabled').dirty">
+          <span *ngIf="form.get('adminEventsEnabled').errors.required" class="help-block">This field is required</span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="form.get('adminEventsEnabled').value" class="form-group" [ngClass]="{ 'has-error' : !form.get('adminEventsDetailsEnabled').valid && form.get('adminEventsDetailsEnabled').dirty }">
+      <label class="col-md-2 control-label required-pf">Include Representation
+					<i class="fa fa-question-circle text-muted" ngbTooltip="adminEventsDetailsEnabled of the organization" placement="right"></i>
+      </label>
+      <div class="col-md-4">
+        <of-button-switch formControlName="adminEventsDetailsEnabled"></of-button-switch>
+        <div *ngIf="!form.get('adminEventsDetailsEnabled').valid && form.get('adminEventsDetailsEnabled').dirty">
+          <span *ngIf="form.get('adminEventsDetailsEnabled').errors.required" class="help-block">This field is required</span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="form.get('adminEventsEnabled').value" class="form-group" [ngClass]="{ 'has-error' : !form.get('adminEventsDetailsEnabled').valid && form.get('adminEventsDetailsEnabled').dirty }">
+      <label class="col-md-2 control-label required-pf">Clear admin events
+					<i class="fa fa-question-circle text-muted" ngbTooltip="adminEventsDetailsEnabled of the organization" placement="right"></i>
+      </label>
+      <div class="col-md-4">
+        <button type="button" (click)="clearAdminEvents(content)" class="btn btn-danger">Clear admin events</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-2 col-lg-offset-2">
+        <of-button-save [ofForm]="form" [working]="working"></of-button-save>
+        <button type="button" (click)="cancel()" class="btn btn-default">{{'cancel' | translate}}</button>
+      </div>
+    </div>
+  </fieldset>
+</form>

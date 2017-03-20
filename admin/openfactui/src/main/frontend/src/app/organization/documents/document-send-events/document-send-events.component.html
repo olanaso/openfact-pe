@@ -1,0 +1,124 @@
+<div class="row">
+  <div class="col-lg-9">
+
+    <of-document-edit-header [organization]="organization" [document]="document" [breadcrumb]="breadcrumb" [documentType]="documentType"></of-document-edit-header>
+
+    <br>
+
+    <div class="text-right">
+      <div name="destinyType" [(ngModel)]="selectedDestinyType" (ngModelChange)="loadData($event)" ngbRadioGroup>
+        <label *ngFor="let destiny of destinyType" class="btn btn-default">
+          <input type="radio" [value]="destiny.value">{{destiny.denomination | translate}}
+        </label>
+      </div>
+    </div>
+    <br>
+
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <td class="text-center" width="10"></td>
+          <td class="text-right" width="10">#</td>
+          <td class="text-right" width="100">{{'date' | translate}}</td>
+          <td width="120">{{'result' | translate}}</td>
+          <td>{{'description' | translate}}</td>
+        </tr>
+      </thead>
+      <tbody>
+        <template ngFor let-event let-i="index" [ngForOf]="sendEvents">
+          <tr>
+            <td class="text-center">
+              <button (click)="event.collapsed = !event.collapsed" class="btn btn-xs btn-default" type="button">
+                  <span class="fa" [ngClass]="{'fa-plus': !event.collapsed, 'fa-minus': event.collapsed}"></span>
+                </button>
+            </td>
+            <td class="text-right">
+              {{i+1}}
+            </td>
+            <td class="text-right">{{event.createdTimestamp | date}}</td>
+            <td>
+              <span *ngIf="event.result == 'SUCCESS' || event.result == 'ERROR'">
+                <i *ngIf="event.result == 'SUCCESS'" class="pficon pficon-ok"></i>
+                <i *ngIf="event.result == 'ERROR'" class="pficon pficon-warning-triangle-o"></i>                               
+                {{event.result}}
+              </span>
+              <div *ngIf="event.result == 'ON_PROCESS'">
+                <div class="spinner spinner-xs spinner-inline"></div>
+                {{event.result}}
+              </div>
+            </td>
+            <td>
+              <of-limited-string [value]="event.description" [maxlength]="60"></of-limited-string>
+            </td>
+          </tr>
+          <tr *ngIf="event.collapsed">
+            <td colspan="5">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <td width="50%">Destiny</td>
+                    <td width="50%">Response</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="!event.destinyAttributes && !event.responseAttributes">
+                    <td colspan="2"><em>{{'not-registered' | translate}}</em></td>
+                  </tr>
+                  <tr *ngIf="event.destinyAttributes || event.responseAttributes">
+                    <td>
+                      <dl class="dl-horizontal left">
+                        <template ngFor let-key [ngForOf]="(event.destinyAttributes | keys)">
+                          <dt>{{key}}</dt>
+                          <dd>{{event.destinyAttributes[key]}}</dd>
+                        </template>
+                      </dl>
+                    </td>
+                    <td>
+                      <dl class="dl-horizontal left">
+                        <template ngFor let-key [ngForOf]="(event.responseAttributes | keys)">
+                          <dt>{{key}}</dt>
+                          <dd>{{event.responseAttributes[key]}}</dd>
+                        </template>
+                      </dl>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot *ngIf="event.fileAttachments || event.responseFileAttachments">
+                  <tr>
+                    <td>
+                      <ul class="list-inline">
+                        <li *ngFor="let file of event.fileAttachments">
+                          <a (click)="downloadFile(file)" href="javascript:void();">{{file.fileName}}</a>
+                        </li>
+                      </ul>
+                    </td>
+                    <td>
+                      <ul class="list-inline">
+                        <li *ngFor="let file of event.responseFileAttachments">
+                          <a (click)="downloadFile(file)" href="javascript:void();">{{file.fileName}}</a>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </td>
+          </tr>
+        </template>
+        <tr *ngIf="!sendEvents || sendEvents.length == 0">
+          <td colspan="5" class="text-center text-muted">
+            <span>{{'no-results-found' | translate}}.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="col-lg-3 sidebar-right sidebar-pf sidebar-pf-right">
+    <of-document-edit-right-sidebar [document]="document"></of-document-edit-right-sidebar>
+  </div>
+
+</div>
+
+<br>

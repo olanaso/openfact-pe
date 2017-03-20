@@ -1,0 +1,212 @@
+<div class="row">
+	<div class="col-lg-9">
+
+		<of-document-edit-header [organization]="organization" [document]="document" [breadcrumb]="'credit-notes'" [documentType]="'credit-note'"
+			[enableAssignCreditNote]="false" [enableAssignDebitNote]="false"></of-document-edit-header>
+
+			<br>
+			<div *ngIf="!documentJson">
+				<div class="spinner"></div>
+			</div>
+
+			<div *ngIf="documentJson">
+				<div class="row">
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>{{'general-information' | translate}}</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								{{'currency-code' | translate}}:
+								<span ngbTooltip="Currency Code." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.DocumentCurrencyCode">{{documentJson.DocumentCurrencyCode}}</dd>
+							<dd *ngIf="!documentJson.DocumentCurrencyCode"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								{{'invoice-type-code' | translate}}:
+								<span ngbTooltip="Invoice Type Code Value." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.InvoiceTypeCode">{{documentJson.InvoiceTypeCode}}</dd>
+							<dd *ngIf="!documentJson.InvoiceTypeCode"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								{{'issue-date' | translate}}:
+								<span ngbTooltip="Issue Date." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.IssueDate">{{documentJson.IssueDate}}</dd>
+							<dd *ngIf="!documentJson.IssueDate"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								{{'issue-time' | translate}}:
+								<span ngbTooltip="Issue Time." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.IssueTime">{{documentJson.IssueTime}}</dd>
+							<dd *ngIf="!documentJson.IssueTime"><em>{{'not-registered' | translate}}</em></dd>
+						</dl>
+					</div>
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>{{'legal-monetary-total' | translate}}</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								{{'payable-amount' | translate}}:
+								<span ngbTooltip="Legal Monetary Total / Payable Amount." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.LegalMonetaryTotal.PayableAmount.content">{{documentJson.LegalMonetaryTotal.PayableAmount.content | number:'1.2-3'}}</dd>
+							<dd *ngIf="!documentJson.LegalMonetaryTotal.PayableAmount.content"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								{{'charge-total-amount' | translate}}:
+								<span ngbTooltip="Legal Monetary Total / Charge Total Amount." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.LegalMonetaryTotal.ChargeTotalAmount">{{documentJson.LegalMonetaryTotal.ChargeTotalAmount.content | number:'1.2-3'}}</dd>
+							<dd *ngIf="!documentJson.LegalMonetaryTotal.ChargeTotalAmount"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								{{'allowance-total-amount' | translate}}:
+								<span ngbTooltip="Legal Monetary Total / Allowance Total Amount." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.LegalMonetaryTotal.AllowanceTotalAmount">{{documentJson.LegalMonetaryTotal.AllowanceTotalAmount.content | number:'1.2-3'}}</dd>
+							<dd *ngIf="!documentJson.LegalMonetaryTotal.AllowanceTotalAmount"><em>{{'not-registered' | translate}}</em></dd>
+						</dl>
+					</div>
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>{{'tax-total' | translate}}</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								{{'tax-amount' | translate}}:
+								<span ngbTooltip="Tax Total / Tax Amount." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd>
+								<ul class="list-inline" style="margin-bottom: 0px;">
+									<li *ngFor="let taxTotal of (documentJson.TaxTotal | toArray)">
+										{{taxTotal.TaxAmount.content | number:'1.2-3'}}
+									</li>
+								</ul>
+							</dd>
+						</dl>
+					</div>
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>{{'supplier-party' | translate}}</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								{{'assigned-account-id' | translate}}:
+								<span ngbTooltip="Accounting Supplier Party / Customer AssignedAccount ID." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd>{{documentJson.AccountingSupplierParty.CustomerAssignedAccountID}}</dd>
+							<template ngIf="documentJson.AccountingSupplierParty.AdditionalAccountID">
+								<dt>
+									{{'additional-account-id' | translate}}:
+									<span ngbTooltip="Accounting Supplier Party / Additional Account ID." placement="right" class="pficon pficon-help text-muted small"></span>
+								</dt>
+								<dd>
+									<ul class="list-inline" style="margin-bottom: 0px;">
+										<li *ngFor="let additiontalAccountId of (documentJson.AccountingSupplierParty.AdditionalAccountID | toArray)">{{additiontalAccountId}}</li>
+									</ul>
+								</dd>
+							</template>
+							<template ngIf="documentJson.AccountingSupplierParty.Party">
+								<dt>
+									{{'registration-name' | translate}}:
+									<span ngbTooltip="Accounting Supplier Party / Party / Party Legal Entity / Registration Name." placement="right" class="pficon pficon-help text-muted small"></span>
+								</dt>
+								<dd>
+									<ul class="list-unstyled" style="margin-bottom: 0px;">
+										<li *ngFor="let partyLegalEntity of (documentJson.AccountingSupplierParty.Party.PartyLegalEntity | toArray)">{{partyLegalEntity.RegistrationName}}</li>
+									</ul>
+								</dd>
+							</template>
+						</dl>
+					</div>
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>{{'customer-party' | translate}}</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								{{'assigned-account-id' | translate}}:
+								<span ngbTooltip="Accounting Customer Party/Customer Assigned Account ID." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.AccountingCustomerParty.CustomerAssignedAccountID">{{documentJson.AccountingCustomerParty.CustomerAssignedAccountID}}</dd>
+							<dd *ngIf="!documentJson.AccountingCustomerParty.CustomerAssignedAccountID"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								{{'additional-account-id' | translate}}:
+								<span ngbTooltip="Accounting Customer Party/Additional Account ID." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.AccountingCustomerParty.AdditionalAccountID">
+								<ul class="list-inline" style="margin-bottom: 0px;">
+									<li *ngFor="let additionalAccountId of (documentJson.AccountingCustomerParty.AdditionalAccountID | toArray)">{{additionalAccountId}}</li>
+								</ul>
+							</dd>
+							<dd *ngIf="!documentJson.AccountingCustomerParty.AdditionalAccountID"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								{{'registration-name' | translate}}:
+								<span ngbTooltip="Accounting Customer Party/Party/Party Legal Entity." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.AccountingCustomerParty.Party.PartyLegalEntity">
+								<ul class="list-unstyled" style="margin-bottom: 0px;">
+									<li *ngFor="let partyLegalEntity of (documentJson.AccountingCustomerParty.Party.PartyLegalEntity | toArray)">{{partyLegalEntity.RegistrationName}}</li>
+								</ul>
+							</dd>
+							<dd *ngIf="!documentJson.AccountingCustomerParty.Party.PartyLegalEntity"><em>{{'not-registered' | translate}}</em></dd>
+						</dl>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div>
+							<h3>{{'credit-note-lines' | translate}}</h3>
+						</div>
+						<div>
+							<div class="table-responsive">
+								<table class="datatable table table-striped table-bordered dataTable no-footer table-mobile">
+									<thead>
+										<tr>
+											<th class="text-right">#</th>
+											<th class="text-right">{{'quantity' | translate}}</th>
+											<th>{{'item-description' | translate}}</th>
+											<th class="text-right">{{'price' | translate}}</th>
+											<th class="text-right">{{'tax-amount' | translate}}</th>
+											<th class="text-right">{{'line-extension-amount' | translate}}</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let creditNoteLine of (documentJson.CreditNoteLine | toArray); let i = index;">
+											<td class="text-right">{{i+1}}</td>
+											<td class="text-right">{{creditNoteLine.CreditedQuantity.content | number:'1.2-3'}}</td>
+											<td>{{creditNoteLine.Item.Description}}</td>
+											<td class="text-right">{{creditNoteLine.Price.PriceAmount.content | number:'1.2-3'}}</td>
+											<td class="text-right">
+												<span *ngFor="let creditNoteLineTaxTotal of (creditNoteLine.TaxTotal | toArray)">
+										&nbsp;{{creditNoteLineTaxTotal.TaxAmount.content | number:'1.2-3'}}									
+									</span>
+											</td>
+											<td class="text-right">{{creditNoteLine.LineExtensionAmount.content | number:'1.2-3'}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+	</div>
+
+	<div class="col-lg-3 sidebar-right sidebar-pf sidebar-pf-right">
+		<of-document-edit-right-sidebar [document]="document"></of-document-edit-right-sidebar>
+	</div>
+</div>
+
+<br>

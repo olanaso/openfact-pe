@@ -1,0 +1,23 @@
+<template #aboutModalContent let-c="close" let-d="dismiss">
+  <div class="about-modal-pf">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="d('Cross click')">
+          <span class="pficon pficon-close"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <h1>Openfact</h1>
+      <div class="product-versions-pf">
+        <ul class="list-unstyled">
+          <li><strong>Version</strong> 1.0.0.Final</li>
+        </ul>
+      </div>
+      <div class="trademark-pf">
+        Sistcoop Copyright 2017
+      </div>
+    </div>
+    <div class="modal-footer">
+      <img src="/assets/img/logo-alt.svg" alt="Openfact">
+    </div>
+  </div>
+</template>

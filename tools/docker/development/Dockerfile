@@ -11,9 +11,14 @@ USER jboss
 RUN ${JBOSS_HOME}/bin/add-user.sh admin admin
 
 # KEYCLOAK
-# ADD keycloak-overlay-2.5.5.Final.tar.gz /opt/jboss/wildfly/
 ADD openfact-realm.json /${JBOSS_HOME}
-ADD https://downloads.jboss.org/keycloak/${KEYCLOAK_VERSION}/keycloak-overlay-${KEYCLOAK_VERSION}.tar.gz /opt/jboss/wildfly/
+ADD https://downloads.jboss.org/keycloak/2.5.5.Final/keycloak-overlay-2.5.5.Final.tar.gz /opt/jboss/wildfly/
+
+USER root
+RUN chown -R jboss ${JBOSS_HOME}
+RUN chmod -R 700 ${JBOSS_HOME}
+
+RUN tar -xvzf ${JBOSS_HOME}/keycloak-overlay-2.5.5.Final.tar.gz -C ${JBOSS_HOME} && rm -R ${JBOSS_HOME}/keycloak-overlay-2.5.5.Final.tar.gz
 RUN ${JBOSS_HOME}/bin/jboss-cli.sh --file=${JBOSS_HOME}/bin/keycloak-install.cli
 RUN ${JBOSS_HOME}/bin/add-user-keycloak.sh -u ${KEYCLOAK_ADMIN_USER} -p ${KEYCLOAK_ADMIN_PASWORD}
 

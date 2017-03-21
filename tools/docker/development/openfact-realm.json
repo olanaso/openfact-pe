@@ -227,13 +227,13 @@
   },
   "clients": [
     {
-      "clientId": "openfact-web-console",
+      "clientId": "openfactui",
       "enabled": true,
       "publicClient": true,
       "consentRequired": false,
       "fullScopeAllowed": true,
-      "baseUrl": "/openfact-web-console",
-      "adminUrl": "/openfact-web-console",
+      "baseUrl": "/openfactui",
+      "adminUrl": "/openfactui",
       "protocolMappers": [
         {
           "name": "email",
@@ -322,7 +322,7 @@
       ],
       "redirectUris": [
         "http://localhost:4200/*",
-        "/openfact-web-console/*"
+        "/openfactui/*"
       ],
       "webOrigins": [
         "http://localhost:4200",

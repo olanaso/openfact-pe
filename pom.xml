@@ -208,6 +208,16 @@
             </dependency>
             <dependency>
                 <groupId>org.openfact</groupId>
+                <artifactId>openfact-reports</artifactId>
+                <version>${openfact.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openfact</groupId>
+                <artifactId>openfact-themes</artifactId>
+                <version>${openfact.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openfact</groupId>
                 <artifactId>openfact-web-console</artifactId>
                 <version>${openfact.version}</version>
                 <type>war</type>

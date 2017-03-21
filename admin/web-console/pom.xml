@@ -43,8 +43,46 @@
         </dependency>
         <dependency>
             <groupId>org.openfact</groupId>
+            <artifactId>openfact-reports</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-themes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openfact</groupId>
             <artifactId>openfact-web-console</artifactId>
             <type>war</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openfact</groupId>
+                    <artifactId>openfact-server-spi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.openfact</groupId>
+                    <artifactId>openfact-server-spi-private</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.openfact</groupId>
+                    <artifactId>openfact-integration</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.openfact</groupId>
+                    <artifactId>openfact-services</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.openfact</groupId>
+                    <artifactId>openfact-model-jpa</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.openfact</groupId>
+                    <artifactId>openfact-reports</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.openfact</groupId>
+                    <artifactId>openfact-themes</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Java EE 7 -->

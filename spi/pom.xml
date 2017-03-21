@@ -1,54 +1,51 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>openfact.pe</artifactId>
-		<groupId>org.openfact</groupId>
-		<version>1.0.0.Final</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<name>Openfact PE SPI</name>
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>openfact-pe</artifactId>
+        <groupId>org.openfact</groupId>
+        <version>1.0-beta-7-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <name>Openfact PE SPI</name>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>openfact.pe-spi</artifactId>
+    <artifactId>openfact-pe-spi</artifactId>
 
-	<properties>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-	</properties>
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact.pe-core</artifactId>
-		</dependency>
+    <dependencies>
+        <!--Openfact PE-->
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-pe-core</artifactId>
+        </dependency>
 
-		<!-- Openfact Core -->
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-server-spi</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openfact</groupId>
-			<artifactId>openfact-server-spi-private</artifactId>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+        <!-- Openfact Core -->
+        <dependency>
+            <groupId>org.openfact</groupId>
+            <artifactId>openfact-server-spi-private</artifactId>
+        </dependency>
+
+        <!-- Java EE 7 -->
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

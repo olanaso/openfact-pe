@@ -1,7 +1,7 @@
 package org.openfact.pe.models.utils;
 
-import org.openfact.pe.models.enums.*;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
+import org.openfact.pe.ubl.types.*;
 
 public class SunatEnumToRepresentation {
     public static GenericTypeRepresentation toRepresentation(TipoAfectacionIgv type) {
@@ -137,6 +137,14 @@ public class SunatEnumToRepresentation {
         rep.setCodigo(type.getCodigo());
         rep.setDenominacion(type.getDenominacion());
         rep.setValor(type.getValor());
+        return rep;
+    }
+
+    public static GenericTypeRepresentation toRepresentation(TipoDocumentoRelacionadoPercepcionRetencion type) {
+        GenericTypeRepresentation rep = new GenericTypeRepresentation();
+        rep.setCodigo(type.getCodigo());
+        rep.setDenominacion(type.getDenominacion());
+        rep.setGrupo(type.getDocumentType().toString());
         return rep;
     }
 

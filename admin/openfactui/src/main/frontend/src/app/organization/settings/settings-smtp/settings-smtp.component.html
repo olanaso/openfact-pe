@@ -1,0 +1,98 @@
+<of-settings-tabset [organization]="organization"></of-settings-tabset>
+
+<form [formGroup]="form" (ngSubmit)="save(form)" class="form-horizontal">
+  <of-form-fields-status [ofForm]="form"></of-form-fields-status>
+
+  <div class="form-group" [ofFormFieldValidationState]="form.get('host')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('host')">Host
+		  <i class="fa fa-question-circle text-muted" ngbTooltip="Host of the smtp server." placement="right"></i>
+    </label>
+    <div class="col-md-3">
+      <input formControlName="host" type="text" class="form-control" placeholder="SMTP Host" />
+      <of-form-field-validation-messages [ofFormControl]="form.get('host')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [ofFormFieldValidationState]="form.get('port')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('port')">Port
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Port of the smtp server." placement="right"></i>
+    </label>
+    <div class="col-md-3">
+      <input formControlName="port" type="text" class="form-control" placeholder="SMTP Port(defaults to 25)" />
+      <of-form-field-validation-messages [ofFormControl]="form.get('port')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [ofFormFieldValidationState]="form.get('from')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('from')">From
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Origin of the smtp server." placement="right"></i>
+    </label>
+    <div class="col-md-4">
+      <input formControlName="from" type="text" class="form-control" placeholder="Sender Email Address" />
+      <of-form-field-validation-messages [ofFormControl]="form.get('from')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [ofFormFieldValidationState]="form.get('ssl')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('ssl')">Enable SSL
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Set true/false to enable/disable ssl on smtp server." placement="right"></i>
+    </label>
+    <div class="col-md-4">
+      <of-button-switch formControlName="ssl"></of-button-switch>
+      <of-form-field-validation-messages [ofFormControl]="form.get('ssl')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [ofFormFieldValidationState]="form.get('starttls')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('starttls')">Enable StartTLS
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Set true/false to enable/disable startTLS on smtp server." placement="right"></i>
+    </label>
+    <div class="col-md-4">
+      <of-button-switch formControlName="starttls"></of-button-switch>
+      <of-form-field-validation-messages [ofFormControl]="form.get('starttls')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+
+  <div class="form-group" [ofFormFieldValidationState]="form.get('auth')">
+    <label class="col-md-2 control-label" [ofFormRequiredLabel]="form.get('auth')">Enable Authentication
+			<i class="fa fa-question-circle text-muted" ngbTooltip="Set true to enalble authentication" placement="right"></i>
+    </label>
+    <div class="col-md-4">
+      <div class="checkbox">
+        <label>
+					<input formControlName="auth" type="checkbox"> Check for enable Authentication
+				</label>
+      </div>
+      <of-form-field-validation-messages [ofFormControl]="form.get('auth')">
+      </of-form-field-validation-messages>
+    </div>
+  </div>
+  <div class="form-group" [hidden]="!form.get('auth').value">
+    <label class="col-md-2 control-label"></label>
+    <div class="col-md-4">
+      <div class="row of-no-margin">
+        <div class="col-md-12">
+          <div class="form-group" class="form-group" [ofFormFieldValidationState]="form.get('user')">
+            <label class="control-label" [ofFormRequiredLabel]="form.get('user')">Username</label>
+            <input formControlName="user" type="text" class="form-control" placeholder="Login Username">
+            <of-form-field-validation-messages [ofFormControl]="form.get('user')">
+            </of-form-field-validation-messages>
+          </div>
+          <div class="form-group" class="form-group" [ofFormFieldValidationState]="form.get('password')">
+            <label class="control-label" [ofFormRequiredLabel]="form.get('password')">Password</label>
+            <input formControlName="password" type="password" class="form-control" placeholder="Login Password">
+            <of-form-field-validation-messages [ofFormControl]="form.get('password')">
+            </of-form-field-validation-messages>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-2 col-lg-offset-2">
+      <of-button-save [ofForm]="form" [working]="working"></of-button-save>
+      <of-button-reset [ofForm]="form" (ofOnReset)="loadData()"></of-button-reset>
+    </div>
+  </div>
+</form>

@@ -1,45 +1,37 @@
 package org.openfact.pe.services.resources;
 
-import org.jboss.resteasy.annotations.cache.NoCache;
-import org.openfact.common.ClientConnection;
-import org.openfact.models.OpenfactSession;
-import org.openfact.models.OrganizationModel;
-import org.openfact.pe.models.enums.*;
 import org.openfact.pe.models.utils.SunatEnumToRepresentation;
 import org.openfact.pe.representations.idm.GenericTypeRepresentation;
-import org.openfact.services.ServicesLogger;
+import org.openfact.pe.ubl.types.*;
+import org.openfact.services.resource.OrganizationResourceProvider;
 
-import javax.ws.rs.GET;
+import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenericTypesResource {
-    private static final ServicesLogger logger = ServicesLogger.LOGGER;
+@Stateless
+@Produces(MediaType.APPLICATION_JSON)
+public class GenericTypesResource implements OrganizationResourceProvider {
 
-    @Context
-    protected UriInfo uriInfo;
-    @Context
-    protected OpenfactSession session;
-    @Context
-    protected ClientConnection clientConnection;
-    @Context
-    protected HttpHeaders headers;
-    protected OrganizationModel organization;
+    private static final String PATH = "sunat";
 
-    public GenericTypesResource(OpenfactSession session, OrganizationModel organization) {
-        this.session = session;
-        this.organization = organization;
+    @Override
+    public String getPath() {
+        return PATH;
+    }
+
+    @Override
+    public Object getResource() {
+        return this;
     }
 
     @GET
-    @Path("igv")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/igv")
     public GenericTypeRepresentation getIgv() {
         GenericTypeRepresentation rep = new GenericTypeRepresentation();
         rep.setDenominacion("Impuesto General a las Ventas");
@@ -49,9 +41,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipos-afectacion-igv")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipos-afectacion-igv")
     public List<GenericTypeRepresentation> getTipoAfectacionIgv() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoAfectacionIgv type : TipoAfectacionIgv.values()) {
@@ -61,9 +51,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipos-comprobante-pago")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipos-comprobante-pago")
     public List<GenericTypeRepresentation> getTipoComprobante() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoInvoice type : TipoInvoice.values()) {
@@ -73,9 +61,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("conceptos-tributarios")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/conceptos-tributarios")
     public List<GenericTypeRepresentation> getTipoConceptosTributarios() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoConceptosTributarios type : TipoConceptosTributarios.values()) {
@@ -85,9 +71,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipos-documento-entidad")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipos-documento-entidad")
     public List<GenericTypeRepresentation> getTipoDocumento() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoDocumentoEntidad type : TipoDocumentoEntidad.values()) {
@@ -97,9 +81,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("documento-relacionado-guia")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/documento-relacionado-guia")
     public List<GenericTypeRepresentation> getTipoDocumentoRelacionadoGuia() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoDocumentoRelacionadoGuia type : TipoDocumentoRelacionadoGuia.values()) {
@@ -109,9 +91,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("documento-relacionado-tributo")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/documento-relacionado-tributo")
     public List<GenericTypeRepresentation> getTipoDocumentoRelacionadoTributo() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoDocumentoRelacionadoTributo type : TipoDocumentoRelacionadoTributo.values()) {
@@ -121,9 +101,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("elementos-adicionales-comprobante")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/elementos-adicionales-comprobante")
     public List<GenericTypeRepresentation> getTipoElementosAdicionalesComprobante() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoElementosAdicionalesComprobante type : TipoElementosAdicionalesComprobante.values()) {
@@ -133,9 +111,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("estado-item")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/estado-item")
     public List<GenericTypeRepresentation> getTipoEstadoItem() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoEstadoItem type : TipoEstadoItem.values()) {
@@ -145,9 +121,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("modalidad-traslado")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/modalidad-traslado")
     public List<GenericTypeRepresentation> getTipoModalidadTraslado() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoModalidadTraslado type : TipoModalidadTraslado.values()) {
@@ -157,9 +131,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("moneda")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/monedas")
     public List<GenericTypeRepresentation> getTipoMoneda() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoMoneda type : TipoMoneda.values()) {
@@ -169,9 +141,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("motivo-traslado")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/motivo-traslado")
     public List<GenericTypeRepresentation> getTipoMotivoTraslado() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoMotivoTraslado type : TipoMotivoTraslado.values()) {
@@ -181,9 +151,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipo-nota-credito")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipos-nota-credito")
     public List<GenericTypeRepresentation> getTipoNotaCredito() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoNotaCredito type : TipoNotaCredito.values()) {
@@ -193,9 +161,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipo-nota-debito")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipos-nota-debito")
     public List<GenericTypeRepresentation> getTipoNotaDebito() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoNotaDebito type : TipoNotaDebito.values()) {
@@ -205,9 +171,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipo-operacion")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipo-operacion")
     public List<GenericTypeRepresentation> getTipoOperacion() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoOperacion type : TipoOperacion.values()) {
@@ -217,9 +181,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("precio-venta-unitario")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/precio-venta-unitario")
     public List<GenericTypeRepresentation> getTipoPrecioVentaUnitario() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoPrecioVentaUnitario type : TipoPrecioVentaUnitario.values()) {
@@ -229,9 +191,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("recibo-servicios-publicos")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/recibo-servicios-publicos")
     public List<GenericTypeRepresentation> getTipoReciboServiciosPublicos() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoReciboServiciosPublicos type : TipoReciboServiciosPublicos.values()) {
@@ -241,9 +201,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("regimen-percepcion")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipos-regimen-percepcion")
     public List<GenericTypeRepresentation> getTipoRegimenPercepcion() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoRegimenPercepcion type : TipoRegimenPercepcion.values()) {
@@ -253,9 +211,17 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("regimen-retencion")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/documentos-relacionados-percepcion")
+    public List<GenericTypeRepresentation> getDocumentosRelacionadosPercepcion() {
+        List<GenericTypeRepresentation> rep = new ArrayList<>();
+        for (TipoDocumentoRelacionadoPercepcionRetencion type : TipoDocumentoRelacionadoPercepcionRetencion.values()) {
+            rep.add(SunatEnumToRepresentation.toRepresentation(type));
+        }
+        return rep;
+    }
+
+    @GET
+    @Path("/generic-types/tipos-regimen-retencion")
     public List<GenericTypeRepresentation> getTipoRegimenRetencion() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoRegimenRetencion type : TipoRegimenRetencion.values()) {
@@ -265,9 +231,17 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("sistema-calculo-isc")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/documentos-relacionados-retencion")
+    public List<GenericTypeRepresentation> getDocumentosRelacionadosRetencion() {
+        List<GenericTypeRepresentation> rep = new ArrayList<>();
+        for (TipoDocumentoRelacionadoPercepcionRetencion type : TipoDocumentoRelacionadoPercepcionRetencion.values()) {
+            rep.add(SunatEnumToRepresentation.toRepresentation(type));
+        }
+        return rep;
+    }
+
+    @GET
+    @Path("/generic-types/sistema-calculo-isc")
     public List<GenericTypeRepresentation> getTipoSistemaCalculoISC() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoSistemaCalculoISC type : TipoSistemaCalculoISC.values()) {
@@ -277,9 +251,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("tipo-tributo")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/tipo-tributo")
     public List<GenericTypeRepresentation> getTipoTributo() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoTributo type : TipoTributo.values()) {
@@ -289,9 +261,7 @@ public class GenericTypesResource {
     }
 
     @GET
-    @Path("valor-venta")
-    @NoCache
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/generic-types/valor-venta")
     public List<GenericTypeRepresentation> getTipoValorVenta() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();
         for (TipoValorVenta type : TipoValorVenta.values()) {
@@ -299,4 +269,5 @@ public class GenericTypesResource {
         }
         return rep;
     }
+
 }

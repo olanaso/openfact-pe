@@ -1,0 +1,198 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>{{'voided-documents' | translate}}</h1>
+
+    <div class="row toolbar-pf table-view-pf-toolbar" id="toolbar1">
+      <div class="col-sm-12">
+        <form #searchForm="ngForm" (ngSubmit)="search()" class="toolbar-pf-actions">
+          <div class="form-group toolbar-pf-filter">
+            <label class="sr-only" for="filter">Filter</label>
+            <div class="input-group">
+              <div class="input-group-btn" ngbDropdown>
+                <button type="button" ngbDropdownToggle class="btn btn-default dropdown-toggle" id="filter" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">Filtros <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" (click)="addNoEnviadosSunatFilter()">No Enviados a Sunat</a></li>
+                    <li><a href="javascript:void(0);" (click)="addNoEnviadosClienteFilter()">No Enviados a Cliente</a></li>
+                    <li class="divider"></li>
+                    <li><a href="javascript:void(0);" (click)="addUltimaHoraFilter()">Ultima Hora</a></li>
+                    <li><a href="javascript:void(0);" (click)="addUltimas24HorasFilter()">Ultimas 24 Horas</a></li>
+                    <li><a href="javascript:void(0);" (click)="addUltimoMesFilter()">Ultimo Mes</a></li>
+                  </ul>
+              </div>
+              <input id="filterText" [(ngModel)]="searchCriteria.filterText" name="filterText" #filterText="ngModel" type="text" class="form-control"
+                placeholder="Filter By DocumentId..." autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group">
+            <span>Fecha creacion</span>
+            <button class="btn btn-link" type="button" (click)="changeAscending()">
+              <span class="fa fa-sort-alpha-{{orderBy.ascending ? 'asc' : 'desc'}}"></span>
+            </button>
+          </div>
+          <!--<div class="form-group">
+            <button class="btn btn-default" type="button" id="deleteRows1">Delete Rows</button>
+            <button class="btn btn-default" type="button" id="restoreRows1" disabled="">Restore Rows</button>
+            <div class="dropdown btn-group  dropdown-kebab-pf">
+              <button class="btn btn-link dropdown-toggle" type="button" id="dropdownKebab" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="true">
+                <span class="fa fa-ellipsis-v"></span>
+              </button>
+              <ul class="dropdown-menu " aria-labelledby="dropdownKebab">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+            </div>
+          </div>-->
+          <div class="toolbar-pf-action-right">
+            <div class="form-group toolbar-pf-find">
+              <button class="btn btn-link btn-find" type="submit">
+                <span class="fa fa-search"></span>
+              </button>
+              <div class="find-pf-dropdown-container">
+                <input type="text" class="form-control" id="find" placeholder="Find By Keyword...">
+                <div class="find-pf-buttons">
+                  <span class="find-pf-nums">1 of 3</span>
+                  <button class="btn btn-link" type="button">
+                    <span class="fa fa-angle-up"></span>
+                  </button>
+                  <button class="btn btn-link" type="button">
+                    <span class="fa fa-angle-down"></span>
+                  </button>
+                  <button class="btn btn-link btn-find-close" type="button">
+                    <span class="pficon pficon-close"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group toolbar-pf-view-selector">
+              <button class="btn btn-primary" type="button" (click)="createNewDocument()">{{'new-voided-document' | translate}}</button>
+            </div>
+          </div>
+        </form>
+        <div class="row toolbar-pf-results">
+          <div class="col-sm-9">
+            <div>
+              <h5>{{searchResult.totalSize || 0}} {{'results' | translate}}</h5>
+              <p *ngIf="filters.length > 0">{{'active-filters' | translate}}:</p>
+              <ul class="list-inline">
+                <li *ngFor="let filter of filters; let i = index;">
+                  <span class="label label-info">{{filter.alias}}
+							      <a (click)="removeFilter(i)" href="javascript:void(0);"><span class="pficon pficon-close"></span></a>
+                  </span>
+                </li>
+              </ul>
+              <p *ngIf="filters.length > 0"><a (click)="clearFilters()" href="javascript:void(0);">{{'clear-all-filters' | translate}}</a></p>
+            </div>
+          </div>
+          <div class="col-sm-3 table-view-pf-select-results">
+            <strong>0</strong> of <strong>0</strong> selected
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dataTables_wrapper no-footer">
+      <table class="table table-striped table-bordered table-hover dataTable no-footer" id="table1" role="grid">
+        <thead>
+          <tr role="row">
+            <th class="sorting text-right">#</th>
+            <th class="sorting">ID</th>
+            <th class="sorting">{{'issue-date' | translate}}</th>
+            <th class="sorting">{{'voided' | translate}}</th>
+            <th class="text-right">{{'customer-sended' | translate}}</th>
+            <th class="text-right">{{'third-party-sended' | translate}}</th>
+            <th colspan="2" rowspan="1">{{'actions' | translate}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="!searchResult || searchResult.items == 0">
+            <td colspan="12" class="text-center text-muted">
+              <span>{{'no-results-found' | translate}}.</span>
+            </td>
+          </tr>
+          <tr *ngFor="let item of searchResult.items; let i = index;">
+            <td class="text-right">{{i+1}}</td>
+            <td>{{item.documentId}}</td>
+            <td>{{item.createdTimestamp | date: 'dd/MM/yyyy'}}</td>
+            <td>
+              <span>
+                <i *ngIf="!item.enabled" class="pficon-error-circle-o"></i>
+                {{!item.enabled | yesNo: ('yes-no' | translate)}}
+              </span>
+            </td>
+            <td class="text-right">
+              <span *ngIf="item.requiredActions && item.requiredActions.length > 0">
+                    <i *ngIf="hasRequiredAction(item, 'SEND_TO_CUSTOMER')" class="pficon pficon-warning-triangle-o"></i>                    
+                    {{!hasRequiredAction(item, 'SEND_TO_CUSTOMER') | yesNo: ('yes-no' | translate)}}
+              </span>
+              <span *ngIf="!item.requiredActions || item.requiredActions.length == 0">{{'yes' | translate}}</span>
+            </td>
+            <td class="text-right">
+              <span *ngIf="item.requiredActions && item.requiredActions.length > 0">
+                    <i *ngIf="hasRequiredAction(item, 'SEND_TO_THIRD_PARTY')" class="pficon pficon-warning-triangle-o"></i>
+                    {{!hasRequiredAction(item, 'SEND_TO_THIRD_PARTY') | yesNo: ('yes-no' | translate)}}
+              </span>
+              <span *ngIf="!item.requiredActions || item.requiredActions.length == 0">{{'yes' | translate}}</span>
+            </td>
+            <td class=" table-view-pf-actions">
+              <div class="table-view-pf-btn">
+                <button (click)="editDocument(item)" class="btn btn-default" type="button">{{'edit' | translate}}</button>
+              </div>
+            </td>
+            <td class=" table-view-pf-actions">
+              <of-document-actions [organization]="organization" [document]="item" [enableDownloadCdr]="false" [enableAssignCreditNote]="false"
+                [enableAssignDebitNote]="false" [enableVoid]="false"></of-document-actions>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <form class="content-view-pf-pagination table-view-pf-pagination clearfix">
+      <div class="form-group">
+        <div class="btn-group bootstrap-select pagination-pf-pagesize" ngbDropdown>
+          <button type="button" class="btn dropdown-toggle btn-default" ngbDropdownToggle data-toggle="dropdown" [title]="paging.pageSize">
+            <span class="filter-option pull-left">{{paging.pageSize}}</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span>
+          </button>
+          <div class="dropdown-menu open">
+            <ul class="dropdown-menu inner" role="menu">
+              <li [ngClass]="{'selected': paging.pageSize === 6}"><a (click)="changePageSize(6)" href="javascript:void(0);"><span class="text">6</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+              <li [ngClass]="{'selected': paging.pageSize === 10}"><a (click)="changePageSize(10)" href="javascript:void(0);"><span class="text">10</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+              <li [ngClass]="{'selected': paging.pageSize === 15}"><a (click)="changePageSize(15)" href="javascript:void(0);"><span class="text">15</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+              <li [ngClass]="{'selected': paging.pageSize === 25}"><a (click)="changePageSize(25)" href="javascript:void(0);"><span class="text">25</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+              <li [ngClass]="{'selected': paging.pageSize === 50}"><a (click)="changePageSize(50)" href="javascript:void(0);"><span class="text">50</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+            </ul>
+          </div>
+          <select class="selectpicker pagination-pf-pagesize">
+            <option value="6">6</option>
+            <option value="10">10</option>
+            <option value="15" selected="selected">15</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+        <span>{{'per page' | translate}}</span>
+      </div>
+      <div class="form-group">
+        <span><span class="pagination-pf-items-current">{{(paging.page-1) * paging.pageSize + 1}}-{{paging.page * paging.pageSize}}</span>        {{'of' | translate}} <span class="pagination-pf-items-total">{{searchResult.totalSize}}</span></span>
+        <ul class="pagination pagination-pf-back">
+          <li [ngClass]="{'disabled': paging.page === 1}"><a (click)="firstPage()" href="javascript:void();"><span class="i fa fa-angle-double-left"></span></a></li>
+          <li [ngClass]="{'disabled': paging.page === 1}"><a (click)="previousPage()" href="javascript:void();"><span class="i fa fa-angle-left"></span></a></li>
+        </ul>
+        <input id="page" [(ngModel)]="paging.page" name="page" #filterText="ngModel" class="pagination-pf-page" type="text">
+        <span>{{'of' | translate}} <span class="pagination-pf-pages">{{getTotalNumberOfPages()}}</span></span>
+        <ul class="pagination pagination-pf-forward">
+          <li [ngClass]="{'disabled': getTotalNumberOfPages() === paging.page}"><a (click)="nextPage()" href="javascript:void();"><span class="i fa fa-angle-right"></span></a></li>
+          <li [ngClass]="{'disabled': getTotalNumberOfPages() === paging.page}"><a (click)="lastPage()" href="javascript:void();"><span class="i fa fa-angle-double-right"></span></a></li>
+        </ul>
+      </div>
+    </form>
+
+    <p>Debit notes from server database.</p>
+
+  </div>
+</div>

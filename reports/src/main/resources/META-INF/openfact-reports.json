@@ -1,0 +1,16 @@
+{
+  "themes": [
+    {
+      "name": "openfact",
+      "types": [
+        "admin"
+      ]
+    },
+    {
+      "name": "sunat",
+      "types": [
+        "admin"
+      ]
+    }
+  ]
+}

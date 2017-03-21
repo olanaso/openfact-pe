@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+>
+
+<h:head>
+    <title>Web Console</title>
+    <link rel="icon" href='#{resource["favicon.ico"]}'/>
+    <h:outputStylesheet name="patternfly/css/patternfly.min.css"/>
+    <h:outputStylesheet name="patternfly/css/patternfly-additions.min.css"/>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <div class="jumbotron" style="text-align: center;">
+            <h1>Bienvenido a Openfact!</h1>
+            <p class="lead">Openfact te ayuda a administrar de manera eficiente tus documentos electronicos asociados a la SUNAT. Desde Openfact usted puede, ademas, emitir boletas, facturas, notas de credito y debito.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="blank-slate-pf">
+                    <div class="blank-slate-pf-icon">
+                        <span class="pficon pficon-server"></span>
+                    </div>
+                    <h1>Openfact Core Server</h1>
+                    <p>Acceda al sistema de configuracion de openfact core.</p>
+                    <div class="blank-slate-pf-main-action">
+                        <a href="/openfactui" class="btn btn-default btn-lg" style="width: 100%"> Ingresar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="blank-slate-pf">
+                    <div class="blank-slate-pf-icon">
+                        <span class="pficon pficon-virtual-machine"></span>
+                    </div>
+                    <h1>Openfact Peru</h1>
+                    <p>Acceda al sistema de configuracion de openfact peru.</p>
+                    <div class="blank-slate-pf-main-action">
+                        <a href="/openfact/admin" class="btn btn-default btn-lg" style="width: 100%"> Ingresar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© 2017 Openfact, Inc.</p>
+        </footer>
+    </div>
+</h:body>
+</html>

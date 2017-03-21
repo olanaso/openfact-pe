@@ -1,0 +1,22 @@
+<div class="sidebar-header right-header">
+  <div>
+    <h2>
+      <span class="events-sidebar-collapse">
+        <a href="javascript:void(0);" class="pficon pficon-info" ><span class="sr-only">{{'attributes' | translate}}</span></a>
+      </span> {{'attributes' | translate}}
+      <small class="warning-count"><span class="hidden-xs hidden-sm"><span>{{'additional-info' | translate}}</span></span></small>
+    </h2>
+  </div>
+  <div *ngIf="document.attributes">
+    <dl class="dl-horizontal left" [ngbCollapse]="isAttributesCollapsed">
+      <template ngFor let-key [ngForOf]="document.attributes | keys">
+        <dt>{{key}}:</dt>
+        <dd>{{document.attributes[key]}}</dd>
+      </template>
+    </dl>
+    <a href="javascript:void(0);" (click)="isAttributesCollapsed = !isAttributesCollapsed">{{'view-details' | translate}}</a>
+  </div>
+  <div *ngIf="!document.attributes">
+    <em>{{'not-registered' | translate}}</em>
+  </div>
+</div>

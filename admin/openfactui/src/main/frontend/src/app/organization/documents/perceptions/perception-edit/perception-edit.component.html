@@ -1,0 +1,153 @@
+<div class="row">
+	<div class="col-lg-9">
+
+		<of-document-edit-header [organization]="organization" [document]="document" [breadcrumb]="'perceptions'" [documentType]="'perception'"
+			[enableAssignCreditNote]="false" [enableAssignDebitNote]="false" [enableVoid]="false"></of-document-edit-header>
+
+			<br>
+			<div *ngIf="!documentJson">
+				<div class="spinner"></div>
+			</div>
+
+			<div *ngIf="documentJson">
+				<div class="row">
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>{{'general-information' | translate}}</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								{{'issue-date' | translate}}:
+								<span ngbTooltip="Issue Date." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.IssueDate">{{documentJson.IssueDate}}</dd>
+							<dd *ngIf="!documentJson.IssueDate"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								Porcentaje percepcion
+								<span ngbTooltip="SUNATPerceptionPercent." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.SUNATPerceptionPercent">%{{documentJson.SUNATPerceptionPercent}}</dd>
+							<dd *ngIf="!documentJson.SUNATPerceptionPercent"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								Codigo percepcion
+								<span ngbTooltip="SUNATPerceptionSystemCode." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.SUNATPerceptionSystemCode">{{documentJson.SUNATPerceptionSystemCode}}</dd>
+							<dd *ngIf="!documentJson.SUNATPerceptionSystemCode"><em>{{'not-registered' | translate}}</em></dd>
+							<dt>
+								Nota
+								<span ngbTooltip="Note." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd *ngIf="documentJson.Note">{{documentJson.Note}}</dd>
+							<dd *ngIf="!documentJson.Note"><em>{{'not-registered' | translate}}</em></dd>
+						</dl>
+					</div>
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>Total</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								SUNATTotalCashed:
+								<span ngbTooltip="SUNATTotalCashed." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd>{{documentJson.SUNATTotalCashed.currencyID}} {{documentJson.SUNATTotalCashed.content | number:'1.2-3'}}</dd>
+							<dt>
+								TotalInvoiceAmount:
+								<span ngbTooltip="TotalInvoiceAmount." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd>{{documentJson.TotalInvoiceAmount.currencyID}} {{documentJson.TotalInvoiceAmount.content | number:'1.2-3'}}</dd>
+						</dl>
+					</div>
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>Cliente</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								Identification ID:
+								<span ngbTooltip="ReceiverParty / PartyIdentification / ID." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd>{{documentJson.ReceiverParty.PartyIdentification.ID.content}}</dd>
+							<dt>
+								Registration Name:
+								<span ngbTooltip="ReceiverParty / PartyLegalEntity / RegistrationName." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd>{{documentJson.ReceiverParty.PartyLegalEntity.RegistrationName}}</dd>
+						</dl>
+					</div>
+					<div class="col-lg-6">
+						<fieldset>
+							<legend>
+								<h3>{{'supplier-party' | translate}}</h3>
+							</legend>
+						</fieldset>
+						<dl class="dl-horizontal left">
+							<dt>
+								{{'assigned-account-id' | translate}}:
+								<span ngbTooltip="AgentParty / PartyIdentification ID." placement="right" class="pficon pficon-help text-muted small"></span>
+							</dt>
+							<dd>{{documentJson.AgentParty.PartyIdentification.ID.content}}</dd>
+							<template ngIf="documentJson.AgentParty.PartyLegalEntity">
+								<dt>
+									{{'registration-name' | translate}}:
+									<span ngbTooltip="AgentParty / Party Legal Entity / Registration Name." placement="right" class="pficon pficon-help text-muted small"></span>
+								</dt>
+								<dd>
+									<ul class="list-unstyled" style="margin-bottom: 0px;">
+										<li *ngFor="let partyLegalEntity of (documentJson.AgentParty.PartyLegalEntity | toArray)">{{partyLegalEntity.RegistrationName}}</li>
+									</ul>
+								</dd>
+							</template>
+						</dl>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div>
+							<h3>Detalle</h3>
+						</div>
+						<div>
+							<div class="table-responsive">
+								<table class="datatable table table-striped table-bordered dataTable no-footer table-mobile">
+									<thead>
+										<tr>
+											<th class="text-right">#</th>
+											<th class="text-right">ID</th>
+											<th class="text-right">PaidAmount</th>
+											<th class="text-right">SUNATNetTotalCashed</th>
+											<th class="text-right">SUNATPerceptionAmount</th>
+											<th class="text-right">TotalInvoiceAmount</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let documentReference of (documentJson.SUNATPerceptionDocumentReference | toArray); let i = index;">
+											<td class="text-right">{{i+1}}</td>
+											<td class="text-right">{{documentReference.ID.content}}</td>
+											<td class="text-right">{{documentReference.Payment.PaidAmount.content | number:'1.2-3'}}</td>
+											<td class="text-right">{{documentReference.SUNATPerceptionInformation.SUNATNetTotalCashed.content | number:'1.2-3'}}</td>
+											<td class="text-right">{{documentReference.SUNATPerceptionInformation.SUNATPerceptionAmount.content | number:'1.2-3'}}</td>
+											<td class="text-right">{{documentReference.TotalInvoiceAmount.content | number:'1.2-3'}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+	</div>
+
+	<div class="col-lg-3 sidebar-right sidebar-pf sidebar-pf-right">
+		<of-document-edit-right-sidebar [document]="document"></of-document-edit-right-sidebar>
+	</div>
+</div>
+
+<br>

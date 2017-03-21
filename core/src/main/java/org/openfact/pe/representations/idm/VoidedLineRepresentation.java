@@ -1,40 +1,40 @@
 package org.openfact.pe.representations.idm;
 
 public class VoidedLineRepresentation {
-	protected String id;
-	private String tipoDocumentoRelacionado;
-	private String numeroDocumentoRelacionado;
-	protected String descripcionDocumentoRelacionado;
+    protected String id;
+    private String tipoDocumentoRelacionado;
+    private String numeroDocumentoRelacionado;
+    protected String descripcionDocumentoRelacionado;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getTipoDocumentoRelacionado() {
-		return tipoDocumentoRelacionado;
-	}
+    public String getTipoDocumentoRelacionado() {
+        return tipoDocumentoRelacionado;
+    }
 
-	public void setTipoDocumentoRelacionado(String tipoDocumentoRelacionado) {
-		this.tipoDocumentoRelacionado = tipoDocumentoRelacionado;
-	}
+    public void setTipoDocumentoRelacionado(String tipoDocumentoRelacionado) {
+        this.tipoDocumentoRelacionado = tipoDocumentoRelacionado;
+    }
 
-	public String getNumeroDocumentoRelacionado() {
-		return numeroDocumentoRelacionado;
-	}
+    public String getNumeroDocumentoRelacionado() {
+        return numeroDocumentoRelacionado;
+    }
 
-	public void setNumeroDocumentoRelacionado(String numeroDocumentoRelacionado) {
-		this.numeroDocumentoRelacionado = numeroDocumentoRelacionado;
-	}
+    public void setNumeroDocumentoRelacionado(String numeroDocumentoRelacionado) {
+        this.numeroDocumentoRelacionado = numeroDocumentoRelacionado;
+    }
 
-	public String getDescripcionDocumentoRelacionado() {
-		return descripcionDocumentoRelacionado;
-	}
+    public String getDescripcionDocumentoRelacionado() {
+        return descripcionDocumentoRelacionado;
+    }
 
-	public void setDescripcionDocumentoRelacionado(String descripcionDocumentoRelacionado) {
-		this.descripcionDocumentoRelacionado = descripcionDocumentoRelacionado;
-	}
+    public void setDescripcionDocumentoRelacionado(String descripcionDocumentoRelacionado) {
+        this.descripcionDocumentoRelacionado = descripcionDocumentoRelacionado;
+    }
 }

@@ -73,7 +73,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run ng -- build --base-href /openfactui/ --target=production --env=war</arguments>
+                            <arguments>run ng -- build --base-href /openfactui/ --env=war</arguments>
                         </configuration>
                     </execution>
                 </executions>

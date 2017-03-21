@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
->
-
+<html class="layout-pf-alt-fixed-with-footer"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
 <h:head>
     <title>Web Console</title>
     <link rel="icon" href='#{resource["favicon.ico"]}'/>
@@ -12,7 +11,7 @@
 
 <h:body>
     <div class="container">
-        <div class="jumbotron" style="text-align: center;">
+        <div class="jumbotron" style="text-align: center; background-color: #fff; padding-top: 0; padding-bottom: 0;">
             <h1>Bienvenido a Openfact!</h1>
             <p class="lead">Openfact te ayuda a administrar de manera eficiente tus documentos electronicos asociados a la SUNAT. Desde Openfact usted puede, ademas, emitir boletas, facturas, notas de credito y debito.</p>
         </div>
@@ -43,10 +42,12 @@
                 </div>
             </div>
         </div>
-
-        <footer class="footer">
-            <p>© 2017 Openfact, Inc.</p>
-        </footer>
     </div>
+
+    <footer class="footer-pf-alt">
+        <div class="container">
+            <p class="text-muted">© 2017 Openfact, Inc.</p>
+        </div>
+    </footer>
 </h:body>
 </html>

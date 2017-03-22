@@ -24,3 +24,7 @@ java -jar distribution/wildfly-swarm/target/openfact-swarm.jar -Dswarm.http.port
 
 # Testsuite purposes
 mvn -f testsuite/integration/pom.xml exec:java -Popenfact-server -Dimport=/**/demo-organization.json
+
+
+
+ng build --prod --deploy-url openfactui

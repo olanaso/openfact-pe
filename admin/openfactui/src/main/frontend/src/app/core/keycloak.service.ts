@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-
 import { environment } from '../../environments/environment';
 
 declare var Keycloak: any;
-declare var KeycloakAuthorization: any;
 
 @Injectable()
 export class KeycloakService {
@@ -14,14 +12,13 @@ export class KeycloakService {
     const keycloakAuth: any = new Keycloak({
       url: environment.keykloakBaseUrl,
       realm: 'openfact',
-      clientId: 'openfact-web-console',
+      clientId: 'openfactui',
     });
 
     return new Promise((resolve, reject) => {
       keycloakAuth.init({ onLoad: 'login-required' })
         .success(() => {
           KeycloakService.auth.authz = keycloakAuth;
-          KeycloakService.auth.authorization = new KeycloakAuthorization(keycloakAuth);
           resolve();
         })
         .error(() => {
@@ -42,6 +39,8 @@ export class KeycloakService {
           .error(() => {
             reject('Failed to refresh token');
           });
+      } else {
+        reject('Not loggen in');
       }
     });
   }

@@ -11,6 +11,7 @@ import {
   TiposRegimenPercepcionResolverService,
   TiposRegimenRetencionResolverService,
 } from './resolvers/generic-type-resolver.service';
+import { KEYCLOAK_HTTP_PROVIDER, KeycloakHttp } from './keycloak.http';
 
 import { AlertComponent } from './alert/alert.component';
 import { AlertService } from './alert/alert.service';
@@ -27,7 +28,6 @@ import { EventsConfigResolverService } from './resolvers/events-config-resolver.
 import { FileService } from './data/file.service';
 import { Http } from '@angular/http';
 import { InvoiceService } from './data/invoice.service';
-import { KeycloakHttpFactory } from './keycloak.http';
 import { KeycloakService } from './keycloak.service';
 import { LoadingComponent } from './loading/loading.component';
 import { LoadingService } from './loading/loading.service';
@@ -68,11 +68,7 @@ import { XHRBackend } from '@angular/http';
   ],
   providers: [
     KeycloakService,
-    {
-      provide: Http,
-      useFactory: KeycloakHttpFactory,
-      deps: [XHRBackend, RequestOptions, KeycloakService, LoadingService]
-    },
+    KEYCLOAK_HTTP_PROVIDER,
     {
       provide: RestangularService,
       useFactory: RestangularServiceFactory,

@@ -2,6 +2,7 @@ package org.openfact.pe.ws.sunat;
 
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -117,7 +118,7 @@ public class SunatResponseUtils {
                 }
             }
         } catch (Exception e) {
-            throw new ModelException("Error al descomprimir la constancia", e.getCause());
+            throw new ModelRuntimeException("Error al descomprimir la constancia", e.getCause());
         }
     }
 

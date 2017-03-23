@@ -1,16 +1,18 @@
 package org.openfact.pe.ubl.ubl21.factories;
 
-import com.helger.ubl21.UBL21NamespaceContext;
-import com.helger.xml.namespace.MapBasedNamespaceContext;
-import org.openfact.models.ModelException;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.openfact.models.ModelRuntimeException;
+
+import com.helger.ubl21.UBL21NamespaceContext;
+import com.helger.xml.namespace.MapBasedNamespaceContext;
 
 public class SunatMarshallerUtils {
 
@@ -20,7 +22,7 @@ public class SunatMarshallerUtils {
         } else if (currentSerie < maxSerie) {
             return currentSerie;
         } else {
-            throw new ModelException("Max series and number");
+            throw new ModelRuntimeException("Max series and number");
         }
     }
 
@@ -70,7 +72,7 @@ public class SunatMarshallerUtils {
             final StringReader reader = new StringReader(xmlData);
             object = unmarshaller.unmarshal(reader);
         } catch (final JAXBException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
         return (T) object;
     }

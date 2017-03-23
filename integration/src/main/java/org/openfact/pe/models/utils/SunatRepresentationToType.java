@@ -10,6 +10,7 @@ import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.openfact.common.converts.DateUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.representations.idm.*;
@@ -71,7 +72,7 @@ public class SunatRepresentationToType {
             XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
             return xmlCal;
         } catch (DatatypeConfigurationException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -83,7 +84,7 @@ public class SunatRepresentationToType {
             XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
             return xmlCal;
         } catch (DatatypeConfigurationException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -1330,7 +1331,7 @@ public class SunatRepresentationToType {
             if (organization.getStreetName() == null || organization.getCitySubdivisionName() == null
                     || organization.getCityName() == null || organization.getCountrySubentity() == null
                     || organization.getDistrict() == null || organization.getCountryIdentificationCode() == null) {
-                throw new ModelException("Inssuficient information on organization");
+                throw new ModelRuntimeException("Inssuficient information on organization");
             }
 
             addressType.setID(organization.getPostalAddressId());
@@ -1400,7 +1401,7 @@ public class SunatRepresentationToType {
             Element element = ((Document) res.getNode()).getDocumentElement();
             return element;
         } catch (JAXBException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
 
     }

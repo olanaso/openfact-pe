@@ -8,6 +8,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
 import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.invoice.UBLInvoiceReaderWriter;
@@ -47,7 +48,7 @@ public class SunatUBLInvoiceReaderWriter implements UBLInvoiceReaderWriter {
 
                 return DocumentUtils.byteToDocument(out.toByteArray());
             } catch (Exception e) {
-                throw new ModelException(e);
+                throw new ModelRuntimeException(e);
             }
         };
     }

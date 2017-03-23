@@ -36,7 +36,7 @@ public class SunatUBLInvoiceIDGenerator extends AbstractInvoiceProvider implemen
         } else if (TipoInvoice.BOLETA.getCodigo().equals(invoiceTypeCode)) {
             tipoInvoice = TipoInvoice.BOLETA;
         } else {
-            throw new ModelException("Invalid invoice type code");
+            throw new ModelRuntimeException("Invalid invoice type code");
         }
 
         DocumentModel lastInvoice = null;

@@ -2,6 +2,7 @@ package org.openfact.pe.ubl.ubl21;
 
 import org.openfact.models.KeyManager;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OrganizationModel;
 import org.openfact.provider.SingleProviderType;
 import org.openfact.ubl.UBLSigner;
@@ -72,13 +73,13 @@ public class SunatSignerProvider implements UBLSigner {
             }
             return newdocument;
         } catch (NoSuchAlgorithmException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         } catch (InvalidAlgorithmParameterException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         } catch (MarshalException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         } catch (XMLSignatureException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 

@@ -1,7 +1,6 @@
 package org.openfact.pe.ubl.ubl21.factories;
 
-
-import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionFactory;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
@@ -38,7 +37,7 @@ public class SunatTypeToDocument {
             Document document = element.getOwnerDocument();
             return document;
         } catch (FactoryConfigurationError e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -59,7 +58,7 @@ public class SunatTypeToDocument {
             return document;
 
         } catch (FactoryConfigurationError e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -80,7 +79,7 @@ public class SunatTypeToDocument {
             Document document = element.getOwnerDocument();
             return document;
         } catch (FactoryConfigurationError e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -100,7 +99,7 @@ public class SunatTypeToDocument {
             Document document = element.getOwnerDocument();
             return document;
         } catch (FactoryConfigurationError e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 }

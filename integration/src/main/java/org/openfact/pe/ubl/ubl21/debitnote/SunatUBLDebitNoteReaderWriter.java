@@ -8,6 +8,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
 import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.debitnote.UBLDebitNoteReaderWriter;
@@ -47,7 +48,7 @@ public class SunatUBLDebitNoteReaderWriter implements UBLDebitNoteReaderWriter {
 
                 return DocumentUtils.byteToDocument(out.toByteArray());
             } catch (Exception e) {
-                throw new ModelException(e);
+                throw new ModelRuntimeException(e);
             }
         };
     }

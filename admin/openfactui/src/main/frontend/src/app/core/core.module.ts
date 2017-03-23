@@ -11,6 +11,7 @@ import {
   TiposRegimenPercepcionResolverService,
   TiposRegimenRetencionResolverService,
 } from './resolvers/generic-type-resolver.service';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { KEYCLOAK_HTTP_PROVIDER, KeycloakHttp } from './keycloak.http';
 
 import { AlertComponent } from './alert/alert.component';
@@ -31,7 +32,6 @@ import { InvoiceService } from './data/invoice.service';
 import { KeycloakService } from './keycloak.service';
 import { LoadingComponent } from './loading/loading.component';
 import { LoadingService } from './loading/loading.service';
-import { NgModule } from '@angular/core';
 import { OrganizationComponentResolverService } from './resolvers/organization-component-resolver.service';
 import { OrganizationKeyResolverService } from './resolvers/organization-key-resolver.service';
 import { OrganizationResolverService } from './resolvers/organization-resolver.service';

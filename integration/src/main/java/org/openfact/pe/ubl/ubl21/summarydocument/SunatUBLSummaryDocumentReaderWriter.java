@@ -2,6 +2,7 @@ package org.openfact.pe.ubl.ubl21.summarydocument;
 
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.pe.ubl.ubl21.factories.SunatDocumentToType;
 import org.openfact.pe.ubl.ubl21.factories.SunatTypeToDocument;
 import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
@@ -31,7 +32,7 @@ public class SunatUBLSummaryDocumentReaderWriter implements UBLSummaryDocumentRe
                     Document document = DocumentUtils.byteToDocument(bytes);
                     return read(document);
                 } catch (Exception e) {
-                    throw new ModelException(e);
+                    throw new ModelRuntimeException(e);
                 }
             }
         };
@@ -43,7 +44,7 @@ public class SunatUBLSummaryDocumentReaderWriter implements UBLSummaryDocumentRe
             try {
                 return SunatTypeToDocument.toDocument(organization, summaryDocumentsType);
             } catch (JAXBException e) {
-                throw new ModelException(e);
+                throw new ModelRuntimeException(e);
             }
         };
     }

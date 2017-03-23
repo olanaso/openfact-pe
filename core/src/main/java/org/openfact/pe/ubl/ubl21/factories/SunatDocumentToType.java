@@ -1,6 +1,6 @@
 package org.openfact.pe.ubl.ubl21.factories;
 
-import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionFactory;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
 import org.openfact.pe.ubl.ubl21.retention.RetentionFactory;
@@ -28,7 +28,7 @@ public class SunatDocumentToType {
             VoidedDocumentsType voidedDocumentsType = jaxbVoidedDocumentsType.getValue();
             return voidedDocumentsType;
         } catch (JAXBException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -42,7 +42,7 @@ public class SunatDocumentToType {
             RetentionType retentionType = jaxbRetentionType.getValue();
             return retentionType;
         } catch (JAXBException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -56,7 +56,7 @@ public class SunatDocumentToType {
             SummaryDocumentsType summaryDocumentsType = jaxbSummaryDocumentsType.getValue();
             return summaryDocumentsType;
         } catch (JAXBException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 
@@ -71,7 +71,7 @@ public class SunatDocumentToType {
             PerceptionType perceptionType = jaxbPerceptionType.getValue();
             return perceptionType;
         } catch (JAXBException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 }

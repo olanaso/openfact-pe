@@ -8,6 +8,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.pe.ubl.ubl21.factories.SunatMarshallerUtils;
 import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.creditnote.UBLCreditNoteReaderWriter;
@@ -47,7 +48,7 @@ public class SunatUBLCreditNoteReaderWriter implements UBLCreditNoteReaderWriter
 
                 return DocumentUtils.byteToDocument(out.toByteArray());
             } catch (Exception e) {
-                throw new ModelException(e);
+                throw new ModelRuntimeException(e);
             }
         };
     }

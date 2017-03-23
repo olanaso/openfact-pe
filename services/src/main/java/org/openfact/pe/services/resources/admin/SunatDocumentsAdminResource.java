@@ -27,19 +27,17 @@ import org.openfact.pe.ubl.types.SunatDocumentType;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
 import org.openfact.pe.ubl.ubl21.retention.RetentionType;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
-import org.openfact.pe.ws.sunat.SunatSender;
 import org.openfact.services.ErrorResponse;
+import org.openfact.services.ModelErrorResponseException;
 import org.openfact.services.managers.DocumentManager;
 import org.openfact.services.managers.EventStoreManager;
 import org.openfact.services.managers.OrganizationManager;
-import org.openfact.services.resource.OrganizationAdminResourceProvider;
 import org.openfact.services.resource.security.OrganizationAuth;
 import org.openfact.services.resource.security.Resource;
 import org.openfact.services.resource.security.SecurityContextProvider;
 import org.openfact.services.resources.admin.AdminEventBuilder;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReaderWriter;
-import org.openfact.ubl.UBLSigner;
 import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.Stateless;
@@ -107,6 +105,21 @@ public class SunatDocumentsAdminResource {
         return organization;
     }
 
+    private boolean validateOrganizationInfo(OrganizationModel organization) {
+        if (organization.getAdditionalAccountId() == null || organization.getAdditionalAccountId().trim().isEmpty()
+                || organization.getAssignedIdentificationId() == null || organization.getAssignedIdentificationId().trim().isEmpty()
+                || organization.getRegistrationName() == null || organization.getRegistrationName().trim().isEmpty()
+                || organization.getStreetName() == null || organization.getStreetName().trim().isEmpty()
+                || organization.getCitySubdivisionName() == null || organization.getCitySubdivisionName().trim().isEmpty()
+                || organization.getCityName() == null || organization.getCityName().trim().isEmpty()
+                || organization.getCountrySubentity() == null || organization.getCountrySubentity().trim().isEmpty()
+                || organization.getDistrict() == null || organization.getDistrict().trim().isEmpty()
+                || organization.getCountryIdentificationCode() == null || organization.getCountryIdentificationCode().trim().isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
     private DocumentModel getDocument(String documentIdPk, OrganizationModel organization) {
         DocumentModel document = documentManager.getDocumentById(documentIdPk, organization);
         if (document == null) {
@@ -127,20 +140,20 @@ public class SunatDocumentsAdminResource {
         return new AdminEventBuilder(organization, securityContext.getClientUser(session), session, clientConnection).resource(ResourceType.DOCUMENT);
     }
 
-    private void checkSerieAndNumber(String serie, String numero, String documentType, OrganizationModel organization) throws ModelRollbackException {
+    private void checkSerieAndNumber(String serie, String numero, String documentType, OrganizationModel organization) throws ModelErrorResponseException {
         if (serie != null || numero != null) {
             if (serie != null && numero != null) {
                 // Double-check duplicated documentId
                 if (documentManager.getDocumentByTypeAndDocumentId(documentType, serie + "-" + numero, organization) != null) {
-                    throw new ModelRollbackException("Document exists with same documentId", Response.Status.CONFLICT);
+                    throw new ModelErrorResponseException("Document exists with same documentId", Response.Status.CONFLICT);
                 }
             } else {
-                throw new ModelRollbackException("Invalid number and/or serie", Response.Status.BAD_REQUEST);
+                throw new ModelErrorResponseException("Invalid number and/or serie", Response.Status.BAD_REQUEST);
             }
         }
     }
 
-    private void sendDocumentToCustomer(OrganizationModel organization, DocumentModel document) throws ModelRollbackException {
+    private void sendDocumentToCustomer(OrganizationModel organization, DocumentModel document) throws ModelErrorResponseException {
         try {
             documentManager.sendToCustomerParty(organization, document);
         } catch (ModelInsuficientData e) {
@@ -155,16 +168,16 @@ public class SunatDocumentsAdminResource {
         }
     }
 
-    private void sendDocumentToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelRollbackException {
+    private void sendDocumentToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelErrorResponseException {
         try {
             documentManager.sendToThirdParty(organization, document);
         } catch (ModelInsuficientData e) {
-            throw new ModelRollbackException(e.getMessage(), Response.Status.BAD_REQUEST);
+            throw new ModelErrorResponseException(e.getMessage(), Response.Status.BAD_REQUEST);
         } catch (SendEventException e) {
             if (e instanceof SunatSendEventException) {
-                throw new ModelRollbackException(e.getMessage(), Response.Status.BAD_REQUEST);
+                throw new ModelErrorResponseException(e.getMessage(), Response.Status.BAD_REQUEST);
             } else {
-                throw new ModelRollbackException("Could not send to sunat", Response.Status.INTERNAL_SERVER_ERROR);
+                throw new ModelErrorResponseException("Could not send to sunat", Response.Status.INTERNAL_SERVER_ERROR);
             }
         }
     }
@@ -182,7 +195,7 @@ public class SunatDocumentsAdminResource {
         UBLReaderWriter<T> readerWriter = (UBLReaderWriter<T>) ublUtil.getReaderWriter(provider, documentType).reader();
         T t = readerWriter.reader().read(bytes);
         if (t == null) {
-            throw new ModelException("Could not read file");
+            throw new ModelRuntimeException("Could not read file");
         }
         return t;
     }
@@ -220,12 +233,16 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/invoices")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createInvoice(@Valid final DocumentRepresentation rep) throws ModelRollbackException {
+    public Response createInvoice(@Valid final DocumentRepresentation rep) throws ModelErrorResponseException, ModelException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
         auth.requireManage();
         checkSerieAndNumber(rep.getSerie(), rep.getNumero(), DocumentType.INVOICE.toString(), organization);
+
+        if (!validateOrganizationInfo(organization)) {
+            throw new ModelErrorResponseException("Datos de organizacion insuficientes", Response.Status.BAD_REQUEST);
+        }
 
         try {
             InvoiceType invoiceType = representationToType.toInvoiceType(organization, rep);
@@ -255,21 +272,25 @@ public class SunatDocumentsAdminResource {
                     .getEvent());
             return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
         } catch (ModelDuplicateException e) {
-            throw new ModelRollbackException("Invoice exists with same documentId", Response.Status.CONFLICT);
+            throw new ModelErrorResponseException("Invoice exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
-            throw new ModelRollbackException("Invoice could not be created", Response.Status.INTERNAL_SERVER_ERROR);
+            throw new ModelErrorResponseException("Invoice could not be created", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @POST
     @Path("/documents/credit-notes")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createCreditNote(@Valid final DocumentRepresentation rep) throws ModelRollbackException {
+    public Response createCreditNote(@Valid final DocumentRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
         auth.requireManage();
         checkSerieAndNumber(rep.getSerie(), rep.getNumero(), DocumentType.CREDIT_NOTE.toString(), organization);
+
+        if (!validateOrganizationInfo(organization)) {
+            throw new ModelErrorResponseException("Datos de organizacion insuficientes", Response.Status.BAD_REQUEST);
+        }
 
         try {
             CreditNoteType creditNoteType = representationToType.toCreditNoteType(organization, rep);
@@ -299,21 +320,25 @@ public class SunatDocumentsAdminResource {
                     .getEvent());
             return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
         } catch (ModelDuplicateException e) {
-            throw new ModelRollbackException("Credit note exists with same documentId", Response.Status.CONFLICT);
+            throw new ModelErrorResponseException("Credit note exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
-            throw new ModelRollbackException("Credit note could not be created", Response.Status.INTERNAL_SERVER_ERROR);
+            throw new ModelErrorResponseException("Credit note could not be created", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @POST
     @Path("/documents/debit-notes")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createDebitNote(@Valid final DocumentRepresentation rep) throws ModelRollbackException {
+    public Response createDebitNote(@Valid final DocumentRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
         auth.requireManage();
         checkSerieAndNumber(rep.getSerie(), rep.getNumero(), DocumentType.DEBIT_NOTE.toString(), organization);
+
+        if (!validateOrganizationInfo(organization)) {
+            throw new ModelErrorResponseException("Datos de organizacion insuficientes", Response.Status.BAD_REQUEST);
+        }
 
         try {
             DebitNoteType debitNoteType = representationToType.toDebitNoteType(organization, rep);
@@ -343,9 +368,9 @@ public class SunatDocumentsAdminResource {
                     .getEvent());
             return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
         } catch (ModelDuplicateException e) {
-            throw new ModelRollbackException("Debit note exists with same documentId", Response.Status.CONFLICT);
+            throw new ModelErrorResponseException("Debit note exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
-            throw new ModelRollbackException("Debit note could not be created", Response.Status.INTERNAL_SERVER_ERROR);
+            throw new ModelErrorResponseException("Debit note could not be created", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -353,7 +378,7 @@ public class SunatDocumentsAdminResource {
     @Path("/documents/extensions/upload/perceptions")
     @Consumes("multipart/form-data")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadPerception(final MultipartFormDataInput input) throws ModelRollbackException {
+    public Response uploadPerception(final MultipartFormDataInput input) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -380,11 +405,11 @@ public class SunatDocumentsAdminResource {
                         .getEvent());
             } catch (IOException e) {
                 logger.error("Error reading input data", e);
-                throw new ModelRollbackException("Error Reading data", Response.Status.BAD_REQUEST);
+                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
             } catch (ModelDuplicateException e) {
-                throw new ModelRollbackException("Perception exists with same documentId");
+                throw new ModelErrorResponseException("Perception exists with same documentId");
             } catch (ModelException e) {
-                throw new ModelRollbackException("Could not create document");
+                throw new ModelErrorResponseException("Could not create document");
             }
         }
 
@@ -395,7 +420,7 @@ public class SunatDocumentsAdminResource {
     @Path("/documents/extensions/upload/retentions")
     @Consumes("multipart/form-data")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadRetention(final MultipartFormDataInput input) throws ModelRollbackException {
+    public Response uploadRetention(final MultipartFormDataInput input) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -422,11 +447,11 @@ public class SunatDocumentsAdminResource {
                         .getEvent());
             } catch (IOException e) {
                 logger.error("Error reading input data", e);
-                throw new ModelRollbackException("Error Reading data", Response.Status.BAD_REQUEST);
+                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
             } catch (ModelDuplicateException e) {
-                throw new ModelRollbackException("Retention exists with same documentId");
+                throw new ModelErrorResponseException("Retention exists with same documentId");
             } catch (ModelException e) {
-                throw new ModelRollbackException("Could not create document");
+                throw new ModelErrorResponseException("Could not create document");
             }
         }
 
@@ -437,7 +462,7 @@ public class SunatDocumentsAdminResource {
     @Path("/documents/extensions/upload/voided-documents")
     @Consumes("multipart/form-data")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadVoidedDocument(final MultipartFormDataInput input) throws ModelRollbackException {
+    public Response uploadVoidedDocument(final MultipartFormDataInput input) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -464,11 +489,11 @@ public class SunatDocumentsAdminResource {
                         .getEvent());
             } catch (IOException e) {
                 logger.error("Error reading input data", e);
-                throw new ModelRollbackException("Error Reading data", Response.Status.BAD_REQUEST);
+                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
             } catch (ModelDuplicateException e) {
-                throw new ModelRollbackException("Retention exists with same documentId");
+                throw new ModelErrorResponseException("Retention exists with same documentId");
             } catch (ModelException e) {
-                throw new ModelRollbackException("Could not create document");
+                throw new ModelErrorResponseException("Could not create document");
             }
         }
 
@@ -478,12 +503,16 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/extensions/perceptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPerception(DocumentoSunatRepresentation rep) throws ModelRollbackException {
+    public Response createPerception(DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
         auth.requireManage();
         checkSerieAndNumber(rep.getSerieDocumento(), rep.getNumeroDocumento(), SunatDocumentType.PERCEPTION.toString(), organization);
+
+        if (!validateOrganizationInfo(organization)) {
+            throw new ModelErrorResponseException("Datos de organizacion insuficientes", Response.Status.BAD_REQUEST);
+        }
 
         try {
             PerceptionType perceptionType = representationToType.toPerceptionType(organization, rep);
@@ -506,21 +535,25 @@ public class SunatDocumentsAdminResource {
                     .getEvent());
             return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
         } catch (ModelDuplicateException e) {
-            throw new ModelRollbackException("Perception exists with same documentId", Response.Status.CONFLICT);
+            throw new ModelErrorResponseException("Perception exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
-            throw new ModelRollbackException("Perception could not be created", Response.Status.INTERNAL_SERVER_ERROR);
+            throw new ModelErrorResponseException("Perception could not be created", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @POST
     @Path("/documents/extensions/retentions")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createRetention(DocumentoSunatRepresentation rep) throws ModelRollbackException {
+    public Response createRetention(DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
         auth.requireManage();
         checkSerieAndNumber(rep.getSerieDocumento(), rep.getNumeroDocumento(), SunatDocumentType.RETENTION.toString(), organization);
+
+        if (!validateOrganizationInfo(organization)) {
+            throw new ModelErrorResponseException("Datos de organizacion insuficientes", Response.Status.BAD_REQUEST);
+        }
 
         try {
             RetentionType retentionType = representationToType.toRetentionType(organization, rep);
@@ -543,21 +576,25 @@ public class SunatDocumentsAdminResource {
                     .getEvent());
             return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
         } catch (ModelDuplicateException e) {
-            throw new ModelRollbackException("Perception exists with same documentId", Response.Status.CONFLICT);
+            throw new ModelErrorResponseException("Perception exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
-            throw new ModelRollbackException("Perception could not be created", Response.Status.INTERNAL_SERVER_ERROR);
+            throw new ModelErrorResponseException("Perception could not be created", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @POST
     @Path("/documents/extensions/voided-documents")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createRetention(VoidedRepresentation rep) throws ModelRollbackException {
+    public Response createRetention(VoidedRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
         auth.requireManage();
         checkSerieAndNumber(rep.getSerieDocumento(), rep.getNumeroDocumento(), SunatDocumentType.VOIDED_DOCUMENTS.toString(), organization);
+
+        if (!validateOrganizationInfo(organization)) {
+            throw new ModelErrorResponseException("Datos de organizacion insuficientes", Response.Status.BAD_REQUEST);
+        }
 
         try {
             VoidedDocumentsType voidedDocumentsType = representationToType.toVoidedDocumentType(organization, rep);
@@ -580,17 +617,16 @@ public class SunatDocumentsAdminResource {
                     .getEvent());
             return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
         } catch (ModelDuplicateException e) {
-            throw new ModelRollbackException("Perception exists with same documentId", Response.Status.CONFLICT);
+            throw new ModelErrorResponseException("Perception exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
-            throw new ModelRollbackException("Perception could not be created", Response.Status.INTERNAL_SERVER_ERROR);
+            throw new ModelErrorResponseException("Perception could not be created", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GET
     @Path("/documents/{documentId}/cdr")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getCdr(
-            @PathParam("documentId") final String documentIdPk) {
+    public Response getCdr(@PathParam("documentId") final String documentIdPk) {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 

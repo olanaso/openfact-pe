@@ -2,6 +2,7 @@ package org.openfact.pe.ubl.ubl21.retention;
 
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.pe.ubl.ubl21.factories.SunatDocumentToType;
 import org.openfact.pe.ubl.ubl21.factories.SunatTypeToDocument;
 import org.openfact.provider.ProviderType;
@@ -30,7 +31,7 @@ public class SunatUBLRetentionReaderWriter implements UBLRetentionReaderWriter {
                     Document document = DocumentUtils.byteToDocument(bytes);
                     return read(document);
                 } catch (Exception e) {
-                    throw new ModelException(e);
+                    throw new ModelRuntimeException(e);
                 }
             }
         };
@@ -42,7 +43,7 @@ public class SunatUBLRetentionReaderWriter implements UBLRetentionReaderWriter {
             try {
                 return SunatTypeToDocument.toDocument(organization, retentionType);
             } catch (JAXBException e) {
-                throw new ModelException(e);
+                throw new ModelRuntimeException(e);
             }
         };
     }

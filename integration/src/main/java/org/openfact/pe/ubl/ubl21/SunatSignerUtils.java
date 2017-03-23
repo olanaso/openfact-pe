@@ -3,6 +3,7 @@ package org.openfact.pe.ubl.ubl21;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.KeyManager;
 import org.openfact.models.ModelException;
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.ubl.UBLSigner;
@@ -85,15 +86,15 @@ public class SunatSignerUtils {
             xmlSignature.sign(domSignCtx);
             return document;
         } catch (NoSuchAlgorithmException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         } catch (InvalidAlgorithmParameterException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         } catch (MarshalException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         } catch (XMLSignatureException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         } catch (ParserConfigurationException e) {
-            throw new ModelException(e);
+            throw new ModelRuntimeException(e);
         }
     }
 }

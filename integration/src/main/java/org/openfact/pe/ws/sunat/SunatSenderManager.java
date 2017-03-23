@@ -32,9 +32,6 @@ public class SunatSenderManager {
     @Inject
     private FileProvider fileProvider;
 
-    @WebServiceRef()
-    private BillService service;
-
     public SendEventModel sendBillAddress1(OrganizationModel organization, DocumentModel document, String fileName) throws ModelInsuficientData, SendEventException {
         return sendBill(organization, document, fileName, organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1));
     }
@@ -108,32 +105,12 @@ public class SunatSenderManager {
                     .save()
                     .toBytes();
 
-            pe.gob.sunat.service.BillService port = service.getBillServicePort();
-            //configureTimeout(port);
 
-            BindingProvider bp = (BindingProvider) port;
-            configureAddress(bp, sunatAddress);
-//            configureUser(bp, sunatUsername, sunatPassword);
-            service.setHandlerResolver(new HandlerResolver() {
-                @Override
-                public List<Handler> getHandlerChain(PortInfo portInfo) {
-                    List<Handler> handlerList = new ArrayList<>();
-                    handlerList.add(new UsernameTokenCallbackHandler(sunatUsername, sunatPassword));
-                    return handlerList;
-                }
-            });
-
-
-            DataSource dataSource = new ByteArrayDataSource(zipFile, InternetMediaType.ZIP.getMimeType());
-            DataHandler dataHandler = new DataHandler(dataSource);
-            byte[] response = port.sendBill(zipFileName, dataHandler);
-
-//            Map<String, String> config = SunatSender.buildConfig()
-//                    .address(sunatAddress)
-//                    .username(sunatUsername)
-//                    .password(sunatPassword).build();
-//
-//            byte[] response = new SunatSender().sendBill(config, zipFile, zipFileName, InternetMediaType.ZIP);
+            Map<String, String> config = SunatSender.buildConfig()
+                    .address(sunatAddress)
+                    .username(sunatUsername)
+                    .password(sunatPassword).build();
+            byte[] response = new SunatSender().sendBill(config, zipFile, zipFileName, InternetMediaType.ZIP);
 
             SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
             sendEvent.setResult(SendEventStatus.SUCCESS);

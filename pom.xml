@@ -12,7 +12,8 @@
 
     <properties>
         <product.name>Openfact PE</product.name>
-        <product.name-html>\u003Cdiv class="of-logo-text"\u003E\u003Cspan\u003EOpenfact PE\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E
+        <product.name-html>\u003Cdiv class="of-logo-text"\u003E\u003Cspan\u003EOpenfact
+            PE\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E
         </product.name-html>
         <product.version>${project.version}</product.version>
         <product.build-time>${timestamp}</product.build-time>
@@ -286,34 +287,6 @@
                 <version>${version.deltaspike}</version>
             </dependency>
 
-            <!--Jasper Reports-->
-            <dependency>
-                <groupId>net.sf.barcode4j</groupId>
-                <artifactId>barcode4j</artifactId>
-                <version>${version.barcode4j}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.xmlgraphics</groupId>
-                <artifactId>batik-bridge</artifactId>
-                <version>${version.batik}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xmlgraphics</groupId>
-                <artifactId>batik-dom</artifactId>
-                <version>${version.batik}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xmlgraphics</groupId>
-                <artifactId>batik-svg-dom</artifactId>
-                <version>${version.batik}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xmlgraphics</groupId>
-                <artifactId>xmlgraphics-commons</artifactId>
-                <version>${version.xmlgraphics-commons}</version>
-            </dependency>
-
             <!--Apache JXF-->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -375,6 +348,12 @@
             </dependency>
 
             <!--Jasper Reports-->
+            <dependency>
+                <groupId>net.sf.barcode4j</groupId>
+                <artifactId>barcode4j</artifactId>
+                <version>${version.barcode4j}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-bridge</artifactId>

@@ -3,7 +3,7 @@ package org.openfact.pe.ws.sunat;
 import org.openfact.models.types.InternetMediaType;
 import org.openfact.pe.ws.ServiceConfigurationException;
 import org.openfact.pe.ws.ServiceWrapper;
-import org.openfact.pe.ws.sunat.services.BillService;
+import pe.gob.sunat.service.BillService;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;

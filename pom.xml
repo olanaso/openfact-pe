@@ -78,6 +78,9 @@
         <version.jasperreports.fonts>6.0.0</version.jasperreports.fonts>
         <version.barcode4j>2.1</version.barcode4j>
 
+        <version.batik>1.8</version.batik>
+        <version.xmlgraphics-commons>2.1</version.xmlgraphics-commons>
+
         <!--zip builder-->
         <version.jodd-core>3.8.1</version.jodd-core>
 
@@ -281,6 +284,34 @@
                 <groupId>org.apache.deltaspike.core</groupId>
                 <artifactId>deltaspike-core-api</artifactId>
                 <version>${version.deltaspike}</version>
+            </dependency>
+
+            <!--Jasper Reports-->
+            <dependency>
+                <groupId>net.sf.barcode4j</groupId>
+                <artifactId>barcode4j</artifactId>
+                <version>${version.barcode4j}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-bridge</artifactId>
+                <version>${version.batik}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-dom</artifactId>
+                <version>${version.batik}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-svg-dom</artifactId>
+                <version>${version.batik}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>xmlgraphics-commons</artifactId>
+                <version>${version.xmlgraphics-commons}</version>
             </dependency>
 
             <!--Apache JXF-->

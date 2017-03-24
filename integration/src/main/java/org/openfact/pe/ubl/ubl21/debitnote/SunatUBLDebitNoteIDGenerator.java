@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 @Stateless
 @ProviderType("sunat")
-@UBLDocumentType("CREDIT_NOTE")
+@UBLDocumentType("DEBIT_NOTE")
 public class SunatUBLDebitNoteIDGenerator extends AbstractDebitNoteProvider implements UBLDebitNoteIDGenerator {
 
     @Inject

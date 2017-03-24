@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 @Stateless
 @ProviderType("sunat")
-@UBLDocumentType("RETENTION")
+@UBLDocumentType("SUMMARY_DOCUMENTS")
 public class SunatUBLSummaryDocumentThirdPartySender implements UBLThirdPartySender {
 
     @Inject

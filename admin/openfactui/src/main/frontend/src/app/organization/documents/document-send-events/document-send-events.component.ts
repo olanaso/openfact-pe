@@ -22,7 +22,7 @@ export class DocumentSendEventsComponent implements OnInit, OnDestroy {
   document: Document;
   sendEvents: Array<any>;
 
-  selectedDestinyType = 'CUSTOMER';
+  selectedDestinyType = 'THIRD_PARTY';
   destinyType = [
     { denomination: 'to-customer', value: 'CUSTOMER' },
     { denomination: 'to-third-party', value: 'THIRD_PARTY' },

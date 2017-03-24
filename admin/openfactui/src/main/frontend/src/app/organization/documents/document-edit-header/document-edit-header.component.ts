@@ -63,6 +63,9 @@ export class DocumentEditHeaderComponent implements OnInit {
   @Input()
   enableCheckTicket = false;
 
+  @Input()
+  documentNumberOfParents: number;
+
   thirdPartyByEmail: any = {};
   isAttatchedDocumentsCollapsed: boolean;
   isAttributesCollapsed: boolean;
@@ -151,16 +154,42 @@ export class DocumentEditHeaderComponent implements OnInit {
   }
 
   attachCreditNote() {
-    this.router.navigate(['../../credit-notes', 'create', { invoice: this.document.documentId }], { relativeTo: this.route });
+    let base = 'credit-notes';
+    if (this.documentNumberOfParents) {
+      for (let i = 0; i < this.documentNumberOfParents; i++) {
+        base = '../' + base;
+      }
+    } else {
+      base = '../../' + base;
+    }
+
+    this.router.navigate([base, 'create', { invoice: this.document.documentId }], { relativeTo: this.route });
   }
 
   attachDebitNote() {
-    this.router.navigate(['../../debit-notes', 'create', { invoice: this.document.documentId }], { relativeTo: this.route });
+    let base = 'debit-notes';
+    if (this.documentNumberOfParents) {
+      for (let i = 0; i < this.documentNumberOfParents; i++) {
+        base = '../' + base;
+      }
+    } else {
+      base = '../../' + base;
+    }
+
+    this.router.navigate([base, 'create', { invoice: this.document.documentId }], { relativeTo: this.route });
   }
 
   maskAsVoided() {
+    let base = 'voided-documents';
+    if (this.documentNumberOfParents) {
+      for (let i = 0; i < this.documentNumberOfParents; i++) {
+        base = '../' + base;
+      }
+    } else {
+      base = '../../' + base;
+    }
     this.router.navigate(
-      ['../../voided-documents', 'create', { document: this.document.documentId, type: this.document.documentType }],
+      [base, 'create', { document: this.document.documentId, type: this.document.documentType }],
       { relativeTo: this.route }
     );
   }
@@ -170,7 +199,17 @@ export class DocumentEditHeaderComponent implements OnInit {
       (result) => {
         this.document.delete().subscribe((data) => {
           this.alertService.pop('success', 'Success', 'Success! Document deleted successfully.');
-          this.router.navigate(['../'], { relativeTo: this.route });
+
+          let base = '';
+          if (this.documentNumberOfParents) {
+            for (let i = 0; i < this.documentNumberOfParents; i++) {
+              base = '../' + base;
+            }
+            base = base + this.documentType + 's';
+          } else {
+            base = '../' + base;
+          }
+          this.router.navigate([base], { relativeTo: this.route });
         });
       },
       (cancel) => { }

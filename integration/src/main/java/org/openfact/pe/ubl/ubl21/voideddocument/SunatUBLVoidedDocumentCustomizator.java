@@ -3,6 +3,7 @@ package org.openfact.pe.ubl.ubl21.voideddocument;
 import org.openfact.models.DocumentModel;
 import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Stateless
-@ProviderType("default")
+@ProviderType("sunat")
 @UBLDocumentType("VOIDED_DOCUMENTS")
 public class SunatUBLVoidedDocumentCustomizator extends AbstractVoidedDocumentProvider implements UBLVoidedDocumentCustomizator {
 
@@ -48,4 +49,10 @@ public class SunatUBLVoidedDocumentCustomizator extends AbstractVoidedDocumentPr
             });
         }
     }
+
+    @Override
+    public DocumentRequiredAction[] getRequiredActions() {
+        return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_CUSTOMER, DocumentRequiredAction.SEND_TO_THIRD_PARTY};
+    }
+
 }

@@ -47,5 +47,29 @@
     "idGenerator": "sunat",
     "modelCustomization": "sunat",
     "thirdPartySender": "sunat"
+  },
+  "voided_documents": {
+    "readerWriter": "sunat",
+    "idGenerator": "sunat",
+    "modelCustomization": "sunat",
+    "thirdPartySender": "sunat"
+  },
+  "perception": {
+    "readerWriter": "sunat",
+    "idGenerator": "sunat",
+    "modelCustomization": "sunat",
+    "thirdPartySender": "sunat"
+  },
+  "retention": {
+    "readerWriter": "sunat",
+    "idGenerator": "sunat",
+    "modelCustomization": "sunat",
+    "thirdPartySender": "sunat"
+  },
+  "summary_documents": {
+    "readerWriter": "sunat",
+    "idGenerator": "sunat",
+    "modelCustomization": "sunat",
+    "thirdPartySender": "sunat"
   }
 }

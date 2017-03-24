@@ -4,6 +4,7 @@ import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import org.openfact.models.DocumentModel;
 import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.models.types.DocumentType;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.provider.ProviderType;
@@ -14,7 +15,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 @Stateless
-@ProviderType("default")
+@ProviderType("sunat")
 @UBLDocumentType("DEBIT_NOTE")
 public class SunatUBLDebitNoteCustomizator extends AbstractDebitNoteProvider implements UBLDebitNoteCustomizator {
 
@@ -42,5 +43,10 @@ public class SunatUBLDebitNoteCustomizator extends AbstractDebitNoteProvider imp
                         }
                     });
         }
+    }
+
+    @Override
+    public DocumentRequiredAction[] getRequiredActions() {
+        return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_CUSTOMER, DocumentRequiredAction.SEND_TO_THIRD_PARTY};
     }
 }

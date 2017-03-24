@@ -4,6 +4,7 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import org.openfact.models.DocumentModel;
 import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.models.types.DocumentType;
 import org.openfact.models.utils.TypeToModel;
 import org.openfact.provider.ProviderType;
@@ -43,4 +44,10 @@ public class SunatUBLCreditNoteCustomizator extends AbstractCreditNoteProvider i
                     });
         }
     }
+
+    @Override
+    public DocumentRequiredAction[] getRequiredActions() {
+        return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_CUSTOMER, DocumentRequiredAction.SEND_TO_THIRD_PARTY};
+    }
+
 }

@@ -3,6 +3,7 @@ package org.openfact.pe.ubl.ubl21.retention;
 import org.openfact.models.DocumentModel;
 import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.provider.ProviderType;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Stateless
-@ProviderType("default")
+@ProviderType("sunat")
 @UBLDocumentType("RETENTION")
 public class SunatUBLRetentionCustomizator extends AbstractRetentionProvider implements UBLRetentionCustomizator {
 
@@ -47,4 +48,10 @@ public class SunatUBLRetentionCustomizator extends AbstractRetentionProvider imp
             });
         }
     }
+
+    @Override
+    public DocumentRequiredAction[] getRequiredActions() {
+        return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_THIRD_PARTY};
+    }
+
 }

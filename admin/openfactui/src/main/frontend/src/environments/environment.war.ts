@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   keykloakBaseUrl: '/auth',
-  serviceBaseUrl: '/openfact'
+  serviceBaseUrl: '/openfact/rest'
 };

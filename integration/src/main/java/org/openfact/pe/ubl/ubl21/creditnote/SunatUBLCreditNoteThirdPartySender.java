@@ -1,7 +1,7 @@
 package org.openfact.pe.ubl.ubl21.creditnote;
 
 import org.openfact.models.*;
-import org.openfact.models.utils.TypeToModel;
+import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.pe.ubl.types.TipoInvoice;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
 import org.openfact.provider.ProviderType;
@@ -28,19 +28,10 @@ public class SunatUBLCreditNoteThirdPartySender implements UBLThirdPartySender {
         if (organization.getAssignedIdentificationId() == null) {
             throw new ModelInsuficientData("Organization doesn't have assignedIdentificationId");
         }
-
-        String invoiceTypeCode = null;
-        if (document.getFirstAttribute(TypeToModel.INVOICE_TYPE_CODE).equals(TipoInvoice.FACTURA.getCodigo())) {
-            invoiceTypeCode = TipoInvoice.FACTURA.getCodigo();
-        } else if (document.getFirstAttribute(TypeToModel.INVOICE_TYPE_CODE).equals(TipoInvoice.BOLETA.getCodigo())) {
-            invoiceTypeCode = TipoInvoice.BOLETA.getCodigo();
-        } else {
-            throw new ModelInsuficientData("Invoice Type Code invalido");
-        }
-
+        String codigo = TipoComprobante.NOTA_CREDITO.getCodigo();
         StringBuilder sb = new StringBuilder();
         sb.append(organization.getAssignedIdentificationId()).append("-");
-        sb.append(invoiceTypeCode).append("-");
+        sb.append(codigo).append("-");
         sb.append(document.getDocumentId());
         return sb.toString();
     }

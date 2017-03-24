@@ -501,7 +501,7 @@ public class SunatDocumentsAdminResource {
     }
 
     @POST
-    @Path("/documents/extensions/perceptions")
+    @Path("/documents/perceptions")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createPerception(DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
@@ -542,7 +542,7 @@ public class SunatDocumentsAdminResource {
     }
 
     @POST
-    @Path("/documents/extensions/retentions")
+    @Path("/documents/retentions")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createRetention(DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
@@ -583,7 +583,7 @@ public class SunatDocumentsAdminResource {
     }
 
     @POST
-    @Path("/documents/extensions/voided-documents")
+    @Path("/documents/voided-documents")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createRetention(VoidedRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();

@@ -1,5 +1,4 @@
 import { AlertService } from './../alert/alert.service';
-import { BASE_URL } from '../../app.module';
 import { Headers } from '@angular/http';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
@@ -10,9 +9,10 @@ import { Response } from '@angular/http';
 import { RestangularBasePath } from './restangular-base-path';
 import { Router } from '@angular/router';
 import { URLSearchParams } from '@angular/http';
+import { environment } from './../../../environments/environment';
 
 export function RestangularServiceFactory(http: Http, router: Router, alertService: AlertService) {
-  return new RestangularService(http, router, alertService, { url: BASE_URL });
+  return new RestangularService(http, router, alertService, { url: environment.serviceBaseUrl });
 }
 
 @Injectable()

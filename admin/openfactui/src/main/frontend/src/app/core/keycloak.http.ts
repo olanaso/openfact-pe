@@ -53,5 +53,5 @@ export function keycloakHttpFactory(
 export const KEYCLOAK_HTTP_PROVIDER = {
     provide: Http,
     useFactory: keycloakHttpFactory,
-    deps: [XHRBackend, RequestOptions, KeycloakService]
+    deps: [XHRBackend, RequestOptions, KeycloakService, LoadingService]
 };

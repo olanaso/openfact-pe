@@ -15,7 +15,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-debit-note-edit',
   templateUrl: './debit-note-edit.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class DebitNoteEditComponent implements OnInit, OnDestroy {
 

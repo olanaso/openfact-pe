@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 @Component({
   selector: 'of-component-config',
   templateUrl: './component-config.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class ComponentConfigComponent implements OnInit {
 

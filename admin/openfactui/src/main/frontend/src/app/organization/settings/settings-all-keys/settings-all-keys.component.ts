@@ -10,7 +10,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-settings-all-keys',
   templateUrl: './settings-all-keys.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class SettingsAllKeysComponent implements OnInit, OnDestroy {
 

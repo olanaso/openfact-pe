@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'of-button-delete',
   templateUrl: './button-delete.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class ButtonDeleteComponent implements OnInit {
 

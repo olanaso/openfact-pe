@@ -10,7 +10,7 @@ import { findParam } from '../../../core/resolvers/find-param';
 @Component({
   selector: 'of-settings-generic-keystore',
   templateUrl: './settings-generic-keystore.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class SettingsGenericKeystoreComponent implements OnInit, OnDestroy {
 

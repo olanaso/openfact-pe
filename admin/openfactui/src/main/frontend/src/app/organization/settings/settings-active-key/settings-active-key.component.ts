@@ -12,7 +12,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-settings-active-key',
   templateUrl: './settings-active-key.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class SettingsActiveKeyComponent implements OnInit, OnDestroy {
 

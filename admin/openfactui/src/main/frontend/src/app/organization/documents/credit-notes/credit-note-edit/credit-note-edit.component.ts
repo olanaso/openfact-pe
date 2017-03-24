@@ -15,7 +15,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-credit-note-edit',
   templateUrl: './credit-note-edit.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class CreditNoteEditComponent implements OnInit, OnDestroy {
 

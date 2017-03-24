@@ -12,7 +12,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-settings-key-providers',
   templateUrl: './settings-key-providers.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class SettingsKeyProvidersComponent implements OnInit, OnDestroy {
 

@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 @Component({
   selector: 'of-limited-string',
   templateUrl: './limited-string.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class LimitedStringComponent implements OnInit {
 

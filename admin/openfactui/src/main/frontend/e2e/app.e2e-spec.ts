@@ -1,10 +1,10 @@
-import { WebConsolePage } from './app.po';
+import { OpenfactuiPage } from './app.po';
 
-describe('web-console App', () => {
-  let page: WebConsolePage;
+describe('openfactui App', () => {
+  let page: OpenfactuiPage;
 
   beforeEach(() => {
-    page = new WebConsolePage();
+    page = new OpenfactuiPage();
   });
 
   it('should display message saying app works', () => {

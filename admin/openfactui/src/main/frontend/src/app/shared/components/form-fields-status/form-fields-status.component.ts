@@ -4,7 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
 @Component({
   selector: 'of-form-fields-status',
   templateUrl: './form-fields-status.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class FormFieldsStatusComponent implements OnInit {
 

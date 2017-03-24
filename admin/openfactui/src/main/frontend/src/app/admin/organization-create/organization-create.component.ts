@@ -10,7 +10,7 @@ import { Validators } from '@angular/forms';
 @Component({
   selector: 'of-organization-create',
   templateUrl: './organization-create.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class OrganizationCreateComponent implements OnInit {
 

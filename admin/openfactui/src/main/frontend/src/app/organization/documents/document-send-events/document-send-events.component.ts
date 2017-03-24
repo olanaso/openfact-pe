@@ -11,7 +11,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-document-send-events',
   templateUrl: './document-send-events.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class DocumentSendEventsComponent implements OnInit, OnDestroy {
 

@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'of-organization-list',
   templateUrl: './organization-list.component.html',
-  styleUrls: [],
   styles: [`
     .pull-right dropdown-kebab-pf {
       margin-top: 5px;

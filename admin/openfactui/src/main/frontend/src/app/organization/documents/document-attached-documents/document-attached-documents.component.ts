@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs/Subscription';
 @Component({
   selector: 'of-document-attached-documents',
   templateUrl: './document-attached-documents.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class DocumentAttachedDocumentsComponent implements OnInit, OnDestroy {
 

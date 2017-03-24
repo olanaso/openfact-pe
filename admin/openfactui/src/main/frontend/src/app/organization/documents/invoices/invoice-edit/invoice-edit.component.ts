@@ -15,7 +15,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-invoice-edit',
   templateUrl: './invoice-edit.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class InvoiceEditComponent implements OnInit, OnDestroy {
 

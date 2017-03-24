@@ -5,7 +5,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'of-about',
   templateUrl: './about.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class AboutComponent implements OnInit {
 

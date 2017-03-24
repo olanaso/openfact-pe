@@ -1,6 +1,6 @@
 import { browser, element, by } from 'protractor';
 
-export class WebConsolePage {
+export class OpenfactuiPage {
   navigateTo() {
     return browser.get('/');
   }

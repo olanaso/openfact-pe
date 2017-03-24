@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'of-view-key',
   templateUrl: './view-key.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class ViewKeyComponent implements OnInit {
 

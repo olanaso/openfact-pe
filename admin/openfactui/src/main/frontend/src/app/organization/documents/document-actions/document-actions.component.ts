@@ -12,7 +12,7 @@ import { URLSearchParams } from '@angular/http';
 @Component({
   selector: 'of-document-actions',
   templateUrl: './document-actions.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class DocumentActionsComponent implements OnInit {
 

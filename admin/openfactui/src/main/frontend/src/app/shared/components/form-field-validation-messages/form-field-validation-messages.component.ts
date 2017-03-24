@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'of-form-field-validation-messages',
   templateUrl: './form-field-validation-messages.component.html',
-  styleUrls: []
+  styles: [``]
 })
 export class FormFieldValidationMessagesComponent implements OnInit {
 

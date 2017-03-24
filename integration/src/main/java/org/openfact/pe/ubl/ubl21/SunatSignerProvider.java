@@ -1,7 +1,6 @@
 package org.openfact.pe.ubl.ubl21;
 
 import org.openfact.models.KeyManager;
-import org.openfact.models.ModelException;
 import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OrganizationModel;
 import org.openfact.provider.SingleProviderType;
@@ -102,12 +101,34 @@ public class SunatSignerProvider implements UBLSigner {
         Node extensions = nodeList.item(0);
         Node content = null;
         if (extensions != null) {
-            Node extension = document.createElement("ext:UBLExtension");
-            content = document.createElement("ext:ExtensionContent");
-            extension.appendChild(content);
-            extensions.appendChild(extension);
+            NodeList previousSignature = extensions.getOwnerDocument().getElementsByTagName("ds:Signature");
+            if (previousSignature != null && previousSignature.getLength() > 0) {
+                Node previousContent = previousSignature.item(0).getParentNode();
+                removeAll(previousContent);
+                content = previousContent;
+            } else {
+                Node extension = document.createElement("ext:UBLExtension");
+                content = document.createElement("ext:ExtensionContent");
+                extension.appendChild(content);
+                extensions.appendChild(extension);
+            }
         }
         return content;
+    }
+
+    private static void removeAll(Node node) {
+        NodeList childNodes = node.getChildNodes();
+        if (childNodes != null) {
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                Node n = node.getChildNodes().item(i);
+                if (n.hasChildNodes()) {
+                    removeAll(n);
+                    node.removeChild(n);
+                } else {
+                    node.removeChild(n);
+                }
+            }
+        }
     }
 
 }

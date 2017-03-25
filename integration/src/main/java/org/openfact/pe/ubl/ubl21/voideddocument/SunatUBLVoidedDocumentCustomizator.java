@@ -5,6 +5,7 @@ import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.pe.models.utils.SunatTypeToModel;
+import org.openfact.pe.ubl.types.SunatRequiredAction;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.provider.ProviderType;
@@ -53,6 +54,11 @@ public class SunatUBLVoidedDocumentCustomizator extends AbstractVoidedDocumentPr
     @Override
     public DocumentRequiredAction[] getRequiredActions() {
         return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_CUSTOMER, DocumentRequiredAction.SEND_TO_THIRD_PARTY};
+    }
+
+    @Override
+    public String[] getExtraRequiredActions() {
+        return new String[]{SunatRequiredAction.CONSULTAR_TICKET.toString()};
     }
 
 }

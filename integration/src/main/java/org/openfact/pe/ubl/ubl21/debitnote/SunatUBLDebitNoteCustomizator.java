@@ -49,4 +49,10 @@ public class SunatUBLDebitNoteCustomizator extends AbstractDebitNoteProvider imp
     public DocumentRequiredAction[] getRequiredActions() {
         return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_CUSTOMER, DocumentRequiredAction.SEND_TO_THIRD_PARTY};
     }
+
+    @Override
+    public String[] getExtraRequiredActions() {
+        return new String[0];
+    }
+
 }

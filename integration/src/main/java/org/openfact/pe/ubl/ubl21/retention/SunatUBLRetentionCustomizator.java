@@ -54,4 +54,9 @@ public class SunatUBLRetentionCustomizator extends AbstractRetentionProvider imp
         return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_THIRD_PARTY};
     }
 
+    @Override
+    public String[] getExtraRequiredActions() {
+        return new String[0];
+    }
+
 }

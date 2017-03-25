@@ -53,4 +53,10 @@ public class SunatUBLPerceptionCustomizator extends AbstractPerceptionProvider i
     public DocumentRequiredAction[] getRequiredActions() {
         return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_THIRD_PARTY};
     }
+
+    @Override
+    public String[] getExtraRequiredActions() {
+        return new String[0];
+    }
+
 }

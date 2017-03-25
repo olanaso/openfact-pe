@@ -8,19 +8,13 @@ import org.openfact.models.types.SendEventStatus;
 import org.openfact.pe.models.SunatSendEventException;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.ubl.types.SunatCodigoErrores;
+import org.openfact.pe.ws.ServiceConfigurationException;
 import pe.gob.sunat.UsernameTokenCallbackHandler;
-import pe.gob.sunat.servicio.registro.comppago.factura.gem.service.BillService;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.mail.util.ByteArrayDataSource;
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +79,24 @@ public class SunatSenderManager {
         }
     }
 
+    public byte[] checkTicket(OrganizationModel organization, String ticket) throws SunatSendEventException {
+        String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+        String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
+        String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
+
+        Map<String, String> config = SunatSender.buildConfig()
+                .address(sunatAddress)
+                .username(sunatUsername)
+                .password(sunatPassword).build();
+
+        try {
+            byte[] result = new SunatSender().getStatus(config, ticket);
+            return result;
+        } catch (ServiceConfigurationException e) {
+            throw new SunatSendEventException("Ocurrio un error al consultar el numero de ticket");
+        }
+    }
+
     private SendEventModel sendBill(OrganizationModel organization, DocumentModel document, String fileName, String sunatAddress) throws ModelInsuficientData, SendEventException {
         String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
         String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
@@ -135,7 +147,7 @@ public class SunatSenderManager {
 
     private void configureTimeout(pe.gob.sunat.service.BillService port) throws Exception {
         //Set timeout until a connection is established
-        ((BindingProvider)port).getRequestContext().put("javax.xml.ws.client.connectionTimeout", "6000");
+        ((BindingProvider) port).getRequestContext().put("javax.xml.ws.client.connectionTimeout", "6000");
 
         //Set timeout until the response is received
         ((BindingProvider) port).getRequestContext().put("javax.xml.ws.client.receiveTimeout", "1000");

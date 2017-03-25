@@ -35,4 +35,9 @@ public class SunatUBLSummaryDocumentCustomizator extends AbstractSummaryDocument
         return new DocumentRequiredAction[]{DocumentRequiredAction.SEND_TO_THIRD_PARTY};
     }
 
+    @Override
+    public String[] getExtraRequiredActions() {
+        return new String[0];
+    }
+
 }

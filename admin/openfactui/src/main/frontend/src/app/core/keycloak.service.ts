@@ -38,6 +38,7 @@ export class KeycloakService {
           })
           .error(() => {
             reject('Failed to refresh token');
+            window.location.reload();
           });
       } else {
         reject('Not loggen in');

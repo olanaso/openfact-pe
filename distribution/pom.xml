@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>openfact-pe</artifactId>
         <groupId>org.openfact</groupId>
@@ -9,12 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>openfact-pe-admin</artifactId>
-    <name>Openfact PE Admin</name>
+    <artifactId>openfact-pe-distribution</artifactId>
+    <name>Openfact PE Distribution</name>
     <packaging>pom</packaging>
 
     <modules>
-        <!--<module>web-console</module>-->
-        <module>openfactui</module>
+        <module>war</module>
+        <module>wildfly-swarm</module>
     </modules>
+
 </project>

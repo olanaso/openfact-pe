@@ -26,7 +26,7 @@
         <version.jboss.bom>8.2.2.Final</version.jboss.bom>
 
         <!-- Wildfly Swarm -->
-        <version.wildfly.swarm>2017.3.3</version.wildfly.swarm>
+        <version.wildfly.swarm>2017.4.0</version.wildfly.swarm>
 
         <!-- Arquillian -->
         <version.arquillian>1.1.10.Final</version.arquillian>

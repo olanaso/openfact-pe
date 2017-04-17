@@ -517,6 +517,12 @@
                         <skip>true</skip>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>0.20.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -544,4 +550,9 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>docker</id>
+        </profile>
+    </profiles>
 </project>

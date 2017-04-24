@@ -23,7 +23,7 @@ public class WildflySwarmOpenfactConfigResolver implements OpenfactConfigResolve
         } catch (MalformedURLException e) {
             throw new IllegalStateException("Invalid configuration: " + configPath);
         } catch (IOException e) {
-            throw new IllegalStateException("Could not read openfact-server.json file:" + configPath, e);
+            throw new IllegalStateException("Could not read openfact-server-sunat.json file:" + configPath, e);
         }
         return null;
     }
@@ -36,7 +36,7 @@ public class WildflySwarmOpenfactConfigResolver implements OpenfactConfigResolve
                 return externalConfigNote;
             }
 
-            URL resource = Thread.currentThread().getContextClassLoader().getResource("META-INF/openfact-server.json");
+            URL resource = Thread.currentThread().getContextClassLoader().getResource("META-INF/openfact-server-sunat.json");
             if (resource != null) {
                 node = new ObjectMapper().readTree(resource);
             }

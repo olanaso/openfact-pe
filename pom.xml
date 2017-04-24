@@ -19,7 +19,7 @@
         <product.default-profile>community</product.default-profile>
 
         <!-- Openfact Versions -->
-        <openfact.version>1.0-beta-7</openfact.version>
+        <openfact.version>1.0-RC1-SNAPSHOT</openfact.version>
 
         <!--Wildfly-->
         <version.jboss.bom>8.2.2.Final</version.jboss.bom>

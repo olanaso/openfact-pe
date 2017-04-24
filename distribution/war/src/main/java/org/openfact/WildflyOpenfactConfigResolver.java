@@ -16,7 +16,7 @@ public class WildflyOpenfactConfigResolver implements OpenfactConfigResolver {
         try {
             configDir = System.getProperty("jboss.server.config.dir");
             if (configDir != null) {
-                File f = new File(configDir + File.separator + "openfact-server.json");
+                File f = new File(configDir + File.separator + "openfact-server-sunat.json");
                 if (f.isFile()) {
                     return new ObjectMapper().readTree(f);
                 }
@@ -35,7 +35,7 @@ public class WildflyOpenfactConfigResolver implements OpenfactConfigResolver {
                 return externalConfigNote;
             }
 
-            URL resource = Thread.currentThread().getContextClassLoader().getResource("META-INF/openfact-server.json");
+            URL resource = Thread.currentThread().getContextClassLoader().getResource("META-INF/openfact-server-sunat.json");
             if (resource != null) {
                 node = new ObjectMapper().readTree(resource);
             }

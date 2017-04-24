@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.openfact</groupId>
     <artifactId>openfact-pe</artifactId>
-    <version>1.0-beta-7-SNAPSHOT</version>
+    <version>1.0-beta-7</version>
     <packaging>pom</packaging>
 
     <name>Openfact PE</name>
@@ -12,15 +12,14 @@
 
     <properties>
         <product.name>Openfact PE</product.name>
-        <product.name-html>\u003Cdiv class="of-logo-text"\u003E\u003Cspan\u003EOpenfact
-            PE\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E
+        <product.name-html>\u003Cdiv class="of-logo-text"\u003E\u003Cspan\u003EOpenfact PE\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E
         </product.name-html>
         <product.version>${project.version}</product.version>
         <product.build-time>${timestamp}</product.build-time>
         <product.default-profile>community</product.default-profile>
 
         <!-- Openfact Versions -->
-        <openfact.version>1.0-beta-7-SNAPSHOT</openfact.version>
+        <openfact.version>1.0-beta-7</openfact.version>
 
         <!--Wildfly-->
         <version.jboss.bom>8.2.2.Final</version.jboss.bom>

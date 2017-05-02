@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.openfact</groupId>
+    <groupId>org.sistcoop</groupId>
     <artifactId>openfact-pe</artifactId>
     <version>1.0.RC1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -15,11 +15,10 @@
         <product.name-html>\u003Cdiv class="of-logo-text"\u003E\u003Cspan\u003EOpenfact PE\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E
         </product.name-html>
         <product.version>${project.version}</product.version>
-        <product.build-time>${timestamp}</product.build-time>
         <product.default-profile>community</product.default-profile>
 
         <!-- Openfact Versions -->
-        <openfact.version>1.0-RC1-SNAPSHOT</openfact.version>
+        <openfact.version>1.0.RC7</openfact.version>
 
         <!--Wildfly-->
         <version.jboss.bom>8.2.2.Final</version.jboss.bom>
@@ -152,79 +151,79 @@
 
             <!--Openfact Core-->
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-pe-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-pe-integration</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-pe-services</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-pe-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-pe-reports</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- Openfact Core -->
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-core</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-services</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-integration</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-server-spi</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-server-spi-private</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-model-jpa</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-testsuite-integration</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-reports</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-themes</artifactId>
                 <version>${openfact.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.openfact</groupId>
+                <groupId>org.sistcoop</groupId>
                 <artifactId>openfact-web-console</artifactId>
                 <version>${openfact.version}</version>
                 <type>war</type>

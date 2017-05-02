@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>openfact-pe</artifactId>
-        <groupId>org.openfact</groupId>
+        <groupId>org.sistcoop</groupId>
         <version>1.0.RC1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -76,12 +76,12 @@
                     </dependency>
 
                     <dependency>
-                        <groupId>org.openfact</groupId>
+                        <groupId>org.sistcoop</groupId>
                         <artifactId>openfact-integration</artifactId>
                         <version>${openfact.version}</version>
                     </dependency>
                     <dependency>
-                        <groupId>org.openfact</groupId>
+                        <groupId>org.sistcoop</groupId>
                         <artifactId>openfact-pe-integration</artifactId>
                         <version>${project.version}</version>
                     </dependency>

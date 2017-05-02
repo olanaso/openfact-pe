@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>openfact-pe</artifactId>
-        <groupId>org.openfact</groupId>
+        <groupId>org.sistcoop</groupId>
         <version>1.0.RC1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -26,7 +26,7 @@
     <dependencies>
         <!-- Openfact Core -->
         <dependency>
-            <groupId>org.openfact</groupId>
+            <groupId>org.sistcoop</groupId>
             <artifactId>openfact-server-spi-private</artifactId>
         </dependency>
 

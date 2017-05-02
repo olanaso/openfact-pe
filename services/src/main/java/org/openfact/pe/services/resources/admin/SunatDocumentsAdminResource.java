@@ -276,7 +276,7 @@ public class SunatDocumentsAdminResource {
                     .resourcePath(uriInfo, document.getId())
                     .representation(rep)
                     .getEvent());
-            return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
+            return Response.created(location).entity(modelToRepresentation.toRepresentation(document, false)).build();
         } catch (ModelDuplicateException e) {
             throw new ModelErrorResponseException("Invoice exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
@@ -324,7 +324,7 @@ public class SunatDocumentsAdminResource {
                     .resourcePath(uriInfo, document.getId())
                     .representation(rep)
                     .getEvent());
-            return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
+            return Response.created(location).entity(modelToRepresentation.toRepresentation(document, false)).build();
         } catch (ModelDuplicateException e) {
             throw new ModelErrorResponseException("Credit note exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
@@ -372,7 +372,7 @@ public class SunatDocumentsAdminResource {
                     .resourcePath(uriInfo, document.getId())
                     .representation(rep)
                     .getEvent());
-            return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
+            return Response.created(location).entity(modelToRepresentation.toRepresentation(document, false)).build();
         } catch (ModelDuplicateException e) {
             throw new ModelErrorResponseException("Debit note exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
@@ -539,7 +539,7 @@ public class SunatDocumentsAdminResource {
                     .resourcePath(uriInfo, document.getId())
                     .representation(rep)
                     .getEvent());
-            return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
+            return Response.created(location).entity(modelToRepresentation.toRepresentation(document, false)).build();
         } catch (ModelDuplicateException e) {
             throw new ModelErrorResponseException("Perception exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
@@ -580,7 +580,7 @@ public class SunatDocumentsAdminResource {
                     .resourcePath(uriInfo, document.getId())
                     .representation(rep)
                     .getEvent());
-            return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
+            return Response.created(location).entity(modelToRepresentation.toRepresentation(document, false)).build();
         } catch (ModelDuplicateException e) {
             throw new ModelErrorResponseException("Perception exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
@@ -621,7 +621,7 @@ public class SunatDocumentsAdminResource {
                     .resourcePath(uriInfo, document.getId())
                     .representation(rep)
                     .getEvent());
-            return Response.created(location).entity(modelToRepresentation.toRepresentation(document)).build();
+            return Response.created(location).entity(modelToRepresentation.toRepresentation(document, false)).build();
         } catch (ModelDuplicateException e) {
             throw new ModelErrorResponseException("Perception exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {

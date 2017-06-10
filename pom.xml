@@ -45,7 +45,7 @@
         <jboss.logging.tools.version>2.0.1.Final</jboss.logging.tools.version>
 
         <!-- Openfact Versions -->
-        <openfact.version>1.0.RC21</openfact.version>
+        <openfact.version>1.0.RC22</openfact.version>
 
         <!-- Arquillian -->
         <version.arquillian>1.1.10.Final</version.arquillian>

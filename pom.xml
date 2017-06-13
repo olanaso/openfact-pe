@@ -45,7 +45,7 @@
         <jboss.logging.tools.version>2.0.1.Final</jboss.logging.tools.version>
 
         <!-- Openfact Versions -->
-        <openfact.version>1.0.RC22</openfact.version>
+        <openfact.version>1.0.RC23</openfact.version>
 
         <!-- Arquillian -->
         <version.arquillian>1.1.10.Final</version.arquillian>
@@ -133,6 +133,7 @@
         <module>spi</module>
         <module>reports</module>
         <module>distribution</module>
+        <module>client</module>
     </modules>
 
     <dependencyManagement>
@@ -233,6 +234,11 @@
                 <artifactId>openfact-web-console</artifactId>
                 <version>${openfact.version}</version>
                 <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.sistcoop</groupId>
+                <artifactId>openfact-admin-client</artifactId>
+                <version>${openfact.version}</version>
             </dependency>
 
             <!-- Java EE 7 -->

@@ -2,7 +2,7 @@
     <parent>
         <artifactId>openfact-pe</artifactId>
         <groupId>org.sistcoop</groupId>
-        <version>1.0.RC5-SNAPSHOT</version>
+        <version>1.0.RC5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <name>Openfact PE SPI</name>

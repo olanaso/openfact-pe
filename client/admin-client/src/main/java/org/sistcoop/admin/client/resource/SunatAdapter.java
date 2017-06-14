@@ -1,11 +1,11 @@
 package org.sistcoop.admin.client.resource;
 
-import org.sistcoop.admin.client.Openfact;
+import org.sistcoop.admin.client.OpenfactClient;
 
 public class SunatAdapter {
 
-    public static OrganizationsSunatResource from(Openfact openfact) {
-        return openfact.proxy(OrganizationsSunatResource.class, "");
+    public static OrganizationsSunatResource from(OpenfactClient openfact) {
+        return openfact.getOpenfact().proxy(OrganizationsSunatResource.class, "");
     }
 
 }

@@ -136,7 +136,7 @@ public class SunatDocumentsAdminResource {
 
     private OrganizationAuth getAuth(OrganizationModel organization) {
         List<OrganizationModel> permittedOrganizations = securityContext.getPermittedOrganizations(session);
-        if (!permittedOrganizations.contains(organizationManager.getOpenfactAdminstrationOrganization()) && !permittedOrganizations.contains(organization)) {
+        if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN) && !permittedOrganizations.contains(organization)) {
             throw new ForbiddenException();
         }
         return securityContext.getClientUser(session).organizationAuth(Resource.DOCUMENT);

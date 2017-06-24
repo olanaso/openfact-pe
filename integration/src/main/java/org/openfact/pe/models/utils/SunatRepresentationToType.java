@@ -1327,12 +1327,13 @@ public class SunatRepresentationToType {
 
         PartyType partyType = new PartyType();
         if (organization.getRegistrationName() != null) {
-            List<PartyLegalEntityType> partyLegalEntityTypes = new ArrayList<>();
-            PartyLegalEntityType partyLegalEntityType = new PartyLegalEntityType();
-            partyLegalEntityType.setRegistrationName(organization.getRegistrationName());
-
-            partyLegalEntityTypes.add(partyLegalEntityType);
-            partyType.setPartyLegalEntity(partyLegalEntityTypes);
+//            List<PartyLegalEntityType> partyLegalEntityTypes = new ArrayList<>();
+//            PartyLegalEntityType partyLegalEntityType = new PartyLegalEntityType();
+//            partyLegalEntityType.setRegistrationName(organization.getRegistrationName());
+//
+//            partyLegalEntityTypes.add(partyLegalEntityType);
+//            partyType.setPartyLegalEntity(partyLegalEntityTypes);
+            partyType.setPartyLegalEntity(Arrays.asList(toPartyLegalEntityType(organization)));
 
             // Address
             AddressType addressType = new AddressType();
@@ -1354,6 +1355,10 @@ public class SunatRepresentationToType {
 
             partyType.setPostalAddress(addressType);
         }
+        if (organization.getSupplierName() != null) {
+            partyType.setPartyName(Arrays.asList(toPartyName(organization)));
+        }
+
         supplierPartyType.setParty(partyType);
 
         return supplierPartyType;

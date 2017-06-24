@@ -9,7 +9,6 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.openfact.common.converts.DateUtils;
-import org.openfact.models.ModelException;
 import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
@@ -998,6 +997,14 @@ public class SunatRepresentationToType {
         return type;
     }
 
+    private PartyNameType toPartyName(OrganizationModel organization) {
+        PartyNameType type = new PartyNameType();
+        if (organization.getSupplierName() != null) {
+            type.setName(organization.getSupplierName());
+        }
+        return type;
+    }
+
     private AddressType toPostalAddressType(OrganizationModel organization) {
         AddressType type = new AddressType();
         if (organization.getPostalAddressId() != null) {
@@ -1295,6 +1302,7 @@ public class SunatRepresentationToType {
     private PartyType toPartyType(OrganizationModel organization) {
         PartyType type = new PartyType();
         type.setPartyLegalEntity(Arrays.asList(toPartyLegalEntityType(organization)));
+        type.setPartyName(Arrays.asList(toPartyName(organization)));
         return type;
     }
 

@@ -115,6 +115,7 @@ public class SunatDocumentsAdminResource {
         if (organization.getAdditionalAccountId() == null || organization.getAdditionalAccountId().trim().isEmpty()
                 || organization.getAssignedIdentificationId() == null || organization.getAssignedIdentificationId().trim().isEmpty()
                 || organization.getRegistrationName() == null || organization.getRegistrationName().trim().isEmpty()
+                || organization.getSupplierName() == null || organization.getSupplierName().trim().isEmpty()
                 || organization.getStreetName() == null || organization.getStreetName().trim().isEmpty()
                 || organization.getCitySubdivisionName() == null || organization.getCitySubdivisionName().trim().isEmpty()
                 || organization.getCityName() == null || organization.getCityName().trim().isEmpty()

@@ -5,6 +5,7 @@ import org.openfact.models.DocumentProvider;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.pe.models.utils.SunatTypeToModel;
+import org.openfact.pe.ubl.types.SunatRequiredAction;
 import org.openfact.pe.ubl.ubl21.summary.SummaryDocumentsType;
 import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
@@ -37,7 +38,7 @@ public class SunatUBLSummaryDocumentCustomizator extends AbstractSummaryDocument
 
     @Override
     public String[] getExtraRequiredActions() {
-        return new String[0];
+        return new String[]{SunatRequiredAction.CONSULTAR_TICKET.toString()};
     }
 
 }

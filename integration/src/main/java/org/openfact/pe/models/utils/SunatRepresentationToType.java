@@ -10,7 +10,6 @@ import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.openfact.common.converts.DateUtils;
 import org.openfact.models.ModelRuntimeException;
-import org.openfact.models.OpenfactSession;
 import org.openfact.models.OrganizationModel;
 import org.openfact.pe.representations.idm.*;
 import org.openfact.pe.ubl.types.*;
@@ -1099,7 +1098,7 @@ public class SunatRepresentationToType {
         return type;
     }
 
-    public SummaryDocumentsType toSummaryDocumentType(OpenfactSession session, OrganizationModel organization, SummaryRepresentation rep) {
+    public SummaryDocumentsType toSummaryDocumentType(OrganizationModel organization, SummaryRepresentation rep) {
         SummaryDocumentsType type = new SummaryDocumentsType();
 
         // Firma ficticia

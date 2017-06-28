@@ -237,6 +237,35 @@ public class SunatDocumentsAdminResource {
         }
     }
 
+    private void generateAttributes(DocumentRepresentation representation, DocumentModel document) {
+        document.setSingleAttribute(SunatTypeToModel.ES_OPERACION_GRATUITA, String.valueOf(representation.isOperacionGratuita()));
+
+        if (representation.getTotalGravada() != null) {
+            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_GRAVADAS, representation.getTotalGravada().toString());
+        }
+        if (representation.getTotalInafecta() != null) {
+            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_INAFECTAS, representation.getTotalInafecta().toString());
+        }
+        if (representation.getTotalExonerada() != null) {
+            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_EXONERADAS, representation.getTotalExonerada().toString());
+        }
+        if (representation.getTotalIgv() != null) {
+            document.setSingleAttribute(SunatTypeToModel.TOTAL_IGV, representation.getTotalIgv().toString());
+        }
+        if (representation.getTotalGratuita() != null) {
+            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_GRATUITAS, representation.getTotalGratuita().toString());
+        }
+        if (representation.getIgv() != null) {
+            document.setSingleAttribute(SunatTypeToModel.VALOR_IGV, representation.getIgv().toString());
+        }
+        if (representation.getPorcentajeDescuento() != null) {
+            document.setSingleAttribute(SunatTypeToModel.PORCENTAJE_DESCUENTO_GLOBAL_APLICADO, representation.getPorcentajeDescuento().toString());
+        }
+        if (representation.getTotalOtrosCargos() != null) {
+            document.setSingleAttribute(SunatTypeToModel.TOTAL_OTROS_CARGOS_APLICADO, representation.getTotalOtrosCargos().toString());
+        }
+    }
+
     @POST
     @Path("/documents/invoices")
     @Produces(MediaType.APPLICATION_JSON)
@@ -263,6 +292,7 @@ public class SunatDocumentsAdminResource {
             }
 
             DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(), DocumentType.INVOICE, invoiceType);
+            generateAttributes(rep, document);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 sendDocumentToThirdParty(organization, document);
@@ -311,6 +341,7 @@ public class SunatDocumentsAdminResource {
             }
 
             DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(), DocumentType.CREDIT_NOTE, creditNoteType);
+            generateAttributes(rep, document);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 sendDocumentToThirdParty(organization, document);
@@ -359,6 +390,7 @@ public class SunatDocumentsAdminResource {
             }
 
             DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(), DocumentType.DEBIT_NOTE, debitNoteType);
+            generateAttributes(rep, document);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 sendDocumentToThirdParty(organization, document);

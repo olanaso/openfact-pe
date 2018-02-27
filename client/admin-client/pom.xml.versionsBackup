@@ -3,7 +3,7 @@
     <parent>
         <artifactId>openfact-pe-client</artifactId>
         <groupId>org.sistcoop</groupId>
-        <version>1.0.0.Final</version>
+        <version>1.0.RC9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

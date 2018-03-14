@@ -11,6 +11,12 @@
       "types": [
         "admin"
       ]
+    },
+    {
+      "name": "sunat2",
+      "types": [
+        "admin"
+      ]
     }
   ]
 }

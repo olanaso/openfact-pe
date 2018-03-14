@@ -68,7 +68,7 @@ public class ServiceWrapper<T> {
         filter.getInclude().add(".*_WITH_NULL_.*");
         filter.getExclude().add(".*_DH_anon_.*");
 
-        tlsParams.setCipherSuitesFilter(filter);
+        //tlsParams.setCipherSuitesFilter(filter);
         httpConduit.setTlsClientParameters(tlsParams);
         HashMap outProps = new HashMap();
 

@@ -107,6 +107,9 @@
 	<field name="sunat_total_valor_venta_operaciones_gratuitas" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="of_br_invoice_document_reference_id" class="java.util.List">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
@@ -281,7 +284,7 @@
 				<text><![CDATA[ADQUIRIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="380" y="95" width="80" height="15" uuid="0f86baff-6386-4f3f-b3fe-2388707babe8"/>
+				<reportElement x="370" y="115" width="90" height="15" uuid="0f86baff-6386-4f3f-b3fe-2388707babe8"/>
 				<box rightPadding="4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="8" isBold="true"/>
@@ -289,7 +292,7 @@
 				<text><![CDATA[FECHA EMISIÓN:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="95" width="96" height="15" uuid="97c8c468-6012-4e4f-81c9-eaa4c3ccbf57"/>
+				<reportElement x="460" y="115" width="96" height="15" uuid="97c8c468-6012-4e4f-81c9-eaa4c3ccbf57"/>
 				<textElement verticalAlignment="Top"/>
 				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
 			</textField>
@@ -338,7 +341,7 @@
 				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_cp_postal_address_city_name},true)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="110" width="80" height="15" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
+				<reportElement x="370" y="130" width="90" height="15" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="4"/>
@@ -348,7 +351,7 @@
 				<text><![CDATA[MONEDA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="110" width="96" height="15" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
+				<reportElement x="460" y="130" width="96" height="15" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
@@ -405,6 +408,19 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_sp_postal_address_city_name},true)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="370" y="100" width="90" height="15" uuid="61ae6d39-f985-4887-8209-a799ec20c79a"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOCUMENTO REF.:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="460" y="100" width="96" height="15" uuid="15a2da0b-28b8-4e3c-acc5-04104552146d"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{of_br_invoice_document_reference_id},",",true)]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

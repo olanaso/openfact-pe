@@ -17,6 +17,12 @@
       "types": [
         "admin"
       ]
+    },
+    {
+      "name": "positiva",
+      "types": [
+        "admin"
+      ]
     }
   ]
 }

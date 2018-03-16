@@ -279,7 +279,7 @@
 				<textField>
 					<reportElement x="160" y="120" width="394" height="32" uuid="41859d80-0fbf-4213-acf4-5fd8f7f984b3"/>
 					<textElement textAlignment="Left"/>
-					<textFieldExpression><![CDATA[$P{OPENFACT_MONEY_FORMAT_SCRIPTLET}.asWords($F{of_lmt_payable_amount})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{OPENFACT_MONEY_FORMAT_SCRIPTLET}.asWords($F{of_rmt_payable_amount}).concat(" ").concat($F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code})]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>

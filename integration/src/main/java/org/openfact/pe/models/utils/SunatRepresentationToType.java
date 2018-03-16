@@ -9,8 +9,7 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.openfact.common.converts.DateUtils;
-import org.openfact.models.ModelRuntimeException;
-import org.openfact.models.OrganizationModel;
+import org.openfact.models.*;
 import org.openfact.pe.representations.idm.*;
 import org.openfact.pe.ubl.types.*;
 import org.openfact.pe.ubl.ubl21.SunatSignerUtils;
@@ -43,13 +42,12 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.dom.DOMResult;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -61,6 +59,21 @@ public class SunatRepresentationToType {
 
     @Inject
     private SunatSignerUtils sunatSingerUtils;
+
+    @Inject
+    private DocumentProvider documentProvider;
+
+    public XMLGregorianCalendar toGregorianCalendar(Date date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String locale = sdf.format(date);
+            XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
+            return xmlCal;
+        } catch (DatatypeConfigurationException e) {
+            throw new ModelRuntimeException(e);
+        }
+    }
 
     public XMLGregorianCalendar toGregorianCalendar(LocalDate date) {
         try {
@@ -1249,13 +1262,31 @@ public class SunatRepresentationToType {
         if (rep.getSerieDocumento() != null && rep.getNumeroDocumento() != null) {
             type.setID(rep.getSerieDocumento() + UblSunatConfiguration.ID_SEPARATOR.getCodigo() + rep.getNumeroDocumento());
         }
-        if (rep.getFechaDeEmision() != null) {
-            type.setIssueDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
-            type.setReferenceDate(toGregorianCalendar(DateUtils.asLocalDateTime(rep.getFechaDeEmision()).toLocalDate()));
-        } else {
-            type.setIssueDate(toGregorianCalendar(LocalDate.now()));
-            type.setReferenceDate(toGregorianCalendar(LocalDate.now()));
+
+
+        // Issue Date: Fecha de generación de la comunicación
+        // Reference Date: Fecha del documento que se dará de baja
+        Date issueDate = null;
+
+        List<VoidedLineRepresentation> detalle = rep.getDetalle();
+        if (!detalle.isEmpty()) {
+            VoidedLineRepresentation voidedLineRepresentation = detalle.get(0);
+            DocumentModel document = documentProvider.getDocumentById(voidedLineRepresentation.getId(), organization);
+            List<String> issueDates = document.getAttribute("issueDate");
+            if (!issueDates.isEmpty()) {
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    issueDate = format.parse(issueDates.get(0));
+                } catch (ParseException e) {
+                    issueDate = null;
+                }
+            }
         }
+        if (issueDate == null) throw new IllegalStateException("Could not find a issue date for voided document");
+        type.setIssueDate(toGregorianCalendar(issueDate));
+        type.setReferenceDate(toGregorianCalendar(LocalDate.now()));
+        // End Issue and reference date
+
 
         if (rep.getObservaciones() != null) {
             type.addNote(rep.getObservaciones());

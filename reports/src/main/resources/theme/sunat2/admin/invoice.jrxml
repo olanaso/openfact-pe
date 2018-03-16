@@ -267,21 +267,21 @@
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_inafectas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="10" y="120" width="170" height="12" uuid="a12b034d-71f7-4d02-94d2-b756f8e58114"/>
+					<reportElement x="0" y="120" width="80" height="12" uuid="a12b034d-71f7-4d02-94d2-b756f8e58114"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[SON:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="180" y="120" width="40" height="12" uuid="c84b704f-4724-4d47-9284-b9f1f53c7ac7"/>
+					<reportElement x="80" y="120" width="40" height="12" uuid="c84b704f-4724-4d47-9284-b9f1f53c7ac7"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="220" y="120" width="334" height="32" uuid="e51df9d8-bf76-47e2-ad85-917f8671d9b2"/>
+					<reportElement x="120" y="120" width="424" height="32" uuid="e51df9d8-bf76-47e2-ad85-917f8671d9b2"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_MONEY_FORMAT_SCRIPTLET}.asWords($F{of_lmt_payable_amount})]]></textFieldExpression>
 				</textField>

@@ -1266,25 +1266,22 @@ public class SunatRepresentationToType {
 
         // Issue Date: Fecha de generación de la comunicación
         // Reference Date: Fecha del documento que se dará de baja
-        Date issueDate = null;
+        Date issueDateOfReferencedDocument = null;
 
         List<VoidedLineRepresentation> detalle = rep.getDetalle();
         if (!detalle.isEmpty()) {
             VoidedLineRepresentation voidedLineRepresentation = detalle.get(0);
-            DocumentModel document = documentProvider.getDocumentById(voidedLineRepresentation.getId(), organization);
-            List<String> issueDates = document.getAttribute("issueDate");
-            if (!issueDates.isEmpty()) {
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                try {
-                    issueDate = format.parse(issueDates.get(0));
-                } catch (ParseException e) {
-                    issueDate = null;
-                }
+            String fechaEmision = voidedLineRepresentation.getFechaEmision();
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                issueDateOfReferencedDocument = format.parse(fechaEmision);
+            } catch (ParseException e) {
+                // nothing to do
             }
         }
-        if (issueDate == null) throw new IllegalStateException("Could not find a issue date for voided document");
-        type.setIssueDate(toGregorianCalendar(issueDate));
-        type.setReferenceDate(toGregorianCalendar(LocalDate.now()));
+        if (issueDateOfReferencedDocument == null) throw new IllegalStateException("Could not find a issue date for voided document");
+        type.setIssueDate(toGregorianCalendar(LocalDate.now()));
+        type.setReferenceDate(toGregorianCalendar(issueDateOfReferencedDocument));
         // End Issue and reference date
 
 

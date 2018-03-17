@@ -5,6 +5,7 @@ public class VoidedLineRepresentation {
     private String tipoDocumentoRelacionado;
     private String numeroDocumentoRelacionado;
     protected String descripcionDocumentoRelacionado;
+    private String fechaEmision;
 
     public String getId() {
         return id;
@@ -36,5 +37,13 @@ public class VoidedLineRepresentation {
 
     public void setDescripcionDocumentoRelacionado(String descripcionDocumentoRelacionado) {
         this.descripcionDocumentoRelacionado = descripcionDocumentoRelacionado;
+    }
+
+    public String getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(String fechaEmision) {
+        this.fechaEmision = fechaEmision;
     }
 }

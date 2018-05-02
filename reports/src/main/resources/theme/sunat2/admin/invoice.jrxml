@@ -108,6 +108,7 @@
 	<field name="sunat_total_valor_venta_operaciones_gratuitas" class="java.math.BigDecimal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="of_note" class="java.lang.String"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
@@ -422,7 +423,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="70">
+		<band height="130">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<componentElement>
 				<reportElement x="0" y="5" width="556" height="60" uuid="a79bddcd-bdb2-4373-91d7-00cb837aa1b1">
@@ -550,6 +551,17 @@
 					</jr:column>
 				</jr:table>
 			</componentElement>
+			<staticText>
+				<reportElement x="10" y="70" width="90" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observaciones:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="70" width="442" height="52" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+				<textFieldExpression><![CDATA[$F{of_note}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<lastPageFooter>

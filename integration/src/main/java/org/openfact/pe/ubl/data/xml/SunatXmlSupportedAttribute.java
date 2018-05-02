@@ -19,6 +19,10 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 public enum SunatXmlSupportedAttribute {
 
+    OF_NOTE(XMLAttributeContainer.simpleKey((value) -> {
+        return value != null ? String.valueOf(value) : null;
+    }, new String[]{"Note"})),
+
     SUNAT_TOTAL_VALOR_VENTA_OPERACIONES_GRAVADAS(XMLAttributeContainer.simpleKey(value -> {
         if (value == null) {
             return null;

@@ -552,7 +552,9 @@
 				</jr:table>
 			</componentElement>
 			<staticText>
-				<reportElement x="10" y="70" width="90" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995"/>
+				<reportElement x="10" y="70" width="90" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
+					<printWhenExpression><![CDATA[new Boolean($F{of_note}!= null)]]></printWhenExpression>
+				</reportElement>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>

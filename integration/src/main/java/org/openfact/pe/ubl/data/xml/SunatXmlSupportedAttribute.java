@@ -19,6 +19,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 public enum SunatXmlSupportedAttribute {
 
+    // WARNING ESTO DEBE DE IR EN EL OPENFACT-CORE PERO SE HIZO POR URGENCIA
     OF_NOTE(XMLAttributeContainer.simpleKey((value) -> {
         return value != null ? String.valueOf(value) : null;
     }, new String[]{"Note"})),

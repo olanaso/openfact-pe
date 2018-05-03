@@ -561,7 +561,10 @@
 				<text><![CDATA[Observaciones:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="100" y="70" width="442" height="52" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+				<reportElement x="100" y="70" width="442" height="60" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{of_note}]]></textFieldExpression>
 			</textField>
 		</band>

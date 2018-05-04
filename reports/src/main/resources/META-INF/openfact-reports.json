@@ -23,6 +23,12 @@
       "types": [
         "admin"
       ]
+    },
+    {
+      "name": "multiserviciosmr",
+      "types": [
+        "admin"
+      ]
     }
   ]
 }

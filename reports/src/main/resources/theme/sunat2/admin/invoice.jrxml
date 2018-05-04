@@ -423,7 +423,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="110">
+		<band height="100">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 			<componentElement>
@@ -445,7 +445,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="46" height="30" forecolor="#FFFFFF" uuid="9767c873-68f5-467c-ab8d-ad7259f9bf01"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8" isBold="true"/>
+									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[CANT.]]></text>
 							</staticText>
@@ -455,7 +455,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="46" height="30" uuid="08c21afd-5a4e-4f8e-b476-ff2c70c9f54d"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8"/>
+									<font size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{of_invoiced_quantity}, "", ",", "." ,"3")]]></textFieldExpression>
 							</textField>
@@ -467,7 +467,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="46" height="30" forecolor="#FFFFFF" uuid="a874200b-4e1a-460c-ba5b-73f781b25811"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8" isBold="true"/>
+									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[UM]]></text>
 							</staticText>
@@ -477,7 +477,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="46" height="30" uuid="1ad4acc3-b12b-4aab-9e44-650e696972f3"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
+									<font size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{of_unit_code}]]></textFieldExpression>
 							</textField>
@@ -491,7 +491,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="332" height="30" forecolor="#FFFFFF" uuid="ff573864-7de2-486c-85ba-8ead127ecfd8"/>
 								<textElement verticalAlignment="Middle">
-									<font size="8" isBold="true"/>
+									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[DESCRIPCIÓN]]></text>
 							</staticText>
@@ -501,7 +501,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="332" height="30" uuid="7fa9cbe3-78ea-4098-9d96-a97499aa6109"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
-									<font size="8"/>
+									<font size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.stringFormat($F{of_item_description},",",true)]]></textFieldExpression>
 							</textField>
@@ -514,7 +514,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="56" height="30" forecolor="#FFFFFF" uuid="bc98f5a9-680d-4772-a8c9-1ed188c421af"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8" isBold="true"/>
+									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[P/U]]></text>
 							</staticText>
@@ -524,7 +524,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="30" uuid="7afc9db8-1444-45c9-baa9-c52ea5ae00f7"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8"/>
+									<font size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{of_pricing_reference_acp_price_amount}," ", "", ",", "." ,"2")]]></textFieldExpression>
 							</textField>
@@ -540,7 +540,7 @@
 									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 								</reportElement>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8" isBold="true"/>
+									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[IMPORTE]]></text>
 							</staticText>
@@ -550,7 +550,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="56" height="30" uuid="a4a5bb65-8a7d-4dea-bf9d-26aadc94c052"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8"/>
+									<font size="6"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.sumElementsAndFormat($F{of_line_extension_amount}, $F{of_tt_tax_amount}, "", ",", "." ,"2")]]></textFieldExpression>
 							</textField>
@@ -559,14 +559,14 @@
 				</jr:table>
 			</componentElement>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="110" y="70" width="434" height="18" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="110" y="70" width="434" height="18" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{of_note}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="70" width="102" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="70" width="102" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
 					<printWhenExpression><![CDATA[new Boolean($F{of_note}!= null)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">

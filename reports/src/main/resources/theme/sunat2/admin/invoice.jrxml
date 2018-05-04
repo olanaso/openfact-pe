@@ -112,171 +112,197 @@
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
-			<band height="160">
+			<band height="100">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				<textField pattern="">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="52" width="144" height="12" uuid="f136243e-500d-4b88-9284-163ef4ae840b"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="40" width="144" height="9" uuid="f136243e-500d-4b88-9284-163ef4ae840b">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_allowance_total_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="76" width="144" height="12" uuid="700da497-ccad-4a23-9116-046d837c3e3c"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="58" width="144" height="9" uuid="700da497-ccad-4a23-9116-046d837c3e3c"/>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_tt_tax_amount}," ", "",",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="4" width="170" height="12" uuid="60638c03-a7a9-4115-a823-8011dfa4c177"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="4" width="170" height="9" uuid="60638c03-a7a9-4115-a823-8011dfa4c177">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. GRAVADA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="16" width="170" height="12" uuid="4fc9fa4b-b3c4-4d9b-ae42-133757015421"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="13" width="170" height="9" uuid="4fc9fa4b-b3c4-4d9b-ae42-133757015421">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. GRATUITA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="28" width="170" height="12" uuid="be9f4928-4100-488c-82c6-ace609287b16"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="22" width="170" height="9" uuid="be9f4928-4100-488c-82c6-ace609287b16"/>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. EXONERADA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="40" width="170" height="12" uuid="10568965-c421-4cb9-8d6f-63af62d4bc99"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="31" width="170" height="9" uuid="10568965-c421-4cb9-8d6f-63af62d4bc99"/>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. INAFECTA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="52" width="170" height="12" uuid="705a62cc-8d9d-4397-a9d8-b9ff8203b0ba"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="40" width="170" height="9" uuid="705a62cc-8d9d-4397-a9d8-b9ff8203b0ba"/>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[TOT. DESCUENTO GLOBAL:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="64" width="170" height="12" uuid="3534035d-1671-4d19-8cc1-303d7a3bccaa"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="49" width="170" height="9" uuid="3534035d-1671-4d19-8cc1-303d7a3bccaa"/>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[OTROS CARGOS:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="76" width="170" height="12" uuid="0494b317-4dae-46e0-a74a-41fddf3c3bfb"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="58" width="170" height="9" uuid="0494b317-4dae-46e0-a74a-41fddf3c3bfb"/>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[IGV:]]></text>
 				</staticText>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="4" width="40" height="12" uuid="f2f12647-c364-48b5-ba10-69c5e85020ce"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="4" width="40" height="9" uuid="f2f12647-c364-48b5-ba10-69c5e85020ce"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="16" width="40" height="12" uuid="5933d8e9-64d3-404e-a323-485a1972beeb"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="13" width="40" height="9" uuid="5933d8e9-64d3-404e-a323-485a1972beeb"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="40" width="40" height="12" uuid="b453fa6c-eb2c-42f8-8111-a6b0b0fa5429"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="31" width="40" height="9" uuid="b453fa6c-eb2c-42f8-8111-a6b0b0fa5429"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="28" width="40" height="12" uuid="43984422-8ddb-46c5-89e5-d4c6d4a2d298"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="22" width="40" height="9" uuid="43984422-8ddb-46c5-89e5-d4c6d4a2d298"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="64" width="40" height="12" uuid="458a8ef7-ba73-4ab5-b1b6-7939357b2f15"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="49" width="40" height="9" uuid="458a8ef7-ba73-4ab5-b1b6-7939357b2f15"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="52" width="40" height="12" uuid="c104d8ae-7ec5-441c-9006-8564febda517"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="40" width="40" height="9" uuid="c104d8ae-7ec5-441c-9006-8564febda517"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="76" width="40" height="12" uuid="a95de97d-6bf1-471a-9174-e02d8950ce54"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="58" width="40" height="9" uuid="a95de97d-6bf1-471a-9174-e02d8950ce54"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="88" width="144" height="12" uuid="c9a99db4-51ee-415f-b45f-612b718df9fa"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="67" width="144" height="9" uuid="c9a99db4-51ee-415f-b45f-612b718df9fa"/>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_payable_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="88" width="170" height="12" uuid="45bd61ca-51ba-402c-9b5a-53ca04a6c7e2"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="67" width="170" height="9" uuid="45bd61ca-51ba-402c-9b5a-53ca04a6c7e2"/>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[TOTAL VENTA:]]></text>
 				</staticText>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="88" width="40" height="12" uuid="254421d1-6ff8-4c9b-8729-ceb9714ac523"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="360" y="67" width="40" height="9" uuid="254421d1-6ff8-4c9b-8729-ceb9714ac523"/>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="64" width="144" height="12" uuid="87a108e5-f039-4abd-95eb-b7233ed76103"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="49" width="144" height="9" uuid="87a108e5-f039-4abd-95eb-b7233ed76103"/>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_charge_total_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="4" width="144" height="12" uuid="42dac270-6adf-4228-860a-daae6232c177"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="4" width="144" height="9" uuid="42dac270-6adf-4228-860a-daae6232c177"/>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_gravadas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="16" width="144" height="12" uuid="673f6ec6-bb3c-4911-a5ca-d7f1376da126"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="13" width="144" height="9" uuid="673f6ec6-bb3c-4911-a5ca-d7f1376da126"/>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_gratuitas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="28" width="144" height="12" uuid="8d2661a6-f611-4499-abb4-7341f2321cc2"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="22" width="144" height="9" uuid="8d2661a6-f611-4499-abb4-7341f2321cc2"/>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_exoneradas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="40" width="144" height="12" uuid="dfc0208a-770b-4a4d-a72e-dcc632fad6eb"/>
-					<textElement textAlignment="Right"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="31" width="144" height="9" uuid="dfc0208a-770b-4a4d-a72e-dcc632fad6eb"/>
+					<textElement textAlignment="Right">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_inafectas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="118" width="60" height="12" uuid="2c04dc78-8db7-4b66-8e1e-cb5a35200c9c"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="80" y="80" width="60" height="9" uuid="2c04dc78-8db7-4b66-8e1e-cb5a35200c9c">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
 					<textElement textAlignment="Right">
-						<font isBold="true"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<text><![CDATA[SON:]]></text>
 				</staticText>
-				<textField>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="140" y="118" width="404" height="32" uuid="54dd7038-9079-498c-9369-698bdb2d0cb7"/>
-					<textElement textAlignment="Left"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="140" y="80" width="404" height="9" uuid="54dd7038-9079-498c-9369-698bdb2d0cb7"/>
+					<textElement textAlignment="Left">
+						<font size="7"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_MONEY_FORMAT_SCRIPTLET}.asWords($F{of_lmt_payable_amount}).concat(" ").concat($F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code})]]></textFieldExpression>
 				</textField>
 			</band>
@@ -423,11 +449,11 @@
 		</band>
 	</title>
 	<detail>
-		<band height="100">
+		<band height="80">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
 			<componentElement>
-				<reportElement x="0" y="4" width="555" height="60" uuid="a79bddcd-bdb2-4373-91d7-00cb837aa1b1">
+				<reportElement x="0" y="4" width="555" height="40" uuid="a79bddcd-bdb2-4373-91d7-00cb837aa1b1">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -441,19 +467,19 @@
 					<jr:column width="50" uuid="c12bec93-7be4-4b33-8e3b-5a5569d66a9f">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="46" height="30" forecolor="#FFFFFF" uuid="9767c873-68f5-467c-ab8d-ad7259f9bf01"/>
+								<reportElement x="0" y="0" width="46" height="20" forecolor="#FFFFFF" uuid="faf2a586-0076-4508-ba36-541ddecf4329"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[CANT.]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
+						<jr:detailCell style="Table_TD" height="20">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<textField>
-								<reportElement x="0" y="0" width="46" height="30" uuid="08c21afd-5a4e-4f8e-b476-ff2c70c9f54d"/>
+								<reportElement x="0" y="0" width="46" height="20" uuid="24af6dbe-4846-4bb2-8117-b222e4dd0eaa"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="6"/>
 								</textElement>
@@ -463,19 +489,19 @@
 					</jr:column>
 					<jr:column width="50" uuid="7cabf903-7654-44b3-9e28-babf119b1377">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="46" height="30" forecolor="#FFFFFF" uuid="a874200b-4e1a-460c-ba5b-73f781b25811"/>
+								<reportElement x="0" y="0" width="46" height="20" forecolor="#FFFFFF" uuid="a874200b-4e1a-460c-ba5b-73f781b25811"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[UM]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
+						<jr:detailCell style="Table_TD" height="20">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<textField>
-								<reportElement x="0" y="0" width="46" height="30" uuid="1ad4acc3-b12b-4aab-9e44-650e696972f3"/>
+								<reportElement x="0" y="0" width="46" height="20" uuid="1ad4acc3-b12b-4aab-9e44-650e696972f3"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="6"/>
 								</textElement>
@@ -486,20 +512,20 @@
 					<jr:column width="336" uuid="a76f5413-8827-4417-bcd1-847797c0c93a">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="332" height="30" forecolor="#FFFFFF" uuid="ff573864-7de2-486c-85ba-8ead127ecfd8"/>
+								<reportElement x="0" y="0" width="332" height="20" forecolor="#FFFFFF" uuid="ff573864-7de2-486c-85ba-8ead127ecfd8"/>
 								<textElement verticalAlignment="Middle">
 									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[DESCRIPCIÓN]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
+						<jr:detailCell style="Table_TD" height="20">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<textField>
-								<reportElement x="0" y="0" width="332" height="30" uuid="7fa9cbe3-78ea-4098-9d96-a97499aa6109"/>
+								<reportElement x="0" y="0" width="332" height="20" uuid="7fa9cbe3-78ea-4098-9d96-a97499aa6109"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font size="6"/>
 								</textElement>
@@ -510,19 +536,19 @@
 					<jr:column width="60" uuid="7e3c857c-5fb5-4ede-bd84-170e0ae0ce8d">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="56" height="30" forecolor="#FFFFFF" uuid="bc98f5a9-680d-4772-a8c9-1ed188c421af"/>
+								<reportElement x="0" y="0" width="56" height="20" forecolor="#FFFFFF" uuid="bc98f5a9-680d-4772-a8c9-1ed188c421af"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="6" isBold="true"/>
 								</textElement>
 								<text><![CDATA[P/U]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
+						<jr:detailCell style="Table_TD" height="20">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<textField>
-								<reportElement x="0" y="0" width="56" height="30" uuid="7afc9db8-1444-45c9-baa9-c52ea5ae00f7"/>
+								<reportElement x="0" y="0" width="56" height="20" uuid="7afc9db8-1444-45c9-baa9-c52ea5ae00f7"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="6"/>
 								</textElement>
@@ -533,10 +559,10 @@
 					<jr:column width="60" uuid="c371fdf4-43df-4dae-8528-b9c88d100741">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<staticText>
-								<reportElement x="0" y="0" width="56" height="30" forecolor="#FFFFFF" uuid="21a2b6da-e9b0-4652-8447-4fa83df2a3bf">
+								<reportElement x="0" y="0" width="56" height="20" forecolor="#FFFFFF" uuid="21a2b6da-e9b0-4652-8447-4fa83df2a3bf">
 									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 								</reportElement>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -545,10 +571,10 @@
 								<text><![CDATA[IMPORTE]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
+						<jr:detailCell style="Table_TD" height="20">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<textField>
-								<reportElement x="0" y="0" width="56" height="30" uuid="a4a5bb65-8a7d-4dea-bf9d-26aadc94c052"/>
+								<reportElement x="0" y="0" width="56" height="20" uuid="a4a5bb65-8a7d-4dea-bf9d-26aadc94c052"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="6"/>
 								</textElement>
@@ -559,78 +585,78 @@
 				</jr:table>
 			</componentElement>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="110" y="70" width="434" height="18" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="110" y="50" width="434" height="18" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
 				<textElement>
-					<font size="9"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{of_note}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="70" width="102" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="50" width="102" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
 					<printWhenExpression><![CDATA[new Boolean($F{of_note}!= null)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Observaciones:]]></text>
 			</staticText>
 		</band>
 	</detail>
 	<lastPageFooter>
-		<band height="165">
+		<band height="135">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<componentElement>
-				<reportElement x="206" y="35" width="152" height="70" uuid="3befc03e-f6c3-41d8-b6de-b518d092bff5"/>
+				<reportElement x="204" y="34" width="152" height="45" uuid="3befc03e-f6c3-41d8-b6de-b518d092bff5"/>
 				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<jr:codeExpression><![CDATA[$F{of_model_id}]]></jr:codeExpression>
 				</jr:Code128>
 			</componentElement>
 			<textField>
-				<reportElement x="387" y="135" width="84" height="20" uuid="641f7dc3-012c-4b17-aa48-480615756b7a"/>
+				<reportElement x="387" y="99" width="84" height="20" uuid="641f7dc3-012c-4b17-aa48-480615756b7a"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="471" y="135" width="84" height="20" uuid="d05bbcd6-5379-4877-b962-dec911ed98c2"/>
+				<reportElement x="471" y="99" width="84" height="20" uuid="d05bbcd6-5379-4877-b962-dec911ed98c2"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="200" y="155" width="159" height="10" backcolor="#FFFFFF" uuid="fd56b633-cb26-40e8-bde9-a31a34813545"/>
+				<reportElement positionType="Float" mode="Opaque" x="200" y="119" width="159" height="10" backcolor="#FFFFFF" uuid="fd56b633-cb26-40e8-bde9-a31a34813545"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Serif" size="8" isItalic="true"/>
+					<font fontName="Serif" size="7" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[www.openfact.com]]></text>
+				<text><![CDATA[www.openfact.pe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="200" y="145" width="159" height="10" backcolor="#FFFFFF" uuid="d8abdb22-627b-4fa3-9296-31fac2072ec5"/>
+				<reportElement positionType="Float" mode="Opaque" x="200" y="109" width="159" height="10" backcolor="#FFFFFF" uuid="d8abdb22-627b-4fa3-9296-31fac2072ec5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Serif" size="8" isItalic="true"/>
+					<font fontName="Serif" size="7" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[OPENFACT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="80" y="10" width="400" height="20" backcolor="#FFFFFF" uuid="7d1f6e05-ec86-4559-94f1-2badce2dee70"/>
+				<reportElement positionType="Float" mode="Opaque" x="77" y="4" width="400" height="20" backcolor="#FFFFFF" uuid="7d1f6e05-ec86-4559-94f1-2badce2dee70"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Serif" size="8" isItalic="true"/>
+					<font fontName="Serif" size="7" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[Representación impresa de la FACTURA ELECTRÓNICA, para consultar el documento visita www.openfact.com]]></text>
+				<text><![CDATA[Representación impresa de la FACTURA ELECTRÓNICA, para consultar el documento visita www.openfact.pe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="200" y="110" width="159" height="20" backcolor="#FFFFFF" uuid="0fcd241d-1d0d-4de5-80ee-8b8aaa93161c"/>
+				<reportElement positionType="Float" mode="Opaque" x="199" y="84" width="159" height="20" backcolor="#FFFFFF" uuid="0fcd241d-1d0d-4de5-80ee-8b8aaa93161c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Serif" size="10" isItalic="true"/>
+					<font fontName="Serif" size="7" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Gracias por su compra!]]></text>
 			</staticText>
 			<textField pattern="MMMMM dd, yyyy HH:mm">
-				<reportElement x="455" y="155" width="100" height="10" uuid="2515d384-78fd-4766-a7cf-c82a4af72d54"/>
+				<reportElement x="455" y="119" width="100" height="10" uuid="2515d384-78fd-4766-a7cf-c82a4af72d54"/>
 				<textElement verticalAlignment="Top">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>

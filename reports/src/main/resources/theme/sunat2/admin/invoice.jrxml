@@ -116,178 +116,178 @@
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				<textField pattern="">
-					<reportElement x="398" y="72" width="144" height="12" uuid="f518426a-b34f-4ba4-a9e2-e26730c9caab"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="72" width="144" height="12" uuid="f518426a-b34f-4ba4-a9e2-e26730c9caab"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_allowance_total_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="398" y="96" width="144" height="12" uuid="5529095b-11d3-4e8e-9412-98051a919502"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="96" width="144" height="12" uuid="5529095b-11d3-4e8e-9412-98051a919502"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_tt_tax_amount}," ", "",",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="188" y="24" width="170" height="12" uuid="f12362c3-317a-410c-9887-572e7a1105ff"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="24" width="170" height="12" uuid="f12362c3-317a-410c-9887-572e7a1105ff"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. GRAVADA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="188" y="36" width="170" height="12" uuid="6d284a71-f122-4658-9c1b-84d5b8958572"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="36" width="170" height="12" uuid="6d284a71-f122-4658-9c1b-84d5b8958572"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. GRATUITA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="188" y="48" width="170" height="12" uuid="a14a3c13-1777-4cd0-99c9-7ae9ad019fa5"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="48" width="170" height="12" uuid="a14a3c13-1777-4cd0-99c9-7ae9ad019fa5"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. EXONERADA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="188" y="60" width="170" height="12" uuid="83520915-7996-420c-8718-b86d37df4122"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="60" width="170" height="12" uuid="83520915-7996-420c-8718-b86d37df4122"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[OP. INAFECTA:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="188" y="72" width="170" height="12" uuid="d9eae91a-9d58-4470-870d-14b43493b6b5"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="72" width="170" height="12" uuid="d9eae91a-9d58-4470-870d-14b43493b6b5"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[TOT. DESCUENTO GLOBAL:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="188" y="84" width="170" height="12" uuid="99338b5a-ced8-4866-916c-ac68c16bdab4"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="84" width="170" height="12" uuid="99338b5a-ced8-4866-916c-ac68c16bdab4"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[OTROS CARGOS:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="188" y="96" width="170" height="12" uuid="fe99bfcb-710f-4ab0-b652-2e2fad0f94b7"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="96" width="170" height="12" uuid="fe99bfcb-710f-4ab0-b652-2e2fad0f94b7"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[IGV:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="358" y="24" width="40" height="12" uuid="368b0722-5a62-4977-9bec-b455843c3778"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="24" width="40" height="12" uuid="368b0722-5a62-4977-9bec-b455843c3778"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="358" y="36" width="40" height="12" uuid="b577de2f-4621-4382-98d4-507357684598"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="36" width="40" height="12" uuid="b577de2f-4621-4382-98d4-507357684598"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="358" y="60" width="40" height="12" uuid="0bb2f234-b20b-4850-b838-ab19109c5f38"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="60" width="40" height="12" uuid="0bb2f234-b20b-4850-b838-ab19109c5f38"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="358" y="48" width="40" height="12" uuid="5c4bc28c-0c32-4a27-8d6a-3f23fd5106e1"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="48" width="40" height="12" uuid="5c4bc28c-0c32-4a27-8d6a-3f23fd5106e1"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="358" y="84" width="40" height="12" uuid="c730f085-eac7-43f3-95bf-49d9192be328"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="84" width="40" height="12" uuid="c730f085-eac7-43f3-95bf-49d9192be328"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="358" y="72" width="40" height="12" uuid="4662216c-2ef7-4bf0-b33d-9b12ba6600ea"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="72" width="40" height="12" uuid="4662216c-2ef7-4bf0-b33d-9b12ba6600ea"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="358" y="96" width="40" height="12" uuid="ae040395-fdc2-4df0-b1a4-4b389e2203cb"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="96" width="40" height="12" uuid="ae040395-fdc2-4df0-b1a4-4b389e2203cb"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="398" y="108" width="144" height="12" uuid="2aeff137-6d4c-440b-b8dd-c37a37dcbb5b"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="108" width="144" height="12" uuid="2aeff137-6d4c-440b-b8dd-c37a37dcbb5b"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_payable_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="188" y="108" width="170" height="12" uuid="fa800a01-f29a-46af-a3bb-e4a54dd18f90"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="188" y="108" width="170" height="12" uuid="fa800a01-f29a-46af-a3bb-e4a54dd18f90"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[TOTAL VENTA:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="358" y="108" width="40" height="12" uuid="986431a1-4b81-4e33-99e5-ad347fcf8fdf"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="358" y="108" width="40" height="12" uuid="986431a1-4b81-4e33-99e5-ad347fcf8fdf"/>
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "S/" : $F{of_document_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="398" y="84" width="144" height="12" uuid="b8842275-baf9-413d-9def-c58139c04beb"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="84" width="144" height="12" uuid="b8842275-baf9-413d-9def-c58139c04beb"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{of_lmt_charge_total_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="398" y="24" width="144" height="12" uuid="c25bf2c9-96ab-4a68-a8ba-0949232a3a06"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="24" width="144" height="12" uuid="c25bf2c9-96ab-4a68-a8ba-0949232a3a06"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_gravadas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="398" y="36" width="144" height="12" uuid="48f4c8b6-fd68-4da9-847e-b70923ff5c6d"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="36" width="144" height="12" uuid="48f4c8b6-fd68-4da9-847e-b70923ff5c6d"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_gratuitas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="398" y="48" width="144" height="12" uuid="ee4997af-abb0-4461-b9b2-da66c6651006"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="48" width="144" height="12" uuid="ee4997af-abb0-4461-b9b2-da66c6651006"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_exoneradas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="398" y="60" width="144" height="12" uuid="a6d0eed4-7642-4565-926a-2f6b414a6e33"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="398" y="60" width="144" height="12" uuid="a6d0eed4-7642-4565-926a-2f6b414a6e33"/>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_valor_venta_operaciones_inafectas},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="68" y="138" width="60" height="12" uuid="a12b034d-71f7-4d02-94d2-b756f8e58114"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="68" y="138" width="60" height="12" uuid="a12b034d-71f7-4d02-94d2-b756f8e58114"/>
 					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[SON:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="138" y="138" width="404" height="32" uuid="e51df9d8-bf76-47e2-ad85-917f8671d9b2"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="138" y="138" width="404" height="32" uuid="e51df9d8-bf76-47e2-ad85-917f8671d9b2"/>
 					<textElement textAlignment="Left"/>
 					<textFieldExpression><![CDATA[$P{OPENFACT_MONEY_FORMAT_SCRIPTLET}.asWords($F{of_lmt_payable_amount}).concat(" ").concat($F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="102" y="0" width="442" height="18" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+					<reportElement stretchType="RelativeToTallestObject" x="102" y="0" width="442" height="18" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_note}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="0" width="102" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
+					<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="102" height="19" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
 						<printWhenExpression><![CDATA[new Boolean($F{of_note}!= null)]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right">

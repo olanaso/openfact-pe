@@ -31,14 +31,14 @@
 			<rightPen lineWidth="0.0" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="Table_CH" mode="Opaque" backcolor="#0088CE">
+	<style name="Table_CH" mode="Opaque" backcolor="#8B8D8F">
 		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
-			<pen lineWidth="0.5" lineColor="#000000"/>
+			<pen lineWidth="0.1" lineColor="#000000"/>
 		</box>
 	</style>
 	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
 		<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
-			<pen lineWidth="0.5" lineColor="#000000"/>
+			<pen lineWidth="0.1" lineColor="#000000"/>
 		</box>
 		<paragraph lineSpacingSize="1.0"/>
 		<conditionalStyle>
@@ -393,7 +393,7 @@
 				<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code}]]></textFieldExpression>
 			</textField>
 			<rectangle radius="5">
-				<reportElement x="380" y="0" width="176" height="80" forecolor="#FFFFFF" backcolor="#0088CE" uuid="3336c703-bc47-4879-be8b-8c150cb44a06"/>
+				<reportElement x="380" y="0" width="176" height="80" forecolor="#FFFFFF" backcolor="#8B8D8F" uuid="3336c703-bc47-4879-be8b-8c150cb44a06"/>
 				<graphicElement>
 					<pen lineColor="#00659C"/>
 				</graphicElement>

@@ -5,13 +5,14 @@ import java.util.stream.Stream;
 
 public enum TipoInvoice {
 
-    FACTURA("01", "FACTURA", "FACTURA ELECTRONICA", "^[F]{1}\\d{1,3}[-]\\d{1,8}$"),
-    BOLETA("03", "BOLETA", "BOLETA ELECTRONICA", "^[B]{1}\\d{1,3}[-]\\d{1,8}$");
+    FACTURA("01", "FACTURA", "FACTURA ELECTRONICA", "^[F]{1}\\d{1,3}[-]\\d{1,8}$","F"),
+    BOLETA("03", "BOLETA", "BOLETA ELECTRONICA", "^[B]{1}\\d{1,3}[-]\\d{1,8}$", "B");
 
     private final String codigo;
     private final String abreviatura;
     private final String denominacion;
     private final String documentIdPattern;
+    private final String primeraLetra;
 
     public String getCodigo() {
         return codigo;
@@ -29,11 +30,12 @@ public enum TipoInvoice {
         return documentIdPattern;
     }
 
-    TipoInvoice(String codigo, String abreviatura, String denominacion, String documentIdPattern) {
+    TipoInvoice(String codigo, String abreviatura, String denominacion, String documentIdPattern, String primeraLetra) {
         this.codigo = codigo;
         this.abreviatura = abreviatura;
         this.denominacion = denominacion;
         this.documentIdPattern = documentIdPattern;
+        this.primeraLetra = primeraLetra;
     }
 
     public static TipoInvoice getFromCode(String codigo) {
@@ -45,4 +47,7 @@ public enum TipoInvoice {
         }
     }
 
+    public String getPrimeraLetra() {
+        return primeraLetra;
+    }
 }

@@ -46,14 +46,14 @@ public class SerieNumeroController {
             TypedQuery<DocumentEntity> query1 = em.createNamedQuery("selectLastDocumentChanged", DocumentEntity.class);
             query1.setParameter("organizationId", organizationId);
             query1.setParameter("documentType", documentType);
-            query1.setParameter("firstLetter", "%" + firstLetter.toUpperCase());
+            query1.setParameter("firstLetter", firstLetter.toUpperCase() + "%");
             query1.setMaxResults(1);
             List<DocumentEntity> resultList1 = query1.getResultList();
             Optional<DocumentEntity> ultimoDocumento = getFirstResult(resultList1);
             if (ultimoDocumento.isPresent()) {
                 DocumentEntity documentEntity = ultimoDocumento.get();
                 String[] split = documentEntity.getDocumentId().split("-");
-                int serie = Integer.valueOf(split[0].replaceAll("\\D+",""));
+                int serie = Integer.valueOf(split[0].replaceAll("\\D+", ""));
                 int numero = Integer.valueOf(split[1]);
 
                 SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();

@@ -57,7 +57,7 @@ public class SerieNumeroController {
                 DocumentEntity documentEntity = ultimoDocumento.get();
                 String[] split = documentEntity.getDocumentId().split("-");
                 serie = Integer.valueOf(split[0].replaceAll("\\D+", ""));
-                numero = Integer.valueOf(split[1]);
+                numero = Integer.valueOf(split[1]) + 1;
                 if (99_999_999 < numero + 1) {
                     serie++;
                     numero = 1;

@@ -43,7 +43,7 @@ public class SerieNumeroController {
 
             return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
         } else {
-            TypedQuery<DocumentEntity> query1 = em.createQuery("select d from DocumentEntity d where d.organizationId=:organizationId and d.documentType=:documentType and upper(d.documentId) like :firstLetter order by d.documentId", DocumentEntity.class);
+            TypedQuery<DocumentEntity> query1 = em.createQuery("select d from DocumentEntity d where d.organizationId=:organizationId and d.documentType=:documentType and upper(d.documentId) like :firstLetter order by d.documentId desc", DocumentEntity.class);
             query1.setParameter("organizationId", organizationId);
             query1.setParameter("documentType", documentType);
             query1.setParameter("firstLetter", firstLetter.toUpperCase() + "%");

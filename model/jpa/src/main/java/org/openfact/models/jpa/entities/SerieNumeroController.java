@@ -43,43 +43,41 @@ public class SerieNumeroController {
 
             return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
         } else {
-            TypedQuery<DocumentEntity> query1 = em.createNamedQuery("selectLastDocumentChanged", DocumentEntity.class);
+            TypedQuery<DocumentEntity> query1 = em.createQuery("select d from DocumentEntity d where d.organizationId=:organizationId and d.documentType=:documentType and upper(d.documentId) like :firstLetter order by d.documentId", DocumentEntity.class);
             query1.setParameter("organizationId", organizationId);
             query1.setParameter("documentType", documentType);
             query1.setParameter("firstLetter", firstLetter.toUpperCase() + "%");
             query1.setMaxResults(1);
             List<DocumentEntity> resultList1 = query1.getResultList();
             Optional<DocumentEntity> ultimoDocumento = getFirstResult(resultList1);
+
+            int serie;
+            int numero;
             if (ultimoDocumento.isPresent()) {
                 DocumentEntity documentEntity = ultimoDocumento.get();
                 String[] split = documentEntity.getDocumentId().split("-");
-                int serie = Integer.valueOf(split[0].replaceAll("\\D+", ""));
-                int numero = Integer.valueOf(split[1]);
-
-                SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
-                serieNumeroEntity.setId(UUID.randomUUID().toString());
-                serieNumeroEntity.setSerie(serie);
-                serieNumeroEntity.setNumero(numero);
-                serieNumeroEntity.setDocumentType(documentType);
-                serieNumeroEntity.setFirstLetter(firstLetter);
-                serieNumeroEntity.setOrganizationId(organizationId);
-                em.persist(serieNumeroEntity);
-                em.flush();
-
-                return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
+                serie = Integer.valueOf(split[0].replaceAll("\\D+", ""));
+                numero = Integer.valueOf(split[1]);
+                if (99_999_999 < numero + 1) {
+                    serie++;
+                    numero = 1;
+                }
             } else {
-                SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
-                serieNumeroEntity.setId(UUID.randomUUID().toString());
-                serieNumeroEntity.setSerie(1);
-                serieNumeroEntity.setNumero(1);
-                serieNumeroEntity.setDocumentType(documentType);
-                serieNumeroEntity.setFirstLetter(firstLetter);
-                serieNumeroEntity.setOrganizationId(organizationId);
-                em.persist(serieNumeroEntity);
-                em.flush();
-
-                return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
+                serie = 1;
+                numero = 1;
             }
+
+            SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
+            serieNumeroEntity.setId(UUID.randomUUID().toString());
+            serieNumeroEntity.setSerie(serie);
+            serieNumeroEntity.setNumero(numero);
+            serieNumeroEntity.setDocumentType(documentType);
+            serieNumeroEntity.setFirstLetter(firstLetter);
+            serieNumeroEntity.setOrganizationId(organizationId);
+            em.persist(serieNumeroEntity);
+            em.flush();
+
+            return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
         }
     }
 

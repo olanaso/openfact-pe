@@ -4,6 +4,7 @@ import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.models.jpa.entities.SerieNumeroController;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.types.DocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.debitnote.UBLDebitNoteIDGenerator;
@@ -35,7 +36,7 @@ public class SunatUBLDebitNoteIDGenerator extends AbstractDebitNoteProvider impl
         String primeraLetra = debitNoteType.getBillingReference().get(0).getInvoiceDocumentReference().getIDValue().substring(0, 1);
         AbstractMap.SimpleEntry<Integer, Integer> serieNumero = serieNumeroController.getSiguienteSerieNumero(
                 organization.getId(),
-                TipoComprobante.NOTA_DEBITO.toString(),
+                DocumentType.DEBIT_NOTE.toString(),
                 primeraLetra
 
         );

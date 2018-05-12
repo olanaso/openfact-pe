@@ -4,6 +4,7 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import org.openfact.common.converts.StringUtils;
 import org.openfact.models.jpa.entities.SerieNumeroController;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.types.DocumentType;
 import org.openfact.pe.ubl.types.TipoComprobante;
 import org.openfact.provider.ProviderType;
 import org.openfact.ubl.ubl21.creditnote.UBLCreditNoteIDGenerator;
@@ -35,7 +36,7 @@ public class SunatUBLCreditNoteIDGenerator extends AbstractCreditNoteProvider im
         String primeraLetra = creditNoteType.getBillingReference().get(0).getInvoiceDocumentReference().getIDValue().substring(0, 1);
         AbstractMap.SimpleEntry<Integer, Integer> serieNumero = serieNumeroController.getSiguienteSerieNumero(
                 organization.getId(),
-                TipoComprobante.NOTA_CREDITO.toString(),
+                DocumentType.CREDIT_NOTE.toString(),
                 primeraLetra
 
         );

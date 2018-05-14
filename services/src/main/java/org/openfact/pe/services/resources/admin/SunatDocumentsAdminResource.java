@@ -220,21 +220,25 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createInvoice(organization, rep);
 
-            try {
-                if (rep.isEnviarAutomaticamenteASunat()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-                    if (!async) {
+            if (rep.isEnviarAutomaticamenteASunat()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-                if (rep.isEnviarAutomaticamenteAlCliente()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
-                    if (!async) {
+            }
+            if (rep.isEnviarAutomaticamenteAlCliente()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -268,21 +272,25 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createCreditNote(organization, rep);
 
-            try {
-                if (rep.isEnviarAutomaticamenteASunat()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-                    if (!async) {
+            if (rep.isEnviarAutomaticamenteASunat()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-                if (rep.isEnviarAutomaticamenteAlCliente()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
-                    if (!async) {
+            }
+            if (rep.isEnviarAutomaticamenteAlCliente()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -316,21 +324,25 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createDebitNote(organization, rep);
 
-            try {
-                if (rep.isEnviarAutomaticamenteASunat()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-                    if (!async) {
+            if (rep.isEnviarAutomaticamenteASunat()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-                if (rep.isEnviarAutomaticamenteAlCliente()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
-                    if (!async) {
+            }
+            if (rep.isEnviarAutomaticamenteAlCliente()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -572,21 +584,25 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createVoidedDocuments(organization, rep);
 
-            try {
-                if (rep.isEnviarAutomaticamenteASunat()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-                    if (!async) {
+            if (rep.isEnviarAutomaticamenteASunat()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-                if (rep.isEnviarAutomaticamenteAlCliente()) {
-                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
-                    if (!async) {
+            }
+            if (rep.isEnviarAutomaticamenteAlCliente()) {
+                Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                if (!async) {
+                    try {
                         future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
                     }
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();

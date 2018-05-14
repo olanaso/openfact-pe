@@ -201,45 +201,6 @@ public class SunatDocumentsAdminResource {
         }
     }
 
-    private void setVoidedDocumentIDType(OrganizationModel organization, final VoidedDocumentsType voidedDocumentsType) {
-        IDType documentId = voidedDocumentsType.getID();
-        if (documentId == null || documentId.getValue() == null) {
-            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.VOIDED_DOCUMENTS.toString());
-            String newDocumentId = ublIDGenerator.generateID(organization, voidedDocumentsType);
-            documentId = new IDType(newDocumentId);
-            voidedDocumentsType.setID(documentId);
-        }
-    }
-
-    private void generateAttributes(DocumentRepresentation representation, DocumentModel document) {
-        document.setSingleAttribute(SunatTypeToModel.ES_OPERACION_GRATUITA, String.valueOf(representation.isOperacionGratuita()));
-
-        if (representation.getTotalGravada() != null) {
-            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_GRAVADAS, representation.getTotalGravada().toString());
-        }
-        if (representation.getTotalInafecta() != null) {
-            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_INAFECTAS, representation.getTotalInafecta().toString());
-        }
-        if (representation.getTotalExonerada() != null) {
-            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_EXONERADAS, representation.getTotalExonerada().toString());
-        }
-        if (representation.getTotalIgv() != null) {
-            document.setSingleAttribute(SunatTypeToModel.TOTAL_IGV, representation.getTotalIgv().toString());
-        }
-        if (representation.getTotalGratuita() != null) {
-            document.setSingleAttribute(SunatTypeToModel.TOTAL_OPERACIONES_GRATUITAS, representation.getTotalGratuita().toString());
-        }
-        if (representation.getIgv() != null) {
-            document.setSingleAttribute(SunatTypeToModel.VALOR_IGV, representation.getIgv().toString());
-        }
-        if (representation.getPorcentajeDescuento() != null) {
-            document.setSingleAttribute(SunatTypeToModel.PORCENTAJE_DESCUENTO_GLOBAL_APLICADO, representation.getPorcentajeDescuento().toString());
-        }
-        if (representation.getTotalOtrosCargos() != null) {
-            document.setSingleAttribute(SunatTypeToModel.TOTAL_OTROS_CARGOS_APLICADO, representation.getTotalOtrosCargos().toString());
-        }
-    }
-
     @POST
     @Path("/documents/invoices")
     @Produces(MediaType.APPLICATION_JSON)
@@ -255,18 +216,7 @@ public class SunatDocumentsAdminResource {
         }
 
         try {
-            InvoiceType invoiceType = representationToType.toInvoiceType(organization, rep);
-
-            IDType documentId = invoiceType.getID();
-            if (documentId == null) {
-                UBLIDGenerator<InvoiceType> ublIDGenerator = ublUtil.getIDGenerator(DocumentType.INVOICE);
-                String newDocumentId = ublIDGenerator.generateID(organization, invoiceType);
-                documentId = new IDType(newDocumentId);
-                invoiceType.setID(documentId);
-            }
-
-            DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(), DocumentType.INVOICE, invoiceType);
-            generateAttributes(rep, document);
+            DocumentModel document = sunatResourceManager.createInvoice(organization, rep);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
@@ -304,18 +254,7 @@ public class SunatDocumentsAdminResource {
         }
 
         try {
-            CreditNoteType creditNoteType = representationToType.toCreditNoteType(organization, rep);
-
-            IDType documentId = creditNoteType.getID();
-            if (documentId == null) {
-                UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(DocumentType.CREDIT_NOTE);
-                String newDocumentId = ublIDGenerator.generateID(organization, creditNoteType);
-                documentId = new IDType(newDocumentId);
-                creditNoteType.setID(documentId);
-            }
-
-            DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(), DocumentType.CREDIT_NOTE, creditNoteType);
-            generateAttributes(rep, document);
+            DocumentModel document = sunatResourceManager.createCreditNote(organization, rep);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
@@ -353,18 +292,7 @@ public class SunatDocumentsAdminResource {
         }
 
         try {
-            DebitNoteType debitNoteType = representationToType.toDebitNoteType(organization, rep);
-
-            IDType documentId = debitNoteType.getID();
-            if (documentId == null) {
-                UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(DocumentType.DEBIT_NOTE);
-                String newDocumentId = ublIDGenerator.generateID(organization, debitNoteType);
-                documentId = new IDType(newDocumentId);
-                debitNoteType.setID(documentId);
-            }
-
-            DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(), DocumentType.DEBIT_NOTE, debitNoteType);
-            generateAttributes(rep, document);
+            DocumentModel document = sunatResourceManager.createDebitNote(organization, rep);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
@@ -471,47 +399,47 @@ public class SunatDocumentsAdminResource {
         return Response.ok().build();
     }
 
-    @POST
-    @Path("/documents/extensions/upload/voided-documents")
-    @Consumes("multipart/form-data")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadVoidedDocument(final MultipartFormDataInput input) throws ModelErrorResponseException {
-        OrganizationModel organization = getOrganizationModel();
-        OrganizationAuth auth = getAuth(organization);
-
-        auth.requireManage();
-
-        List<InputPart> inputParts = getInputs(input);
-
-        for (InputPart inputPart : inputParts) {
-            try {
-                VoidedDocumentsType voidedDocumentsType = readFile(inputPart, SunatDocumentType.VOIDED_DOCUMENTS.toString(), VoidedDocumentsType.class);
-
-                // Double-check duplicated documentId
-                if (voidedDocumentsType.getID() != null && voidedDocumentsType.getID().getValue() != null && documentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.RETENTION.toString(), voidedDocumentsType.getID().getValue(), organization) != null) {
-                    throw new ModelDuplicateException("Voided document exists with same documentId[" + voidedDocumentsType.getID().getValue() + "]");
-                }
-
-                setVoidedDocumentIDType(organization, voidedDocumentsType);
-
-                DocumentModel document = documentManager.addDocument(organization, voidedDocumentsType.getID().getValue(), SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentsType);
-                eventStoreManager.send(organization, getAdminEvent(organization)
-                        .operation(OperationType.CREATE)
-                        .resourcePath(uriInfo, document.getId())
-                        .representation(voidedDocumentsType)
-                        .getEvent());
-            } catch (IOException e) {
-                logger.error("Error reading input data", e);
-                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
-            } catch (ModelDuplicateException e) {
-                throw new ModelErrorResponseException("Retention exists with same documentId");
-            } catch (ModelException e) {
-                throw new ModelErrorResponseException("Could not create document");
-            }
-        }
-
-        return Response.ok().build();
-    }
+//    @POST
+//    @Path("/documents/extensions/upload/voided-documents")
+//    @Consumes("multipart/form-data")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response uploadVoidedDocument(final MultipartFormDataInput input) throws ModelErrorResponseException {
+//        OrganizationModel organization = getOrganizationModel();
+//        OrganizationAuth auth = getAuth(organization);
+//
+//        auth.requireManage();
+//
+//        List<InputPart> inputParts = getInputs(input);
+//
+//        for (InputPart inputPart : inputParts) {
+//            try {
+//                VoidedDocumentsType voidedDocumentsType = readFile(inputPart, SunatDocumentType.VOIDED_DOCUMENTS.toString(), VoidedDocumentsType.class);
+//
+//                // Double-check duplicated documentId
+//                if (voidedDocumentsType.getID() != null && voidedDocumentsType.getID().getValue() != null && documentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.RETENTION.toString(), voidedDocumentsType.getID().getValue(), organization) != null) {
+//                    throw new ModelDuplicateException("Voided document exists with same documentId[" + voidedDocumentsType.getID().getValue() + "]");
+//                }
+//
+//                setVoidedDocumentIDType(organization, voidedDocumentsType);
+//
+//                DocumentModel document = documentManager.addDocument(organization, voidedDocumentsType.getID().getValue(), SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentsType);
+//                eventStoreManager.send(organization, getAdminEvent(organization)
+//                        .operation(OperationType.CREATE)
+//                        .resourcePath(uriInfo, document.getId())
+//                        .representation(voidedDocumentsType)
+//                        .getEvent());
+//            } catch (IOException e) {
+//                logger.error("Error reading input data", e);
+//                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
+//            } catch (ModelDuplicateException e) {
+//                throw new ModelErrorResponseException("Retention exists with same documentId");
+//            } catch (ModelException e) {
+//                throw new ModelErrorResponseException("Could not create document");
+//            }
+//        }
+//
+//        return Response.ok().build();
+//    }
 
     @POST
     @Path("/documents/perceptions")
@@ -610,10 +538,7 @@ public class SunatDocumentsAdminResource {
         }
 
         try {
-            VoidedDocumentsType voidedDocumentsType = representationToType.toVoidedDocumentType(organization, rep);
-            setVoidedDocumentIDType(organization, voidedDocumentsType);
-
-            DocumentModel document = documentManager.addDocument(organization, voidedDocumentsType.getID().getValue(), SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentsType);
+            DocumentModel document = sunatResourceManager.createVoidedDocuments(organization, rep);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
                 sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());

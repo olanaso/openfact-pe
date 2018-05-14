@@ -45,7 +45,7 @@ public class SunatUBLInvoiceCustomizator extends AbstractInvoiceProvider impleme
                     documentLine.setAttribute("priceAmount", invoiceLineType.getPrice().getPriceAmountValue());
                 }
                 if (invoiceLineType.getPricingReference() != null && !invoiceLineType.getPricingReference().getAlternativeConditionPrice().isEmpty()) {
-                    documentLine.setAttribute("priceAmount", invoiceLineType.getPricingReference().getAlternativeConditionPrice().get(0).getPriceAmountValue());
+                    documentLine.setAttribute("alternativePriceAmount", invoiceLineType.getPricingReference().getAlternativeConditionPrice().get(0).getPriceAmountValue());
                 }
                 if (invoiceLineType.getTaxTotal() != null && !invoiceLineType.getTaxTotal().isEmpty()) {
                     // IGV

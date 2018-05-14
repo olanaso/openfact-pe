@@ -102,6 +102,9 @@ public class SunatDocumentsAdminResource {
     @Inject
     private SunatSenderManager sunatSenderManager;
 
+    @Inject
+    private SunatResourceManager sunatResourceManager;
+
     private OrganizationModel getOrganizationModel() {
         String organizationName = session.getContext().getOrganization().getName();
         OrganizationModel organization = organizationManager.getOrganizationByName(organizationName);
@@ -156,35 +159,6 @@ public class SunatDocumentsAdminResource {
                 }
             } else {
                 throw new ModelErrorResponseException("Invalid number and/or serie", Response.Status.BAD_REQUEST);
-            }
-        }
-    }
-
-    private void sendDocumentToCustomer(OrganizationModel organization, DocumentModel document) throws ModelErrorResponseException {
-        try {
-            documentManager.sendToCustomerParty(organization, document);
-        } catch (ModelInsuficientData e) {
-            SendEventModel sendEventModel = document.addSendEvent(DestinyType.CUSTOMER);
-            sendEventModel.setResult(SendEventStatus.ERROR);
-            sendEventModel.setDescription(e.getMessage());
-        } catch (SendEventException e) {
-            logger.error(e.getMessage(), e);
-            SendEventModel sendEventModel = document.addSendEvent(DestinyType.CUSTOMER);
-            sendEventModel.setResult(SendEventStatus.ERROR);
-            sendEventModel.setDescription("Error sending email");
-        }
-    }
-
-    private void sendDocumentToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelErrorResponseException {
-        try {
-            documentManager.sendToThirdParty(organization, document);
-        } catch (ModelInsuficientData e) {
-            throw new ModelErrorResponseException(e.getMessage(), Response.Status.BAD_REQUEST);
-        } catch (SendEventException e) {
-            if (e instanceof SunatSendEventException) {
-                throw new ModelErrorResponseException(e.getMessage(), Response.Status.BAD_REQUEST);
-            } else {
-                throw new ModelErrorResponseException("Could not send to sunat", Response.Status.INTERNAL_SERVER_ERROR);
             }
         }
     }
@@ -295,10 +269,10 @@ public class SunatDocumentsAdminResource {
             generateAttributes(rep, document);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sendDocumentToThirdParty(organization, document);
+                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sendDocumentToCustomer(organization, document);
+                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -344,10 +318,10 @@ public class SunatDocumentsAdminResource {
             generateAttributes(rep, document);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sendDocumentToThirdParty(organization, document);
+                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sendDocumentToCustomer(organization, document);
+                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -393,10 +367,10 @@ public class SunatDocumentsAdminResource {
             generateAttributes(rep, document);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sendDocumentToThirdParty(organization, document);
+                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sendDocumentToCustomer(organization, document);
+                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -560,10 +534,10 @@ public class SunatDocumentsAdminResource {
             DocumentModel document = documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sendDocumentToThirdParty(organization, document);
+                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sendDocumentToCustomer(organization, document);
+                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -601,10 +575,10 @@ public class SunatDocumentsAdminResource {
             DocumentModel document = documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sendDocumentToThirdParty(organization, document);
+                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sendDocumentToCustomer(organization, document);
+                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -642,10 +616,10 @@ public class SunatDocumentsAdminResource {
             DocumentModel document = documentManager.addDocument(organization, voidedDocumentsType.getID().getValue(), SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentsType);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sendDocumentToThirdParty(organization, document);
+                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sendDocumentToCustomer(organization, document);
+                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();

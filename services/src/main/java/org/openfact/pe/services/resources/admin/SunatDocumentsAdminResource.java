@@ -57,6 +57,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Stateless
 @Consumes(MediaType.APPLICATION_JSON)
@@ -204,7 +206,7 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/invoices")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createInvoice(@Valid final DocumentRepresentation rep) throws ModelErrorResponseException, ModelException {
+    public Response createInvoice(@QueryParam("async") @DefaultValue("false") Boolean async, @Valid final DocumentRepresentation rep) throws ModelErrorResponseException, ModelException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -218,11 +220,21 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createInvoice(organization, rep);
 
-            if (rep.isEnviarAutomaticamenteASunat()) {
-                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-            }
-            if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+            try {
+                if (rep.isEnviarAutomaticamenteASunat()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+                if (rep.isEnviarAutomaticamenteAlCliente()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -242,7 +254,7 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/credit-notes")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createCreditNote(@Valid final DocumentRepresentation rep) throws ModelErrorResponseException {
+    public Response createCreditNote(@QueryParam("async") @DefaultValue("false") Boolean async, @Valid final DocumentRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -256,11 +268,21 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createCreditNote(organization, rep);
 
-            if (rep.isEnviarAutomaticamenteASunat()) {
-                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-            }
-            if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+            try {
+                if (rep.isEnviarAutomaticamenteASunat()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+                if (rep.isEnviarAutomaticamenteAlCliente()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -280,7 +302,7 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/debit-notes")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createDebitNote(@Valid final DocumentRepresentation rep) throws ModelErrorResponseException {
+    public Response createDebitNote(@QueryParam("async") @DefaultValue("false") Boolean async, @Valid final DocumentRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -294,11 +316,21 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createDebitNote(organization, rep);
 
-            if (rep.isEnviarAutomaticamenteASunat()) {
-                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-            }
-            if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+            try {
+                if (rep.isEnviarAutomaticamenteASunat()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+                if (rep.isEnviarAutomaticamenteAlCliente()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -526,7 +558,7 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/voided-documents")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createRetention(VoidedRepresentation rep) throws ModelErrorResponseException {
+    public Response createRetention(@QueryParam("async") @DefaultValue("false") Boolean async, VoidedRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -540,11 +572,21 @@ public class SunatDocumentsAdminResource {
         try {
             DocumentModel document = sunatResourceManager.createVoidedDocuments(organization, rep);
 
-            if (rep.isEnviarAutomaticamenteASunat()) {
-                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
-            }
-            if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+            try {
+                if (rep.isEnviarAutomaticamenteASunat()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+                if (rep.isEnviarAutomaticamenteAlCliente()) {
+                    Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                    if (!async) {
+                        future.get();
+                    }
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                logger.error(e);
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();

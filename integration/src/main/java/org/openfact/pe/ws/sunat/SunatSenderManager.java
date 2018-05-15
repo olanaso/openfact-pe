@@ -139,6 +139,32 @@ public class SunatSenderManager {
             return sendEvent;
         } catch (SOAPFaultException e) {
             String faultCode = e.getFault().getFaultCode();
+
+            if (faultCode.equals("soap-env:Client.1033")) {
+                String message = e.getMessage();
+                int ticketIndex = message.indexOf("ticket:");
+                message = message.substring(ticketIndex + "ticket:".length()).trim();
+                String ticket = message.substring(0, message.indexOf(" ")).trim();
+
+                byte[] bytes = checkTicket(organization, ticket);
+                FileModel cdrFile;
+                try {
+                    cdrFile = fileProvider.createFile(organization, "R" + fileName + ".zip", bytes);
+
+                    SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
+                    sendEvent.setResult(SendEventStatus.SUCCESS);
+                    sendEvent.setDescription("Document submitted successfully to SUNAT");
+                    sendEvent.setAttribute("address", sunatAddress);
+                    sendEvent.attachFile(cdrFile);
+
+                    for (Map.Entry<String, String> entry : SunatResponseUtils.byteResponseToMap(bytes).entrySet()) {
+                        sendEvent.setAttribute(entry.getKey(), entry.getValue());
+                    }
+                } catch (Exception e1) {
+                    throw new SunatSendEventException(SunatCodigoErrores.codigoErrores.getOrDefault(faultCode, e1.getMessage()), e1);
+                }
+            }
+
             throw new SunatSendEventException(SunatCodigoErrores.codigoErrores.getOrDefault(faultCode, e.getMessage()), e);
         } catch (Exception e) {
             throw new SendEventException("Could not generate send to third party", e);

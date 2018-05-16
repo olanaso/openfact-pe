@@ -19,9 +19,9 @@ public class DocumentRepresentation {
     protected String entidadDireccion;
     protected String entidadEmail;
 
-    protected Date fechaDeEmision;
-    protected Date fechaDeVencimiento;
-    protected Date fechaDeReferencia;
+    protected String fechaDeEmision;
+    protected String fechaDeVencimiento;
+    protected String fechaDeReferencia;
 
     protected String moneda;
     protected BigDecimal tipoDeCambio;
@@ -120,19 +120,19 @@ public class DocumentRepresentation {
         this.entidadEmail = entidadEmail;
     }
 
-    public Date getFechaDeEmision() {
+    public String getFechaDeEmision() {
         return fechaDeEmision;
     }
 
-    public void setFechaDeEmision(Date fechaDeEmision) {
+    public void setFechaDeEmision(String fechaDeEmision) {
         this.fechaDeEmision = fechaDeEmision;
     }
 
-    public Date getFechaDeVencimiento() {
+    public String getFechaDeVencimiento() {
         return fechaDeVencimiento;
     }
 
-    public void setFechaDeVencimiento(Date fechaDeVencimiento) {
+    public void setFechaDeVencimiento(String fechaDeVencimiento) {
         this.fechaDeVencimiento = fechaDeVencimiento;
     }
 
@@ -288,11 +288,11 @@ public class DocumentRepresentation {
         this.codigoUnico = codigoUnico;
     }
 
-    public Date getFechaDeReferencia() {
+    public String getFechaDeReferencia() {
         return fechaDeReferencia;
     }
 
-    public void setFechaDeReferencia(Date fechaDeReferencia) {
+    public void setFechaDeReferencia(String fechaDeReferencia) {
         this.fechaDeReferencia = fechaDeReferencia;
     }
 

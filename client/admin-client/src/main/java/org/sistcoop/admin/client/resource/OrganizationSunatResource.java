@@ -1,7 +1,6 @@
 package org.sistcoop.admin.client.resource;
 
 import org.openfact.models.ModelException;
-import org.openfact.pe.representations.idm.DocumentRepresentation;
 import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.services.ModelErrorResponseException;

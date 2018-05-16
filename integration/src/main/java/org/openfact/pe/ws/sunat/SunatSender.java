@@ -4,6 +4,7 @@ import org.openfact.models.types.InternetMediaType;
 import org.openfact.pe.ws.ServiceConfigurationException;
 import org.openfact.pe.ws.ServiceWrapper;
 import pe.gob.sunat.service.BillService;
+import service.sunat.gob.pe.billconsultservice.StatusResponse;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -45,6 +46,13 @@ public class SunatSender {
         BillService client = serviceWrapper.initWebService(BillService.class);
 
         return client.getStatus(ticket).getContent();
+    }
+
+    public StatusResponse getStatusCdr(Map<String, String> config, String ruc, String tipoComprobante, String serieComprobante, Integer numeroComprobante) throws ServiceConfigurationException {
+        ServiceWrapper<service.sunat.gob.pe.billconsultservice.BillService> serviceWrapper = new ServiceWrapper<>(config);
+        service.sunat.gob.pe.billconsultservice.BillService client = serviceWrapper.initWebService(service.sunat.gob.pe.billconsultservice.BillService.class);
+
+        return client.getStatusCdr(ruc, tipoComprobante, serieComprobante, numeroComprobante);
     }
 
     public static SunatSenderConfig buildConfig() {

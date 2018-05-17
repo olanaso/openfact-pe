@@ -103,7 +103,8 @@ public class SunatSenderManager {
     }
 
     public StatusResponse getStatusCdr(OrganizationModel organization, DocumentModel document) throws SunatSendEventException {
-        String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_1);
+//        String sunatAddress = organization.getAttribute(SunatConfig.SUNAT_ADDRESS_3);
+        String sunatAddress = "https://e-factura.sunat.gob.pe/ol-it-wsconscpegem/billConsultService";
         String sunatUsername = organization.getAttribute(SunatConfig.SUNAT_USERNAME);
         String sunatPassword = organization.getAttribute(SunatConfig.SUNAT_PASSWORD);
 

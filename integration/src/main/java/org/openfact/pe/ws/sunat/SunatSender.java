@@ -3,8 +3,8 @@ package org.openfact.pe.ws.sunat;
 import org.openfact.models.types.InternetMediaType;
 import org.openfact.pe.ws.ServiceConfigurationException;
 import org.openfact.pe.ws.ServiceWrapper;
-import pe.gob.sunat.service.BillService;
 import service.sunat.gob.pe.billconsultservice.StatusResponse;
+import service.sunat.gob.pe.billservice.BillService;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -20,7 +20,7 @@ public class SunatSender {
         DataSource dataSource = new ByteArrayDataSource(file, mediaType.getMimeType());
         DataHandler dataHandler = new DataHandler(dataSource);
 
-        return client.sendBill(fileName, dataHandler);
+        return client.sendBill(fileName, dataHandler, null);
     }
 
     public String sendSummary(Map<String, String> config, byte[] document, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
@@ -29,7 +29,7 @@ public class SunatSender {
         DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
         DataHandler dataHandler = new DataHandler(dataSource);
 
-        return client.sendSummary(fileName, dataHandler);
+        return client.sendSummary(fileName, dataHandler, null);
     }
 
     public String sendPack(Map<String, String> config, byte[] document, String fileName, InternetMediaType mediaType) throws ServiceConfigurationException {
@@ -38,7 +38,7 @@ public class SunatSender {
         DataSource dataSource = new ByteArrayDataSource(document, mediaType.getMimeType());
         DataHandler dataHandler = new DataHandler(dataSource);
 
-        return client.sendPack(fileName, dataHandler);
+        return client.sendPack(fileName, dataHandler, null);
     }
 
     public byte[] getStatus(Map<String, String> config, String ticket) throws ServiceConfigurationException {

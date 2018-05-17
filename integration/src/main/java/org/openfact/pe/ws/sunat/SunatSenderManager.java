@@ -232,14 +232,6 @@ public class SunatSenderManager {
         }
     }
 
-    private void configureTimeout(pe.gob.sunat.service.BillService port) throws Exception {
-        //Set timeout until a connection is established
-        ((BindingProvider) port).getRequestContext().put("javax.xml.ws.client.connectionTimeout", "6000");
-
-        //Set timeout until the response is received
-        ((BindingProvider) port).getRequestContext().put("javax.xml.ws.client.receiveTimeout", "1000");
-    }
-
     private void configureAddress(BindingProvider bindingProvider, String address) {
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, address);
     }

@@ -646,7 +646,7 @@ public class SunatDocumentsAdminResource {
                     logger.warn("Se encontraron mas de un cdr, no se puede identificar el valido");
                 }
 
-                FileModel cdrFile = fileProvider.getFileById(organization, fileIds.get(0));
+                FileModel cdrFile = fileProvider.getFileById(organization, fileIds.get(fileIds.size() - 1));
                 Response.ResponseBuilder response = Response.ok(cdrFile.getFile());
                 String internetMediaType = InternetMediaType.getMymeTypeFromExtension(cdrFile.getExtension());
                 if (internetMediaType != null && !internetMediaType.isEmpty()) response.type(internetMediaType);

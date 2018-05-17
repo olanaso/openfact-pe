@@ -194,13 +194,11 @@ public class SunatSenderManager {
                     ConsultaCdrResponseType consultaCdrResponseType = optional.get();
 
                     SendEventModel sendEvent = document.addSendEvent(DestinyType.THIRD_PARTY);
-                    sendEvent.setDescription(consultaCdrResponseType.getDescripcion());
+                    sendEvent.setDescription(statusResponse.getStatusMessage());
+                    sendEvent.setAttribute("codigo", statusResponse.getStatusCode());
                     sendEvent.setAttribute("address", sunatAddress);
-                    sendEvent.setAttribute("codigo", consultaCdrResponseType.getCodigo());
                     sendEvent.setAttribute("exito", consultaCdrResponseType.isTipo());
-                    if (consultaCdrResponseType.isTipo()) {
-                        sendEvent.setResult(SendEventStatus.SUCCESS);
-                    }
+                    sendEvent.setResult(statusResponse.getStatusMessage().equalsIgnoreCase("La constancia existe") ? SendEventStatus.SUCCESS : SendEventStatus.ERROR);
 
                     byte[] bytes = statusResponse.getContent();
 

@@ -641,9 +641,11 @@ public class SunatDocumentsAdminResource {
             List<String> fileIds = sendEvent.getAttachedFileIds();
             if (fileIds.isEmpty()) {
                 return ErrorResponse.error("Cdr no encontrado", Response.Status.NOT_FOUND);
-            } else if (fileIds.size() > 1) {
-                return ErrorResponse.error("Se encontraron mas de un cdr, no se puede identificar el valido", Response.Status.CONFLICT);
             } else {
+                if (fileIds.size() > 1) {
+                    logger.warn("Se encontraron mas de un cdr, no se puede identificar el valido");
+                }
+
                 FileModel cdrFile = fileProvider.getFileById(organization, fileIds.get(0));
                 Response.ResponseBuilder response = Response.ok(cdrFile.getFile());
                 String internetMediaType = InternetMediaType.getMymeTypeFromExtension(cdrFile.getExtension());

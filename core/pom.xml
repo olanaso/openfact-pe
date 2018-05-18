@@ -39,15 +39,15 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <excludes>
-                    <exclude>**/*.xsd</exclude>
-                </excludes>
-            </resource>
-        </resources>
+        <!--<resources>-->
+            <!--<resource>-->
+                <!--<directory>src/main/resources</directory>-->
+                <!--<filtering>true</filtering>-->
+                <!--<excludes>-->
+                    <!--<exclude>**/*.xsd</exclude>-->
+                <!--</excludes>-->
+            <!--</resource>-->
+        <!--</resources>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -91,29 +91,29 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-ubl21-sunat</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <schemaDirectory>src/main/resources/jaxb</schemaDirectory>
-                            <schemaIncludes>
-                                <include>maindoc/*.xsd</include>
-                            </schemaIncludes>
-                            <bindingDirectory>src/main/resources/jaxb/common</bindingDirectory>
-                            <bindingIncludes>
-                                <include>*.xml</include>
-                            </bindingIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/schemas/ubl21</generateDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.jvnet.jaxb2.maven2</groupId>-->
+                <!--<artifactId>maven-jaxb2-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>generate-ubl21-sunat</id>-->
+                        <!--<goals>-->
+                            <!--<goal>generate</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<schemaDirectory>src/main/resources/jaxb</schemaDirectory>-->
+                            <!--<schemaIncludes>-->
+                                <!--<include>maindoc/*.xsd</include>-->
+                            <!--</schemaIncludes>-->
+                            <!--<bindingDirectory>src/main/resources/jaxb/common</bindingDirectory>-->
+                            <!--<bindingIncludes>-->
+                                <!--<include>*.xml</include>-->
+                            <!--</bindingIncludes>-->
+                            <!--<generateDirectory>${project.build.directory}/generated-sources/schemas/ubl21</generateDirectory>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

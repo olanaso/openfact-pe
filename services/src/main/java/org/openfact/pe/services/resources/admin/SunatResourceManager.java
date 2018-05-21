@@ -7,6 +7,8 @@ import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.jboss.logging.Logger;
 import org.openfact.events.admin.OperationType;
 import org.openfact.models.*;
+import org.openfact.models.jpa.entities.SerieNumeroController;
+import org.openfact.models.jpa.entities.SerieNumeroEntity;
 import org.openfact.models.types.DestinyType;
 import org.openfact.models.types.DocumentType;
 import org.openfact.models.types.SendEventStatus;
@@ -26,7 +28,10 @@ import javax.ejb.*;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Stateless
 public class SunatResourceManager {
@@ -48,6 +53,9 @@ public class SunatResourceManager {
     @Inject
     private UBLUtil ublUtil;
 
+    @Inject
+    private SerieNumeroController serieNumeroController;
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public DocumentModel createInvoice(OrganizationModel organization, DocumentRepresentation rep) throws ModelException {
         InvoiceType invoiceType = representationToType.toInvoiceType(organization, rep);
@@ -58,6 +66,45 @@ public class SunatResourceManager {
             String newDocumentId = ublIDGenerator.generateID(organization, invoiceType);
             documentId = new IDType(newDocumentId);
             invoiceType.setID(documentId);
+        } else {
+            String[] assignedID = documentId.getValue().split("-");
+            String serieString = assignedID[0];
+            String numeroString = assignedID[1];
+
+            Pattern pattern = Pattern.compile("F[0-9]{3}");
+            Matcher matcher = pattern.matcher(serieString);
+            if (matcher.matches()) {
+                int customSerie = Integer.parseInt(serieString.substring(1));
+                int customNumero = Integer.parseInt(numeroString);
+                String firstLetterSerie = serieString.substring(0, 1);
+
+                Optional<SerieNumeroEntity> serieNumeroDB = serieNumeroController.getSerieNumero(organization, DocumentType.INVOICE.toString(), firstLetterSerie);
+                if (serieNumeroDB.isPresent()) {
+                    SerieNumeroEntity serieNumeroEntity = serieNumeroDB.get();
+                    if (customSerie > serieNumeroEntity.getSerie()) {
+                        // poner nueva serie y numero
+                        serieNumeroEntity.setSerie(customSerie);
+                        serieNumeroEntity.setNumero(customNumero);
+                        serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                    } else if (customSerie == serieNumeroEntity.getSerie()){
+                        if (customNumero > serieNumeroEntity.getNumero()) {
+                            // poner serie igual pero incrementar el numero
+                            serieNumeroEntity.setNumero(customNumero);
+                            serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                        }
+                    }
+                } else {
+                    // poner serie y numero de rep
+                    SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
+                    serieNumeroEntity.setDocumentType(DocumentType.INVOICE.toString());
+                    serieNumeroEntity.setOrganizationId(organization.getId());
+                    serieNumeroEntity.setSerie(customSerie);
+                    serieNumeroEntity.setNumero(customNumero);
+                    serieNumeroEntity.setFirstLetter(firstLetterSerie);
+
+                    serieNumeroController.createSerieNumero(serieNumeroEntity);
+                }
+            }
         }
 
         DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(), DocumentType.INVOICE, invoiceType);
@@ -75,6 +122,45 @@ public class SunatResourceManager {
             String newDocumentId = ublIDGenerator.generateID(organization, creditNoteType);
             documentId = new IDType(newDocumentId);
             creditNoteType.setID(documentId);
+        } else {
+            String[] assignedID = documentId.getValue().split("-");
+            String serieString = assignedID[0];
+            String numeroString = assignedID[1];
+
+            Pattern pattern = Pattern.compile("[F|B][0-9]{3}");
+            Matcher matcher = pattern.matcher(serieString);
+            if (matcher.matches()) {
+                int customSerie = Integer.parseInt(serieString.substring(1));
+                int customNumero = Integer.parseInt(numeroString);
+                String firstLetterSerie = serieString.substring(0, 1);
+
+                Optional<SerieNumeroEntity> serieNumeroDB = serieNumeroController.getSerieNumero(organization, DocumentType.CREDIT_NOTE.toString(), firstLetterSerie);
+                if (serieNumeroDB.isPresent()) {
+                    SerieNumeroEntity serieNumeroEntity = serieNumeroDB.get();
+                    if (customSerie > serieNumeroEntity.getSerie()) {
+                        // poner nueva serie y numero
+                        serieNumeroEntity.setSerie(customSerie);
+                        serieNumeroEntity.setNumero(customNumero);
+                        serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                    } else if (customSerie == serieNumeroEntity.getSerie()){
+                        if (customNumero > serieNumeroEntity.getNumero()) {
+                            // poner serie igual pero incrementar el numero
+                            serieNumeroEntity.setNumero(customNumero);
+                            serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                        }
+                    }
+                } else {
+                    // poner serie y numero de rep
+                    SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
+                    serieNumeroEntity.setDocumentType(DocumentType.CREDIT_NOTE.toString());
+                    serieNumeroEntity.setOrganizationId(organization.getId());
+                    serieNumeroEntity.setSerie(customSerie);
+                    serieNumeroEntity.setNumero(customNumero);
+                    serieNumeroEntity.setFirstLetter(firstLetterSerie);
+
+                    serieNumeroController.createSerieNumero(serieNumeroEntity);
+                }
+            }
         }
 
         DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(), DocumentType.CREDIT_NOTE, creditNoteType);
@@ -92,6 +178,45 @@ public class SunatResourceManager {
             String newDocumentId = ublIDGenerator.generateID(organization, debitNoteType);
             documentId = new IDType(newDocumentId);
             debitNoteType.setID(documentId);
+        } else {
+            String[] assignedID = documentId.getValue().split("-");
+            String serieString = assignedID[0];
+            String numeroString = assignedID[1];
+
+            Pattern pattern = Pattern.compile("[F|B][0-9]{3}");
+            Matcher matcher = pattern.matcher(serieString);
+            if (matcher.matches()) {
+                int customSerie = Integer.parseInt(serieString.substring(1));
+                int customNumero = Integer.parseInt(numeroString);
+                String firstLetterSerie = serieString.substring(0, 1);
+
+                Optional<SerieNumeroEntity> serieNumeroDB = serieNumeroController.getSerieNumero(organization, DocumentType.DEBIT_NOTE.toString(), firstLetterSerie);
+                if (serieNumeroDB.isPresent()) {
+                    SerieNumeroEntity serieNumeroEntity = serieNumeroDB.get();
+                    if (customSerie > serieNumeroEntity.getSerie()) {
+                        // poner nueva serie y numero
+                        serieNumeroEntity.setSerie(customSerie);
+                        serieNumeroEntity.setNumero(customNumero);
+                        serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                    } else if (customSerie == serieNumeroEntity.getSerie()){
+                        if (customNumero > serieNumeroEntity.getNumero()) {
+                            // poner serie igual pero incrementar el numero
+                            serieNumeroEntity.setNumero(customNumero);
+                            serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                        }
+                    }
+                } else {
+                    // poner serie y numero de rep
+                    SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
+                    serieNumeroEntity.setDocumentType(DocumentType.DEBIT_NOTE.toString());
+                    serieNumeroEntity.setOrganizationId(organization.getId());
+                    serieNumeroEntity.setSerie(customSerie);
+                    serieNumeroEntity.setNumero(customNumero);
+                    serieNumeroEntity.setFirstLetter(firstLetterSerie);
+
+                    serieNumeroController.createSerieNumero(serieNumeroEntity);
+                }
+            }
         }
 
         DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(), DocumentType.DEBIT_NOTE, debitNoteType);

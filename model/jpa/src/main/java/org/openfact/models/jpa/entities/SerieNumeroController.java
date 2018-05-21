@@ -1,5 +1,7 @@
 package org.openfact.models.jpa.entities;
 
+import org.openfact.models.OrganizationModel;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,6 +13,31 @@ public class SerieNumeroController {
 
     @PersistenceContext
     private EntityManager em;
+
+    public SerieNumeroEntity createSerieNumero(SerieNumeroEntity serieNumeroEntity) {
+        if (serieNumeroEntity.getId() == null) {
+            serieNumeroEntity.setId(UUID.randomUUID().toString());
+        }
+
+        em.persist(serieNumeroEntity);
+        em.flush();
+        return serieNumeroEntity;
+    }
+
+    public void updateSerieNumero(SerieNumeroEntity serieNumeroEntity) {
+        em.merge(serieNumeroEntity);
+        em.flush();
+    }
+
+    public Optional<SerieNumeroEntity> getSerieNumero(OrganizationModel organization, String documentType, String firstLetter) {
+        TypedQuery<SerieNumeroEntity> query = em.createNamedQuery("selectSerieNumero", SerieNumeroEntity.class);
+        query.setParameter("organizationId", organization.getId());
+        query.setParameter("documentType", documentType);
+        query.setParameter("firstLetter", firstLetter);
+        query.setMaxResults(1);
+        List<SerieNumeroEntity> resultList = query.getResultList();
+        return getFirstResult(resultList);
+    }
 
     public AbstractMap.SimpleEntry<Integer, Integer> getSiguienteSerieNumero(String organizationId, String documentType, String firstLetter) {
         return siguienteSerieNumero(organizationId, documentType, firstLetter);

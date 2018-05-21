@@ -26,13 +26,6 @@ public class SunatUBLCreditNoteIDGenerator extends AbstractCreditNoteProvider im
     public String generateID(OrganizationModel organization, Object o) {
         CreditNoteType creditNoteType = resolve(o);
 
-        String invoiceDocumentReferenceID = null;
-        if (creditNoteType.getDiscrepancyResponseCount() > 0) {
-            invoiceDocumentReferenceID = creditNoteType.getDiscrepancyResponse().get(0).getReferenceIDValue();
-        } else if (creditNoteType.getBillingReferenceCount() > 0) {
-            invoiceDocumentReferenceID = creditNoteType.getBillingReference().get(0).getInvoiceDocumentReference().getIDValue();
-        }
-
         String primeraLetra = creditNoteType.getBillingReference().get(0).getInvoiceDocumentReference().getIDValue().substring(0, 1);
         AbstractMap.SimpleEntry<Integer, Integer> serieNumero = serieNumeroController.getSiguienteSerieNumero(
                 organization.getId(),

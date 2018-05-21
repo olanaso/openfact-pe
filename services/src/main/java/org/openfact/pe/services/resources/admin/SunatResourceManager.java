@@ -15,8 +15,11 @@ import org.openfact.models.types.SendEventStatus;
 import org.openfact.pe.models.utils.SunatRepresentationToType;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.representations.idm.DocumentRepresentation;
+import org.openfact.pe.representations.idm.DocumentoSunatRepresentation;
 import org.openfact.pe.representations.idm.VoidedRepresentation;
 import org.openfact.pe.ubl.types.SunatDocumentType;
+import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
+import org.openfact.pe.ubl.ubl21.retention.RetentionType;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.services.ModelErrorResponseException;
 import org.openfact.services.managers.DocumentManager;
@@ -86,7 +89,7 @@ public class SunatResourceManager {
                         serieNumeroEntity.setSerie(customSerie);
                         serieNumeroEntity.setNumero(customNumero);
                         serieNumeroController.updateSerieNumero(serieNumeroEntity);
-                    } else if (customSerie == serieNumeroEntity.getSerie()){
+                    } else if (customSerie == serieNumeroEntity.getSerie()) {
                         if (customNumero > serieNumeroEntity.getNumero()) {
                             // poner serie igual pero incrementar el numero
                             serieNumeroEntity.setNumero(customNumero);
@@ -142,7 +145,7 @@ public class SunatResourceManager {
                         serieNumeroEntity.setSerie(customSerie);
                         serieNumeroEntity.setNumero(customNumero);
                         serieNumeroController.updateSerieNumero(serieNumeroEntity);
-                    } else if (customSerie == serieNumeroEntity.getSerie()){
+                    } else if (customSerie == serieNumeroEntity.getSerie()) {
                         if (customNumero > serieNumeroEntity.getNumero()) {
                             // poner serie igual pero incrementar el numero
                             serieNumeroEntity.setNumero(customNumero);
@@ -198,7 +201,7 @@ public class SunatResourceManager {
                         serieNumeroEntity.setSerie(customSerie);
                         serieNumeroEntity.setNumero(customNumero);
                         serieNumeroController.updateSerieNumero(serieNumeroEntity);
-                    } else if (customSerie == serieNumeroEntity.getSerie()){
+                    } else if (customSerie == serieNumeroEntity.getSerie()) {
                         if (customNumero > serieNumeroEntity.getNumero()) {
                             // poner serie igual pero incrementar el numero
                             serieNumeroEntity.setNumero(customNumero);
@@ -241,6 +244,112 @@ public class SunatResourceManager {
             documentId = new IDType(newDocumentId);
             voidedDocumentsType.setID(documentId);
         }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public DocumentModel createPerception(OrganizationModel organization, DocumentoSunatRepresentation rep) throws ModelException {
+        PerceptionType perceptionType = representationToType.toPerceptionType(organization, rep);
+        IDType documentId = perceptionType.getId();
+        if (documentId == null || documentId.getValue() == null) {
+            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.PERCEPTION.toString());
+            String newDocumentId = ublIDGenerator.generateID(organization, perceptionType);
+            documentId = new IDType(newDocumentId);
+            perceptionType.setId(documentId);
+        } else {
+            String[] assignedID = documentId.getValue().split("-");
+            String serieString = assignedID[0];
+            String numeroString = assignedID[1];
+
+            Pattern pattern = Pattern.compile("P[0-9]{3}");
+            Matcher matcher = pattern.matcher(serieString);
+            if (matcher.matches()) {
+                int customSerie = Integer.parseInt(serieString.substring(1));
+                int customNumero = Integer.parseInt(numeroString);
+                String firstLetterSerie = serieString.substring(0, 1);
+
+                Optional<SerieNumeroEntity> serieNumeroDB = serieNumeroController.getSerieNumero(organization, SunatDocumentType.PERCEPTION.toString(), firstLetterSerie);
+                if (serieNumeroDB.isPresent()) {
+                    SerieNumeroEntity serieNumeroEntity = serieNumeroDB.get();
+                    if (customSerie > serieNumeroEntity.getSerie()) {
+                        // poner nueva serie y numero
+                        serieNumeroEntity.setSerie(customSerie);
+                        serieNumeroEntity.setNumero(customNumero);
+                        serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                    } else if (customSerie == serieNumeroEntity.getSerie()) {
+                        if (customNumero > serieNumeroEntity.getNumero()) {
+                            // poner serie igual pero incrementar el numero
+                            serieNumeroEntity.setNumero(customNumero);
+                            serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                        }
+                    }
+                } else {
+                    // poner serie y numero de rep
+                    SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
+                    serieNumeroEntity.setDocumentType(SunatDocumentType.PERCEPTION.toString());
+                    serieNumeroEntity.setOrganizationId(organization.getId());
+                    serieNumeroEntity.setSerie(customSerie);
+                    serieNumeroEntity.setNumero(customNumero);
+                    serieNumeroEntity.setFirstLetter(firstLetterSerie);
+
+                    serieNumeroController.createSerieNumero(serieNumeroEntity);
+                }
+            }
+        }
+
+        return documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public DocumentModel createRetention(OrganizationModel organization, DocumentoSunatRepresentation rep) throws ModelException {
+        RetentionType retentionType = representationToType.toRetentionType(organization, rep);
+        IDType documentId = retentionType.getId();
+        if (documentId == null || documentId.getValue() == null) {
+            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.RETENTION.toString());
+            String newDocumentId = ublIDGenerator.generateID(organization, retentionType);
+            documentId = new IDType(newDocumentId);
+            retentionType.setId(documentId);
+        } else {
+            String[] assignedID = documentId.getValue().split("-");
+            String serieString = assignedID[0];
+            String numeroString = assignedID[1];
+
+            Pattern pattern = Pattern.compile("P[0-9]{3}");
+            Matcher matcher = pattern.matcher(serieString);
+            if (matcher.matches()) {
+                int customSerie = Integer.parseInt(serieString.substring(1));
+                int customNumero = Integer.parseInt(numeroString);
+                String firstLetterSerie = serieString.substring(0, 1);
+
+                Optional<SerieNumeroEntity> serieNumeroDB = serieNumeroController.getSerieNumero(organization, SunatDocumentType.RETENTION.toString(), firstLetterSerie);
+                if (serieNumeroDB.isPresent()) {
+                    SerieNumeroEntity serieNumeroEntity = serieNumeroDB.get();
+                    if (customSerie > serieNumeroEntity.getSerie()) {
+                        // poner nueva serie y numero
+                        serieNumeroEntity.setSerie(customSerie);
+                        serieNumeroEntity.setNumero(customNumero);
+                        serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                    } else if (customSerie == serieNumeroEntity.getSerie()) {
+                        if (customNumero > serieNumeroEntity.getNumero()) {
+                            // poner serie igual pero incrementar el numero
+                            serieNumeroEntity.setNumero(customNumero);
+                            serieNumeroController.updateSerieNumero(serieNumeroEntity);
+                        }
+                    }
+                } else {
+                    // poner serie y numero de rep
+                    SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
+                    serieNumeroEntity.setDocumentType(SunatDocumentType.RETENTION.toString());
+                    serieNumeroEntity.setOrganizationId(organization.getId());
+                    serieNumeroEntity.setSerie(customSerie);
+                    serieNumeroEntity.setNumero(customNumero);
+                    serieNumeroEntity.setFirstLetter(firstLetterSerie);
+
+                    serieNumeroController.createSerieNumero(serieNumeroEntity);
+                }
+            }
+        }
+
+        return documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
     }
 
     private void generateAttributes(DocumentRepresentation representation, DocumentModel document) {

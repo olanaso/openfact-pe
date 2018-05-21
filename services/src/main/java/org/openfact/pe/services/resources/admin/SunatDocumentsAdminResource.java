@@ -183,26 +183,6 @@ public class SunatDocumentsAdminResource {
         return t;
     }
 
-    private void setPerceptionIDType(OrganizationModel organization, final PerceptionType perceptionType) {
-        IDType documentId = perceptionType.getId();
-        if (documentId == null || documentId.getValue() == null) {
-            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.PERCEPTION.toString());
-            String newDocumentId = ublIDGenerator.generateID(organization, perceptionType);
-            documentId = new IDType(newDocumentId);
-            perceptionType.setId(documentId);
-        }
-    }
-
-    private void setRetentionIDType(OrganizationModel organization, final RetentionType retentionType) {
-        IDType documentId = retentionType.getId();
-        if (documentId == null || documentId.getValue() == null) {
-            UBLIDGenerator ublIDGenerator = ublUtil.getIDGenerator(SunatDocumentType.RETENTION.toString());
-            String newDocumentId = ublIDGenerator.generateID(organization, retentionType);
-            documentId = new IDType(newDocumentId);
-            retentionType.setId(documentId);
-        }
-    }
-
     @POST
     @Path("/documents/invoices")
     @Produces(MediaType.APPLICATION_JSON)
@@ -359,89 +339,89 @@ public class SunatDocumentsAdminResource {
         }
     }
 
-    @POST
-    @Path("/documents/extensions/upload/perceptions")
-    @Consumes("multipart/form-data")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadPerception(final MultipartFormDataInput input) throws ModelErrorResponseException {
-        OrganizationModel organization = getOrganizationModel();
-        OrganizationAuth auth = getAuth(organization);
+//    @POST
+//    @Path("/documents/extensions/upload/perceptions")
+//    @Consumes("multipart/form-data")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response uploadPerception(final MultipartFormDataInput input) throws ModelErrorResponseException {
+//        OrganizationModel organization = getOrganizationModel();
+//        OrganizationAuth auth = getAuth(organization);
+//
+//        auth.requireManage();
+//
+//        List<InputPart> inputParts = getInputs(input);
+//
+//        for (InputPart inputPart : inputParts) {
+//            try {
+//                PerceptionType perceptionType = readFile(inputPart, SunatDocumentType.PERCEPTION.toString(), PerceptionType.class);
+//
+//                // Double-check duplicated documentId
+//                if (perceptionType.getId() != null && perceptionType.getId().getValue() != null && documentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.PERCEPTION.toString(), perceptionType.getId().getValue(), organization) != null) {
+//                    throw new ModelDuplicateException("Perception exists with same documentId[" + perceptionType.getId().getValue() + "]");
+//                }
+//
+//                setPerceptionIDType(organization, perceptionType);
+//
+//                DocumentModel document = documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
+//                eventStoreManager.send(organization, getAdminEvent(organization)
+//                        .operation(OperationType.CREATE)
+//                        .resourcePath(uriInfo, document.getId())
+//                        .representation(perceptionType)
+//                        .getEvent());
+//            } catch (IOException e) {
+//                logger.error("Error reading input data", e);
+//                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
+//            } catch (ModelDuplicateException e) {
+//                throw new ModelErrorResponseException("Perception exists with same documentId");
+//            } catch (ModelException e) {
+//                throw new ModelErrorResponseException("Could not create document");
+//            }
+//        }
+//
+//        return Response.ok().build();
+//    }
 
-        auth.requireManage();
-
-        List<InputPart> inputParts = getInputs(input);
-
-        for (InputPart inputPart : inputParts) {
-            try {
-                PerceptionType perceptionType = readFile(inputPart, SunatDocumentType.PERCEPTION.toString(), PerceptionType.class);
-
-                // Double-check duplicated documentId
-                if (perceptionType.getId() != null && perceptionType.getId().getValue() != null && documentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.PERCEPTION.toString(), perceptionType.getId().getValue(), organization) != null) {
-                    throw new ModelDuplicateException("Perception exists with same documentId[" + perceptionType.getId().getValue() + "]");
-                }
-
-                setPerceptionIDType(organization, perceptionType);
-
-                DocumentModel document = documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
-                eventStoreManager.send(organization, getAdminEvent(organization)
-                        .operation(OperationType.CREATE)
-                        .resourcePath(uriInfo, document.getId())
-                        .representation(perceptionType)
-                        .getEvent());
-            } catch (IOException e) {
-                logger.error("Error reading input data", e);
-                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
-            } catch (ModelDuplicateException e) {
-                throw new ModelErrorResponseException("Perception exists with same documentId");
-            } catch (ModelException e) {
-                throw new ModelErrorResponseException("Could not create document");
-            }
-        }
-
-        return Response.ok().build();
-    }
-
-    @POST
-    @Path("/documents/extensions/upload/retentions")
-    @Consumes("multipart/form-data")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadRetention(final MultipartFormDataInput input) throws ModelErrorResponseException {
-        OrganizationModel organization = getOrganizationModel();
-        OrganizationAuth auth = getAuth(organization);
-
-        auth.requireManage();
-
-        List<InputPart> inputParts = getInputs(input);
-
-        for (InputPart inputPart : inputParts) {
-            try {
-                RetentionType retentionType = readFile(inputPart, SunatDocumentType.RETENTION.toString(), RetentionType.class);
-
-                // Double-check duplicated documentId
-                if (retentionType.getId() != null && retentionType.getId().getValue() != null && documentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.RETENTION.toString(), retentionType.getId().getValue(), organization) != null) {
-                    throw new ModelDuplicateException("Perception exists with same documentId[" + retentionType.getId().getValue() + "]");
-                }
-
-                setRetentionIDType(organization, retentionType);
-
-                DocumentModel document = documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
-                eventStoreManager.send(organization, getAdminEvent(organization)
-                        .operation(OperationType.CREATE)
-                        .resourcePath(uriInfo, document.getId())
-                        .representation(retentionType)
-                        .getEvent());
-            } catch (IOException e) {
-                logger.error("Error reading input data", e);
-                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
-            } catch (ModelDuplicateException e) {
-                throw new ModelErrorResponseException("Retention exists with same documentId");
-            } catch (ModelException e) {
-                throw new ModelErrorResponseException("Could not create document");
-            }
-        }
-
-        return Response.ok().build();
-    }
+//    @POST
+//    @Path("/documents/extensions/upload/retentions")
+//    @Consumes("multipart/form-data")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response uploadRetention(final MultipartFormDataInput input) throws ModelErrorResponseException {
+//        OrganizationModel organization = getOrganizationModel();
+//        OrganizationAuth auth = getAuth(organization);
+//
+//        auth.requireManage();
+//
+//        List<InputPart> inputParts = getInputs(input);
+//
+//        for (InputPart inputPart : inputParts) {
+//            try {
+//                RetentionType retentionType = readFile(inputPart, SunatDocumentType.RETENTION.toString(), RetentionType.class);
+//
+//                // Double-check duplicated documentId
+//                if (retentionType.getId() != null && retentionType.getId().getValue() != null && documentManager.getDocumentByTypeAndDocumentId(SunatDocumentType.RETENTION.toString(), retentionType.getId().getValue(), organization) != null) {
+//                    throw new ModelDuplicateException("Perception exists with same documentId[" + retentionType.getId().getValue() + "]");
+//                }
+//
+//                setRetentionIDType(organization, retentionType);
+//
+//                DocumentModel document = documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
+//                eventStoreManager.send(organization, getAdminEvent(organization)
+//                        .operation(OperationType.CREATE)
+//                        .resourcePath(uriInfo, document.getId())
+//                        .representation(retentionType)
+//                        .getEvent());
+//            } catch (IOException e) {
+//                logger.error("Error reading input data", e);
+//                throw new ModelErrorResponseException("Error Reading data", Response.Status.BAD_REQUEST);
+//            } catch (ModelDuplicateException e) {
+//                throw new ModelErrorResponseException("Retention exists with same documentId");
+//            } catch (ModelException e) {
+//                throw new ModelErrorResponseException("Could not create document");
+//            }
+//        }
+//
+//        return Response.ok().build();
+//    }
 
 //    @POST
 //    @Path("/documents/extensions/upload/voided-documents")
@@ -488,7 +468,7 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/perceptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPerception(DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
+    public Response createPerception(@QueryParam("async") @DefaultValue("false") Boolean async, DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -500,16 +480,27 @@ public class SunatDocumentsAdminResource {
         }
 
         try {
-            PerceptionType perceptionType = representationToType.toPerceptionType(organization, rep);
-            setPerceptionIDType(organization, perceptionType);
-
-            DocumentModel document = documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
+            DocumentModel document = sunatResourceManager.createPerception(organization, rep);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                if (!async) {
+                    try {
+                        future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
+                    }
+                }
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                if (!async) {
+                    try {
+                        future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
+                    }
+                }
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();
@@ -529,7 +520,7 @@ public class SunatDocumentsAdminResource {
     @POST
     @Path("/documents/retentions")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createRetention(DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
+    public Response createRetention(@QueryParam("async") @DefaultValue("false") Boolean async, DocumentoSunatRepresentation rep) throws ModelErrorResponseException {
         OrganizationModel organization = getOrganizationModel();
         OrganizationAuth auth = getAuth(organization);
 
@@ -541,16 +532,27 @@ public class SunatDocumentsAdminResource {
         }
 
         try {
-            RetentionType retentionType = representationToType.toRetentionType(organization, rep);
-            setRetentionIDType(organization, retentionType);
-
-            DocumentModel document = documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
+            DocumentModel document = sunatResourceManager.createRetention(organization, rep);
 
             if (rep.isEnviarAutomaticamenteASunat()) {
-                sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                Future<Boolean> future = sunatResourceManager.sendDocumentToThirdParty(organization.getId(), document.getId());
+                if (!async) {
+                    try {
+                        future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
+                    }
+                }
             }
             if (rep.isEnviarAutomaticamenteAlCliente()) {
-                sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                Future<Boolean> future = sunatResourceManager.sendDocumentToCustomer(organization.getId(), document.getId());
+                if (!async) {
+                    try {
+                        future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error(e);
+                    }
+                }
             }
 
             URI location = uriInfo.getAbsolutePathBuilder().path(document.getId()).build();

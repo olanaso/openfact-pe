@@ -1,4 +1,0 @@
-project:
-    stage: default
-datasource:
-    name: OpenfactDS

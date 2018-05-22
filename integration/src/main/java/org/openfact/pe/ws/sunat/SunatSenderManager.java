@@ -179,7 +179,7 @@ public class SunatSenderManager {
             sendEvent.attachFile(cdrFile);
 
             for (Map.Entry<String, String> entry : SunatResponseUtils.byteResponseToMap(response).entrySet()) {
-                sendEvent.setAttribute(entry.getKey(), entry.getValue());
+                sendEvent.setAttribute(entry.getKey(), entry.getValue().substring(0, Math.min(entry.getValue().length(), 240)));
             }
 
             return sendEvent;
@@ -204,7 +204,7 @@ public class SunatSenderManager {
 
                     try {
                         for (Map.Entry<String, String> entry : SunatResponseUtils.byteResponseToMap(bytes).entrySet()) {
-                            sendEvent.setAttribute(entry.getKey(), entry.getValue());
+                            sendEvent.setAttribute(entry.getKey(), entry.getValue().substring(0, Math.min(entry.getValue().length(), 240)));
                         }
                     } catch (Exception e1) {
                         throw new SunatSendEventException(SunatCodigoErrores.codigoErrores.getOrDefault(faultCode, e.getMessage()), e);

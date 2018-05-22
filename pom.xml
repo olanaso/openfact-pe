@@ -273,6 +273,39 @@
             <version>6.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.carlosthe19916</groupId>
+            <artifactId>sunat-web-services</artifactId>
+            <version>1.0.3.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-core</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+
+        <!-- WS -->
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>camel-cxf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <version>3.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>3.2.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>

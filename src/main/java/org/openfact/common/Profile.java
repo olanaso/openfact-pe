@@ -10,7 +10,8 @@ public class Profile {
         PRODUCT, PREVIEW, COMMUNITY
     }
 
-    private static ProfileValue value = load();
+//    private static ProfileValue value = load();
+    private static ProfileValue value = ProfileValue.PRODUCT;
 
     static ProfileValue load() {
         String profile = null;

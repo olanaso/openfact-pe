@@ -14,12 +14,14 @@ import org.openfact.services.resource.security.Resource;
 import org.openfact.services.resource.security.SecurityContextProvider;
 
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ForbiddenException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Default
 @Stateless
 @SingleProviderType(provider = "restSecurity", value = "keycloak")
 public class KeycloakSecurityContextProvider implements SecurityContextProvider {

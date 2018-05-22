@@ -11,6 +11,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.*;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Default
 @Stateless
 @SingleProviderType(provider = "ublSigner", value = "sunat")
 public class SunatSignerProvider implements UBLSigner {

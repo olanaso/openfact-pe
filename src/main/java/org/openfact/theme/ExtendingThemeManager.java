@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 import org.openfact.Config;
 import org.openfact.common.Version;
 import org.openfact.theme.ThemeProviderType.ProviderType;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
@@ -34,12 +35,20 @@ public class ExtendingThemeManager implements ThemeProvider {
     @ThemeManagerSelector
     private Instance<ThemeProvider> themeProviders;
 
+    @Inject
+    @ConfigurationValue("org.openfact.theme.defaultTheme")
+    private Optional<String> defaultThemeConfig;
+
+    @Inject
+    @ConfigurationValue("org.openfact.theme.cacheThemes")
+    private Optional<Boolean> cacheThemesConfig;
+
     @PostConstruct
     public void init() {
-        this.defaultTheme = Config.scope("theme").get("default", Version.NAME.toLowerCase());
+        this.defaultTheme = defaultThemeConfig.orElse("openfact");
         loadProviders();
 
-        if (Config.scope("theme").getBoolean("cacheThemes", true)) {
+        if (cacheThemesConfig.orElse(Boolean.TRUE)) {
             themeCache = new ConcurrentHashMap<>();
         }
     }

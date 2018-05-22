@@ -42,6 +42,7 @@ import org.openfact.services.resources.admin.AdminEventBuilder;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReaderWriter;
 import org.openfact.ubl.utils.UBLUtil;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -57,6 +58,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -106,6 +108,10 @@ public class SunatDocumentsAdminResource {
 
     @Inject
     private SunatResourceManager sunatResourceManager;
+
+    @Inject
+    @ConfigurationValue("org.openfact.documents.provider")
+    private Optional<String> documentProvider;
 
     private OrganizationModel getOrganizationModel() {
         String organizationName = session.getContext().getOrganization().getName();
@@ -174,7 +180,7 @@ public class SunatDocumentsAdminResource {
         InputStream inputStream = inputPart.getBody(InputStream.class, null);
         byte[] bytes = IOUtils.toByteArray(inputStream);
 
-        String provider = Config.scope(documentType.toLowerCase()).get("provider");
+        String provider = documentProvider.orElse("default");
         UBLReaderWriter<T> readerWriter = (UBLReaderWriter<T>) ublUtil.getReaderWriter(provider, documentType).reader();
         T t = readerWriter.reader().read(bytes);
         if (t == null) {

@@ -3,14 +3,17 @@ package org.openfact.report;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.util.JRLoader;
 import org.openfact.Config;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
@@ -19,9 +22,13 @@ public class JasperReportUtil {
 
     private ConcurrentHashMap<String, JasperReport> cache;
 
+    @Inject
+    @ConfigurationValue("org.openfact.report.cacheTemplates")
+    private Optional<Boolean> cacheTemplates;
+
     @PostConstruct
     private void init() {
-        if (Config.scope("report").getBoolean("cacheTemplates", true)) {
+        if (cacheTemplates.orElse(Boolean.TRUE)) {
             cache = new ConcurrentHashMap<>();
         }
     }

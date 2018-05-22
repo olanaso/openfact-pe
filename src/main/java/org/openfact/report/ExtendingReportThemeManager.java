@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 import org.openfact.Config;
 import org.openfact.common.Version;
 import org.openfact.report.ReportProviderType.ProviderType;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
@@ -34,12 +35,20 @@ public class ExtendingReportThemeManager implements ReportThemeProvider {
     @ReportThemeManagerSelector
     private Instance<ReportThemeProvider> themeProviders;
 
+    @Inject
+    @ConfigurationValue("org.openfact.report.defaultTheme")
+    private Optional<String> defaultThemeConfig;
+
+    @Inject
+    @ConfigurationValue("org.openfact.report.cacheThemes")
+    private Optional<Boolean> cacheThemesConfig;
+
     @PostConstruct
     public void init() {
-        this.defaultTheme = Config.scope("report").get("default", Version.NAME.toLowerCase());
+        this.defaultTheme = defaultThemeConfig.orElse("openfact");
         loadProviders();
 
-        if (Config.scope("report").getBoolean("cacheThemes", true)) {
+        if (cacheThemesConfig.orElse(Boolean.TRUE)) {
             themeCache = new ConcurrentHashMap<>();
         }
     }

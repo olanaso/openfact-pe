@@ -1,14 +1,17 @@
 package org.openfact.theme;
 
 import org.openfact.Config;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Stateless
@@ -16,11 +19,15 @@ import java.util.Set;
 @ThemeProviderType(type = ThemeProviderType.ProviderType.FOLDER)
 public class FolderThemeProvider implements ThemeProvider {
 
+    @Inject
+    @ConfigurationValue("org.openfact.theme.folder.dir")
+    private Optional<String> themeFolderDir;
+
     private File themesDir;
 
     @PostConstruct
     public void init() {
-        String d = Config.scope("theme", "folder").get("dir");
+        String d = themeFolderDir.orElse("themes");
         File rootDir = null;
         if (d != null) {
             rootDir = new File(d);

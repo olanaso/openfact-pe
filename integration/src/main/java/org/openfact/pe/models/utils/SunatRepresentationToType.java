@@ -757,8 +757,8 @@ public class SunatRepresentationToType {
     private SUNATRetentionInformationType toSUNATRetentionInformation(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal retencion) {
         SUNATRetentionInformationType type = new SUNATRetentionInformationType();
         type.setSUNATRetentionAmount(toSUNATAmountType(rep, currencyCode, retencion));
-        if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSUNATRetentionDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
+        if (rep.getFechaDocumentoSunat() != null) {
+            type.setSUNATRetentionDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoSunat())));
         }
         type.setSUNATNetTotalPaid(tosetSUNATNetTotalPaidType(rep, currencyCode, retencion));
         if (rep.getTipoCambio() != null) {
@@ -900,8 +900,8 @@ public class SunatRepresentationToType {
             type.setID(rep.getNumeroPago());
         }
         type.setPaidAmount(toPaidAmountType(rep));
-        if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setPaidDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
+        if (rep.getFechaDocumentoSunat() != null) {
+            type.setPaidDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoSunat())));
         }
         return type;
     }

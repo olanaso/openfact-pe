@@ -687,8 +687,8 @@ public class SunatRepresentationToType {
     private SUNATPerceptionInformationType toSUNATPerceptionInformationType(DocumentoSunatLineRepresentation rep, String currencyCode, BigDecimal perception) {
         SUNATPerceptionInformationType type = new SUNATPerceptionInformationType();
         type.setSunatPerceptionAmount(toSUNATAmountType(rep, currencyCode, perception));
-        if (rep.getFechaDocumentoRelacionado() != null) {
-            type.setSunatPerceptionDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoRelacionado())));
+        if (rep.getFechaDocumentoSunat() != null) {
+            type.setSunatPerceptionDate(toGregorianCalendar(DateUtils.asLocalDate(rep.getFechaDocumentoSunat())));
         }
         type.setSunatNetTotalCashed(tosetSUNATNetTotalPaidType(rep, currencyCode, perception));
         type.setExchangeRate(toExchangeRateType(rep, currencyCode));

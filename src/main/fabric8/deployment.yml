@@ -26,8 +26,8 @@ spec:
           value: 150
         - name: CONTAINER_CORE_LIMIT
           value: 2
-        - name: JAVA_INITIAL_MEM_RATIO
-          value: 0
+        - name: CONTAINER_MAX_MEMORY
+          value: 1073741824
         - name: JAVA_MAX_MEM_RATIO
           value: 0
         name: ${project.artifactId}

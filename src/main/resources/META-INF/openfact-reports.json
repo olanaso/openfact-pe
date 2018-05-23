@@ -3,6 +3,22 @@
 		{
 			"name": "openfact",
 			"types": [ "admin"]
+		},
+		{
+			"name": "sunat",
+			"types": [ "admin" ]
+		},
+		{
+			"name": "sunat2",
+			"types": [ "admin" ]
+		},
+		{
+			"name": "positiva",
+			"types": [ "admin" ]
+		},
+		{
+			"name": "multiserviciosmr",
+			"types": [ "admin" ]
 		}
 	]
 }

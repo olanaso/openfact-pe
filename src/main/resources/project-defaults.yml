@@ -19,4 +19,47 @@ org:
       folder:
         dir: "reports"
     documents:
-        provider: "sunat"
+      invoice:
+        readerWriter: sunat
+        idGenerator: sunat
+        modelCustomization: sunat
+        thirdPartySender: sunat
+      credit_note:
+        readerWriter: sunat
+        idGenerator: sunat
+        modelCustomization: sunat
+        thirdPartySender: sunat
+      debit_note:
+        readerWriter: sunat
+        idGenerator: sunat
+        modelCustomization: sunat
+        thirdPartySender: sunat
+      voided_documents:
+        readerWriter: sunat
+        idGenerator: sunat
+        modelCustomization: sunat
+        thirdPartySender: sunat
+      summary_documents:
+        readerWriter: sunat
+        idGenerator: sunat
+        modelCustomization: sunat
+        thirdPartySender: sunat
+      perception:
+        readerWriter: sunat
+        idGenerator: sunat
+        modelCustomization: sunat
+        thirdPartySender: sunat
+      retention:
+        readerWriter: sunat
+        idGenerator: sunat
+        modelCustomization: sunat
+        thirdPartySender: sunat
+    logging:
+      success-level: DEBUG
+      error-level: WARN
+    truststore:
+      enable: false
+      file:
+      password:
+      hostname-verification-policy:
+

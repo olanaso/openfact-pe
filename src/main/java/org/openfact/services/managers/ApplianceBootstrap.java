@@ -4,12 +4,14 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
-import org.openfact.Config;
 import org.openfact.common.Version;
 import org.openfact.models.ModelException;
 import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.utils.DefaultKeyProviders;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
+
+import java.util.Optional;
 
 @Stateless
 public class ApplianceBootstrap {
@@ -37,13 +39,13 @@ public class ApplianceBootstrap {
     }
 
     private boolean createMasterOrganization() {
-        String adminOrganizationName = Config.getAdminOrganization();
+        String adminOrganizationName = OrganizationModel.MASTER_ORGANIZATION_NAME;
         logger.info("Initializing Admin Organization " + adminOrganizationName);
 
         try {
             OrganizationModel organization = manager.createOrganization(adminOrganizationName, adminOrganizationName);
             organization.setDisplayName(Version.NAME);
-            organization.setDisplayNameHtml(Version.NAME_HTML);
+            organization.setDisplayNameHtml(Version.NAME);
             organization.setEnabled(true);
 
             defaultKeyProviders.createProviders(organization);

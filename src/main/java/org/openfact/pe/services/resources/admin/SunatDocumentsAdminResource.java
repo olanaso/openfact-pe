@@ -8,7 +8,6 @@ import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.openfact.Config;
 import org.openfact.common.ClientConnection;
 import org.openfact.events.admin.OperationType;
 import org.openfact.events.admin.ResourceType;
@@ -42,7 +41,6 @@ import org.openfact.services.resources.admin.AdminEventBuilder;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.UBLReaderWriter;
 import org.openfact.ubl.utils.UBLUtil;
-import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -58,7 +56,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -108,10 +105,6 @@ public class SunatDocumentsAdminResource {
 
     @Inject
     private SunatResourceManager sunatResourceManager;
-
-    @Inject
-    @ConfigurationValue("org.openfact.documents.provider")
-    private Optional<String> documentProvider;
 
     private OrganizationModel getOrganizationModel() {
         String organizationName = session.getContext().getOrganization().getName();
@@ -180,8 +173,7 @@ public class SunatDocumentsAdminResource {
         InputStream inputStream = inputPart.getBody(InputStream.class, null);
         byte[] bytes = IOUtils.toByteArray(inputStream);
 
-        String provider = documentProvider.orElse("default");
-        UBLReaderWriter<T> readerWriter = (UBLReaderWriter<T>) ublUtil.getReaderWriter(provider, documentType).reader();
+        UBLReaderWriter<T> readerWriter = (UBLReaderWriter<T>) ublUtil.getReaderWriter(documentType).reader();
         T t = readerWriter.reader().read(bytes);
         if (t == null) {
             throw new ModelRuntimeException("Could not read file");

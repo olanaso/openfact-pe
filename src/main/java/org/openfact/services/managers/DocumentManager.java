@@ -1,7 +1,6 @@
 package org.openfact.services.managers;
 
 import org.jboss.logging.Logger;
-import org.openfact.Config;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.*;
 import org.openfact.models.types.DestinyType;
@@ -60,12 +59,8 @@ public class DocumentManager {
     }
 
     public DocumentModel addDocument(OrganizationModel organization, String documentId, String documentType, Object type) throws ModelException {
-        Config.Scope documentConfig = Config.scope(documentType.toLowerCase());
-
-        String readerWriterProviderType = documentConfig.get(DefaultUBLUtil.READER_WRITER, "default");
-        String customizationProviderType = documentConfig.get(DefaultUBLUtil.MODEL_CUSTOMIZATION, "default");
-        UBLReaderWriter readerWriter = ublUtil.getReaderWriter(readerWriterProviderType, documentType);
-        UBLCustomizator customizator = ublUtil.getCustomizationProvider(customizationProviderType, documentType);
+        UBLReaderWriter readerWriter = ublUtil.getReaderWriter(documentType);
+        UBLCustomizator customizator = ublUtil.getCustomizationProvider(documentType);
         if (readerWriter == null) {
             throw new ModelException("Could not find a valid " + UBLReaderWriter.class.getSimpleName() + " for type[" + documentType + "]");
         }
@@ -127,10 +122,7 @@ public class DocumentManager {
     }
 
     public SendEventModel sendToThirdParty(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendEventException {
-        Config.Scope documentConfig = Config.scope(document.getDocumentType().toLowerCase());
-        String providerType = documentConfig.get(DefaultUBLUtil.THIRD_PARTY_SENDER, "default");
-
-        UBLThirdPartySender thirdPartySender = ublUtil.getThirdPartySender(providerType, document.getDocumentType());
+        UBLThirdPartySender thirdPartySender = ublUtil.getThirdPartySender(document.getDocumentType());
         if (thirdPartySender == null) {
             throw new SendEventException("Could not find a valid " + UBLCustomizator.class.getSimpleName() + " for type[" + document.getDocumentType() + "]");
         }

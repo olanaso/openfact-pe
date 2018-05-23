@@ -17,7 +17,6 @@
 
 package org.openfact.report;
 
-import org.openfact.Config;
 import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;

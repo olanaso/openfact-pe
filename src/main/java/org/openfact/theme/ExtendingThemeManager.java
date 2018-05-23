@@ -1,7 +1,6 @@
 package org.openfact.theme;
 
 import org.jboss.logging.Logger;
-import org.openfact.Config;
 import org.openfact.common.Version;
 import org.openfact.theme.ThemeProviderType.ProviderType;
 import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;

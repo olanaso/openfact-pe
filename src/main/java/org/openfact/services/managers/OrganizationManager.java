@@ -1,6 +1,5 @@
 package org.openfact.services.managers;
 
-import org.openfact.Config;
 import org.openfact.models.ModelException;
 import org.openfact.models.OrganizationModel;
 import org.openfact.models.OrganizationProvider;
@@ -32,7 +31,7 @@ public class OrganizationManager {
     private ScheduleOrganizations taskManager;
 
     public OrganizationModel getOpenfactAdminstrationOrganization() {
-        return getOrganization(Config.getAdminOrganization());
+        return getOrganization(OrganizationModel.MASTER_ORGANIZATION_NAME);
     }
 
     public List<OrganizationModel> getOrganizations() {

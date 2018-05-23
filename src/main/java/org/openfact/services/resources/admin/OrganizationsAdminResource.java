@@ -4,7 +4,6 @@ import org.jboss.logging.Logger;
 import org.keycloak.KeyPairVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.common.util.PemUtils;
-import org.openfact.Config;
 import org.openfact.common.ClientConnection;
 import org.openfact.component.ComponentModel;
 import org.openfact.component.ComponentValidationException;
@@ -248,7 +247,7 @@ public class OrganizationsAdminResource {
 
         logger.debug("updating organization: " + organization.getName());
 
-        if (Config.getAdminOrganization().equals(organization.getName()) && (rep.getOrganization() != null && !rep.getOrganization().equals(Config.getAdminOrganization()))) {
+        if (OrganizationModel.MASTER_ORGANIZATION_NAME.equals(organization.getName()) && (rep.getOrganization() != null && !rep.getOrganization().equals(OrganizationModel.MASTER_ORGANIZATION_NAME))) {
             return ErrorResponse.error("Can't rename master organization", Response.Status.BAD_REQUEST);
         }
 
@@ -301,7 +300,7 @@ public class OrganizationsAdminResource {
         }
 
         OrganizationModel organization = getOrganizationModel(organizationName);
-        if (Config.getAdminOrganization().equals(organization.getName())) {
+        if (OrganizationModel.MASTER_ORGANIZATION_NAME.equals(organization.getName())) {
             throw new ModelErrorResponseException("Master organization could not be deleted");
         }
 

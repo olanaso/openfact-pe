@@ -1,6 +1,5 @@
 package org.openfact.theme;
 
-import org.openfact.Config;
 import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;

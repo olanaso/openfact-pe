@@ -41,7 +41,7 @@ public class ClassLoaderReportTheme implements ReportTheme {
         this.type = type;
         this.classLoader = classLoader;
 
-        String themeRoot = "theme/" + name + "/" + type.toString().toLowerCase() + "/";
+        String themeRoot = "report/" + name + "/" + type.toString().toLowerCase() + "/";
 
         this.templateRoot = themeRoot;
         this.resourceRoot = themeRoot + "resources/";

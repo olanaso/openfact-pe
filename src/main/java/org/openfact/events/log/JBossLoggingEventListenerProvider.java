@@ -1,14 +1,16 @@
 package org.openfact.events.log;
 
 import org.jboss.logging.Logger;
-import org.openfact.Config;
 import org.openfact.events.EventListenerProvider;
 import org.openfact.events.EventListenerType;
 import org.openfact.events.admin.AdminEvent;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import java.util.Optional;
 
 @Stateless
 public class JBossLoggingEventListenerProvider implements EventListenerProvider {
@@ -19,16 +21,18 @@ public class JBossLoggingEventListenerProvider implements EventListenerProvider 
     private Logger.Level successLevel;
     private Logger.Level errorLevel;
 
+    @Inject
+    @ConfigurationValue("org.openfact.logging.success-level")
+    private Optional<String> loggingSuccessLevel;
+
+    @Inject
+    @ConfigurationValue("org.openfact.logging.error-level")
+    private Optional<String> loggingErrorLevel;
+
     @PostConstruct
     public void init() {
-        Config.Scope config = Config.scope("jboss-logging");
-        if (config == null) {
-            successLevel = Logger.Level.valueOf("DEBUG");
-            errorLevel = Logger.Level.valueOf("WARN");
-        } else {
-            successLevel = Logger.Level.valueOf(config.get("success-level", "debug").toUpperCase());
-            errorLevel = Logger.Level.valueOf(config.get("error-level", "warn").toUpperCase());
-        }
+        successLevel = Logger.Level.valueOf(loggingSuccessLevel.orElse("debug").toUpperCase());
+        errorLevel = Logger.Level.valueOf(loggingErrorLevel.orElse("warn").toUpperCase());
     }
 
     @Override

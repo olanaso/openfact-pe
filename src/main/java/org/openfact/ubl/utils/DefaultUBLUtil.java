@@ -1,7 +1,6 @@
 package org.openfact.ubl.utils;
 
 import org.jboss.logging.Logger;
-import org.openfact.Config;
 import org.openfact.models.types.DocumentType;
 import org.openfact.ubl.UBLCustomizator;
 import org.openfact.ubl.UBLIDGenerator;
@@ -9,6 +8,7 @@ import org.openfact.ubl.UBLReaderWriter;
 import org.openfact.ubl.UBLThirdPartySender;
 import org.openfact.ubl.ubl21.qualifiers.UBLDocumentType;
 import org.openfact.provider.ProviderType;
+import org.wildfly.swarm.spi.api.config.ConfigView;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
@@ -16,6 +16,8 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
+import java.text.MessageFormat;
+import java.util.Optional;
 
 @Stateless
 public class DefaultUBLUtil implements UBLUtil {
@@ -26,6 +28,8 @@ public class DefaultUBLUtil implements UBLUtil {
     public static final String ID_GENERATOR = "idGenerator";
     public static final String MODEL_CUSTOMIZATION = "modelCustomization";
     public static final String THIRD_PARTY_SENDER = "thirdPartySender";
+
+    private static final String CONFIG_TEMPLATE = "org.openfact.documents.{0}.{1}";
 
     @Inject
     @Any
@@ -43,6 +47,9 @@ public class DefaultUBLUtil implements UBLUtil {
     @Any
     private Instance<UBLThirdPartySender> senderProviders;
 
+    @Inject
+    private ConfigView configView;
+
     /**
      * Writer Reader
      */
@@ -53,7 +60,9 @@ public class DefaultUBLUtil implements UBLUtil {
 
     @Override
     public UBLReaderWriter getReaderWriter(String documentType) {
-        return getReaderWriter(Config.scope(documentType.toLowerCase()).get(READER_WRITER, "default"), documentType);
+        String config = MessageFormat.format(CONFIG_TEMPLATE, documentType.toLowerCase(), READER_WRITER);
+        String provider = configView.resolve(config).withDefault("default").getValue();
+        return getReaderWriter(provider, documentType);
     }
 
     @Override
@@ -80,7 +89,9 @@ public class DefaultUBLUtil implements UBLUtil {
 
     @Override
     public UBLIDGenerator getIDGenerator(String documentType) {
-        return getIDGenerator(Config.scope(documentType.toLowerCase()).get(ID_GENERATOR, "default"), documentType);
+        String config = MessageFormat.format(CONFIG_TEMPLATE, documentType.toLowerCase(), ID_GENERATOR);
+        String provider = configView.resolve(config).withDefault("default").getValue();
+        return getIDGenerator(provider, documentType);
     }
 
     @Override
@@ -107,7 +118,9 @@ public class DefaultUBLUtil implements UBLUtil {
 
     @Override
     public UBLCustomizator getCustomizationProvider(String documentType) {
-        return getCustomizationProvider(Config.scope(documentType.toLowerCase()).get(MODEL_CUSTOMIZATION, "default"), documentType);
+        String config = MessageFormat.format(CONFIG_TEMPLATE, documentType.toLowerCase(), MODEL_CUSTOMIZATION);
+        String provider = configView.resolve(config).withDefault("default").getValue();
+        return getCustomizationProvider(provider, documentType);
     }
 
     @Override
@@ -134,7 +147,9 @@ public class DefaultUBLUtil implements UBLUtil {
 
     @Override
     public UBLThirdPartySender getThirdPartySender(String documentType) {
-        return getThirdPartySender(Config.scope(documentType.toLowerCase()).get(THIRD_PARTY_SENDER, "default"), documentType);
+        String config = MessageFormat.format(CONFIG_TEMPLATE, documentType.toLowerCase(), THIRD_PARTY_SENDER);
+        String provider = configView.resolve(config).withDefault("default").getValue();
+        return getThirdPartySender(provider, documentType);
     }
 
     @Override

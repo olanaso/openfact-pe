@@ -9,6 +9,8 @@ import org.openfact.provider.ProviderEvent;
 
 public interface OrganizationModel {
 
+    String MASTER_ORGANIZATION_NAME = "master";
+
     String NAME = "name";
     String DESCRIPTION = "description";
     String ASSIGNED_IDENTIFICATION_ID = "assignedIdentificationId";

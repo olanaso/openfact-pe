@@ -1,15 +1,17 @@
 package org.openfact.truststore;
 
 import org.jboss.logging.Logger;
-import org.openfact.Config;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.util.Optional;
 
 @Startup
 @Singleton(name = "FileTruststoreProvider")
@@ -21,17 +23,32 @@ public class FileTruststoreProvider implements TruststoreProvider {
     private HostnameVerificationPolicy policy;
     private KeyStore truststore;
 
+    @Inject
+    @ConfigurationValue("org.openfact.truststore.enable")
+    private Optional<Boolean> truststoreEnabled;
+
+    @Inject
+    @ConfigurationValue("org.openfact.truststore.file")
+    private Optional<String> truststoreFile;
+
+    @Inject
+    @ConfigurationValue("org.openfact.truststore.password")
+    private Optional<String> truststorePassword;
+
+    @Inject
+    @ConfigurationValue("org.openfact.truststore.hostname-verification-policy")
+    private Optional<String> truststoreHostnameVerificationPolicy;
+
     @PostConstruct
     private void init() {
-        Config.Scope config = Config.scope("truststore");
-        if (config == null) {
+        if (!truststoreEnabled.orElse(Boolean.FALSE)) {
             return;
         }
 
-        String storepath = config.get("file");
-        String pass = config.get("password");
-        String policy = config.get("hostname-verification-policy");
-        Boolean disabled = config.getBoolean("disabled", null);
+        String storepath = truststoreFile.orElseThrow(() -> new IllegalStateException("invalid org.openfact.truststore.file"));
+        String pass = truststorePassword.orElseThrow(() -> new IllegalStateException("invalid org.openfact.truststore.password"));
+        String policy = truststoreHostnameVerificationPolicy.orElseThrow(() -> new IllegalStateException("invalid org.openfact.truststore.hostname-verification-policy"));
+        Boolean disabled = truststoreEnabled.get();
 
         // if "truststore" . "file" is not configured then it is disabled
         if (storepath == null && pass == null && policy == null && disabled == null) {

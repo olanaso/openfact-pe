@@ -9,7 +9,6 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONObject;
-import org.openfact.Config;
 import org.openfact.common.ClientConnection;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.events.admin.OperationType;
@@ -143,10 +142,7 @@ public class DocumentsAdminResource {
         InputStream inputStream = inputPart.getBody(InputStream.class, null);
         byte[] bytes = IOUtils.toByteArray(inputStream);
 
-        Config.Scope documentConfig = Config.scope(documentType.toString().toLowerCase());
-        String readerWriterProviderType = documentConfig.get(DefaultUBLUtil.READER_WRITER, "default");
-
-        UBLReaderWriter<T> readerWriter = (UBLReaderWriter<T>) ublUtil.getReaderWriter(readerWriterProviderType, documentType.toString());
+        UBLReaderWriter<T> readerWriter = (UBLReaderWriter<T>) ublUtil.getReaderWriter(documentType.toString());
         if (readerWriter == null) {
             throw new ModelException("Could not find a valid " + UBLReaderWriter.class.getSimpleName() + " for type[" + documentType.toString() + "]");
         }

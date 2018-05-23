@@ -1,7 +1,6 @@
 package org.openfact.report;
 
 import org.jboss.logging.Logger;
-import org.openfact.Config;
 import org.openfact.common.Version;
 import org.openfact.report.ReportProviderType.ProviderType;
 import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;

@@ -25,7 +25,7 @@ spec:
         - name: GC_MAX_METASPACE_SIZE
           value: 150
         - name: CONTAINER_CORE_LIMIT
-          value: 1
+          value: 2
         - name: JAVA_INITIAL_MEM_RATIO
           value: 0
         - name: JAVA_MAX_MEM_RATIO

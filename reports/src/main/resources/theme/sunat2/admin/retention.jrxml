@@ -319,7 +319,16 @@
 					</datasetRun>
 					<jr:columnGroup width="250" uuid="866b455c-0c0f-409c-bbae-f75441997551">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [4]"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1"/>
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+							<staticText>
+								<reportElement x="0" y="0" width="246" height="20" forecolor="#FFFFFF" uuid="6ed22486-0157-4e49-b69a-5d4a4743e274"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[COMPROBANTE RELACIONADO]]></text>
+							</staticText>
+						</jr:columnHeader>
 						<jr:column width="70" uuid="c12bec93-7be4-4b33-8e3b-5a5569d66a9f">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
@@ -409,7 +418,15 @@
 					</jr:columnGroup>
 					<jr:columnGroup width="152" uuid="266bc89c-d1f3-4b4b-9590-39b255f8699f">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [3]"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1"/>
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="148" height="20" forecolor="#FFFFFF" uuid="44d92bf4-e184-4209-b515-5a1edaa57333"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[DATOS DE PAGO]]></text>
+							</staticText>
+						</jr:columnHeader>
 						<jr:column width="40" uuid="7e3c857c-5fb5-4ede-bd84-170e0ae0ce8d">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
 							<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -475,7 +492,15 @@
 					</jr:columnGroup>
 					<jr:columnGroup width="150" uuid="4a087e60-504d-44e5-9584-960f3c499141">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [2]"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1"/>
+						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="146" height="20" forecolor="#FFFFFF" uuid="d28cfa08-c6a5-426b-9211-a1bbca3b9d6b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="true"/>
+								</textElement>
+								<text><![CDATA[DATOS DE RETENCIÓN]]></text>
+							</staticText>
+						</jr:columnHeader>
 						<jr:column width="70" uuid="d4236e8f-08e8-4a5e-846c-1914416f7876">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
 							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">

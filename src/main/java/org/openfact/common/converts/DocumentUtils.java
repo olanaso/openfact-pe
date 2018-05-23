@@ -19,7 +19,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -32,14 +31,6 @@ public class DocumentUtils {
 		factory.setNamespaceAware(true);
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document docParse = builder.parse(new ByteArrayInputStream(document));
-		return docParse;
-	}
-
-	public static Document byteToDocument(Byte[] document) throws Exception {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document docParse = builder.parse(new ByteArrayInputStream(ArrayUtils.toPrimitive(document)));
 		return docParse;
 	}
 

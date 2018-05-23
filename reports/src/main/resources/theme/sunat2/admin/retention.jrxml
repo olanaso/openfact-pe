@@ -317,241 +317,198 @@
 					<datasetRun subDataset="lines" uuid="9ea09879-8b31-4628-8126-f0745becfdbd">
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{sunat_retention_document_reference}, false)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="250" uuid="cf92d671-adbd-4e25-a0b3-f83ee3cf3a5d">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [4]"/>
-						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
-							<box>
-								<pen lineColor="#D1D1D1"/>
-								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-							</box>
+					<jr:column width="70" uuid="c12bec93-7be4-4b33-8e3b-5a5569d66a9f">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							<staticText>
-								<reportElement x="0" y="0" width="246" height="20" forecolor="#FFFFFF" uuid="8c96b2f8-e6ea-482f-9fb3-03dae6d94d69"/>
-								<textElement textAlignment="Center">
-									<font size="9" isBold="true"/>
+								<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="c468f8e3-e1e7-488a-b2b7-223a4719f6ff"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
 								</textElement>
-								<text><![CDATA[COMPROBANTE RELACIONADO]]></text>
+								<text><![CDATA[SERIE-NUMERO]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:column width="70" uuid="c12bec93-7be4-4b33-8e3b-5a5569d66a9f">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-								<staticText>
-									<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="c468f8e3-e1e7-488a-b2b7-223a4719f6ff"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[SERIE-NUMERO]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10">
-								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-								<textField>
-									<reportElement x="0" y="0" width="66" height="10" uuid="1ad4acc3-b12b-4aab-9e44-650e696972f3"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font size="7"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{sunat_id}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="70" uuid="7cabf903-7654-44b3-9e28-babf119b1377">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<staticText>
-									<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="9767c873-68f5-467c-ab8d-ad7259f9bf01"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[FECHA EMISIÓN]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10"/>
-						</jr:column>
-						<jr:column width="40" uuid="21865d27-57ef-4dcb-82e2-a4eea5e1f1a2">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<staticText>
-									<reportElement x="0" y="0" width="36" height="10" forecolor="#FFFFFF" uuid="e9c3a888-93e5-49a7-88f0-59f35892ffa1"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[MONEDA]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10"/>
-						</jr:column>
-						<jr:column width="70" uuid="a76f5413-8827-4417-bcd1-847797c0c93a">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
-							<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<staticText>
-									<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="0ee4039e-3ffd-43ae-aa40-bf98c7920070"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[TOTAL DR]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10">
-								<textField>
-									<reportElement x="0" y="0" width="66" height="10" uuid="7bdc5592-ee36-4cde-8098-75ae3c6f1912"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_total_invoice_amount}, "", ",", "." ,"2")]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-					</jr:columnGroup>
-					<jr:columnGroup width="152" uuid="0ace77f3-140f-4e49-975b-32cdb4eb8863">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [3]"/>
-						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
-							<box>
-								<pen lineColor="#D1D1D1"/>
-								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-							</box>
-							<staticText>
-								<reportElement x="0" y="0" width="148" height="20" forecolor="#FFFFFF" uuid="3cabda44-6ac6-422e-9b20-3418a77619eb"/>
-								<textElement textAlignment="Center">
-									<font size="9" isBold="true"/>
+						<jr:detailCell style="Table_TD" height="10">
+							<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+							<textField>
+								<reportElement x="0" y="0" width="66" height="10" uuid="1ad4acc3-b12b-4aab-9e44-650e696972f3"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
 								</textElement>
-								<text><![CDATA[DATOS DE PAGO]]></text>
+								<textFieldExpression><![CDATA[$F{sunat_id}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="7cabf903-7654-44b3-9e28-babf119b1377">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="9767c873-68f5-467c-ab8d-ad7259f9bf01"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[FECHA EMISIÓN]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:column width="40" uuid="7e3c857c-5fb5-4ede-bd84-170e0ae0ce8d">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
-							<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<staticText>
-									<reportElement x="0" y="0" width="36" height="10" printWhenGroupChanges="Gruppo1" forecolor="#FFFFFF" uuid="15d6d10c-a416-4fcd-9533-d025dd75e8eb"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[# PAGO]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10">
-								<textField>
-									<reportElement x="0" y="0" width="36" height="10" uuid="935f1517-0706-42f7-92da-8d861c2f0c6e"/>
-									<textElement textAlignment="Center" verticalAlignment="Middle">
-										<font size="7"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{sunat_payment_id}]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="70" uuid="c371fdf4-43df-4dae-8528-b9c88d100741">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
-							<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<property name="com.jaspersoft.studio.unit.width" value="px"/>
-								<staticText>
-									<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="a4cd2ade-63f5-4fab-87dd-68db72687ee2">
-										<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-									</reportElement>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[MONTO PAGO]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10">
-								<textField>
-									<reportElement x="0" y="0" width="66" height="10" uuid="a4a5bb65-8a7d-4dea-bf9d-26aadc94c052"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_payment_amount}, "", ",", "." ,"2")]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="42" uuid="e2939eeb-6378-4e12-9128-77beb6838a44">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<staticText>
-									<reportElement x="0" y="0" width="38" height="10" forecolor="#FFFFFF" uuid="e4171eba-8fab-437b-b4dc-8b2a84703514">
-										<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-									</reportElement>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[TIPO CAMBIO]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10"/>
-						</jr:column>
-					</jr:columnGroup>
-					<jr:columnGroup width="150" uuid="bb6cb755-fad2-405b-b707-b31ac73a0c33">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [2]"/>
-						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
-							<box>
-								<pen lineColor="#D1D1D1"/>
-								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-							</box>
-							<staticText>
-								<reportElement x="0" y="0" width="146" height="20" forecolor="#FFFFFF" uuid="9255abc0-079f-403e-a9f6-1e9ee143a61a"/>
-								<textElement textAlignment="Center">
-									<font size="9" isBold="true"/>
+						<jr:detailCell style="Table_TD" height="10">
+							<textField>
+								<reportElement x="0" y="0" width="66" height="10" uuid="08c21afd-5a4e-4f8e-b476-ff2c70c9f54d"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
 								</textElement>
-								<text><![CDATA[DATOS DE RETENCIÓN]]></text>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="21865d27-57ef-4dcb-82e2-a4eea5e1f1a2">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="36" height="10" forecolor="#FFFFFF" uuid="e9c3a888-93e5-49a7-88f0-59f35892ffa1"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[MONEDA]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:column width="70" uuid="d4236e8f-08e8-4a5e-846c-1914416f7876">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<staticText>
-									<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="1fd76f51-77c6-4497-9633-9705788cd0fe">
-										<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-									</reportElement>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[RETENCIÓN]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10">
-								<textField>
-									<reportElement x="0" y="0" width="66" height="10" uuid="e84d3976-a932-4ff3-8282-a58126db9e98"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
-										<font size="7"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_retention_amount}, "", ",", "." ,"2")]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-						<jr:column width="80" uuid="ac0447d4-3b7d-40c7-ac7a-8c8bc8507a26">
-							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
-							<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
-								<staticText>
-									<reportElement x="0" y="0" width="76" height="10" forecolor="#FFFFFF" uuid="91af86b0-25a3-4e05-a01b-020c55afd345"/>
-									<textElement textAlignment="Right">
-										<font size="7" isBold="true"/>
-									</textElement>
-									<text><![CDATA[IMPORTE PAGADO]]></text>
-								</staticText>
-							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10">
-								<textField>
-									<reportElement x="0" y="0" width="76" height="10" uuid="8652e420-cecc-4a53-80ea-45fc3a2b0cbf"/>
-									<textElement textAlignment="Right">
-										<font size="7"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_net_total_cashed}, "", ",", "." ,"2")]]></textFieldExpression>
-								</textField>
-							</jr:detailCell>
-						</jr:column>
-					</jr:columnGroup>
+						<jr:detailCell style="Table_TD" height="10">
+							<textField>
+								<reportElement x="0" y="0" width="36" height="10" uuid="db7d6240-2d1c-4d04-9cad-86e9d5de206c"/>
+								<textElement>
+									<font size="7"/>
+								</textElement>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="a76f5413-8827-4417-bcd1-847797c0c93a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<staticText>
+								<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="0ee4039e-3ffd-43ae-aa40-bf98c7920070"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[TOTAL DR]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="10">
+							<textField>
+								<reportElement x="0" y="0" width="66" height="10" uuid="7bdc5592-ee36-4cde-8098-75ae3c6f1912"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_total_invoice_amount}, "", ",", "." ,"2")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="40" uuid="7e3c857c-5fb5-4ede-bd84-170e0ae0ce8d">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="36" height="10" forecolor="#FFFFFF" uuid="15d6d10c-a416-4fcd-9533-d025dd75e8eb"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[# PAGO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="10">
+							<textField>
+								<reportElement x="0" y="0" width="36" height="10" uuid="935f1517-0706-42f7-92da-8d861c2f0c6e"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{sunat_payment_id}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="c371fdf4-43df-4dae-8528-b9c88d100741">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<staticText>
+								<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="a4cd2ade-63f5-4fab-87dd-68db72687ee2">
+									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+								</reportElement>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[MONTO PAGO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="10">
+							<textField>
+								<reportElement x="0" y="0" width="66" height="10" uuid="a4a5bb65-8a7d-4dea-bf9d-26aadc94c052"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_payment_amount}, "", ",", "." ,"2")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="42" uuid="e2939eeb-6378-4e12-9128-77beb6838a44">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="38" height="10" forecolor="#FFFFFF" uuid="e4171eba-8fab-437b-b4dc-8b2a84703514">
+									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+								</reportElement>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[TIPO CAMBIO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="10"/>
+					</jr:column>
+					<jr:column width="70" uuid="d4236e8f-08e8-4a5e-846c-1914416f7876">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="66" height="10" forecolor="#FFFFFF" uuid="1fd76f51-77c6-4497-9633-9705788cd0fe">
+									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+								</reportElement>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[RETENCIÓN]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="10">
+							<textField>
+								<reportElement x="0" y="0" width="66" height="10" uuid="e84d3976-a932-4ff3-8282-a58126db9e98"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_retention_amount}, "", ",", "." ,"2")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="80" uuid="ac0447d4-3b7d-40c7-ac7a-8c8bc8507a26">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column9"/>
+						<jr:columnHeader style="Table_CH" height="10" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="76" height="10" forecolor="#FFFFFF" uuid="91af86b0-25a3-4e05-a01b-020c55afd345"/>
+								<textElement textAlignment="Right">
+									<font size="7" isBold="true"/>
+								</textElement>
+								<text><![CDATA[IMPORTE PAGADO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="10">
+							<textField>
+								<reportElement x="0" y="0" width="76" height="10" uuid="8652e420-cecc-4a53-80ea-45fc3a2b0cbf"/>
+								<textElement textAlignment="Right">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_LINE_SCRIPTLET}.numberFormat($F{sunat_net_total_cashed}, "", ",", "." ,"2")]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
 				</jr:table>
 			</componentElement>
 		</band>

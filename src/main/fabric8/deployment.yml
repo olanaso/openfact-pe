@@ -23,7 +23,7 @@ spec:
         - name: JAVA_OPTIONS
           value: -Dsso.auth.server.url=${SSO_AUTH_SERVER_URL} -Dsso.realm=${SSO_REALM} -Dswarm.project.stage.file=file:///deployments/config/openfactv2-stages.yml -Dswarm.project.stage=production-peru
         - name: GC_MAX_METASPACE_SIZE
-          value: 150
+          value: 250
         name: ${project.artifactId}
         image: ${project.artifactId}:latest
         imagePullPolicy: IfNotPresent

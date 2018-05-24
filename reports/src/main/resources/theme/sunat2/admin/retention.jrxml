@@ -208,10 +208,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_ap_postal_address_city_name},true) +"- ("+$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_ap_postal_address_country_identification_code},true)+")"]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="0" y="1" width="90" height="66" uuid="85e02260-9cbc-4280-94e1-80ea33fc0281"/>
-				<imageExpression><![CDATA[""]]></imageExpression>
-			</image>
 		</band>
 	</title>
 	<pageHeader>

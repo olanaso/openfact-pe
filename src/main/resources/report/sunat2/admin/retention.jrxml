@@ -114,28 +114,28 @@
 				<textField>
 					<reportElement x="450" y="14" width="29" height="10" uuid="368b0722-5a62-4977-9bec-b455843c3778"/>
 					<textElement textAlignment="Right">
-						<font size="7"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{sunat_total_invoice_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{sunat_total_invoice_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="450" y="2" width="29" height="10" uuid="b577de2f-4621-4382-98d4-507357684598"/>
 					<textElement textAlignment="Right">
-						<font size="7"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{sunat_total_invoice_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{sunat_total_invoice_currency_code}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="480" y="14" width="74" height="10" uuid="b8842275-baf9-413d-9def-c58139c04beb"/>
 					<textElement textAlignment="Right">
-						<font size="7"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_paid},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Report">
 					<reportElement x="480" y="2" width="74" height="10" uuid="cc425d56-220b-42ca-aab9-cd053ba164d9"/>
 					<textElement textAlignment="Right">
-						<font size="7"/>
+						<font size="7" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.numberFormat($F{sunat_total_invoice_amount},"", ",", ".", "2")]]></textFieldExpression>
 				</textField>
@@ -223,33 +223,33 @@
 				<text><![CDATA[ADQUIRIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="380" y="11" width="80" height="10" uuid="0f86baff-6386-4f3f-b3fe-2388707babe8"/>
+				<reportElement x="380" y="12" width="80" height="10" uuid="0f86baff-6386-4f3f-b3fe-2388707babe8"/>
 				<box rightPadding="4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="7" isBold="true"/>
 				</textElement>
-				<text><![CDATA[FECHA EMISIÓN:]]></text>
+				<text><![CDATA[FECHA DE EMISIÓN:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="11" width="94" height="10" uuid="97c8c468-6012-4e4f-81c9-eaa4c3ccbf57"/>
+				<reportElement x="460" y="12" width="94" height="10" uuid="97c8c468-6012-4e4f-81c9-eaa4c3ccbf57"/>
 				<textElement verticalAlignment="Top">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="12" width="360" height="10" uuid="fa5c83dc-49f8-47d7-858c-e825f986c2f7"/>
+				<reportElement x="0" y="23" width="360" height="10" uuid="fa5c83dc-49f8-47d7-858c-e825f986c2f7"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_rp_legal_entity_registration_name},true)]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="23" width="360" height="10" uuid="7a4f8fdc-85c2-429c-be0c-ead18f605866"/>
+				<reportElement x="0" y="12" width="360" height="10" uuid="7a4f8fdc-85c2-429c-be0c-ead18f605866"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{sunat_rp_party_identification_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["RUC: "+$F{sunat_rp_party_identification_id}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="34" width="360" height="10" uuid="71c208ea-5b73-459c-bf5c-d7c5ae875ed3"/>
@@ -266,7 +266,7 @@
 				<textFieldExpression><![CDATA[$P{OPENFACT_FORMAT_SCRIPTLET}.stringFormat($F{sunat_rp_postal_address_city_name},true)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="22" width="80" height="10" uuid="96c1f283-537d-40c0-92f0-2d92140232c2"/>
+				<reportElement x="380" y="34" width="80" height="10" uuid="96c1f283-537d-40c0-92f0-2d92140232c2"/>
 				<box rightPadding="4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="7" isBold="true"/>
@@ -274,14 +274,14 @@
 				<text><![CDATA[MONEDA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="22" width="94" height="10" uuid="fce76046-c380-41b8-b061-5c00606991e1"/>
+				<reportElement x="460" y="34" width="94" height="10" uuid="fce76046-c380-41b8-b061-5c00606991e1"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sunat_total_invoice_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{sunat_total_invoice_currency_code}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="33" width="80" height="10" uuid="eee8d41c-1988-44db-8128-fb62820a4970"/>
+				<reportElement x="380" y="45" width="80" height="10" uuid="eee8d41c-1988-44db-8128-fb62820a4970"/>
 				<box rightPadding="4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="7" isBold="true"/>
@@ -289,11 +289,26 @@
 				<text><![CDATA[TASA RETENCIÓN:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="33" width="94" height="10" uuid="a4480cb4-77ba-43f0-844a-9d0ba5d0f473"/>
+				<reportElement x="460" y="45" width="94" height="10" uuid="a4480cb4-77ba-43f0-844a-9d0ba5d0f473"/>
 				<textElement>
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA["3 %"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["3.00 %"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="380" y="23" width="80" height="10" uuid="00f178a2-0fd4-4edf-b017-d48f01d696f5"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE VENC.:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="460" y="23" width="94" height="10" uuid="b806b909-ba76-4a01-8f29-79ea8743cd5e"/>
+				<textElement verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -318,10 +333,7 @@
 							<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 							<box>
 								<pen lineColor="#D1D1D1"/>
-								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
+								<rightPen lineWidth="1.0"/>
 							</box>
 							<staticText>
 								<reportElement x="0" y="0" width="246" height="20" forecolor="#FFFFFF" uuid="6ed22486-0157-4e49-b69a-5d4a4743e274"/>
@@ -490,10 +502,7 @@
 						<jr:columnHeader style="Table_CH" height="20" rowSpan="1">
 							<box>
 								<pen lineColor="#D1D1D1"/>
-								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
-								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#D1D1D1"/>
+								<leftPen lineWidth="1.0"/>
 							</box>
 							<staticText>
 								<reportElement x="0" y="0" width="154" height="20" forecolor="#FFFFFF" uuid="d28cfa08-c6a5-426b-9211-a1bbca3b9d6b"/>

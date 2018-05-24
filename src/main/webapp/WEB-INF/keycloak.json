@@ -1,5 +1,5 @@
 {
-  "realm": "${sso.realm:openfact}",
+  "realm": "${sso.realm:ahren}",
   "bearer-only": true,
   "auth-server-url": "${sso.auth.server.url:http://localhost:8081/auth}",
   "ssl-required": "external",

@@ -21,15 +21,9 @@ spec:
         - name: SSO_AUTH_SERVER_URL
           value: ${SSO_AUTH_SERVER_URL}
         - name: JAVA_OPTIONS
-          value: -Dsso.auth.server.url=${SSO_AUTH_SERVER_URL} -Dswarm.project.stage.file=file:///deployments/config/openfactv2-stages.yml -Dswarm.project.stage=production-peru
+          value: -Dsso.auth.server.url=${SSO_AUTH_SERVER_URL} -Dsso.realm=${SSO_REALM} -Dswarm.project.stage.file=file:///deployments/config/openfactv2-stages.yml -Dswarm.project.stage=production-peru
         - name: GC_MAX_METASPACE_SIZE
           value: 150
-        - name: CONTAINER_CORE_LIMIT
-          value: 2
-        - name: CONTAINER_MAX_MEMORY
-          value: 1073741824
-        - name: JAVA_MAX_MEM_RATIO
-          value: 0
         name: ${project.artifactId}
         image: ${project.artifactId}:latest
         imagePullPolicy: IfNotPresent

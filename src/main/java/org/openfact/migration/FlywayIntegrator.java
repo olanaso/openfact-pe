@@ -41,6 +41,7 @@ public class FlywayIntegrator implements Integrator {
 
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSource);
+        flyway.setBaselineOnMigrate(true);
 
         Dialect dialect = jdbcServices.getDialect();
         if (dialect instanceof H2Dialect) {

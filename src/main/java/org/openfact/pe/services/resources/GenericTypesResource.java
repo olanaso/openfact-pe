@@ -221,6 +221,16 @@ public class GenericTypesResource implements OrganizationResourceProvider {
     }
 
     @GET
+    @Path("/generic-types/documentos-relacionados-bajas")
+    public List<GenericTypeRepresentation> getDocumentosRelacionadosBaja() {
+        List<GenericTypeRepresentation> rep = new ArrayList<>();
+        for (TipoDocumentoRelacionadoBaja type : TipoDocumentoRelacionadoBaja.values()) {
+            rep.add(SunatEnumToRepresentation.toRepresentation(type));
+        }
+        return rep;
+    }
+
+    @GET
     @Path("/generic-types/tipos-regimen-retencion")
     public List<GenericTypeRepresentation> getTipoRegimenRetencion() {
         List<GenericTypeRepresentation> rep = new ArrayList<>();

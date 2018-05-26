@@ -148,6 +148,14 @@ public class SunatEnumToRepresentation {
         return rep;
     }
 
+    public static GenericTypeRepresentation toRepresentation(TipoDocumentoRelacionadoBaja type) {
+        GenericTypeRepresentation rep = new GenericTypeRepresentation();
+        rep.setCodigo(type.getCodigo());
+        rep.setDenominacion(type.getDenominacion());
+        rep.setGrupo(type.getDocumentType());
+        return rep;
+    }
+
     public static GenericTypeRepresentation toRepresentation(TipoRegimenRetencion type) {
         GenericTypeRepresentation rep = new GenericTypeRepresentation();
         rep.setCodigo(type.getCodigo());

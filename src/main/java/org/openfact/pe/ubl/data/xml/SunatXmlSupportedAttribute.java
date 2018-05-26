@@ -132,10 +132,23 @@ public enum SunatXmlSupportedAttribute {
     /**
      * Retention
      */
+    SUNAT_ISSUE_DATE(XMLAttributeContainer.simpleKey(value -> value != null ? String.valueOf(value) : null,
+            "IssueDate")),
+
+    SUNAT_RETENTION_PERCENT(XMLAttributeContainer.simpleKey(value -> value != null ? String.valueOf(value) : null,
+            "SUNATRetentionPercent")),
+    SUNAT_PERCEPTION_PERCENT(XMLAttributeContainer.simpleKey(value -> value != null ? String.valueOf(value) : null,
+            "SUNATPerceptionPercent")),
+
     SUNAT_TOTAL_PAID(XMLAttributeContainer.simpleKey(value -> value != null ? new BigDecimal(String.valueOf(value)) : null,
             "SUNATTotalPaid", "content")),
     SUNAT_TOTAL_PAID_CURRENCY_CODE(XMLAttributeContainer.simpleKey(value -> value != null ? String.valueOf(value) : null,
             "SUNATTotalPaid", "currencyID")),
+
+    TOTAL_INVOICE_AMOUNT(XMLAttributeContainer.simpleKey(value -> value != null ? new BigDecimal(String.valueOf(value)) : null,
+            "TotalInvoiceAmount", "content")),
+    TOTAL_INVOICE_AMOUNT_CURRENCY_CODE(XMLAttributeContainer.simpleKey(value -> value != null ? String.valueOf(value) : null,
+            "TotalInvoiceAmount", "currencyID")),
 
     SUNAT_RETENTION_DOCUMENT_REFERENCE(XMLAttributeContainer.objectArrayKey(XmlSUNATRetentionDocumentReference.class, "SUNATRetentionDocumentReference")),
 

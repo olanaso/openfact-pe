@@ -340,7 +340,7 @@
         <dependency>
             <groupId>io.github.carlosthe19916</groupId>
             <artifactId>jasper-utils-scriptles</artifactId>
-            <version>1.0.2.Final</version>
+            <version>1.0.3.Final</version>
         </dependency>
 
         <dependency>
@@ -464,7 +464,7 @@
                     <dependency>
                         <groupId>io.github.carlosthe19916</groupId>
                         <artifactId>jasper-utils-scriptles</artifactId>
-                        <version>1.0.2.Final</version>
+                        <version>1.0.3.Final</version>
                     </dependency>
                 </dependencies>
             </plugin>

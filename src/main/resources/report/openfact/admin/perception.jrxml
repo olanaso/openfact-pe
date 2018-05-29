@@ -590,7 +590,7 @@
 		<band height="110">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<componentElement>
-				<reportElement x="206" y="23" width="152" height="46" uuid="3befc03e-f6c3-41d8-b6de-b518d092bff5"/>
+				<reportElement x="159" y="23" width="152" height="46" uuid="3befc03e-f6c3-41d8-b6de-b518d092bff5"/>
 				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<jr:codeExpression><![CDATA[$F{of_model_id}]]></jr:codeExpression>
 				</jr:Code128>
@@ -603,28 +603,28 @@
 				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} +" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="200" y="100" width="159" height="10" backcolor="#FFFFFF" uuid="fd56b633-cb26-40e8-bde9-a31a34813545"/>
+				<reportElement positionType="Float" mode="Opaque" x="153" y="100" width="159" height="10" backcolor="#FFFFFF" uuid="fd56b633-cb26-40e8-bde9-a31a34813545"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="7" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[www.openfact.pe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="200" y="90" width="159" height="10" backcolor="#FFFFFF" uuid="d8abdb22-627b-4fa3-9296-31fac2072ec5"/>
+				<reportElement positionType="Float" mode="Opaque" x="153" y="90" width="159" height="10" backcolor="#FFFFFF" uuid="d8abdb22-627b-4fa3-9296-31fac2072ec5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[OPENFACT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="30" y="2" width="500" height="20" backcolor="#FFFFFF" uuid="7d1f6e05-ec86-4559-94f1-2badce2dee70"/>
+				<reportElement positionType="Float" mode="Opaque" x="30" y="2" width="410" height="20" backcolor="#FFFFFF" uuid="7d1f6e05-ec86-4559-94f1-2badce2dee70"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="8" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Representación impresa de la PERCEPCIÓN ELECTRÓNICA, para consultar el documento visita www.openfact.pe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="200" y="74" width="159" height="15" backcolor="#FFFFFF" uuid="0fcd241d-1d0d-4de5-80ee-8b8aaa93161c"/>
+				<reportElement positionType="Float" mode="Opaque" x="153" y="74" width="159" height="15" backcolor="#FFFFFF" uuid="0fcd241d-1d0d-4de5-80ee-8b8aaa93161c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Serif" size="9" isItalic="true"/>
 				</textElement>
@@ -637,6 +637,14 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement x="460" y="3" width="95" height="95" uuid="29caee12-e9f9-4b44-870d-5807e2d9f86c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["http://openfact.pe/consultas?id=" + $F{of_model_id}]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
 		</band>
 	</lastPageFooter>
 </jasperReport>

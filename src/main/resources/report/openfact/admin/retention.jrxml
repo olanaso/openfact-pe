@@ -96,7 +96,7 @@
 	<field name="sunat_ap_postal_address_country_identification_code" class="java.lang.String"/>
 	<field name="sunat_ap_postal_address_city_name" class="java.lang.String"/>
 	<field name="sunat_total_paid_currency_code" class="java.lang.String"/>
-	<field name="sunat_retention_percent" class="java.math.BigDecimal"/>
+	<field name="sunat_retention_percent" class="java.lang.String"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
@@ -219,11 +219,11 @@
 	<pageHeader>
 		<band height="57">
 			<staticText>
-				<reportElement x="0" y="1" width="180" height="10" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a">
+				<reportElement x="0" y="-2" width="180" height="12" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ADQUIRIENTE]]></text>
@@ -309,13 +309,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="460" y="45" width="94" height="10" uuid="62502057-59f8-4c2d-a93d-931e942f38f6"/>
+			<textField>
+				<reportElement x="460" y="45" width="94" height="10" uuid="d31bda78-6c91-477f-94ef-894e71e1c4e3"/>
 				<textElement verticalAlignment="Top">
 					<font size="6"/>
 				</textElement>
-				<text><![CDATA[3%]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$F{sunat_retention_percent} + "%"]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>
@@ -386,7 +386,7 @@
 							<jr:detailCell style="Table_TD" height="10">
 								<textField>
 									<reportElement x="0" y="0" width="66" height="10" uuid="1671b936-4887-4add-8201-5f7856247c19"/>
-									<textElement textAlignment="Left" verticalAlignment="Middle">
+									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{sunat_issue_date}]]></textFieldExpression>
@@ -407,7 +407,7 @@
 							<jr:detailCell style="Table_TD" height="10">
 								<textField>
 									<reportElement x="0" y="0" width="36" height="10" uuid="4ff9bdd5-c0b7-4c38-8385-5b663411968e"/>
-									<textElement textAlignment="Left" verticalAlignment="Middle">
+									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{sunat_total_invoice_currency_code}]]></textFieldExpression>
@@ -519,7 +519,7 @@
 							<jr:detailCell style="Table_TD" height="10">
 								<textField>
 									<reportElement x="0" y="0" width="38" height="10" uuid="e59e6c47-37f5-4002-8387-e0042b40b639"/>
-									<textElement textAlignment="Right" verticalAlignment="Middle">
+									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="6"/>
 									</textElement>
 									<textFieldExpression><![CDATA[$F{sunat_exchange_calculation_rate}]]></textFieldExpression>

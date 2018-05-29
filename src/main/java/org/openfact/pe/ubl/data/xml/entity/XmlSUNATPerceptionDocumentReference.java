@@ -43,16 +43,16 @@ public class XmlSUNATPerceptionDocumentReference {
     @SimpleKey(key = {"SUNATPerceptionInformation", "SUNATNetTotalCashed", "content"}, mapper = BigdecimalMapper.class)
     private BigDecimal sunat_net_total_cashed;
 
-    @SimpleKey(key = {"SUNATRetentionInformation", "ExchangeRate", "SourceCurrencyCode"}, mapper = StringMapper.class)
+    @SimpleKey(key = {"SUNATPerceptionInformation", "ExchangeRate", "SourceCurrencyCode"}, mapper = StringMapper.class)
     private String sunat_exchange_source_currency_code;
 
-    @SimpleKey(key = {"SUNATRetentionInformation", "ExchangeRate", "TargetCurrencyCode"}, mapper = StringMapper.class)
+    @SimpleKey(key = {"SUNATPerceptionInformation", "ExchangeRate", "TargetCurrencyCode"}, mapper = StringMapper.class)
     private String sunat_exchange_target_currency_code;
 
-    @SimpleKey(key = {"SUNATRetentionInformation", "ExchangeRate", "CalculationRate"}, mapper = StringMapper.class)
-    private String sunat_exchange_calculation_rate;
+    @SimpleKey(key = {"SUNATPerceptionInformation", "ExchangeRate", "CalculationRate"}, mapper = BigdecimalMapper.class)
+    private BigDecimal sunat_exchange_calculation_rate;
 
-    @SimpleKey(key = {"SUNATRetentionInformation", "ExchangeRate", "Date"}, mapper = StringMapper.class)
+    @SimpleKey(key = {"SUNATPerceptionInformation", "ExchangeRate", "Date"}, mapper = StringMapper.class)
     private String sunat_exchange_date;
 
     public String getSunat_id() {
@@ -159,11 +159,11 @@ public class XmlSUNATPerceptionDocumentReference {
         this.sunat_exchange_target_currency_code = sunat_exchange_target_currency_code;
     }
 
-    public String getSunat_exchange_calculation_rate() {
+    public BigDecimal getSunat_exchange_calculation_rate() {
         return sunat_exchange_calculation_rate;
     }
 
-    public void setSunat_exchange_calculation_rate(String sunat_exchange_calculation_rate) {
+    public void setSunat_exchange_calculation_rate(BigDecimal sunat_exchange_calculation_rate) {
         this.sunat_exchange_calculation_rate = sunat_exchange_calculation_rate;
     }
 

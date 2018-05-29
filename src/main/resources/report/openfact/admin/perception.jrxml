@@ -70,6 +70,9 @@
 		<field name="sunat_net_total_cashed" class="java.math.BigDecimal"/>
 		<field name="sunat_total_invoice_amount" class="java.math.BigDecimal"/>
 		<field name="sunat_payment_amount" class="java.math.BigDecimal"/>
+		<field name="sunat_issue_date" class="java.lang.String"/>
+		<field name="sunat_total_invoice_currency_code" class="java.lang.String"/>
+		<field name="sunat_exchange_calculation_rate" class="java.math.BigDecimal"/>
 	</subDataset>
 	<scriptlet name="STRING_FORMAT" class="io.github.carlosthe19916.scriptles.FormatStringScriptlet"/>
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet"/>
@@ -93,6 +96,7 @@
 	<field name="sunat_ap_postal_address_country_identification_code" class="java.lang.String"/>
 	<field name="sunat_ap_postal_address_city_name" class="java.lang.String"/>
 	<field name="sunat_total_cashed_currency_code" class="java.lang.String"/>
+	<field name="sunat_perception_percent" class="java.lang.String"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
@@ -215,11 +219,11 @@
 	<pageHeader>
 		<band height="58">
 			<staticText>
-				<reportElement x="0" y="2" width="180" height="10" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a">
+				<reportElement x="0" y="0" width="180" height="12" uuid="57aed2b1-4f4e-40a3-a6ad-54dae8dd4c5a">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="true"/>
 				</textElement>
 				<text><![CDATA[ADQUIRIENTE]]></text>
@@ -290,13 +294,6 @@
 				</textElement>
 				<text><![CDATA[TASA PERCEPCIÓN:]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="460" y="46" width="94" height="10" uuid="6ca23fdf-76c5-4729-af58-964afb95f20d"/>
-				<textElement verticalAlignment="Top">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["# %"]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="380" y="24" width="80" height="10" uuid="6b427c82-4b1d-4d97-aa60-b81a0ca3f5bb"/>
 				<box rightPadding="4"/>
@@ -311,6 +308,13 @@
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="46" width="94" height="10" uuid="e16acf93-d463-48f8-a33d-c0931662f56e"/>
+				<textElement verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sunat_perception_percent} + "%"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -377,7 +381,15 @@
 									<text><![CDATA[FECHA EMISIÓN]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10"/>
+							<jr:detailCell style="Table_TD" height="10">
+								<textField>
+									<reportElement x="0" y="0" width="66" height="10" uuid="28e7ff60-b2f0-4dca-a30d-31aa54fe5373"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="6"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{sunat_issue_date}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
 						<jr:column width="40" uuid="711f57e6-f1b9-4981-bfb5-708158ed4223">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
@@ -390,7 +402,15 @@
 									<text><![CDATA[MONEDA]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10"/>
+							<jr:detailCell style="Table_TD" height="10">
+								<textField>
+									<reportElement x="0" y="0" width="36" height="10" uuid="55c89c01-9601-4f5c-bf4a-7bbd8ca16e7c"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="6"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{sunat_total_invoice_currency_code}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
 						<jr:column width="70" uuid="50814cf9-a827-49c5-a69c-6d8d37ad1574">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
@@ -487,7 +507,15 @@
 									<text><![CDATA[T/C]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell style="Table_TD" height="10"/>
+							<jr:detailCell style="Table_TD" height="10">
+								<textField>
+									<reportElement x="0" y="0" width="36" height="10" uuid="afdf3360-3eaf-4ff4-9c2b-1ff57241e81f"/>
+									<textElement textAlignment="Right" verticalAlignment="Middle">
+										<font size="6"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$P{NUMBER_FORMAT_LINE_SCRIPTLET}.formatNumber($F{sunat_exchange_calculation_rate})]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
 						</jr:column>
 					</jr:columnGroup>
 					<jr:columnGroup width="160" uuid="30ed55ee-69fe-4e02-82fb-e97919284462">

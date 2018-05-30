@@ -90,6 +90,11 @@ public class DocumentAdapter implements DocumentModel, JpaModel<DocumentEntity> 
     }
 
     @Override
+    public void close() {
+        document.setClosed(true);
+    }
+
+    @Override
     public List<DocumentLineModel> getDocumentLines() {
         return document.getLines().stream()
                 .map(this::toDocumentLineModel)

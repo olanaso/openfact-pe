@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "DOCUMENT", uniqueConstraints = {
@@ -45,7 +46,9 @@ import java.util.Collection;
         @NamedQuery(name = "getOrganizationDocumentCount", query = "select count(i) from DocumentEntity i where i.organizationId = :organizationId"),
         @NamedQuery(name = "deleteDocumentsByOrganization", query = "delete from DocumentEntity u where u.organizationId = :organizationId"),
 
-        @NamedQuery(name = "selectLastDocumentChanged", query = "select d from DocumentEntity d where d.organizationId=:organizationId and d.documentType=:documentType and upper(d.documentId) like :firstLetter order by d.createdTimestamp")
+        @NamedQuery(name = "selectLastDocumentChanged", query = "select d from DocumentEntity d where d.organizationId=:organizationId and d.documentType=:documentType and upper(d.documentId) like :firstLetter order by d.createdTimestamp"),
+
+        @NamedQuery(name = "getAllClosedDocuments", query = "select d from DocumentEntity d left join d.requiredActions ra where ra.action in :requiredActions order by d.createdTimestamp")
 })
 public class DocumentEntity {
 
@@ -68,8 +71,9 @@ public class DocumentEntity {
     private String xmlFileId;
 
     @NotNull
-    @Column(name = "ORGANIZATION_ID")
-    private String organizationId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ORGANIZATION_ID", foreignKey = @ForeignKey)
+    private OrganizationEntity organization;
 
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     @Column(name = "CREATED_TIMESTAMP")
@@ -90,6 +94,10 @@ public class DocumentEntity {
     @Column(name = "ENABLED")
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean enabled;
+
+    @Column(name = "CLOSED")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean closed;
 
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "document")
     private Collection<DocumentAttributeEntity> attributes = new ArrayList<>();
@@ -114,26 +122,6 @@ public class DocumentEntity {
 
     @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true, mappedBy = "documentDestiny", fetch = FetchType.LAZY)
     private Collection<AttachedDocumentEntity> attachedDocumentsAsDestiny = new ArrayList<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DocumentEntity that = (DocumentEntity) o;
-
-        if (!getDocumentId().equals(that.getDocumentId())) return false;
-        if (!getDocumentType().equals(that.getDocumentType())) return false;
-        return getOrganizationId().equals(that.getOrganizationId());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getDocumentId().hashCode();
-        result = 31 * result + getDocumentType().hashCode();
-        result = 31 * result + getOrganizationId().hashCode();
-        return result;
-    }
 
     public String getId() {
         return id;
@@ -165,14 +153,6 @@ public class DocumentEntity {
 
     public void setXmlFileId(String xmlFileId) {
         this.xmlFileId = xmlFileId;
-    }
-
-    public String getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
     }
 
     public LocalDateTime getCreatedTimestamp() {
@@ -285,5 +265,35 @@ public class DocumentEntity {
 
     public void setLines(Collection<DocumentLineEntity> lines) {
         this.lines = lines;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    public OrganizationEntity getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(OrganizationEntity organization) {
+        this.organization = organization;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DocumentEntity that = (DocumentEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }

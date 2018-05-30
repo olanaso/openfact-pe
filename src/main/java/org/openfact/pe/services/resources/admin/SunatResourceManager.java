@@ -5,7 +5,6 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.jboss.logging.Logger;
-import org.openfact.events.admin.OperationType;
 import org.openfact.models.*;
 import org.openfact.models.jpa.entities.SerieNumeroController;
 import org.openfact.models.jpa.entities.SerieNumeroEntity;
@@ -23,14 +22,11 @@ import org.openfact.pe.ubl.ubl21.retention.RetentionType;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.services.ModelErrorResponseException;
 import org.openfact.services.managers.DocumentManager;
-import org.openfact.services.resource.security.OrganizationAuth;
 import org.openfact.ubl.UBLIDGenerator;
 import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.*;
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
@@ -112,6 +108,9 @@ public class SunatResourceManager {
 
         DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(), DocumentType.INVOICE, invoiceType);
         generateAttributes(rep, document);
+        if (rep.isEnviarAutomaticamenteASunat()) {
+            document.close();
+        }
         return document;
     }
 
@@ -168,6 +167,9 @@ public class SunatResourceManager {
 
         DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(), DocumentType.CREDIT_NOTE, creditNoteType);
         generateAttributes(rep, document);
+        if (rep.isEnviarAutomaticamenteASunat()) {
+            document.close();
+        }
         return document;
     }
 
@@ -224,6 +226,9 @@ public class SunatResourceManager {
 
         DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(), DocumentType.DEBIT_NOTE, debitNoteType);
         generateAttributes(rep, document);
+        if (rep.isEnviarAutomaticamenteASunat()) {
+            document.close();
+        }
         return document;
     }
 
@@ -233,6 +238,9 @@ public class SunatResourceManager {
         setVoidedDocumentIDType(organization, voidedDocumentsType);
 
         DocumentModel document = documentManager.addDocument(organization, voidedDocumentsType.getID().getValue(), SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentsType);
+        if (rep.isEnviarAutomaticamenteASunat()) {
+            document.close();
+        }
         return document;
     }
 
@@ -296,7 +304,11 @@ public class SunatResourceManager {
             }
         }
 
-        return documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
+        DocumentModel document = documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
+        if (rep.isEnviarAutomaticamenteASunat()) {
+            document.close();
+        }
+        return document;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -349,7 +361,11 @@ public class SunatResourceManager {
             }
         }
 
-        return documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
+        DocumentModel document = documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
+        if (rep.isEnviarAutomaticamenteASunat()) {
+            document.close();
+        }
+        return document;
     }
 
     private void generateAttributes(DocumentRepresentation representation, DocumentModel document) {

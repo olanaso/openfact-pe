@@ -3,9 +3,12 @@ package org.openfact.services.managers;
 import org.jboss.logging.Logger;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.models.*;
-import org.openfact.models.types.DestinyType;
-import org.openfact.models.types.DocumentRequiredAction;
-import org.openfact.models.types.DocumentType;
+import org.openfact.models.types.*;
+import org.openfact.pe.models.SunatSendEventException;
+import org.openfact.pe.models.utils.SunatTypeToModel;
+import org.openfact.pe.ubl.types.SunatRequiredAction;
+import org.openfact.services.ErrorResponse;
+import org.openfact.services.ModelErrorResponseException;
 import org.openfact.ubl.*;
 import org.openfact.ubl.utils.DefaultUBLUtil;
 import org.openfact.ubl.utils.UBLUtil;
@@ -14,7 +17,11 @@ import org.w3c.dom.Document;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import javax.xml.transform.TransformerException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Stateless
 public class DocumentManager {
@@ -79,10 +86,10 @@ public class DocumentManager {
         DocumentModel documentModel = model.addDocument(documentType, documentId, organization);
 
         customizator.config(organization, documentModel, type);
-        for (DocumentRequiredAction requiredAction: customizator.getRequiredActions()) {
+        for (DocumentRequiredAction requiredAction : customizator.getRequiredActions()) {
             documentModel.addRequiredAction(requiredAction);
         }
-        for (String requiredAction: customizator.getExtraRequiredActions()) {
+        for (String requiredAction : customizator.getExtraRequiredActions()) {
             documentModel.addRequiredAction(requiredAction);
         }
 

@@ -1,5 +1,6 @@
 package org.openfact.models.jpa.entities;
 
+import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OrganizationModel;
 
 import javax.ejb.Stateless;
@@ -40,10 +41,6 @@ public class SerieNumeroController {
     }
 
     public AbstractMap.SimpleEntry<Integer, Integer> getSiguienteSerieNumero(String organizationId, String documentType, String firstLetter) {
-        return siguienteSerieNumero(organizationId, documentType, firstLetter);
-    }
-
-    private AbstractMap.SimpleEntry<Integer, Integer> siguienteSerieNumero(String organizationId, String documentType, String firstLetter) {
         Optional<SerieNumeroEntity> ultimaSerieNumero;
 
         TypedQuery<SerieNumeroEntity> query = em.createNamedQuery("selectSerieNumero", SerieNumeroEntity.class);
@@ -104,6 +101,49 @@ public class SerieNumeroController {
             em.persist(serieNumeroEntity);
             em.flush();
 
+            return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
+        }
+    }
+
+    /**
+     * Usar solo para las bajas
+     */
+    public AbstractMap.SimpleEntry<Integer, Integer> getSiguienteSerieNumero(String organizationId, String documentType, String firstLetter, int serie) {
+        Optional<SerieNumeroEntity> ultimaSerieNumero;
+
+        TypedQuery<SerieNumeroEntity> query = em.createNamedQuery("selectSerieNumero", SerieNumeroEntity.class);
+        query.setParameter("organizationId", organizationId);
+        query.setParameter("documentType", documentType);
+        query.setParameter("firstLetter", firstLetter);
+        query.setMaxResults(1);
+        List<SerieNumeroEntity> resultList = query.getResultList();
+        ultimaSerieNumero = getFirstResult(resultList);
+
+        if (ultimaSerieNumero.isPresent()) {
+            SerieNumeroEntity serieNumeroEntity = ultimaSerieNumero.get();
+
+            if (serie > serieNumeroEntity.getSerie()) {
+                serieNumeroEntity.setSerie(serie);
+                serieNumeroEntity.setNumero(1);
+            } else if (serie == serieNumeroEntity.getSerie()) {
+                serieNumeroEntity.setNumero(serieNumeroEntity.getNumero() + 1);
+            } else {
+                throw new ModelRuntimeException("No se puede generar siguiente numero de una serie menor a la ya existente");
+            }
+
+            em.merge(serieNumeroEntity);
+            em.flush();
+            return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
+        } else {
+            SerieNumeroEntity serieNumeroEntity = new SerieNumeroEntity();
+            serieNumeroEntity.setId(UUID.randomUUID().toString());
+            serieNumeroEntity.setSerie(serie);
+            serieNumeroEntity.setNumero(1);
+            serieNumeroEntity.setDocumentType(documentType);
+            serieNumeroEntity.setFirstLetter(firstLetter);
+            serieNumeroEntity.setOrganizationId(organizationId);
+            em.persist(serieNumeroEntity);
+            em.flush();
             return new AbstractMap.SimpleEntry<>(serieNumeroEntity.getSerie(), serieNumeroEntity.getNumero());
         }
     }

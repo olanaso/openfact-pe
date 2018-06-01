@@ -235,6 +235,7 @@
 					<textElement textAlignment="Right">
 						<font size="6"/>
 					</textElement>
+					<textFieldExpression><![CDATA[$P{NUMBER_FORMAT_SCRIPTLET}.formatNumber($F{of_rmt_payable_amount})]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="400" y="89" width="70" height="10" uuid="fa800a01-f29a-46af-a3bb-e4a54dd18f90"/>
@@ -322,35 +323,35 @@
 			<staticText>
 				<reportElement x="381" y="27" width="174" height="15" forecolor="#FFFFFF" uuid="4817e737-628a-4742-b786-d4329f8fb8ec"/>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[NOTA DE DÉBITO ELECTRÓNICA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="400" y="7" width="40" height="16" forecolor="#FFFFFF" uuid="0ef67c49-6612-4bda-aff1-09569c43aaaa"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RUC]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="440" y="7" width="105" height="16" forecolor="#FFFFFF" uuid="9baf9075-23a3-4c5a-93e9-a8ee03ee5ddd"/>
 				<textElement textAlignment="Left">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" "+$F{of_sp_assigned_account_id}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="400" y="45" width="40" height="15" forecolor="#FFFFFF" uuid="f11a07f8-a5ba-4685-a437-50d69ec508a9"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[N° ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="440" y="45" width="105" height="15" forecolor="#FFFFFF" uuid="bc883e1f-5945-4a16-8fca-b41de413f825"/>
 				<textElement>
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " +$F{of_id}]]></textFieldExpression>
 			</textField>

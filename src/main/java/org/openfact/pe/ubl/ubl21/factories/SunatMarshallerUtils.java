@@ -41,6 +41,13 @@ public class SunatMarshallerUtils {
         return Integer.parseInt(formatted);
     }
 
+    public static String getCurrentDateInFormatAndTimeZonePeru(String format) {
+        Calendar localCalendar = Calendar.getInstance(TimeZone.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(TimeZone.getTimeZone("America/Lima"));
+        return sdf.format(localCalendar.getTime());
+    }
+
     public static MapBasedNamespaceContext getBasedNamespaceContext(String defaultNamespace) {
         UBL21NamespaceContext namespace = UBL21NamespaceContext.getInstance();
         namespace.setMapping("ccts", "urn:un:unece:uncefact:documentation:2");

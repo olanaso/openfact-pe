@@ -6,6 +6,7 @@ import org.openfact.models.OrganizationModel;
 import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.pe.models.utils.SunatTypeToModel;
 import org.openfact.pe.ubl.types.SunatRequiredAction;
+import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoBaja;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.provider.ProviderType;
@@ -37,8 +38,8 @@ public class SunatUBLVoidedDocumentCustomizator extends AbstractVoidedDocumentPr
             voidedDocumentsType.getVoidedDocumentsLine().stream().forEach(c -> {
                 String attachedDocumentId = c.getDocumentSerialID().getValue() + "-" + c.getDocumentNumberID().getValue();
                 String attachedDocumentCodeType = c.getDocumentTypeCode().getValue();
-                Optional<TipoDocumentoRelacionadoPercepcionRetencion> tipoDocumentoRelacionadoPercepcion = Arrays
-                        .stream(TipoDocumentoRelacionadoPercepcionRetencion.values())
+                Optional<TipoDocumentoRelacionadoBaja> tipoDocumentoRelacionadoPercepcion = Arrays
+                        .stream(TipoDocumentoRelacionadoBaja.values())
                         .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
                         .findAny();
                 if (tipoDocumentoRelacionadoPercepcion.isPresent()) {

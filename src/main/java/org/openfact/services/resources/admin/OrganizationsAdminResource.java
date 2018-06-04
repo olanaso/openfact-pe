@@ -41,6 +41,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.net.URI;
 import java.security.cert.X509Certificate;
@@ -325,11 +326,11 @@ public class OrganizationsAdminResource {
             throw new ForbiddenException();
         }
 
-        String logoId = organization.getId();
+        String logoId = organization.getLogoId();
         if (logoId != null) {
             FileModel logoFile = fileProvider.getFileById(organization, logoId);
             byte[] bytes = logoFile.getFile();
-            return Response.ok(bytes).build();
+            return Response.ok(Base64.getEncoder().withoutPadding().encodeToString(bytes)).build();
         } else {
             return Response.ok().build();
         }

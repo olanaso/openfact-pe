@@ -78,6 +78,7 @@
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet">
 		<scriptletDescription><![CDATA[]]></scriptletDescription>
 	</scriptlet>
+	<parameter name="LOGO_URL" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -387,6 +388,13 @@
 				</textElement>
 				<text><![CDATA[FACTURA ELECTRÓNICA]]></text>
 			</staticText>
+			<image>
+				<reportElement x="5" y="2" width="60" height="60" uuid="ffcbf73c-68a8-41cd-965a-9cb0dddec1ee">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -640,12 +648,6 @@
 	<lastPageFooter>
 		<band height="110">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<componentElement>
-				<reportElement x="190" y="23" width="152" height="46" uuid="3befc03e-f6c3-41d8-b6de-b518d092bff5"/>
-				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<jr:codeExpression><![CDATA[$F{of_model_id}]]></jr:codeExpression>
-				</jr:Code128>
-			</componentElement>
 			<textField evaluationTime="Report">
 				<reportElement x="360" y="100" width="194" height="10" uuid="d05bbcd6-5379-4877-b962-dec911ed98c2"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
@@ -695,6 +697,12 @@
 				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<jr:codeExpression><![CDATA["http://openfact.pe/consultas?id=" + $F{of_model_id}]]></jr:codeExpression>
 				</jr:QRCode>
+			</componentElement>
+			<componentElement>
+				<reportElement x="169" y="23" width="152" height="46" uuid="f3be273c-da62-43eb-9375-114d6931b1f5"/>
+				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{of_model_id}]]></jr:codeExpression>
+				</jr:Code128>
 			</componentElement>
 		</band>
 	</lastPageFooter>

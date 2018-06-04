@@ -10,6 +10,8 @@ import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.openfact.models.DocumentModel;
+import org.openfact.models.FileModel;
+import org.openfact.models.FileProvider;
 import org.openfact.report.*;
 import org.openfact.report.ReportProviderType.ProviderType;
 import org.openfact.ubl.data.UBLReportDataProvider;
@@ -17,8 +19,10 @@ import org.openfact.ubl.data.UBLReportDataProvider;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.URL;
 
 @Stateless
@@ -34,6 +38,9 @@ public class JasperUBLReportProvider implements ReportTemplateProvider {
     @Inject
     @Any
     private Instance<UBLReportDataProvider> reportDataProviders;
+
+    @Inject
+    private FileProvider fileProvider;
 
     static class Templates {
         public static String getTemplate(ReportTheme.Type type, DocumentModel document) {
@@ -84,6 +91,22 @@ public class JasperUBLReportProvider implements ReportTemplateProvider {
             if (theme == null) {
                 theme = themeProvider.getTheme(null, ReportTheme.Type.ADMIN);
             }
+
+            // Add logo
+            BufferedImage logoInputStream = null;
+            String logoId = config.getOrganization().getLogoId();
+            if (logoId != null) {
+                FileModel logo = fileProvider.getFileById(config.getOrganization(), logoId);
+                if (logo != null) {
+                    InputStream is = new ByteArrayInputStream(logo.getFile());
+                    logoInputStream = ImageIO.read(is);
+                }
+            }
+            if (logoInputStream == null) {
+                InputStream is = getClass().getResourceAsStream("/your-logo-here.png");
+                logoInputStream = ImageIO.read(is);;
+            }
+            config.getAttributes().put("LOGO_URL", logoInputStream);
 
             JasperPrint jasperPrint = jasperReport.processReport(theme, templateName, config.getAttributes(), dataSource);
             return export(jasperPrint, exportFormat);

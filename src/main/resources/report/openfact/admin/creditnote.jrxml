@@ -77,6 +77,7 @@
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet">
 		<scriptletDescription><![CDATA[]]></scriptletDescription>
 	</scriptlet>
+	<parameter name="LOGO_URL" class="java.awt.Image"/>
 	<field name="of_id" class="java.lang.String"/>
 	<field name="of_issue_date" class="java.lang.String"/>
 	<field name="of_sp_legal_entity_registration_name" class="java.util.List"/>
@@ -362,6 +363,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_city_name}) +" - ("+$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_country_identification_code})+")"]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="5" y="2" width="60" height="60" uuid="519ddb6f-8b15-427c-83a0-a9d9f0b5096f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>

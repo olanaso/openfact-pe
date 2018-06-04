@@ -74,6 +74,7 @@
 		<scriptletDescription><![CDATA[]]></scriptletDescription>
 	</scriptlet>
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet"/>
+	<parameter name="LOGO_URL" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -193,6 +194,13 @@
 				</textElement>
 				<text><![CDATA[FECHA DE VENC.:]]></text>
 			</staticText>
+			<image>
+				<reportElement x="5" y="2" width="60" height="60" uuid="4448c425-6ff0-4ff5-b25c-a7c633b44eae">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

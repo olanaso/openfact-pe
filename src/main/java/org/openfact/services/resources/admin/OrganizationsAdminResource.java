@@ -325,12 +325,13 @@ public class OrganizationsAdminResource {
             throw new ForbiddenException();
         }
 
-        FileModel logoFile = fileProvider.getFileById(organization, organization.getId());
-        if (logoFile != null) {
+        String logoId = organization.getId();
+        if (logoId != null) {
+            FileModel logoFile = fileProvider.getFileById(organization, logoId);
             byte[] bytes = logoFile.getFile();
             return Response.ok(bytes).build();
         } else {
-            return ErrorResponse.error("Organization does not have a logo", Response.Status.NOT_FOUND);
+            return Response.ok().build();
         }
     }
 
@@ -349,9 +350,12 @@ public class OrganizationsAdminResource {
 
         // Remove before update
         String logoId = organization.getLogoId();
-        FileModel logo = fileProvider.getFileById(organization, logoId);
-        fileProvider.removeFile(organization, logo);
+        if (logoId != null) {
+            FileModel logo = fileProvider.getFileById(organization, logoId);
+            fileProvider.removeFile(organization, logo);
+        }
 
+        // Create new file
         FileModel logoFile;
         try {
             logoFile = fileProvider.createFile(organization, filename, bytes);

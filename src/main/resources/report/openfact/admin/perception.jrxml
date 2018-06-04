@@ -76,6 +76,7 @@
 	</subDataset>
 	<scriptlet name="STRING_FORMAT" class="io.github.carlosthe19916.scriptles.FormatStringScriptlet"/>
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet"/>
+	<parameter name="LOGO_URL" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -214,6 +215,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{sunat_ap_postal_address_city_name})+ "- ("+$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{sunat_ap_postal_address_country_identification_code})+")"]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="5" y="2" width="60" height="60" uuid="26dbc7ce-2568-41c8-a296-13f37ae0f2d9">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>

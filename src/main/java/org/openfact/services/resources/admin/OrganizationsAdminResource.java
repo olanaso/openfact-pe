@@ -340,13 +340,12 @@ public class OrganizationsAdminResource {
         if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN)) {
             throw new ForbiddenException();
         }
-
         OrganizationModel organization = getOrganizationModel(organizationName);
         OrganizationAuth auth = getAuth(organization);
         auth.requireManage();
 
-        String filename = fileRepresentation.getFileName();
-        byte[] bytes = Base64.getDecoder().decode(fileRepresentation.getFile());
+        String filename = organizationName + getImageType(fileRepresentation.getFile());
+        byte[] bytes = Base64.getDecoder().decode(removeBase64Header(fileRepresentation.getFile()));
 
         // Remove before update
         String logoId = organization.getLogoId();
@@ -363,6 +362,18 @@ public class OrganizationsAdminResource {
         // Update organization
         organization.setLogoId(logoFile.getId());
     }
+
+    public static String removeBase64Header(String base64) {
+        if (base64 == null) return null;
+        return base64.trim().replaceFirst("data[:]image[/]([a-z])+;base64,", "");
+    }
+
+    public static String getImageType(String base64) {
+        String[] header = base64.split("[;]");
+        if (header == null || header.length == 0) return null;
+        return header[0].split("[/]")[1];
+    }
+
 
     @DELETE
     @Path("/{organization}/avatars/logo")

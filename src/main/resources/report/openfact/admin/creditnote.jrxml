@@ -364,7 +364,7 @@
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_city_name}) +" - ("+$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_country_identification_code})+")"]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="5" y="2" width="60" height="60" uuid="519ddb6f-8b15-427c-83a0-a9d9f0b5096f">
+				<reportElement x="5" y="2" width="85" height="68" uuid="12fbcf86-34ad-4959-b9a8-c9076b1ee286">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -428,7 +428,7 @@
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_cp_postal_address_city_name})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="369" y="45" width="90" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
+				<reportElement x="369" y="34" width="90" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="4"/>
@@ -438,7 +438,7 @@
 				<text><![CDATA[MONEDA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="459" y="45" width="96" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
+				<reportElement x="459" y="34" width="96" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
@@ -458,21 +458,6 @@
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.mergeCollection($F{of_br_invoice_document_reference_id})]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="369" y="34" width="90" height="10" uuid="4efb68d7-5347-48a6-b787-7e30194b0765"/>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[FECHA DE VENC.:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="459" y="34" width="96" height="10" uuid="8a05e59d-eada-4fa6-a7f8-a6946c08150b"/>
-				<textElement verticalAlignment="Top">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

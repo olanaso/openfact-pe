@@ -389,7 +389,7 @@
 				<text><![CDATA[FACTURA ELECTRÓNICA]]></text>
 			</staticText>
 			<image>
-				<reportElement x="5" y="2" width="60" height="60" uuid="ffcbf73c-68a8-41cd-965a-9cb0dddec1ee">
+				<reportElement x="5" y="2" width="85" height="68" uuid="ffcbf73c-68a8-41cd-965a-9cb0dddec1ee">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -455,7 +455,7 @@
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_cp_postal_address_city_name})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="34" width="80" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
+				<reportElement x="380" y="23" width="80" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="4"/>
@@ -465,38 +465,21 @@
 				<text><![CDATA[MONEDA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="34" width="95" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
+				<reportElement x="460" y="23" width="95" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="380" y="23" width="80" height="10" uuid="fd0c0500-e156-4ff5-9815-d76640116e5f">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[FECHA DE VENC:]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="460" y="23" width="95" height="10" uuid="403d12a3-f082-4837-93c1-4a313f45817e"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="460" y="45" width="95" height="10" uuid="7d0e4f7d-f2a3-46b9-9512-535207f9d68f"/>
+				<reportElement x="460" y="34" width="95" height="10" uuid="7d0e4f7d-f2a3-46b9-9512-535207f9d68f"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA["18.00 %"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="45" width="80" height="10" uuid="22bc2ec4-6540-432a-ae10-3d58565b5767">
+				<reportElement x="380" y="34" width="80" height="10" uuid="22bc2ec4-6540-432a-ae10-3d58565b5767">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="4"/>

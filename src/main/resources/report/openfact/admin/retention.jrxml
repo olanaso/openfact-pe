@@ -216,7 +216,7 @@
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{sunat_ap_postal_address_city_name}) +"- ("+$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{sunat_ap_postal_address_country_identification_code})+")"]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="5" y="2" width="60" height="60" uuid="756cc6d6-c01d-4c7e-8886-9a12c1afd8d2">
+				<reportElement x="5" y="1" width="85" height="68" uuid="36a0cad3-613e-4e17-add8-244c7c04cfc3">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -280,7 +280,7 @@
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{sunat_rp_postal_address_city_name})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="34" width="80" height="10" uuid="96c1f283-537d-40c0-92f0-2d92140232c2"/>
+				<reportElement x="380" y="23" width="80" height="10" uuid="96c1f283-537d-40c0-92f0-2d92140232c2"/>
 				<box rightPadding="4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="6" isBold="true"/>
@@ -288,37 +288,22 @@
 				<text><![CDATA[MONEDA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="34" width="94" height="10" uuid="fce76046-c380-41b8-b061-5c00606991e1"/>
+				<reportElement x="460" y="23" width="94" height="10" uuid="fce76046-c380-41b8-b061-5c00606991e1"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sunat_total_invoice_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{sunat_total_invoice_currency_code}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="45" width="80" height="10" uuid="eee8d41c-1988-44db-8128-fb62820a4970"/>
+				<reportElement x="380" y="34" width="80" height="10" uuid="eee8d41c-1988-44db-8128-fb62820a4970"/>
 				<box rightPadding="4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="6" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TASA RETENCIÓN:]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="380" y="23" width="80" height="10" uuid="00f178a2-0fd4-4edf-b017-d48f01d696f5"/>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[FECHA DE VENC.:]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="460" y="23" width="94" height="10" uuid="b806b909-ba76-4a01-8f29-79ea8743cd5e"/>
-				<textElement verticalAlignment="Top">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="460" y="45" width="94" height="10" uuid="d31bda78-6c91-477f-94ef-894e71e1c4e3"/>
+				<reportElement x="460" y="34" width="94" height="10" uuid="d31bda78-6c91-477f-94ef-894e71e1c4e3"/>
 				<textElement verticalAlignment="Top">
 					<font size="6"/>
 				</textElement>

@@ -42,6 +42,8 @@ public class OrganizationRepresentation {
     protected String adminTheme;
     protected String emailTheme;
     protected String reportTheme;
+    protected String companyImage;
+    protected String reportTitle;
     protected Set<String> supportedLocales;
     protected String defaultLocale;
     protected Boolean internationalizationEnabled;    
@@ -362,5 +364,21 @@ public class OrganizationRepresentation {
 
     public void setComponents(MultivaluedHashMap<String, ComponentExportRepresentation> components) {
         this.components = components;
+    }
+
+    public String getCompanyImage() {
+        return companyImage;
+    }
+
+    public void setCompanyImage(String companyImage) {
+        this.companyImage = companyImage;
+    }
+
+    public String getReportTitle() {
+        return reportTitle;
+    }
+
+    public void setReportTitle(String reportTitle) {
+        this.reportTitle = reportTitle;
     }
 }

@@ -547,7 +547,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="10">
-							<textField>
+							<textField isStretchWithOverflow="true">
 								<reportElement x="0" y="0" width="332" height="10" uuid="7fa9cbe3-78ea-4098-9d96-a97499aa6109"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font size="6"/>

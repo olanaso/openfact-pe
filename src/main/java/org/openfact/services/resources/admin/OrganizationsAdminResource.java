@@ -41,6 +41,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.File;
 import java.net.URI;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -307,6 +308,80 @@ public class OrganizationsAdminResource {
         if (!organizationManager.removeOrganization(organization)) {
             throw new NotFoundException("Organization doesn't exist");
         }
+    }
+
+    @GET
+    @Path("/{organization}/avatars/logo")
+    @Produces({"image/jpeg", "image/png"})
+    public Response getOrganizationLogo(@PathParam("organization") final String organizationName) throws ModelErrorResponseException {
+        if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN)) {
+            throw new ForbiddenException();
+        }
+
+        OrganizationModel organization = getOrganizationModel(organizationName);
+        OrganizationAuth auth = getAuth(organization);
+
+        if (!auth.hasView()) {
+            throw new ForbiddenException();
+        }
+
+        FileModel logoFile = fileProvider.getFileById(organization, organization.getId());
+        if (logoFile != null) {
+            byte[] bytes = logoFile.getFile();
+            return Response.ok(bytes).build();
+        } else {
+            return ErrorResponse.error("Organization does not have a logo", Response.Status.NOT_FOUND);
+        }
+    }
+
+    @POST
+    @Path("/{organization}/avatars/logo")
+    public void saveOrganizationLogo(@PathParam("organization") final String organizationName, @Valid FileBase64Representation fileRepresentation) throws ModelErrorResponseException {
+        if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN)) {
+            throw new ForbiddenException();
+        }
+
+        OrganizationModel organization = getOrganizationModel(organizationName);
+        OrganizationAuth auth = getAuth(organization);
+        auth.requireManage();
+
+        String filename = fileRepresentation.getFileName();
+        byte[] bytes = Base64.getDecoder().decode(fileRepresentation.getFile());
+
+        // Remove before update
+        String logoId = organization.getLogoId();
+        FileModel logo = fileProvider.getFileById(organization, logoId);
+        fileProvider.removeFile(organization, logo);
+
+        FileModel logoFile;
+        try {
+            logoFile = fileProvider.createFile(organization, filename, bytes);
+        } catch (ModelException e) {
+            throw new ModelErrorResponseException("Could not save the image", Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        // Update organization
+        organization.setLogoId(logoFile.getId());
+    }
+
+    @DELETE
+    @Path("/{organization}/avatars/logo")
+    public void deleteOrganizationLogo(@PathParam("organization") final String organizationName) throws ModelErrorResponseException {
+        if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN)) {
+            throw new ForbiddenException();
+        }
+
+        OrganizationModel organization = getOrganizationModel(organizationName);
+        OrganizationAuth auth = getAuth(organization);
+        auth.requireManage();
+
+        // Remove before update
+        String logoId = organization.getLogoId();
+        FileModel logo = fileProvider.getFileById(organization, logoId);
+        fileProvider.removeFile(organization, logo);
+
+        // Update organization
+        organization.setLogoId(null);
     }
 
     @GET

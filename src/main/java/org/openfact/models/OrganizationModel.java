@@ -91,6 +91,11 @@ public interface OrganizationModel {
 
     void setReportTheme(String name);
 
+    String getReportTitle();
+    void setReportTitle(String reportTitle);
+
+    String getLogoId();
+    void setLogoId(String logoId);
 
     /**
      * Internationalization

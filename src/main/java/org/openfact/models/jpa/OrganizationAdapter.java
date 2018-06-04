@@ -449,6 +449,26 @@ public class OrganizationAdapter implements OrganizationModel, JpaModel<Organiza
     }
 
     @Override
+    public String getReportTitle() {
+        return organization.getReportTitle();
+    }
+
+    @Override
+    public void setReportTitle(String reportTitle) {
+        organization.setReportTitle(reportTitle);
+    }
+
+    @Override
+    public String getLogoId() {
+        return organization.getLogoFileId();
+    }
+
+    @Override
+    public void setLogoId(String logoId) {
+        organization.setLogoFileId(logoId);
+    }
+
+    @Override
     public boolean isInternationalizationEnabled() {
         return organization.isInternationalizationEnabled();
     }

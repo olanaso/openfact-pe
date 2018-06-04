@@ -124,6 +124,9 @@ public class OrganizationEntity {
     @Column(name = "LOGO_FILE_ID")
     private String logoFileId;
 
+    @Column(name = "REPORT_TITLE")
+    private String reportTitle;
+
     @ElementCollection
     @MapKeyColumn(name = "NAME")
     @Column(name = "VALUE")
@@ -472,5 +475,13 @@ public class OrganizationEntity {
 
     public void setLogoFileId(String logoFileId) {
         this.logoFileId = logoFileId;
+    }
+
+    public String getReportTitle() {
+        return reportTitle;
+    }
+
+    public void setReportTitle(String reportTitle) {
+        this.reportTitle = reportTitle;
     }
 }

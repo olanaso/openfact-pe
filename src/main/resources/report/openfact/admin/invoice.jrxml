@@ -303,14 +303,14 @@
 					<textFieldExpression><![CDATA["IMPORTE EN LETRAS: "+$P{MONEY_FORMAT_SCRIPTLET}.asWords($F{of_lmt_payable_amount}).concat(" ").concat($F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="13" width="330" height="10" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="80" y="13" width="320" height="10" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
 					<textElement>
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_note}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="13" width="70" height="10" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="13" width="80" height="18" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
 						<printWhenExpression><![CDATA[new Boolean($F{of_note}!= null)]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right">

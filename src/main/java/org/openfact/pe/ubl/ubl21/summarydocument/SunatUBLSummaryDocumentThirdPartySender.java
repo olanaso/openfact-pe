@@ -26,7 +26,7 @@ public class SunatUBLSummaryDocumentThirdPartySender implements UBLThirdPartySen
 
     @Override
     public SendEventModel send(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendEventException {
-        SendEventModel sendEvent = sunatSenderManager.sendSummary(organization, document, generateFileName(organization, document));
+        SendEventModel sendEvent = sunatSenderManager.sendSummaryCPE(organization, document, generateFileName(organization, document));
         return sendEvent;
     }
 

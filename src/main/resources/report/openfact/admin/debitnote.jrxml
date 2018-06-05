@@ -77,6 +77,7 @@
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet">
 		<scriptletDescription><![CDATA[]]></scriptletDescription>
 	</scriptlet>
+	<parameter name="LOGO_URL" class="java.awt.Image"/>
 	<field name="of_id" class="java.lang.String"/>
 	<field name="of_issue_date" class="java.lang.String"/>
 	<field name="of_sp_legal_entity_registration_name" class="java.util.List"/>
@@ -235,6 +236,7 @@
 					<textElement textAlignment="Right">
 						<font size="6"/>
 					</textElement>
+					<textFieldExpression><![CDATA[$P{NUMBER_FORMAT_SCRIPTLET}.formatNumber($F{of_rmt_payable_amount})]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="400" y="89" width="70" height="10" uuid="fa800a01-f29a-46af-a3bb-e4a54dd18f90"/>
@@ -322,35 +324,35 @@
 			<staticText>
 				<reportElement x="381" y="27" width="174" height="15" forecolor="#FFFFFF" uuid="4817e737-628a-4742-b786-d4329f8fb8ec"/>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[NOTA DE DÉBITO ELECTRÓNICA]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="400" y="7" width="40" height="16" forecolor="#FFFFFF" uuid="0ef67c49-6612-4bda-aff1-09569c43aaaa"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RUC]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="440" y="7" width="105" height="16" forecolor="#FFFFFF" uuid="9baf9075-23a3-4c5a-93e9-a8ee03ee5ddd"/>
 				<textElement textAlignment="Left">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" "+$F{of_sp_assigned_account_id}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="400" y="45" width="40" height="15" forecolor="#FFFFFF" uuid="f11a07f8-a5ba-4685-a437-50d69ec508a9"/>
 				<textElement textAlignment="Right">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[N° ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="440" y="45" width="105" height="15" forecolor="#FFFFFF" uuid="bc883e1f-5945-4a16-8fca-b41de413f825"/>
 				<textElement>
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " +$F{of_id}]]></textFieldExpression>
 			</textField>
@@ -361,6 +363,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_city_name}) +" - ("+$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_country_identification_code})+")"]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="5" y="2" width="85" height="68" uuid="69b9c313-b7d6-47e6-99c1-fb7a58a4d2cc">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -419,7 +428,7 @@
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_cp_postal_address_city_name})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="370" y="45" width="90" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
+				<reportElement x="370" y="34" width="90" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="4"/>
@@ -429,7 +438,7 @@
 				<text><![CDATA[MONEDA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="45" width="94" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
+				<reportElement x="460" y="34" width="94" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
@@ -449,21 +458,6 @@
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.mergeCollection($F{of_br_invoice_document_reference_id})]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="370" y="34" width="90" height="10" uuid="aa157a15-27f1-4bc1-9f70-1891552465b3"/>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[FECHA DE VENC.:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="460" y="34" width="94" height="10" uuid="abbcc2eb-3f21-4067-abfa-7877559ef9cc"/>
-				<textElement verticalAlignment="Top">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -538,7 +532,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="10">
-							<textField>
+							<textField isStretchWithOverflow="true">
 								<reportElement x="0" y="0" width="332" height="10" uuid="7fa9cbe3-78ea-4098-9d96-a97499aa6109"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font size="6"/>

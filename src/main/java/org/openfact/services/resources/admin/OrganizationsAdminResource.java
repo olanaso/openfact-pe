@@ -41,6 +41,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.DatatypeConverter;
+import java.io.File;
 import java.net.URI;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -307,6 +309,95 @@ public class OrganizationsAdminResource {
         if (!organizationManager.removeOrganization(organization)) {
             throw new NotFoundException("Organization doesn't exist");
         }
+    }
+
+    @GET
+    @Path("/{organization}/avatars/logo")
+    @Produces({"image/jpeg", "image/png"})
+    public Response getOrganizationLogo(@PathParam("organization") final String organizationName) throws ModelErrorResponseException {
+        if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN)) {
+            throw new ForbiddenException();
+        }
+
+        OrganizationModel organization = getOrganizationModel(organizationName);
+        OrganizationAuth auth = getAuth(organization);
+
+        if (!auth.hasView()) {
+            throw new ForbiddenException();
+        }
+
+        String logoId = organization.getLogoId();
+        if (logoId != null) {
+            FileModel logoFile = fileProvider.getFileById(organization, logoId);
+            byte[] bytes = logoFile.getFile();
+            return Response.ok(Base64.getEncoder().withoutPadding().encodeToString(bytes)).build();
+        } else {
+            return Response.ok().build();
+        }
+    }
+
+    @POST
+    @Path("/{organization}/avatars/logo")
+    public void saveOrganizationLogo(@PathParam("organization") final String organizationName, @Valid FileBase64Representation fileRepresentation) throws ModelErrorResponseException {
+        if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN)) {
+            throw new ForbiddenException();
+        }
+        OrganizationModel organization = getOrganizationModel(organizationName);
+        OrganizationAuth auth = getAuth(organization);
+        auth.requireManage();
+
+        String filename = organizationName + getImageType(fileRepresentation.getFile());
+        byte[] bytes = Base64.getDecoder().decode(removeBase64Header(fileRepresentation.getFile()));
+
+        // Remove before update
+        String logoId = organization.getLogoId();
+        if (logoId != null) {
+            FileModel logo = fileProvider.getFileById(organization, logoId);
+            fileProvider.removeFile(organization, logo);
+        }
+
+        // Create new file
+        FileModel logoFile;
+        try {
+            logoFile = fileProvider.createFile(organization, filename, bytes);
+        } catch (ModelException e) {
+            throw new ModelErrorResponseException("Could not save the image", Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        // Update organization
+        organization.setLogoId(logoFile.getId());
+    }
+
+    public static String removeBase64Header(String base64) {
+        if (base64 == null) return null;
+        return base64.trim().replaceFirst("data[:]image[/]([a-z])+;base64,", "");
+    }
+
+    public static String getImageType(String base64) {
+        String[] header = base64.split("[;]");
+        if (header == null || header.length == 0) return null;
+        return header[0].split("[/]")[1];
+    }
+
+
+    @DELETE
+    @Path("/{organization}/avatars/logo")
+    public void deleteOrganizationLogo(@PathParam("organization") final String organizationName) throws ModelErrorResponseException {
+        if (!securityContext.getClientUser(session).hasAppRole(AdminRoles.ADMIN)) {
+            throw new ForbiddenException();
+        }
+
+        OrganizationModel organization = getOrganizationModel(organizationName);
+        OrganizationAuth auth = getAuth(organization);
+        auth.requireManage();
+
+        // Remove before update
+        String logoId = organization.getLogoId();
+        FileModel logo = fileProvider.getFileById(organization, logoId);
+        fileProvider.removeFile(organization, logo);
+
+        // Update organization
+        organization.setLogoId(null);
     }
 
     @GET

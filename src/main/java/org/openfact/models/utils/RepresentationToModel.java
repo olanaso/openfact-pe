@@ -241,7 +241,11 @@ public class RepresentationToModel {
             organization.setReportTheme(rep.getReportTheme());
         }
 
-         /*
+        if (rep.getReportTitle() != null) {
+            organization.setReportTitle(rep.getReportTitle());
+        }
+
+        /*
          * Internationalization
          */
         if (rep.getInternationalizationEnabled() != null) {
@@ -254,7 +258,7 @@ public class RepresentationToModel {
             organization.setDefaultLocale(rep.getDefaultLocale());
         }
 
-         /*
+        /*
          * Tasks schedule
          */
         if (rep.isTasksEnabled() != null) {
@@ -277,7 +281,7 @@ public class RepresentationToModel {
             organization.setSupportedCurrencies(new HashSet<String>(new HashSet<>(rep.getSupportedCurrencies())));
         }
 
-         /*
+        /*
          * Smtp server
          */
         if (rep.getSmtpServer() != null) {

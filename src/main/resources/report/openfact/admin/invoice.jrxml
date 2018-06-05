@@ -78,6 +78,7 @@
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet">
 		<scriptletDescription><![CDATA[]]></scriptletDescription>
 	</scriptlet>
+	<parameter name="LOGO_URL" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -302,14 +303,14 @@
 					<textFieldExpression><![CDATA["IMPORTE EN LETRAS: "+$P{MONEY_FORMAT_SCRIPTLET}.asWords($F{of_lmt_payable_amount}).concat(" ").concat($F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="70" y="13" width="330" height="10" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="80" y="13" width="320" height="10" uuid="1113a1f1-debd-4ff1-ab5b-46507c688aae"/>
 					<textElement>
 						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{of_note}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="13" width="70" height="10" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="13" width="80" height="18" uuid="ceb3141e-74d5-4006-b0f6-3e46270c2995">
 						<printWhenExpression><![CDATA[new Boolean($F{of_note}!= null)]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Right">
@@ -387,6 +388,13 @@
 				</textElement>
 				<text><![CDATA[FACTURA ELECTRÓNICA]]></text>
 			</staticText>
+			<image>
+				<reportElement x="5" y="2" width="85" height="68" uuid="ffcbf73c-68a8-41cd-965a-9cb0dddec1ee">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -447,7 +455,7 @@
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_cp_postal_address_city_name})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="34" width="80" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
+				<reportElement x="380" y="23" width="80" height="10" uuid="9a80cab9-546a-4853-afac-be5e66cfbfc3">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="4"/>
@@ -457,38 +465,21 @@
 				<text><![CDATA[MONEDA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="460" y="34" width="95" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
+				<reportElement x="460" y="23" width="95" height="10" uuid="e906b91b-610a-4bfa-92e9-95dcade479dd"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{of_document_currency_code}.toUpperCase().equals("PEN") ? "SOLES" : $F{of_document_currency_code}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="380" y="23" width="80" height="10" uuid="fd0c0500-e156-4ff5-9815-d76640116e5f">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[FECHA DE VENC:]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="460" y="23" width="95" height="10" uuid="403d12a3-f082-4837-93c1-4a313f45817e"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="460" y="45" width="95" height="10" uuid="7d0e4f7d-f2a3-46b9-9512-535207f9d68f"/>
+				<reportElement x="460" y="34" width="95" height="10" uuid="7d0e4f7d-f2a3-46b9-9512-535207f9d68f"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA["18.00 %"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="380" y="45" width="80" height="10" uuid="22bc2ec4-6540-432a-ae10-3d58565b5767">
+				<reportElement x="380" y="34" width="80" height="10" uuid="22bc2ec4-6540-432a-ae10-3d58565b5767">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box rightPadding="4"/>
@@ -575,7 +566,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="10">
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
-							<textField>
+							<textField isStretchWithOverflow="true">
 								<reportElement x="0" y="0" width="332" height="10" uuid="7fa9cbe3-78ea-4098-9d96-a97499aa6109"/>
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font size="6"/>
@@ -640,12 +631,6 @@
 	<lastPageFooter>
 		<band height="110">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<componentElement>
-				<reportElement x="190" y="23" width="152" height="46" uuid="3befc03e-f6c3-41d8-b6de-b518d092bff5"/>
-				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<jr:codeExpression><![CDATA[$F{of_model_id}]]></jr:codeExpression>
-				</jr:Code128>
-			</componentElement>
 			<textField evaluationTime="Report">
 				<reportElement x="360" y="100" width="194" height="10" uuid="d05bbcd6-5379-4877-b962-dec911ed98c2"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
@@ -695,6 +680,12 @@
 				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<jr:codeExpression><![CDATA["http://openfact.pe/consultas?id=" + $F{of_model_id}]]></jr:codeExpression>
 				</jr:QRCode>
+			</componentElement>
+			<componentElement>
+				<reportElement x="169" y="23" width="152" height="46" uuid="f3be273c-da62-43eb-9375-114d6931b1f5"/>
+				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{of_model_id}]]></jr:codeExpression>
+				</jr:Code128>
 			</componentElement>
 		</band>
 	</lastPageFooter>

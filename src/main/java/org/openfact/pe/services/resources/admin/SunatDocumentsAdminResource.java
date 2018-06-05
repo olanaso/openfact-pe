@@ -28,6 +28,7 @@ import org.openfact.pe.ubl.types.SunatRequiredAction;
 import org.openfact.pe.ubl.ubl21.perception.PerceptionType;
 import org.openfact.pe.ubl.ubl21.retention.RetentionType;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
+import org.openfact.pe.ws.sunat.ConsultaTicketResult;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
 import org.openfact.services.ErrorResponse;
 import org.openfact.services.ModelErrorResponseException;
@@ -613,9 +614,9 @@ public class SunatDocumentsAdminResource {
                     .getEvent());
             return Response.created(location).entity(modelToRepresentation.toRepresentation(document, false)).build();
         } catch (ModelDuplicateException e) {
-            throw new ModelErrorResponseException("Perception exists with same documentId", Response.Status.CONFLICT);
+            throw new ModelErrorResponseException("Voided Documents exists with same documentId", Response.Status.CONFLICT);
         } catch (ModelException e) {
-            throw new ModelErrorResponseException("Perception could not be created", Response.Status.INTERNAL_SERVER_ERROR);
+            throw new ModelErrorResponseException("Voided Documents could not be created", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -633,7 +634,7 @@ public class SunatDocumentsAdminResource {
         params.put(DocumentModel.SEND_EVENT_DESTINY, DestinyType.THIRD_PARTY.toString());
         params.put(DocumentModel.SEND_EVENT_STATUS, SendEventStatus.SUCCESS.toString());
 
-        List<SendEventModel> sendEvents = document.searchForSendEvent(params, 0, 2);
+        List<SendEventModel> sendEvents = document.searchForSendEvent(params);
         if (sendEvents.isEmpty()) {
             return ErrorResponse.error("No se encontro un envio valido a SUNAT", Response.Status.BAD_REQUEST);
         } else {
@@ -642,10 +643,6 @@ public class SunatDocumentsAdminResource {
             if (fileIds.isEmpty()) {
                 return ErrorResponse.error("Cdr no encontrado", Response.Status.NOT_FOUND);
             } else {
-                if (fileIds.size() > 1) {
-                    logger.warn("Se encontraron mas de un cdr, no se puede identificar el valido");
-                }
-
                 FileModel cdrFile = fileProvider.getFileById(organization, fileIds.get(fileIds.size() - 1));
                 Response.ResponseBuilder response = Response.ok(cdrFile.getFile());
                 String internetMediaType = InternetMediaType.getMymeTypeFromExtension(cdrFile.getExtension());
@@ -666,61 +663,25 @@ public class SunatDocumentsAdminResource {
         auth.requireView();
         DocumentModel document = getDocument(documentIdPk, organization);
 
-        Map<String, String> params = new HashMap<>();
-        params.put(DocumentModel.SEND_EVENT_DESTINY, DestinyType.THIRD_PARTY.toString());
-        params.put(DocumentModel.SEND_EVENT_STATUS, SendEventStatus.SUCCESS.toString());
-
-        List<SendEventModel> sendEvents = document.searchForSendEvent(params, 0, 2);
-        if (sendEvents.isEmpty()) {
-            return ErrorResponse.error("No se encontro un envio valido a SUNAT", Response.Status.BAD_REQUEST);
-        } else {
-            if (sendEvents.size() > 1) {
-                return ErrorResponse.error("Se encontro mas de un envio valido, debe existir solo un envio", Response.Status.BAD_REQUEST);
-            } else {
-                SendEventModel sendEvent = sendEvents.get(0);
-
-                if (document.getRequiredActions().contains(SunatRequiredAction.CONSULTAR_TICKET.toString())) {
-                    try {
-                        String ticket = sendEvent.getAttribute(SunatTypeToModel.NUMERO_TICKET);
-                        if (ticket == null) {
-                            throw new ModelErrorResponseException("No se encontro un numero de ticket valido", Response.Status.BAD_REQUEST);
-                        }
-
-                        byte[] result = sunatSenderManager.checkTicket(organization, ticket);
-                        FileModel file = fileProvider.createFile(organization, "R" + ticket + ".zip", result);
-                        sendEvent.attachFile(file);
-
-                        // Remove required action
-                        document.removeRequiredAction(SunatRequiredAction.CONSULTAR_TICKET.toString());
-
-                        Response.ResponseBuilder response = Response.ok(file.getFile());
-                        String internetMediaType = InternetMediaType.getMymeTypeFromExtension(file.getExtension());
-                        if (internetMediaType != null && !internetMediaType.isEmpty()) response.type(internetMediaType);
-                        response.header("content-disposition", "attachment; filename=\"" + file.getFileName() + "\"");
-                        return response.build();
-                    } catch (SunatSendEventException e) {
+        if (document.getRequiredActions().contains(SunatRequiredAction.CONSULTAR_TICKET.toString())) {
+            if (!document.getRequiredActions().contains("VERIFICAR")) {
+                ConsultaTicketResult consultaTicketResult = sunatSenderManager.checkTicket(organization, document);
+                switch (consultaTicketResult) {
+                    case PROCESO_CORRECTAMENTE:
+                        return getCdr(documentIdPk);
+                    case EN_PROCESO:
+                        return ErrorResponse.error("Documento en proceso, espere un tiempo prudente", Response.Status.BAD_REQUEST);
+                    case PROCESO_CON_ERRORES:
+                        return getCdr(documentIdPk);
+                    case ERROR:
                         throw new ModelErrorResponseException("Ocurrio un error al consultar a la sunat", Response.Status.INTERNAL_SERVER_ERROR);
-                    } catch (ModelException e) {
-                        throw new ModelErrorResponseException("No se pudo realizar la consulta a la sunat", Response.Status.INTERNAL_SERVER_ERROR);
-                    }
-                } else {
-                    List<String> fileIds = sendEvent.getAttachedFileIds();
-                    if (fileIds.isEmpty()) {
-                        return ErrorResponse.error("Cdr no encontrado", Response.Status.NOT_FOUND);
-                    } else if (fileIds.size() > 1) {
-                        return ErrorResponse.error("Se encontraron mas de un cdr, no se puede identificar el valido", Response.Status.CONFLICT);
-                    } else {
-                        FileModel cdrFile = fileProvider.getFileById(organization, fileIds.get(0));
-                        Response.ResponseBuilder response = Response.ok(cdrFile.getFile());
-                        String internetMediaType = InternetMediaType.getMymeTypeFromExtension(cdrFile.getExtension());
-                        if (internetMediaType != null && !internetMediaType.isEmpty()) response.type(internetMediaType);
-                        response.header("content-disposition", "attachment; filename=\"" + cdrFile.getFileName() + "\"");
-                        return response.build();
-                    }
+                    default:
+                        throw new ModelErrorResponseException("Ocurrio un error al consultar a la sunat", Response.Status.INTERNAL_SERVER_ERROR);
                 }
-
             }
         }
+
+        return getCdr(documentIdPk);
     }
 
 }

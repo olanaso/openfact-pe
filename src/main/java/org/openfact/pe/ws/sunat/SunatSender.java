@@ -41,11 +41,11 @@ public class SunatSender {
         return client.sendPack(fileName, dataHandler, null);
     }
 
-    public byte[] getStatus(Map<String, String> config, String ticket) throws ServiceConfigurationException {
+    public service.sunat.gob.pe.billservice.StatusResponse getStatus(Map<String, String> config, String ticket) throws ServiceConfigurationException {
         ServiceWrapper<BillService> serviceWrapper = new ServiceWrapper<>(config);
         BillService client = serviceWrapper.initWebService(BillService.class);
 
-        return client.getStatus(ticket).getContent();
+        return client.getStatus(ticket);
     }
 
     public StatusResponse getStatusCdr(Map<String, String> config, String ruc, String tipoComprobante, String serieComprobante, Integer numeroComprobante) throws ServiceConfigurationException {

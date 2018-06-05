@@ -2,7 +2,6 @@ package org.openfact.pe.ubl.ubl21.creditnote;
 
 import org.openfact.models.*;
 import org.openfact.pe.ubl.types.TipoComprobante;
-import org.openfact.pe.ubl.types.TipoInvoice;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
 import org.openfact.provider.ProviderType;
 import org.openfact.ubl.UBLThirdPartySender;
@@ -21,7 +20,7 @@ public class SunatUBLCreditNoteThirdPartySender implements UBLThirdPartySender {
 
     @Override
     public SendEventModel send(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendEventException {
-        return sunatSenderManager.sendBillAddress1(organization, document, generateFileName(organization, document));
+        return sunatSenderManager.sendBillCPE(organization, document, generateFileName(organization, document));
     }
 
     private String generateFileName(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData {

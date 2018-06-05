@@ -20,7 +20,7 @@ public class SunatUBLPerceptionThirdPartySender implements UBLThirdPartySender {
 
     @Override
     public SendEventModel send(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendEventException {
-        return sunatSenderManager.sendBillAddress2(organization, document, generateFileName(organization, document));
+        return sunatSenderManager.sendBillAddressOCPE(organization, document, generateFileName(organization, document));
     }
 
     private String generateFileName(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData {

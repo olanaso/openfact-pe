@@ -1,5 +1,8 @@
 package org.openfact.pe.ubl.types;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 public enum TipoDocumentoRelacionadoBaja {
 
     FACTURA("01", "FACTURA", "INVOICE"),
@@ -30,6 +33,10 @@ public enum TipoDocumentoRelacionadoBaja {
         this.codigo = codigo;
         this.denominacion = denominacion;
         this.documentType = documentType;
+    }
+
+    public static Optional<TipoDocumentoRelacionadoBaja> fromCodigo(String codigo) {
+        return Stream.of(TipoDocumentoRelacionadoBaja.values()).filter(p -> p.codigo.equals(codigo)).findFirst();
     }
 
 }

@@ -2,6 +2,7 @@ package org.openfact.pe.ubl.ubl21.voideddocument;
 
 import org.openfact.models.*;
 import org.openfact.pe.ubl.types.SunatDocumentType;
+import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoBaja;
 import org.openfact.pe.ubl.types.TipoDocumentoRelacionadoPercepcionRetencion;
 import org.openfact.pe.ubl.ubl21.voided.VoidedDocumentsType;
 import org.openfact.pe.ws.sunat.SunatSenderManager;
@@ -32,7 +33,13 @@ public class SunatUBLVoidedDocumentThirdPartySender implements UBLThirdPartySend
 
     @Override
     public SendEventModel send(OrganizationModel organization, DocumentModel document) throws ModelInsuficientData, SendEventException {
-        SendEventModel sendEvent = sunatSenderManager.sendSummary(organization, document, generateFileName(organization, document));
+        SendEventModel sendEvent;
+        if (document.getDocumentId().toUpperCase().startsWith("RR") || document.getDocumentId().toUpperCase().startsWith("RP")) {
+            sendEvent = sunatSenderManager.sendSummaryOCPE(organization, document, generateFileName(organization, document));
+        } else {
+            sendEvent = sunatSenderManager.sendSummaryCPE(organization, document, generateFileName(organization, document));
+        }
+
 
         // Disable all related documents
         UBLReaderWriter readerWriter = ublUtil.getReaderWriter(SunatDocumentType.VOIDED_DOCUMENTS.toString());
@@ -40,8 +47,8 @@ public class SunatUBLVoidedDocumentThirdPartySender implements UBLThirdPartySend
         voidedDocumentsType.getVoidedDocumentsLine().stream().forEach(c -> {
             String attachedDocumentId = c.getDocumentSerialID().getValue() + "-" + c.getDocumentNumberID().getValue();
             String attachedDocumentCodeType = c.getDocumentTypeCode().getValue();
-            Optional<TipoDocumentoRelacionadoPercepcionRetencion> tipoDocumentoRelacionadoPercepcion = Arrays
-                    .stream(TipoDocumentoRelacionadoPercepcionRetencion.values())
+            Optional<TipoDocumentoRelacionadoBaja> tipoDocumentoRelacionadoPercepcion = Arrays
+                    .stream(TipoDocumentoRelacionadoBaja.values())
                     .filter(p -> p.getCodigo().equals(attachedDocumentCodeType))
                     .findAny();
             if (tipoDocumentoRelacionadoPercepcion.isPresent()) {

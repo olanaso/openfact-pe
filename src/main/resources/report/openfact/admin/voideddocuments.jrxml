@@ -74,6 +74,7 @@
 		<scriptletDescription><![CDATA[]]></scriptletDescription>
 	</scriptlet>
 	<scriptlet name="NUMBER_FORMAT" class="io.github.carlosthe19916.scriptles.FormatNumberScriptlet"/>
+	<parameter name="LOGO_URL" class="java.awt.Image"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -178,21 +179,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_city_name}) +" - ("+$P{STRING_FORMAT_SCRIPTLET}.uppercase($F{of_sp_postal_address_country_identification_code})+")"]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="460" y="94" width="95" height="10" uuid="c180b55d-1e33-4336-a01c-84e0e3c225b9"/>
-				<textElement verticalAlignment="Top">
-					<font size="7"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{of_issue_date}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="380" y="94" width="80" height="10" uuid="cfe97a63-e352-436f-8c56-a0b31804351b"/>
-				<box rightPadding="4"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[FECHA DE VENC.:]]></text>
-			</staticText>
+			<image>
+				<reportElement x="5" y="2" width="85" height="68" uuid="de3c52f8-286d-478c-90c5-0b6e494a4d87">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>
@@ -288,7 +281,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="10">
-							<textField>
+							<textField isStretchWithOverflow="true">
 								<reportElement x="0" y="0" width="182" height="10" uuid="935f1517-0706-42f7-92da-8d861c2f0c6e"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="6"/>

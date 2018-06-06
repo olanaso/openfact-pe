@@ -35,6 +35,8 @@ public interface DocumentModel {
 
     void disable();
 
+    void close();
+
     /**
      * Document Line
      */

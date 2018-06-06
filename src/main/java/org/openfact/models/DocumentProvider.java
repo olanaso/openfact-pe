@@ -18,6 +18,7 @@ package org.openfact.models;
 
 import java.util.List;
 
+import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.models.types.DocumentType;
 
 public interface DocumentProvider {
@@ -68,4 +69,8 @@ public interface DocumentProvider {
 
     List<DocumentModel> searchForDocument(String filterText, OrganizationModel organization, int firstResult, int maxResults);
 
+    /**
+     * @param
+     */
+    List<DocumentModel> getAllClosedDocuments(String... requiredAction);
 }

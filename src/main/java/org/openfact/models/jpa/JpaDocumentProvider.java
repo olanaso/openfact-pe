@@ -3,17 +3,17 @@ package org.openfact.models.jpa;
 import org.jboss.logging.Logger;
 import org.openfact.models.*;
 import org.openfact.models.jpa.entities.DocumentEntity;
+import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.provider.ProviderEvent;
 import org.openfact.models.types.DocumentType;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +37,8 @@ public class JpaDocumentProvider implements DocumentProvider {
     public static final String SEND_EVENT_STATUS = "status";
     public static final String CUSTOMER_SEND_EVENT_FAILURES = "customerSendEventFailures";
     public static final String THIRD_PARTY_SEND_EVENT_FAILURES = "thirdPartySendEventFailures";
+
+    public static final String CLOSED = "closed";
 
     @Inject
     private Event<ProviderEvent> event;
@@ -71,8 +73,9 @@ public class JpaDocumentProvider implements DocumentProvider {
         entity.setDocumentType(documentType.toUpperCase());
         entity.setDocumentId(documentId.toUpperCase());
         entity.setCreatedTimestamp(LocalDateTime.now());
-        entity.setOrganizationId(organization.getId());
+        entity.setOrganization(OrganizationAdapter.toEntity(organization, em));
         entity.setEnabled(true);
+        entity.setClosed(false);
         em.persist(entity);
         em.flush();
 
@@ -186,6 +189,20 @@ public class JpaDocumentProvider implements DocumentProvider {
         }
         return query.getResultList().stream()
                 .map(entity -> toAdapter(organization, entity))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DocumentModel> getAllClosedDocuments(String... requiredAction) {
+        TypedQuery<DocumentEntity> query = em.createNamedQuery("getAllClosedDocuments", DocumentEntity.class);
+        query.setParameter("closed", true);
+        query.setParameter("requiredActions", Arrays.asList(requiredAction));
+        query.setParameter("createdTimestamp", LocalDateTime.now().minusDays(7));
+
+        query.setHint("javax.persistence.loadgraph", em.getEntityGraph("graph.BatchSendDocuments"));
+
+        return query.getResultList().stream()
+                .map(entity -> toAdapter(new OrganizationAdapter(em, entity.getOrganization()), entity))
                 .collect(Collectors.toList());
     }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job id="send_closed_documents" restartable="true" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/jobXML_1_0.xsd"
+     version="1.0">
+
+    <flow id="start" next="end">
+        <step id="send">
+            <chunk>
+                <reader ref="readDocuments"/>
+                <writer ref="writeDocuments"/>
+            </chunk>
+        </step>
+    </flow>
+    <step id="end">
+        <batchlet ref="endBatchlet"/>
+        <end on="COMPLETED"/>
+    </step>
+</job>

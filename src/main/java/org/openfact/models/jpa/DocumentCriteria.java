@@ -37,6 +37,11 @@ public class DocumentCriteria<R, Q> {
         this.predicates.add(cb.equal(root.get(JpaDocumentProvider.ORGANIZATION_ID), organization.getId()));
     }
 
+    public DocumentCriteria<R, Q> closed(boolean closed) {
+        this.predicates.add(cb.equal(root.get(JpaDocumentProvider.CLOSED), closed));
+        return this;
+    }
+
     public DocumentCriteria<R, Q> currencyCode(String... currencyCode) {
         List<String> currencyCodes = Arrays.asList(currencyCode).stream().map(String::toUpperCase).collect(Collectors.toList());
         predicates.add(cb.upper(root.get(JpaDocumentProvider.DOCUMENT_CURRENCY_CODE)).in(currencyCodes));

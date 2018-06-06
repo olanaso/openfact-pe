@@ -13,6 +13,8 @@ import java.util.*;
 
 public interface DocumentQuery {
 
+    DocumentQuery closed(boolean closed);
+
     DocumentQuery currencyCode(String... currencyCode);
 
     DocumentQuery documentType(DocumentType... documentType);

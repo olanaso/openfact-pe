@@ -41,6 +41,13 @@ public class JpaDocumentQuery implements DocumentQuery {
     }
 
     @Override
+    public DocumentQuery closed(boolean closed) {
+        query.closed(closed);
+        queryCount.closed(closed);
+        return this;
+    }
+
+    @Override
     public DocumentQuery currencyCode(String... currencyCode) {
         if (currencyCode.length > 0) {
             query.currencyCode(currencyCode);

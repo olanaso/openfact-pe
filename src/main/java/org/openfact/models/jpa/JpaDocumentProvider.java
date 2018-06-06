@@ -10,12 +10,10 @@ import org.openfact.models.types.DocumentType;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -195,9 +193,14 @@ public class JpaDocumentProvider implements DocumentProvider {
     }
 
     @Override
-    public List<DocumentModel> getAllClosedDocuments(DocumentRequiredAction... requiredAction) {
-        TypedQuery<DocumentEntity> query = em.createNamedQuery("searchForDocument", DocumentEntity.class);
+    public List<DocumentModel> getAllClosedDocuments(String... requiredAction) {
+        TypedQuery<DocumentEntity> query = em.createNamedQuery("getAllClosedDocuments", DocumentEntity.class);
+        query.setParameter("closed", true);
         query.setParameter("requiredActions", Arrays.asList(requiredAction));
+        query.setParameter("createdTimestamp", LocalDateTime.now().minusDays(7));
+
+        query.setHint("javax.persistence.loadgraph", em.getEntityGraph("graph.BatchSendDocuments"));
+
         return query.getResultList().stream()
                 .map(entity -> toAdapter(new OrganizationAdapter(em, entity.getOrganization()), entity))
                 .collect(Collectors.toList());

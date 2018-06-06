@@ -72,5 +72,5 @@ public interface DocumentProvider {
     /**
      * @param
      */
-    List<DocumentModel> getAllClosedDocuments(DocumentRequiredAction... requiredAction);
+    List<DocumentModel> getAllClosedDocuments(String... requiredAction);
 }

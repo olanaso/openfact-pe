@@ -48,7 +48,16 @@ import java.util.Objects;
 
         @NamedQuery(name = "selectLastDocumentChanged", query = "select d from DocumentEntity d where d.organizationId=:organizationId and d.documentType=:documentType and upper(d.documentId) like :firstLetter order by d.createdTimestamp"),
 
-        @NamedQuery(name = "getAllClosedDocuments", query = "select d from DocumentEntity d left join d.requiredActions ra where ra.action in :requiredActions order by d.createdTimestamp")
+        @NamedQuery(name = "getAllClosedDocuments", query = "select d from DocumentEntity d inner join d.requiredActions ra where d.closed=:closed and ra.action in :requiredActions and d.createdTimestamp <=:createdTimestamp order by d.createdTimestamp")
+})
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "graph.BatchSendDocuments", attributeNodes = {
+                @NamedAttributeNode(value = "organization", subgraph = "organization")
+        }, subgraphs = {
+                @NamedSubgraph(name = "organization", attributeNodes = {
+                        @NamedAttributeNode(value = "id")
+                })
+        })
 })
 public class DocumentEntity {
 
@@ -69,6 +78,9 @@ public class DocumentEntity {
 
     @Column(name = "XML_FILE_ID")
     private String xmlFileId;
+
+    @Column(name = "ORGANIZATION_ID", insertable = false, updatable = false)
+    private String organizationId;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -295,5 +307,13 @@ public class DocumentEntity {
     public int hashCode() {
 
         return Objects.hash(id);
+    }
+
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
     }
 }

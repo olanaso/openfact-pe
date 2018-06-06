@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="net.sf.jasperreports.awt.ignore.missing.font" value="true"/>
@@ -115,6 +115,7 @@
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="of_note" class="java.lang.String"/>
+	<field name="of_invoice_type_code" class="java.lang.String"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[(int)($V{REPORT_COUNT}/15)]]></groupExpression>
 		<groupFooter>
@@ -381,13 +382,6 @@
 				</textElement>
 				<text><![CDATA[RUC]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="400" y="29" width="144" height="16" forecolor="#FFFFFF" uuid="36ba8349-2263-45e9-ad67-ec231f3d191f"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="false"/>
-				</textElement>
-				<text><![CDATA[FACTURA ELECTRÓNICA]]></text>
-			</staticText>
 			<image>
 				<reportElement x="5" y="2" width="85" height="68" uuid="ffcbf73c-68a8-41cd-965a-9cb0dddec1ee">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -395,6 +389,14 @@
 				</reportElement>
 				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="400" y="29" width="144" height="16" forecolor="#FFFFFF" uuid="17f5ffe9-0fb4-4fb1-bcd2-deb76ba0d933"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{of_invoice_type_code}=="01" ? "FACTURA ELECTRÓNICA":"BOLETA ELECTRÓNICA"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>

@@ -74,6 +74,17 @@ public class OrganizationAdapter implements OrganizationModel, JpaModel<Organiza
     }
 
     @Override
+    public boolean isMasterCertificate() {
+        return organization.isMasterCertificate();
+    }
+
+    @Override
+    public void setMasterCertificate(boolean isMasterCertificate) {
+        organization.setMasterCertificate(isMasterCertificate);
+        em.flush();
+    }
+
+    @Override
     public String getAssignedIdentificationId() {
         return organization.getAssignedIdentificationId();
     }

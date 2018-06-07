@@ -10,6 +10,8 @@ public class GenericTypeRepresentation {
     private String denominacion;
     private String grupo;
     private Integer length;
+    private Integer minlength;
+    private Integer maxlength;
     private Boolean afectaIgv;
     private BigDecimal valor;
 
@@ -54,14 +56,14 @@ public class GenericTypeRepresentation {
     }
 
     public Integer getLength() {
-        return length;
+     return length;
     }
 
     public void setLength(Integer length) {
         this.length = length;
     }
 
-    public Boolean getAfectaIgv() {
+public Boolean getAfectaIgv() {
         return afectaIgv;
     }
 
@@ -75,5 +77,21 @@ public class GenericTypeRepresentation {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
+    }
+
+    public Integer getMinlength() {
+        return minlength;
+    }
+
+    public void setMinlength(Integer minlength) {
+        this.minlength = minlength;
+    }
+
+    public Integer getMaxlength() {
+        return maxlength;
+    }
+
+    public void setMaxlength(Integer maxlength) {
+        this.maxlength = maxlength;
     }
 }

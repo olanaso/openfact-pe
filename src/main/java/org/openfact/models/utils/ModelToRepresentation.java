@@ -39,6 +39,7 @@ public class ModelToRepresentation {
         rep.setAssignedIdentificationId(organization.getAssignedIdentificationId());
         rep.setRegistrationName(organization.getRegistrationName());
         rep.setSupplierName(organization.getSupplierName());
+        rep.setMasterCertificate(organization.isMasterCertificate());
 
         /**
          * Postal address

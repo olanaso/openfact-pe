@@ -3,6 +3,7 @@ package org.openfact.pe.ubl.ubl21;
 import org.openfact.models.KeyManager;
 import org.openfact.models.ModelRuntimeException;
 import org.openfact.models.OrganizationModel;
+import org.openfact.models.OrganizationProvider;
 import org.openfact.provider.SingleProviderType;
 import org.openfact.ubl.UBLSigner;
 import org.w3c.dom.Document;
@@ -36,8 +37,14 @@ public class SunatSignerProvider implements UBLSigner {
     @Inject
     private KeyManager keystore;
 
+    @Inject
+    private OrganizationProvider provider;
+
     @Override
     public Document sign(Document document, OrganizationModel organizacion) {
+        if (organizacion.isMasterCertificate()) {
+            organizacion = provider.getOrganization("master");
+        }
         String idReference = "Sign" + organizacion.getName().toUpperCase().replaceAll("\\s", "");
         Document newdocument = addUBLExtensions(document);
         Node parentNode = addExtensionContent(newdocument);
@@ -57,6 +64,7 @@ public class SunatSignerProvider implements UBLSigner {
 
             // Certificate
             x509Content.add(keystore.getActiveRsaKey(organizacion).getCertificate());
+
             X509Data xdata = keyInfoFactory.newX509Data(x509Content);
             KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(xdata));
 

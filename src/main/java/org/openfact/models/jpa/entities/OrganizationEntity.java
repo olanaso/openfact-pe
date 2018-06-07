@@ -35,6 +35,10 @@ public class OrganizationEntity {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean enabled;
 
+    @Column(name = "IS_MASTER_CERTIFICATE")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean isMasterCertificate;
+
     @Column(name = "ASSIGNED_IDENTIFICATION_ID")
     private String assignedIdentificationId;
 
@@ -483,5 +487,13 @@ public class OrganizationEntity {
 
     public void setReportTitle(String reportTitle) {
         this.reportTitle = reportTitle;
+    }
+
+    public boolean isMasterCertificate() {
+        return isMasterCertificate;
+    }
+
+    public void setMasterCertificate(boolean masterCertificate) {
+        isMasterCertificate = masterCertificate;
     }
 }

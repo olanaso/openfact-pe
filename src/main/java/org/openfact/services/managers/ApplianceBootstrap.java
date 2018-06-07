@@ -47,6 +47,7 @@ public class ApplianceBootstrap {
             organization.setDisplayName(Version.NAME);
             organization.setDisplayNameHtml(Version.NAME);
             organization.setEnabled(true);
+            organization.setMasterCertificate(true);
 
             defaultKeyProviders.createProviders(organization);
         } catch (ModelException e) {

@@ -136,6 +136,10 @@ public class RepresentationToModel {
             }
         }
 
+        if (rep.getMasterCertificate() != null) {
+            newOrganization.setMasterCertificate(rep.getMasterCertificate());
+        }
+
         /*
          * Attributes
          */
@@ -150,7 +154,9 @@ public class RepresentationToModel {
         if (rep.getOrganization() != null) {
             renameOrganization(organization, rep.getOrganization());
         }
-
+        if (rep.getMasterCertificate() != null) {
+            organization.setMasterCertificate(rep.getMasterCertificate());
+        }
         // Import attributes first, so the stuff saved directly on
         // representation (displayName, bruteForce etc) has bigger priority
         if (rep.getAttributes() != null) {
@@ -217,7 +223,9 @@ public class RepresentationToModel {
         if (rep.getEnabled() != null) {
             organization.setEnabled(rep.getEnabled());
         }
-
+        if (rep.getMasterCertificate() != null) {
+            organization.setMasterCertificate(rep.getMasterCertificate());
+        }
         if (rep.getAssignedIdentificationId() != null) {
             organization.setAssignedIdentificationId(rep.getAssignedIdentificationId());
         }

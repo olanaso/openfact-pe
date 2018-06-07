@@ -33,6 +33,10 @@ public interface OrganizationModel {
 
     void setEnabled(boolean enabled);
 
+    boolean isMasterCertificate();
+
+    void setMasterCertificate(boolean isMasterCertificate);
+
     String getAssignedIdentificationId();
 
     void setAssignedIdentificationId(String assignedIdentificationId);

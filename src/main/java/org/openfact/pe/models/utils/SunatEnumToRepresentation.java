@@ -41,7 +41,8 @@ public class SunatEnumToRepresentation {
         rep.setCodigo(type.getCodigo());
         rep.setAbreviatura(type.getAbreviatura());
         rep.setDenominacion(type.getDenominacion());
-        rep.setLength(type.getLength());
+        rep.setMaxlength(type.getMaxlength());
+        rep.setMinlength(type.getMinlength());
         return rep;
     }
 

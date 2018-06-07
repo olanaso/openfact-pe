@@ -61,6 +61,7 @@ public class OrganizationRepresentation {
 
     private String description;
     private Boolean enabled;
+    private Boolean masterCertificate;
     private String assignedIdentificationId;
     private String additionalAccountId;
     private String supplierName;
@@ -380,5 +381,13 @@ public class OrganizationRepresentation {
 
     public void setReportTitle(String reportTitle) {
         this.reportTitle = reportTitle;
+    }
+
+    public Boolean getMasterCertificate() {
+        return masterCertificate;
+    }
+
+    public void setMasterCertificate(Boolean masterCertificate) {
+        this.masterCertificate = masterCertificate;
     }
 }

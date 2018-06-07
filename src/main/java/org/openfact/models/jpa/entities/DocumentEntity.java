@@ -48,7 +48,7 @@ import java.util.Objects;
 
         @NamedQuery(name = "selectLastDocumentChanged", query = "select d from DocumentEntity d where d.organizationId=:organizationId and d.documentType=:documentType and upper(d.documentId) like :firstLetter order by d.createdTimestamp"),
 
-        @NamedQuery(name = "getAllClosedDocuments", query = "select d from DocumentEntity d inner join d.requiredActions ra where d.closed=:closed and ra.action in :requiredActions and d.createdTimestamp <=:createdTimestamp order by d.createdTimestamp")
+        @NamedQuery(name = "getAllClosedDocuments", query = "select distinct d from DocumentEntity d inner join d.requiredActions ra where d.closed=:closed and ra.action in :requiredActions and d.createdTimestamp <=:createdTimestamp order by d.createdTimestamp")
 })
 @NamedEntityGraphs({
         @NamedEntityGraph(name = "graph.BatchSendDocuments", attributeNodes = {

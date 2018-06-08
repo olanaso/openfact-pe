@@ -90,6 +90,12 @@ public class DocumentAdapter implements DocumentModel, JpaModel<DocumentEntity> 
     }
 
     @Override
+    public boolean isClosed() {
+        return document.isClosed();
+    }
+
+
+    @Override
     public void close() {
         document.setClosed(true);
     }

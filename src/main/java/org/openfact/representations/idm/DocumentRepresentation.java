@@ -34,6 +34,7 @@ public class DocumentRepresentation {
     private String customerElectronicMail;
 
     private boolean enabled;
+    private boolean closed;
 
     private Map<String, List<String>> attributes;
     private Set<String> requiredActions;
@@ -153,5 +154,13 @@ public class DocumentRepresentation {
 
     public void setDocumentLines(List<Map<String, String>> documentLines) {
         this.documentLines = documentLines;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 }

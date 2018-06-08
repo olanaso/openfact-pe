@@ -32,9 +32,9 @@ public interface DocumentModel {
     LocalDateTime getCreatedTimestamp();
 
     boolean isEnabled();
-
     void disable();
 
+    boolean isClosed();
     void close();
 
     /**

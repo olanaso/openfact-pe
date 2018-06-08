@@ -132,6 +132,7 @@ public class ModelToRepresentation {
             rep.setCreatedTimestamp(Date.from(model.getCreatedTimestamp().atZone(ZoneId.systemDefault()).toInstant()));
         }
         rep.setEnabled(model.isEnabled());
+        rep.setClosed(model.isClosed());
 
         rep.setDocumentCurrencyCode(model.getDocumentCurrencyCode());
         rep.setCustomerRegistrationName(model.getCustomerRegistrationName());

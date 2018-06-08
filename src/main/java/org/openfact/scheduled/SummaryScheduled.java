@@ -1,6 +1,7 @@
 package org.openfact.scheduled;
 
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
+import org.openfact.common.converts.DateUtils;
 import org.openfact.models.*;
 import org.openfact.models.types.DocumentRequiredAction;
 import org.openfact.models.types.DocumentType;
@@ -152,7 +153,7 @@ public class SummaryScheduled implements OrganizationScheduledTask {
                 String newDocumentId = ublIDGenerator.generateID(organization, summaryType);
                 summaryType.setId(new IDType(newDocumentId));
 
-                document = documentManager.addDocument(organization, summaryType.getId().getValue(), SunatDocumentType.SUMMARY_DOCUMENTS.toString(), summaryType);
+                document = documentManager.addDocument(organization, summaryType.getId().getValue(),summaryRep.getFechaDeEmision(), SunatDocumentType.SUMMARY_DOCUMENTS.toString(), summaryType);
             } catch (ModelException e) {
                 e.printStackTrace();
                 throw new EJBException("Error creating summary documents");

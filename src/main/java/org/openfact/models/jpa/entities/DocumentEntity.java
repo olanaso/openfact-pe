@@ -72,6 +72,10 @@ public class DocumentEntity {
     @Column(name = "DOCUMENT_ID")
     private String documentId;
 
+    @Type(type = "org.hibernate.type.LocalDateTimeType")
+    @Column(name = "ISSUE_DATE")
+    private LocalDateTime issueDate;
+
     @NotNull
     @Column(name = "DOCUMENT_TYPE")
     private String documentType;
@@ -315,5 +319,13 @@ public class DocumentEntity {
 
     public void setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
+    }
+
+    public LocalDateTime getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(LocalDateTime issueDate) {
+        this.issueDate = issueDate;
     }
 }

@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.openfact.models;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.openfact.models.types.DocumentRequiredAction;
@@ -25,9 +26,9 @@ public interface DocumentProvider {
 
     DocumentQuery createQuery(OrganizationModel organization);
 
-    DocumentModel addDocument(String documentType, String documentId, OrganizationModel organization) throws ModelException;
+    DocumentModel addDocument(String documentType, String documentId, LocalDateTime issueDate, OrganizationModel organization) throws ModelException;
 
-    DocumentModel addDocument(DocumentType documentType, String documentId, OrganizationModel organization) throws ModelException;
+    DocumentModel addDocument(DocumentType documentType, String documentId, LocalDateTime issueDate, OrganizationModel organization) throws ModelException;
 
     /**
      * @param id

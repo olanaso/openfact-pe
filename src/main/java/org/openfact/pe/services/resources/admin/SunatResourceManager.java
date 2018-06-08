@@ -5,6 +5,7 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.debitnote_21.DebitNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import org.jboss.logging.Logger;
+import org.openfact.common.converts.DateUtils;
 import org.openfact.models.*;
 import org.openfact.models.jpa.entities.SerieNumeroController;
 import org.openfact.models.jpa.entities.SerieNumeroEntity;
@@ -27,6 +28,9 @@ import org.openfact.ubl.utils.UBLUtil;
 
 import javax.ejb.*;
 import javax.inject.Inject;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
@@ -106,7 +110,7 @@ public class SunatResourceManager {
             }
         }
 
-        DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(), DocumentType.INVOICE, invoiceType);
+        DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(), rep.getFechaDeEmision(), DocumentType.INVOICE, invoiceType);
         generateAttributes(rep, document);
         if (rep.isEnviarAutomaticamenteASunat()) {
             document.close();
@@ -165,7 +169,7 @@ public class SunatResourceManager {
             }
         }
 
-        DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(), DocumentType.CREDIT_NOTE, creditNoteType);
+        DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(), rep.getFechaDeEmision(), DocumentType.CREDIT_NOTE, creditNoteType);
         generateAttributes(rep, document);
         if (rep.isEnviarAutomaticamenteASunat()) {
             document.close();
@@ -224,7 +228,7 @@ public class SunatResourceManager {
             }
         }
 
-        DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(), DocumentType.DEBIT_NOTE, debitNoteType);
+        DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(), rep.getFechaDeEmision(), DocumentType.DEBIT_NOTE, debitNoteType);
         generateAttributes(rep, document);
         if (rep.isEnviarAutomaticamenteASunat()) {
             document.close();
@@ -237,7 +241,7 @@ public class SunatResourceManager {
         VoidedDocumentsType voidedDocumentsType = representationToType.toVoidedDocumentType(organization, rep);
         setVoidedDocumentIDType(organization, voidedDocumentsType);
 
-        DocumentModel document = documentManager.addDocument(organization, voidedDocumentsType.getID().getValue(), SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentsType);
+        DocumentModel document = documentManager.addDocument(organization, voidedDocumentsType.getID().getValue(), DateUtils.asLocalDateTime(rep.getFechaDeEmision()), SunatDocumentType.VOIDED_DOCUMENTS.toString(), voidedDocumentsType);
         if (rep.isEnviarAutomaticamenteASunat()) {
             document.close();
         }
@@ -304,7 +308,7 @@ public class SunatResourceManager {
             }
         }
 
-        DocumentModel document = documentManager.addDocument(organization, perceptionType.getId().getValue(), SunatDocumentType.PERCEPTION.toString(), perceptionType);
+        DocumentModel document = documentManager.addDocument(organization, perceptionType.getId().getValue(), DateUtils.asLocalDateTime(rep.getFechaDeEmision()), SunatDocumentType.PERCEPTION.toString(), perceptionType);
         if (rep.isEnviarAutomaticamenteASunat()) {
             document.close();
         }
@@ -361,7 +365,7 @@ public class SunatResourceManager {
             }
         }
 
-        DocumentModel document = documentManager.addDocument(organization, retentionType.getId().getValue(), SunatDocumentType.RETENTION.toString(), retentionType);
+        DocumentModel document = documentManager.addDocument(organization, retentionType.getId().getValue(), DateUtils.asLocalDateTime(rep.getFechaDeEmision()), SunatDocumentType.RETENTION.toString(), retentionType);
         if (rep.isEnviarAutomaticamenteASunat()) {
             document.close();
         }
@@ -427,6 +431,4 @@ public class SunatResourceManager {
             return new AsyncResult<>(false);
         }
     }
-
-
 }

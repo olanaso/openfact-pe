@@ -21,6 +21,8 @@ public interface DocumentModel {
     String CUSTOMER_ELECTRONIC_MAIL = "customerElectronicMail";
 
     String CREATED_TIMESTAMP = "createdTimestamp";
+    String ISSUE_DATE="issueDate";
+
     String ENABLED = "enabled";
 
     String getId();
@@ -28,6 +30,8 @@ public interface DocumentModel {
     String getDocumentId();
 
     String getDocumentType();
+
+    LocalDateTime getIsuueDate();
 
     LocalDateTime getCreatedTimestamp();
 

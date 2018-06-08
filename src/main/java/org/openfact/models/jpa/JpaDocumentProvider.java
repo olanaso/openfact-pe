@@ -54,8 +54,8 @@ public class JpaDocumentProvider implements DocumentProvider {
     }
 
     @Override
-    public DocumentModel addDocument(DocumentType documentType, String documentId, OrganizationModel organization) throws ModelException {
-        return addDocument(documentType.toString(), documentId, organization);
+    public DocumentModel addDocument(DocumentType documentType, String documentId,LocalDateTime issueDate, OrganizationModel organization) throws ModelException {
+        return addDocument(documentType.toString(), documentId, issueDate, organization);
     }
 
     @Override
@@ -64,13 +64,14 @@ public class JpaDocumentProvider implements DocumentProvider {
     }
 
     @Override
-    public DocumentModel addDocument(String documentType, String documentId, OrganizationModel organization) throws ModelException {
+    public DocumentModel addDocument(String documentType, String documentId, LocalDateTime issueDate, OrganizationModel organization) throws ModelException {
         if (getDocumentByTypeAndDocumentId(documentType, documentId, organization) != null) {
             throw new ModelDuplicateException("Document documentId[" + documentId + "] exists");
         }
 
         DocumentEntity entity = new DocumentEntity();
         entity.setDocumentType(documentType.toUpperCase());
+        entity.setIssueDate(issueDate);
         entity.setDocumentId(documentId.toUpperCase());
         entity.setCreatedTimestamp(LocalDateTime.now());
         entity.setOrganization(OrganizationAdapter.toEntity(organization, em));

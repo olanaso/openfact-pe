@@ -75,6 +75,11 @@ public class DocumentAdapter implements DocumentModel, JpaModel<DocumentEntity> 
     }
 
     @Override
+    public LocalDateTime getIsuueDate() {
+        return  document.getIssueDate();
+    }
+
+    @Override
     public LocalDateTime getCreatedTimestamp() {
         return document.getCreatedTimestamp();
     }

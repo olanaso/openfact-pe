@@ -1,9 +1,16 @@
 package org.openfact.common.converts;
 
+import org.openfact.models.ModelRuntimeException;
+
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.TimeZone;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 
 public class DateUtils {
 
@@ -75,7 +82,6 @@ public class DateUtils {
      * </ul>
      *
      * @param zone Time zone, used only if the input object is LocalDate or LocalDateTime.
-     *
      * @return {@link java.util.Date} (exactly this class, not a subclass, such as java.sql.Date)
      */
     public static java.util.Date asUtilDate(Object date, ZoneId zone) {
@@ -158,4 +164,46 @@ public class DateUtils {
         return LocalDateTime.parse(date, formatter);
     }
 
+    public static LocalDateTime asLocalDateTime(XMLGregorianCalendar calendar) {
+        if (calendar == null) {
+            return null;
+        }
+        return asLocalDateTime(calendar.toGregorianCalendar().getTime(), ZoneId.systemDefault());
+    }
+
+    public static XMLGregorianCalendar toGregorianCalendar(Date date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String locale = sdf.format(date);
+            XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
+            return xmlCal;
+        } catch (DatatypeConfigurationException e) {
+            throw new ModelRuntimeException(e);
+        }
+    }
+
+    public static XMLGregorianCalendar toGregorianCalendar(LocalDate date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String locale = sdf.format(DateUtils.asDate(date));
+            XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
+            return xmlCal;
+        } catch (DatatypeConfigurationException e) {
+            throw new ModelRuntimeException(e);
+        }
+    }
+
+    public static XMLGregorianCalendar toGregorianCalendarTime(LocalDateTime date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String locale = sdf.format(DateUtils.asDate(date));
+            XMLGregorianCalendar xmlCal = DatatypeFactory.newInstance().newXMLGregorianCalendar(locale);
+            return xmlCal;
+        } catch (DatatypeConfigurationException e) {
+            throw new ModelRuntimeException(e);
+        }
+    }
 }

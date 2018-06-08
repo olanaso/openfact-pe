@@ -19,6 +19,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.xml.transform.TransformerException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,11 +62,11 @@ public class DocumentManager {
         return model.getDocumentByTypeAndDocumentId(type.toString(), documentId, organization);
     }
 
-    public DocumentModel addDocument(OrganizationModel organization, String documentId, DocumentType documentType, Object type) throws ModelException {
-        return addDocument(organization, documentId, documentType.toString(), type);
+    public DocumentModel addDocument(OrganizationModel organization, String documentId,  LocalDateTime issueDate,DocumentType documentType, Object type) throws ModelException {
+        return addDocument(organization, documentId,issueDate, documentType.toString(), type);
     }
 
-    public DocumentModel addDocument(OrganizationModel organization, String documentId, String documentType, Object type) throws ModelException {
+    public DocumentModel addDocument(OrganizationModel organization, String documentId,  LocalDateTime issueDate, String documentType,Object type) throws ModelException {
         UBLReaderWriter readerWriter = ublUtil.getReaderWriter(documentType);
         UBLCustomizator customizator = ublUtil.getCustomizationProvider(documentType);
         if (readerWriter == null) {
@@ -83,7 +84,7 @@ public class DocumentManager {
         }
 
         documentXml = signerProvider.sign(documentXml, organization);
-        DocumentModel documentModel = model.addDocument(documentType, documentId, organization);
+        DocumentModel documentModel = model.addDocument(documentType, documentId,issueDate, organization);
 
         customizator.config(organization, documentModel, type);
         for (DocumentRequiredAction requiredAction : customizator.getRequiredActions()) {

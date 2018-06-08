@@ -27,6 +27,7 @@ public class DocumentRepresentation {
     private String documentId;
     private String documentType;
     private Date createdTimestamp;
+    private Date issueDate;
 
     private String documentCurrencyCode;
     private String customerRegistrationName;
@@ -154,6 +155,14 @@ public class DocumentRepresentation {
 
     public void setDocumentLines(List<Map<String, String>> documentLines) {
         this.documentLines = documentLines;
+    }
+
+    public Date getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(Date issueDate) {
+        this.issueDate = issueDate;
     }
 
     public boolean isClosed() {

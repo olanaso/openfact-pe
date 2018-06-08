@@ -131,6 +131,9 @@ public class ModelToRepresentation {
         if (model.getCreatedTimestamp() != null) {
             rep.setCreatedTimestamp(Date.from(model.getCreatedTimestamp().atZone(ZoneId.systemDefault()).toInstant()));
         }
+        if (model.getIsuueDate() != null) {
+            rep.setIssueDate(Date.from(model.getIsuueDate().atZone(ZoneId.systemDefault()).toInstant()));
+        }
         rep.setEnabled(model.isEnabled());
         rep.setClosed(model.isClosed());
 

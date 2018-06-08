@@ -10,6 +10,7 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONObject;
 import org.openfact.common.ClientConnection;
+import org.openfact.common.converts.DateUtils;
 import org.openfact.common.converts.DocumentUtils;
 import org.openfact.events.admin.OperationType;
 import org.openfact.events.admin.ResourceType;
@@ -220,7 +221,7 @@ public class DocumentsAdminResource {
             invoiceType.setID(documentId);
         }
 
-        DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(), DocumentType.INVOICE, invoiceType);
+        DocumentModel document = documentManager.addDocument(organization, invoiceType.getIDValue(),DateUtils.asLocalDateTime(invoiceType.getIssueDate().getValue().normalize()), DocumentType.INVOICE, invoiceType);
         eventStoreManager.send(organization, getAdminEvent(organization)
                 .operation(OperationType.CREATE)
                 .resourcePath(uriInfo, document.getId())
@@ -248,7 +249,7 @@ public class DocumentsAdminResource {
             creditNoteType.setID(documentId);
         }
 
-        DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(), DocumentType.CREDIT_NOTE, creditNoteType);
+        DocumentModel document = documentManager.addDocument(organization, creditNoteType.getIDValue(),DateUtils.asLocalDateTime(creditNoteType.getIssueDate().getValue().normalize()), DocumentType.CREDIT_NOTE, creditNoteType);
         eventStoreManager.send(organization, getAdminEvent(organization)
                 .operation(OperationType.CREATE)
                 .resourcePath(uriInfo, document.getId())
@@ -276,7 +277,7 @@ public class DocumentsAdminResource {
             debitNoteType.setID(documentId);
         }
 
-        DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(), DocumentType.DEBIT_NOTE, debitNoteType);
+        DocumentModel document = documentManager.addDocument(organization, debitNoteType.getIDValue(),DateUtils.asLocalDateTime(debitNoteType.getIssueDate().getValue().normalize()), DocumentType.DEBIT_NOTE, debitNoteType);
         eventStoreManager.send(organization, getAdminEvent(organization)
                 .operation(OperationType.CREATE)
                 .resourcePath(uriInfo, document.getId())
@@ -523,7 +524,7 @@ public class DocumentsAdminResource {
                         throw new BadRequestException("Bad operator on criteria");
                     }
                 } else {
-                    query.addFilter(filter.getName(), filter.getValue(), filter.getOperator() != null ?  filter.getOperator() : SearchCriteriaFilterOperator.eq);
+                    query.addFilter(filter.getName(), filter.getValue(), filter.getOperator() != null ? filter.getOperator() : SearchCriteriaFilterOperator.eq);
                 }
             }
         }
@@ -543,7 +544,9 @@ public class DocumentsAdminResource {
 
         SearchResultsRepresentation<DocumentRepresentation> rep = new SearchResultsRepresentation<>();
         List<DocumentRepresentation> items = new ArrayList<>();
-        results.getModels().forEach(f -> items.add(modelToRepresentation.toRepresentation(f, false)));
+        results.getModels().forEach(f -> {
+            items.add(modelToRepresentation.toRepresentation(f, false));
+        });
         rep.setItems(items);
         rep.setTotalSize(results.getTotalSize());
         return rep;

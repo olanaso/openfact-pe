@@ -9,7 +9,7 @@ alter table DOCUMENT
   add column CLOSED integer;
 
 update DOCUMENT
-set CLOSED = 0;
+set CLOSED = 1;
 
 alter table DOCUMENT
   alter column CLOSED set not null;

@@ -703,28 +703,28 @@ public class DocumentsAdminResource {
     /**
      * Deletes document with given documentId.
      */
-    @DELETE
-    @Path("/{document}")
-    public Response deleteDocument(@PathParam("organization") final String organizationName,
-                                   @PathParam("document") final String documentIdPk) throws ModelErrorResponseException {
-        OrganizationModel organization = getOrganizationModel(organizationName);
-        OrganizationAuth auth = getAuth(organization);
-
-        auth.requireManage();
-
-        DocumentModel document = getDocument(documentIdPk, organization);
-
-        boolean removed = documentManager.removeDocument(organization, document);
-        if (removed) {
-            eventStoreManager.send(organization, getAdminEvent(organization)
-                    .operation(OperationType.DELETE)
-                    .resourcePath(uriInfo)
-                    .getEvent());
-            return Response.noContent().build();
-        } else {
-            throw new ModelErrorResponseException("Document couldn't be deleted", Response.Status.BAD_REQUEST);
-        }
-    }
+//    @DELETE
+//    @Path("/{document}")
+//    public Response deleteDocument(@PathParam("organization") final String organizationName,
+//                                   @PathParam("document") final String documentIdPk) throws ModelErrorResponseException {
+//        OrganizationModel organization = getOrganizationModel(organizationName);
+//        OrganizationAuth auth = getAuth(organization);
+//
+//        auth.requireManage();
+//
+//        DocumentModel document = getDocument(documentIdPk, organization);
+//
+//        boolean removed = documentManager.removeDocument(organization, document);
+//        if (removed) {
+//            eventStoreManager.send(organization, getAdminEvent(organization)
+//                    .operation(OperationType.DELETE)
+//                    .resourcePath(uriInfo)
+//                    .getEvent());
+//            return Response.noContent().build();
+//        } else {
+//            throw new ModelErrorResponseException("Document couldn't be deleted", Response.Status.BAD_REQUEST);
+//        }
+//    }
 
     @POST
     @Path("/{document}/send-to-customer")
